@@ -22,13 +22,12 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- *
  * @author Torridity
  */
 public class TagListFormatter extends BasicFormatter<Tag> {
 
-    private final String[] VARIABLES = new String[]{LIST_START, LIST_END, ELEMENT_COUNT, ELEMENT_ID};
-    private final String STANDARD_TEMPLATE = "[b]Gruppenübersicht[/b]\n"
+    private static final String[] VARIABLES = new String[] {LIST_START, LIST_END, ELEMENT_COUNT, ELEMENT_ID};
+    private static final String STANDARD_TEMPLATE = "[b]Gruppenübersicht[/b]\n"
             + "%LIST_START%" + new Tag().getStandardTemplate() + "%LIST_END%";
     private static final String TEMPLATE_PROPERTY = "tag.list.bbexport.template";
 

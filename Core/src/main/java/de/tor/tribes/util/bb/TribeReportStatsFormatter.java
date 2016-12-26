@@ -22,13 +22,12 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- *
  * @author Torridity
  */
 public class TribeReportStatsFormatter extends BasicFormatter<TribeStatResult> {
 
-     private final String[] VARIABLES = new String[]{LIST_START, LIST_END, ELEMENT_COUNT, ELEMENT_ID};
-    private final String STANDARD_TEMPLATE = new TribeStatResult().getStandardTemplate();
+    private static final String[] VARIABLES = new String[] {LIST_START, LIST_END, ELEMENT_COUNT, ELEMENT_ID};
+    private static final String STANDARD_TEMPLATE = new TribeStatResult().getStandardTemplate();
     private static final String TEMPLATE_PROPERTY = "tribe.report.stats.bbexport.template";
 
     @Override

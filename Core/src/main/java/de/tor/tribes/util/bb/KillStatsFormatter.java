@@ -16,14 +16,14 @@
 package de.tor.tribes.util.bb;
 
 import de.tor.tribes.types.TribeStatsElement.Stats;
+import org.apache.commons.lang.StringUtils;
+
 import java.text.NumberFormat;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import org.apache.commons.lang.StringUtils;
 
 /**
- *
  * @author Torridity
  */
 public class KillStatsFormatter extends BasicFormatter<Stats> {
@@ -33,13 +33,13 @@ public class KillStatsFormatter extends BasicFormatter<Stats> {
     private static final String KILLS_AFTER = "%KILLS_END%";
     private static final String KILLS_DIFFERENCE = "%KILLS_DIFFERENCE%";
     private static final String PERCENT_DIFFERENCE = "%PERCENT_DIFFERENCE%";
-    private final String[] STAT_SPECIFIC_VARIABLES = new String[]{TRIBE, KILLS_BEFORE, KILLS_AFTER, KILLS_DIFFERENCE, PERCENT_DIFFERENCE};
-    private final String[] VARIABLES = new String[]{LIST_START, LIST_END, ELEMENT_COUNT, ELEMENT_ID};
+    private static final String[] VARIABLES = new String[] {LIST_START, LIST_END, ELEMENT_COUNT, ELEMENT_ID};
     private static final String STANDARD_TEMPLATE = "[b]Angriffsstatistik[/b]\nBerücksichtigte Spieler: %ELEMENT_COUNT%\n[table]\n"
             + "[**]Platz[||]Spieler[||]Kills (Anfang)[||]Zuwachs[||]Kills (Ende)[/**]\n"
             + "%LIST_START%[*]%ELEMENT_ID%[|]%TRIBE%[|]%KILLS_START%[|]%KILLS_DIFFERENCE%[|]%KILLS_END%[/*]%LIST_END%\n"
             + "[/table]";
     private static final String TEMPLATE_PROPERTY = "kills.stats.bbexport.template";
+    private final String[] STAT_SPECIFIC_VARIABLES = new String[] {TRIBE, KILLS_BEFORE, KILLS_AFTER, KILLS_DIFFERENCE, PERCENT_DIFFERENCE};
 
     @Override
     public String formatElements(List<Stats> pElements, boolean pShowAll) {
@@ -49,14 +49,14 @@ public class KillStatsFormatter extends BasicFormatter<Stats> {
         String beforeList = getHeader();
         String listItemTemplate = getLineTemplate();
         String afterList = getFooter();
-        String replacedStart = StringUtils.replaceEach(beforeList, new String[]{ELEMENT_COUNT}, new String[]{f.format(pElements.size())});
+        String replacedStart = StringUtils.replaceEach(beforeList, new String[] {ELEMENT_COUNT}, new String[] {f.format(pElements.size())});
         b.append(replacedStart);
         Collections.sort(pElements, Stats.BASH_OFF_COMPARATOR);
         int idx = 0;
         for (Stats s : pElements) {
             String[] replacements = getStatSpecificReplacements(s);
             String itemLine = StringUtils.replaceEach(listItemTemplate, STAT_SPECIFIC_VARIABLES, replacements);
-            itemLine = StringUtils.replaceEach(itemLine, new String[]{ELEMENT_ID, ELEMENT_COUNT}, new String[]{f.format(cnt), f.format(pElements.size())});
+            itemLine = StringUtils.replaceEach(itemLine, new String[] {ELEMENT_ID, ELEMENT_COUNT}, new String[] {f.format(cnt), f.format(pElements.size())});
             b.append(itemLine).append("\n");
             idx++;
             if (idx == 10 && !pShowAll) {
@@ -65,7 +65,7 @@ public class KillStatsFormatter extends BasicFormatter<Stats> {
             }
             cnt++;
         }
-        String replacedEnd = StringUtils.replaceEach(afterList, new String[]{ELEMENT_COUNT}, new String[]{f.format(pElements.size())});
+        String replacedEnd = StringUtils.replaceEach(afterList, new String[] {ELEMENT_COUNT}, new String[] {f.format(pElements.size())});
         b.append(replacedEnd);
         return b.toString();
     }
@@ -99,7 +99,7 @@ public class KillStatsFormatter extends BasicFormatter<Stats> {
             percentDiff = "[color=red]" + percentDiff + "[/color]";
         }
 
-        return new String[]{tribe, killsBefore, killsAfter, killsDiff, percentDiff};
+        return new String[] {tribe, killsBefore, killsAfter, killsDiff, percentDiff};
     }
 
     @Override

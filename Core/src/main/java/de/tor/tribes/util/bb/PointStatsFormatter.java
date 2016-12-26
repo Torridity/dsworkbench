@@ -16,14 +16,14 @@
 package de.tor.tribes.util.bb;
 
 import de.tor.tribes.types.TribeStatsElement.Stats;
+import org.apache.commons.lang.StringUtils;
+
 import java.text.NumberFormat;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import org.apache.commons.lang.StringUtils;
 
 /**
- *
  * @author Torridity
  */
 public class PointStatsFormatter extends BasicFormatter<Stats> {
@@ -34,13 +34,13 @@ public class PointStatsFormatter extends BasicFormatter<Stats> {
     private static final String POINTS_DIFFERENCE = "%POINTS_DIFFERENCE%";
     private static final String PERCENT_DIFFERENCE = "%PERCENT_DIFFERENCE%";
     private static final String KILLS_PER_POINT = "%KILLS_PER_POINT%";
-    private final String[] STAT_SPECIFIC_VARIABLES = new String[]{TRIBE, POINTS_BEFORE, POINTS_AFTER, POINTS_DIFFERENCE, PERCENT_DIFFERENCE, KILLS_PER_POINT};
-    private final String[] VARIABLES = new String[]{LIST_START, LIST_END, ELEMENT_COUNT, ELEMENT_ID};
+    private static final String[] VARIABLES = new String[] {LIST_START, LIST_END, ELEMENT_COUNT, ELEMENT_ID};
     private static final String STANDARD_TEMPLATE = "[b]Punktestatistik[/b]\nBerücksichtigte Spieler: %ELEMENT_COUNT%\n[table]\n"
             + "[**]Platz[||]Spieler[||]Punkte (Anfang)[||]Wachstum[||]Punkte (Ende)[||]Kills/Punkt[/**]\n"
             + "%LIST_START%[*]%ELEMENT_ID%[|]%TRIBE%[|]%POINTS_START%[|]%PERCENT_DIFFERENCE%[|]%POINTS_END%[|]%KILLS_PER_POINT%[/*]%LIST_END%\n"
             + "[/table]";
     private static final String TEMPLATE_PROPERTY = "point.stats.bbexport.template";
+    private final String[] STAT_SPECIFIC_VARIABLES = new String[] {TRIBE, POINTS_BEFORE, POINTS_AFTER, POINTS_DIFFERENCE, PERCENT_DIFFERENCE, KILLS_PER_POINT};
 
     /*
     01. [player]-Atheris-[/player]
@@ -57,14 +57,14 @@ public class PointStatsFormatter extends BasicFormatter<Stats> {
         String beforeList = getHeader();
         String listItemTemplate = getLineTemplate();
         String afterList = getFooter();
-        String replacedStart = StringUtils.replaceEach(beforeList, new String[]{ELEMENT_COUNT}, new String[]{f.format(pElements.size())});
+        String replacedStart = StringUtils.replaceEach(beforeList, new String[] {ELEMENT_COUNT}, new String[] {f.format(pElements.size())});
         b.append(replacedStart);
         Collections.sort(pElements, Stats.POINTS_COMPARATOR);
         int idx = 0;
         for (Stats s : pElements) {
             String[] replacements = getStatSpecificReplacements(s);
             String itemLine = StringUtils.replaceEach(listItemTemplate, STAT_SPECIFIC_VARIABLES, replacements);
-            itemLine = StringUtils.replaceEach(itemLine, new String[]{ELEMENT_ID, ELEMENT_COUNT}, new String[]{f.format(cnt), f.format(pElements.size())});
+            itemLine = StringUtils.replaceEach(itemLine, new String[] {ELEMENT_ID, ELEMENT_COUNT}, new String[] {f.format(cnt), f.format(pElements.size())});
             b.append(itemLine).append("\n");
             cnt++;
             idx++;
@@ -73,7 +73,7 @@ public class PointStatsFormatter extends BasicFormatter<Stats> {
                 break;
             }
         }
-        String replacedEnd = StringUtils.replaceEach(afterList, new String[]{ELEMENT_COUNT}, new String[]{f.format(pElements.size())});
+        String replacedEnd = StringUtils.replaceEach(afterList, new String[] {ELEMENT_COUNT}, new String[] {f.format(pElements.size())});
         b.append(replacedEnd);
         return b.toString();
     }
@@ -104,7 +104,7 @@ public class PointStatsFormatter extends BasicFormatter<Stats> {
 
         String killsPerPoints = nf.format(pStats.getKillPerPoint());
 
-        return new String[]{tribe, pointsBefore, pointsAfter, pointsDiff, percentDiff, killsPerPoints};
+        return new String[] {tribe, pointsBefore, pointsAfter, pointsDiff, percentDiff, killsPerPoints};
     }
 
     @Override

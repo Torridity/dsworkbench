@@ -28,7 +28,7 @@ import java.util.List;
  */
 public class TroopListFormatter extends BasicFormatter<VillageTroopsHolder> {
 
-    private final String[] VARIABLES = new String[]{LIST_START, LIST_END, ELEMENT_COUNT, ELEMENT_ID};
+    private static final String[] VARIABLES = new String[] {LIST_START, LIST_END, ELEMENT_COUNT, ELEMENT_ID};
     private static final String TEMPLATE_PROPERTY = "troops.list.bbexport.template";
     private static final String STANDARD_TEMPLATE = "[b]Truppenübersicht[/b]\n"
             + "[table]\n"
@@ -46,14 +46,14 @@ public class TroopListFormatter extends BasicFormatter<VillageTroopsHolder> {
         String beforeList = getHeader();
         String listItemTemplate = getLineTemplate();
         String afterList = getFooter();
-        String replacedStart = StringUtils.replaceEach(beforeList, new String[]{ELEMENT_COUNT}, new String[]{f.format(pElements.size())});
+        String replacedStart = StringUtils.replaceEach(beforeList, new String[] {ELEMENT_COUNT}, new String[] {f.format(pElements.size())});
 
         VillageTroopsHolder dummyHolder = new VillageTroopsHolder();
         //replace unit icons
         replacedStart = StringUtils.replaceEach(replacedStart, dummyHolder.getBBVariables(), dummyHolder.getReplacements(pExtended));
         b.append(replacedStart).append("\n");
         cnt += formatElementsCore(b, pElements, pExtended, listItemTemplate, f);
-        String replacedEnd = StringUtils.replaceEach(afterList, new String[]{ELEMENT_COUNT}, new String[]{f.format(pElements.size())});
+        String replacedEnd = StringUtils.replaceEach(afterList, new String[] {ELEMENT_COUNT}, new String[] {f.format(pElements.size())});
         b.append(replacedEnd);
         return b.toString();
     }

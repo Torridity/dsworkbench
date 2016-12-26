@@ -17,20 +17,20 @@ package de.tor.tribes.util.bb;
 
 import de.tor.tribes.types.drawing.AbstractForm;
 import de.tor.tribes.types.drawing.Circle;
+import org.apache.commons.lang.StringUtils;
+
 import java.text.NumberFormat;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import org.apache.commons.lang.StringUtils;
 
 /**
- *
  * @author Torridity
  */
 public class FormListFormatter extends BasicFormatter<AbstractForm> {
 
-    private final String[] VARIABLES = new String[]{LIST_START, LIST_END, ELEMENT_COUNT, ELEMENT_ID};
-    private final String STANDARD_TEMPLATE = "[b]Zeichnungen[/b]\nAnzahl der Zeichnungen: %ELEMENT_COUNT%\n"
+    private static final String[] VARIABLES = new String[] {LIST_START, LIST_END, ELEMENT_COUNT, ELEMENT_ID};
+    private static final String STANDARD_TEMPLATE = "[b]Zeichnungen[/b]\nAnzahl der Zeichnungen: %ELEMENT_COUNT%\n"
             + "%LIST_START%\n" + new Circle().getStandardTemplate() + "\n%LIST_END%";
     private static final String TEMPLATE_PROPERTY = "form.list.bbexport.template";
 
@@ -51,18 +51,18 @@ public class FormListFormatter extends BasicFormatter<AbstractForm> {
         String beforeList = getHeader();
         String listItemTemplate = getLineTemplate();
         String afterList = getFooter();
-        String replacedStart = StringUtils.replaceEach(beforeList, new String[]{ELEMENT_COUNT}, new String[]{f.format(allowedElements.size())});
+        String replacedStart = StringUtils.replaceEach(beforeList, new String[] {ELEMENT_COUNT}, new String[] {f.format(allowedElements.size())});
         b.append(replacedStart);
         for (AbstractForm form : allowedElements) {
             String[] replacements = form.getReplacements(pExtended);
             if (replacements != null) {
                 String itemLine = StringUtils.replaceEach(listItemTemplate, form.getBBVariables(), replacements);
-                itemLine = StringUtils.replaceEach(itemLine, new String[]{ELEMENT_ID, ELEMENT_COUNT}, new String[]{f.format(cnt), f.format(allowedElements.size())});
+                itemLine = StringUtils.replaceEach(itemLine, new String[] {ELEMENT_ID, ELEMENT_COUNT}, new String[] {f.format(cnt), f.format(allowedElements.size())});
                 b.append(itemLine).append("\n");
                 cnt++;
             }
         }
-        String replacedEnd = StringUtils.replaceEach(afterList, new String[]{ELEMENT_COUNT}, new String[]{f.format(allowedElements.size())});
+        String replacedEnd = StringUtils.replaceEach(afterList, new String[] {ELEMENT_COUNT}, new String[] {f.format(allowedElements.size())});
         b.append(replacedEnd);
         return b.toString();
     }

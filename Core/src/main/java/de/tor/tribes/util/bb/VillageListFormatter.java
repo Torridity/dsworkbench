@@ -22,12 +22,11 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- *
  * @author Torridity
  */
 public class VillageListFormatter extends BasicFormatter<Village> {
 
-    private final String[] VARIABLES = new String[]{LIST_START, LIST_END, ELEMENT_COUNT, ELEMENT_ID};
+    private static final String[] VARIABLES = new String[] {LIST_START, LIST_END, ELEMENT_COUNT, ELEMENT_ID};
     private static final String STANDARD_TEMPLATE = "[table]\n[**]ID[||]Dorf[||]Besitzer[||]Punkte[/**]\n"
             + "%LIST_START%[*]%ELEMENT_ID%[|][coord]%X%|%Y%[/coord][|]%TRIBE%[|]%POINTS%[/*]%LIST_END%\n"
             + "[/table]";

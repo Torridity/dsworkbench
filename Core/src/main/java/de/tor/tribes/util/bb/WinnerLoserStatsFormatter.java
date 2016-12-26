@@ -16,14 +16,14 @@
 package de.tor.tribes.util.bb;
 
 import de.tor.tribes.types.TribeStatsElement.Stats;
+import org.apache.commons.lang.StringUtils;
+
 import java.text.NumberFormat;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import org.apache.commons.lang.StringUtils;
 
 /**
- *
  * @author Torridity
  */
 public class WinnerLoserStatsFormatter extends BasicFormatter<Stats> {
@@ -39,8 +39,7 @@ public class WinnerLoserStatsFormatter extends BasicFormatter<Stats> {
     private static final String LOSER_BY_CONQUERS = "%LOSER_BY_CONQUERS%";
     private static final String LOSER_BY_OFFENSE = "%LOSER_BY_OFFENSE%";
     private static final String LOSER_BY_DEFENSE = "%LOSER_BY_DEFENSE%";
-    private final String[] STAT_SPECIFIC_VARIABLES = new String[]{WINNER_BY_POINTS, WINNER_BY_EXPANSION, WINNER_BY_CONQUERS, WINNER_BY_OFFENSE, WINNER_BY_DEFENSE, WINNER_BY_KILLS_PER_POINT, LOSER_BY_POINTS, LOSER_BY_EXPANSION, LOSER_BY_CONQUERS, LOSER_BY_OFFENSE, LOSER_BY_DEFENSE};
-    private final String[] VARIABLES = new String[]{};
+    private static final String[] VARIABLES = new String[] {};
     private static final String STANDARD_TEMPLATE = "[b]Gewinner und Verlierer[/b]\n\n"
             + "[table]\n[**]Titel[||]Spieler[/**]\n"
             + "[*][u][b]Gewinner[/b][/u][|][/*]\n"
@@ -59,6 +58,7 @@ public class WinnerLoserStatsFormatter extends BasicFormatter<Stats> {
             + "[*][b]Liebling des Feindes[/b][|]%LOSER_BY_DEFENSE%[/*]\n"
             + "[/table]";
     private static final String TEMPLATE_PROPERTY = "winner.loser.stats.bbexport.template";
+    private final String[] STAT_SPECIFIC_VARIABLES = new String[] {WINNER_BY_POINTS, WINNER_BY_EXPANSION, WINNER_BY_CONQUERS, WINNER_BY_OFFENSE, WINNER_BY_DEFENSE, WINNER_BY_KILLS_PER_POINT, LOSER_BY_POINTS, LOSER_BY_EXPANSION, LOSER_BY_CONQUERS, LOSER_BY_OFFENSE, LOSER_BY_DEFENSE};
 
     @Override
     public String formatElements(List<Stats> pElements, boolean pExtended) {
@@ -128,7 +128,7 @@ public class WinnerLoserStatsFormatter extends BasicFormatter<Stats> {
         }
 
 
-        return new String[]{winnerByPoints, winnerByExpansion, winnerByConquers, winnerByOffense, winnerByDefense, winnerByKillsPerPoint, loserByPoints, loserByExpansion, loserByConquers, loserByOffense, loserByDefense};
+        return new String[] {winnerByPoints, winnerByExpansion, winnerByConquers, winnerByOffense, winnerByDefense, winnerByKillsPerPoint, loserByPoints, loserByExpansion, loserByConquers, loserByOffense, loserByDefense};
     }
 
     private String formatValue(Number pValue, NumberFormat pFormatter) {

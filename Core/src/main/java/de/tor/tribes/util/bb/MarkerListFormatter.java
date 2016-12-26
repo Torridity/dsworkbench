@@ -22,12 +22,11 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- *
  * @author Torridity
  */
 public class MarkerListFormatter extends BasicFormatter<Marker> {
 
-    private final String[] VARIABLES = new String[]{LIST_START, LIST_END, ELEMENT_COUNT, ELEMENT_ID};
+    private static final String[] VARIABLES = new String[] {LIST_START, LIST_END, ELEMENT_COUNT, ELEMENT_ID};
     private static final String STANDARD_TEMPLATE = "Anzahl der Markierungen: %ELEMENT_COUNT%\n\n"
             + "%LIST_START% %NAME% [color=%MARKER_COLOR%]▓▓▓[/color] %LIST_END%\n";
     private static final String TEMPLATE_PROPERTY = "marker.list.bbexport.template";

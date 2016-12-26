@@ -25,7 +25,6 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- *
  * @author Torridity
  */
 public abstract class BasicFormatter<C extends BBSupport> implements BBFormatterInterface {
@@ -65,7 +64,6 @@ public abstract class BasicFormatter<C extends BBSupport> implements BBFormatter
     }
 
     /**
-     * 
      * @return
      */
     public String getLineTemplate() {

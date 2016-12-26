@@ -16,11 +16,10 @@
 package de.tor.tribes.util.bb;
 
 import de.tor.tribes.types.ext.Village;
-import java.text.NumberFormat;
+
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import org.apache.commons.lang.StringUtils;
 
 /**
  *
@@ -42,28 +41,6 @@ public class VillageListFormatter extends BasicFormatter<Village> {
     @Override
     public String getStandardTemplate() {
         return STANDARD_TEMPLATE;
-    }
-
-    @Override
-    public String formatElements(List<Village> pElements, boolean pExtended) {
-        StringBuilder b = new StringBuilder();
-        int cnt = 1;
-        NumberFormat f = getNumberFormatter(pElements.size());
-        String beforeList = getHeader();
-        String listItemTemplate = getLineTemplate();
-        String afterList = getFooter();
-        String replacedStart = StringUtils.replaceEach(beforeList, new String[]{ELEMENT_COUNT}, new String[]{f.format(pElements.size())});
-        b.append(replacedStart);
-        for (Village v : pElements) {
-            String[] replacements = v.getReplacements(pExtended);
-            String itemLine = StringUtils.replaceEach(listItemTemplate, v.getBBVariables(), replacements);
-            itemLine = StringUtils.replaceEach(itemLine, new String[]{ELEMENT_ID, ELEMENT_COUNT}, new String[]{f.format(cnt), f.format(pElements.size())});
-            b.append(itemLine).append("\n");
-            cnt++;
-        }
-        String replacedEnd = StringUtils.replaceEach(afterList, new String[]{ELEMENT_COUNT}, new String[]{f.format(pElements.size())});
-        b.append(replacedEnd);
-        return b.toString();
     }
 
     @Override

@@ -15,10 +15,13 @@
  */
 package de.tor.tribes.util.bb;
 
-import de.tor.tribes.util.interfaces.BBFormatterInterface;
 import de.tor.tribes.util.BBSupport;
 import de.tor.tribes.util.GlobalOptions;
+import de.tor.tribes.util.interfaces.BBFormatterInterface;
+import org.apache.commons.lang.StringUtils;
+
 import java.text.NumberFormat;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -37,8 +40,6 @@ public abstract class BasicFormatter<C extends BBSupport> implements BBFormatter
     public final void storeProperty() {
         GlobalOptions.addProperty(getPropertyKey(), sCustomTemplate);
     }
-
-    public abstract String formatElements(List<C> pElements, boolean pExtended);
 
     @Override
     public final String getTemplate() {
@@ -103,6 +104,31 @@ public abstract class BasicFormatter<C extends BBSupport> implements BBFormatter
             f.setMaximumIntegerDigits(5);
         }
         return f;
+    }
+
+    public String formatElements(List<C> pElements, boolean pExtended) {
+        StringBuilder b = new StringBuilder(pElements.size() * 15);
+        NumberFormat f = getNumberFormatter(pElements.size());
+        String beforeList = getHeader();
+        String listItemTemplate = getLineTemplate();
+        String afterList = getFooter();
+        String replacedStart = StringUtils.replaceEach(beforeList, new String[] {ELEMENT_COUNT}, new String[] {f.format(pElements.size())});
+        b.append(replacedStart);
+        formatElementsCore(b, pElements, pExtended, listItemTemplate, f);
+        String replacedEnd = StringUtils.replaceEach(afterList, new String[] {ELEMENT_COUNT}, new String[] {f.format(pElements.size())});
+        b.append(replacedEnd);
+        return b.toString();
+    }
+
+    protected void formatElementsCore(final StringBuilder builder, final Collection<C> elems, final boolean pExtended, final String listItemTemplate, final NumberFormat format) {
+        int cnt = 1;
+        for (C n : elems) {
+            String[] replacements = n.getReplacements(pExtended);
+            String itemLine = StringUtils.replaceEach(listItemTemplate, n.getBBVariables(), replacements);
+            itemLine = StringUtils.replaceEach(itemLine, new String[] {ELEMENT_ID, ELEMENT_COUNT}, new String[] {format.format(cnt), format.format(elems.size())});
+            builder.append(itemLine).append("\n");
+            cnt++;
+        }
     }
 
     @Override

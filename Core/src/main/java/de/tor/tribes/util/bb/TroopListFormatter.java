@@ -16,11 +16,12 @@
 package de.tor.tribes.util.bb;
 
 import de.tor.tribes.util.troops.VillageTroopsHolder;
+import org.apache.commons.lang.StringUtils;
+
 import java.text.NumberFormat;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import org.apache.commons.lang.StringUtils;
 
 /**
  * @author Torridity
@@ -51,13 +52,7 @@ public class TroopListFormatter extends BasicFormatter<VillageTroopsHolder> {
         //replace unit icons
         replacedStart = StringUtils.replaceEach(replacedStart, dummyHolder.getBBVariables(), dummyHolder.getReplacements(pExtended));
         b.append(replacedStart).append("\n");
-        for (VillageTroopsHolder t : pElements) {
-            String[] replacements = t.getReplacements(pExtended);
-            String itemLine = StringUtils.replaceEach(listItemTemplate, t.getBBVariables(), replacements);
-            itemLine = StringUtils.replaceEach(itemLine, new String[]{ELEMENT_ID, ELEMENT_COUNT}, new String[]{f.format(cnt), f.format(pElements.size())});
-            b.append(itemLine).append("\n");
-            cnt++;
-        }
+        cnt += formatElementsCore(b, pElements, pExtended, listItemTemplate, f);
         String replacedEnd = StringUtils.replaceEach(afterList, new String[]{ELEMENT_COUNT}, new String[]{f.format(pElements.size())});
         b.append(replacedEnd);
         return b.toString();

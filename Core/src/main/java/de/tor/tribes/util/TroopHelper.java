@@ -23,11 +23,11 @@ import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.views.DSWorkbenchFarmManager;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
+import org.apache.log4j.Logger;
+
+import javax.swing.*;
 import java.util.*;
 import java.util.Map.Entry;
-import javax.swing.DefaultListModel;
-import javax.swing.JList;
-import org.apache.log4j.Logger;
 
 /**
  *
@@ -208,6 +208,19 @@ public class TroopHelper {
             }
         }
         return result;
+    }
+
+    public static List<Village> fillSourcesWithAttacksForUnit(Village source, Hashtable<UnitHolder, List<Village>> villagesForUnitHolder, List<Village> existingSources, UnitHolder unitHolder) {
+        List<Village> sourcesForUnit = existingSources != null ? existingSources : villagesForUnitHolder.get(unitHolder);
+        if (sourcesForUnit == null) {
+            sourcesForUnit = new LinkedList<>();
+            sourcesForUnit.add(source);
+            villagesForUnitHolder.put(unitHolder, sourcesForUnit);
+        } else {
+            sourcesForUnit.add(source);
+        }
+
+        return sourcesForUnit;
     }
 
     public static void sendTroops(Village pVillage, Hashtable<UnitHolder, Integer> pTroops) {

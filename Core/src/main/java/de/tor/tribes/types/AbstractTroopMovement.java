@@ -15,14 +15,15 @@
  */
 package de.tor.tribes.types;
 
-import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.io.UnitHolder;
+import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.DSCalculator;
+import de.tor.tribes.util.TroopHelper;
 import de.tor.tribes.util.algo.types.TimeFrame;
+
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -54,14 +55,7 @@ public abstract class AbstractTroopMovement {
   }
 
   public void addOff(UnitHolder pUnit, Village mSource) {
-    List<Village> sourcesForUnit = mOffs.get(pUnit);
-    if (sourcesForUnit == null) {
-      sourcesForUnit = new LinkedList<>();
-      sourcesForUnit.add(mSource);
-      mOffs.put(pUnit, sourcesForUnit);
-    } else {
-      sourcesForUnit.add(mSource);
-    }
+    TroopHelper.fillSourcesWithAttacksForUnit(mSource, mOffs, null, pUnit);
   }
 
   public Hashtable<UnitHolder, List<Village>> getOffs() {

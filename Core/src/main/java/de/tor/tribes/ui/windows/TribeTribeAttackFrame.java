@@ -2175,22 +2175,9 @@ private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
                     snobSources = sourcesForUnit.size();
                 }
             }
-            if (sourcesForUnit == null) {
-                sourcesForUnit = new LinkedList<>();
-                sourcesForUnit.add(vSource);
-                sources.put(uSource, sourcesForUnit);
-            } else {
-                sourcesForUnit.add(vSource);
-            }
+            TroopHelper.fillSourcesWithAttacksForUnit(vSource, sources, sourcesForUnit, uSource);
         } else {
-            List<Village> fakesForUnit = fakes.get(uSource);
-            if (fakesForUnit == null) {
-                fakesForUnit = new LinkedList<>();
-                fakesForUnit.add(vSource);
-                fakes.put(uSource, fakesForUnit);
-            } else {
-                fakesForUnit.add(vSource);
-            }
+            TroopHelper.fillSourcesWithAttacksForUnit(vSource, fakes, null, uSource);
         }
     }
     // </editor-fold>
@@ -2402,23 +2389,9 @@ private void showAttackInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:eve
         UnitHolder uSource = (UnitHolder) attackModel.getValueAt(i, 1);
         boolean fake = (Boolean) attackModel.getValueAt(i, 2);
         if (!fake) {
-            List<Village> sourcesForUnit = sources.get(uSource);
-            if (sourcesForUnit == null) {
-                sourcesForUnit = new LinkedList<>();
-                sourcesForUnit.add(vSource);
-                sources.put(uSource, sourcesForUnit);
-            } else {
-                sourcesForUnit.add(vSource);
-            }
+            TroopHelper.fillSourcesWithAttacksForUnit(vSource, sources, null, uSource);
         } else {
-            List<Village> fakesForUnit = fakes.get(uSource);
-            if (fakesForUnit == null) {
-                fakesForUnit = new LinkedList<>();
-                fakesForUnit.add(vSource);
-                fakes.put(uSource, fakesForUnit);
-            } else {
-                fakesForUnit.add(vSource);
-            }
+            TroopHelper.fillSourcesWithAttacksForUnit(vSource, fakes, null, uSource);
         }
     }
     DSWorkbenchAttackInfoPanel info = new DSWorkbenchAttackInfoPanel();

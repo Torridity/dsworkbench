@@ -15,26 +15,27 @@
  */
 package de.tor.tribes.types;
 
-import de.tor.tribes.types.ext.Tribe;
-import de.tor.tribes.types.ext.Barbarians;
-import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.php.LuckViewInterface;
 import de.tor.tribes.php.UnitTableInterface;
+import de.tor.tribes.types.ext.Barbarians;
 import de.tor.tribes.types.ext.InvalidTribe;
+import de.tor.tribes.types.ext.Tribe;
+import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.BBSupport;
 import de.tor.tribes.util.TroopHelper;
 import de.tor.tribes.util.xml.JaxenUtils;
 import de.tor.tribes.util.xml.XMLHelper;
+import org.jdom.Document;
+import org.jdom.Element;
+
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import org.jdom.Document;
-import org.jdom.Element;
 
 /**
  *
@@ -55,41 +56,41 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
 
     @Override
     public String[] getReplacements(boolean pExtended) {
-        String attackerVal = getAttacker().toBBCode();
-        String targetVal = getTargetVillage().toBBCode();
+        String attackerVal = attacker.toBBCode();
+        String targetVal = targetVillage.toBBCode();
         SimpleDateFormat d = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
-        String sendDateVal = d.format(new Date(getTimestamp()));
-        String resultVal = (isWon()) ? "Der Angreifer hat gewonnen" : "Der Verteidiger hat gewonnen";
+        String sendDateVal = d.format(new Date(timestamp));
+        String resultVal = (won) ? "Der Angreifer hat gewonnen" : "Der Verteidiger hat gewonnen";
 
         NumberFormat nf = NumberFormat.getInstance();
         nf.setMinimumFractionDigits(1);
         nf.setMinimumFractionDigits(1);
 
-        String luckVal = "[img]" + LuckViewInterface.createLuckIndicator(getLuck()) + "[/img] " + nf.format(getLuck()) + "%";
+        String luckVal = "[img]" + LuckViewInterface.createLuckIndicator(luck) + "[/img] " + nf.format(luck) + "%";
         nf.setMinimumFractionDigits(0);
         nf.setMinimumFractionDigits(0);
-        String moraleVal = nf.format(getMoral()) + " %";
+        String moraleVal = nf.format(moral) + " %";
 
-        String sourceVal = getSourceVillage().toBBCode();
+        String sourceVal = sourceVillage.toBBCode();
         String attackerTroopsVal = (areAttackersHidden())
                 ? "Durch Besitzer des Berichts verborgen"
-                : "[img]" + UnitTableInterface.createAttackerUnitTableLink(getAttackers(), getDiedAttackers()) + "[/img]";
+                : "[img]" + UnitTableInterface.createAttackerUnitTableLink(attackers, diedAttackers) + "[/img]";
 
-        String defenderVal = getDefender().toBBCode();
+        String defenderVal = defender.toBBCode();
         String defenderTroopsVal = (wasLostEverything())
                 ? "Keiner deiner Kämpfer ist lebend zurückgekehrt.\nEs konnten keine Informationen über die Truppenstärke des Gegners erlangt werden."
-                : "[img]" + UnitTableInterface.createDefenderUnitTableLink(getDefenders(), getDiedDefenders()) + "[/img]";
+                : "[img]" + UnitTableInterface.createDefenderUnitTableLink(defenders, diedDefenders) + "[/img]";
 
         String troopsEnRouteVal = (whereDefendersOnTheWay())
-                ? "[b]Truppen des Verteidigers, die unterwegs waren[/b]\n\n" + "[img]" + UnitTableInterface.createAttackerUnitTableLink(getDefendersOnTheWay()) + "[/img]"
+                ? "[b]Truppen des Verteidigers, die unterwegs waren[/b]\n\n" + "[img]" + UnitTableInterface.createAttackerUnitTableLink(defendersOnTheWay) + "[/img]"
                 : "";
         String troopsOutsideVal = "";
         if (whereDefendersOutside()) {
-            Enumeration<Village> targetKeys = getDefendersOutside().keys();
+            Enumeration<Village> targetKeys = defendersOutside.keys();
             while (targetKeys.hasMoreElements()) {
                 Village target = targetKeys.nextElement();
                 troopsOutsideVal += target.toBBCode() + "\n\n";
-                troopsOutsideVal += "[img]" + UnitTableInterface.createAttackerUnitTableLink(getDefendersOutside().get(target)) + "[/img]\n\n";
+                troopsOutsideVal += "[img]" + UnitTableInterface.createAttackerUnitTableLink(defendersOutside.get(target)) + "[/img]\n\n";
             }
         }
 
@@ -101,7 +102,7 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
                 ? "[b]Schaden durch Rammen:[/b] Wall beschädigt von Level " + getWallBefore() + " auf Level " + getWallAfter()
                 : "";
         String cataChangeVal = (wasBuildingDamaged())
-                ? "[b]Schaden durch Katapultbeschuss:[/b] " + getAimedBuilding() + " beschädigt von Level " + getBuildingBefore() + " auf Level " + getBuildingAfter()
+                ? "[b]Schaden durch Katapultbeschuss:[/b] " + aimedBuilding + " beschädigt von Level " + getBuildingBefore() + " auf Level " + getBuildingAfter()
                 : "";
         return new String[]{attackerVal, sourceVal, defenderVal, targetVal, sendDateVal, resultVal, luckVal, moraleVal, attackerTroopsVal, defenderTroopsVal, troopsOutsideVal, troopsEnRouteVal, loyalityChangeVal, wallChangeVal, cataChangeVal};
     }
@@ -142,12 +143,12 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
     private int wallLevel = -1;
 
     public FightReport() {
-        attackers = new Hashtable<UnitHolder, Integer>();
-        diedAttackers = new Hashtable<UnitHolder, Integer>();
-        defenders = new Hashtable<UnitHolder, Integer>();
-        diedDefenders = new Hashtable<UnitHolder, Integer>();
-        defendersOutside = new Hashtable<Village, Hashtable<UnitHolder, Integer>>();
-        defendersOnTheWay = new Hashtable<UnitHolder, Integer>();
+        attackers = new Hashtable<>();
+        diedAttackers = new Hashtable<>();
+        defenders = new Hashtable<>();
+        diedDefenders = new Hashtable<>();
+        defendersOutside = new Hashtable<>();
+        defendersOnTheWay = new Hashtable<>();
     }
 
     public static String toInternalRepresentation(FightReport pReport) {
@@ -175,36 +176,36 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
         }
 
         try {
-            setTimestamp(Long.parseLong(pElement.getChild("timestamp").getText()));
-            setMoral(Double.parseDouble(pElement.getChild("moral").getText()));
-            setLuck(Double.parseDouble(pElement.getChild("luck").getText()));
+            this.timestamp = Long.parseLong(pElement.getChild("timestamp").getText());
+            this.moral = Double.parseDouble(pElement.getChild("moral").getText());
+            this.luck = Double.parseDouble(pElement.getChild("luck").getText());
             //attacker stuff
             Element attackerElement = pElement.getChild("attacker");
             Element defenderElement = pElement.getChild("defender");
             int source = Integer.parseInt(attackerElement.getChild("src").getText());
-            setSourceVillage(DataHolder.getSingleton().getVillagesById().get(source));
+            this.sourceVillage = DataHolder.getSingleton().getVillagesById().get(source);
 
             int attackerId = Integer.parseInt(attackerElement.getChild("id").getText());
             Tribe attElement = DataHolder.getSingleton().getTribes().get(attackerId);
             if (attElement != null) {
                 setAttacker(attElement);
             } else {
-                if (attackerId != -666 && getSourceVillage() != null && getSourceVillage().getTribe() != null) {
-                    setAttacker(getSourceVillage().getTribe());
+                if (attackerId != -666 && sourceVillage != null && sourceVillage.getTribe() != null) {
+                    setAttacker(sourceVillage.getTribe());
                 } else {
                     setAttacker(InvalidTribe.getSingleton());
                 }
             }
 
             int target = Integer.parseInt(defenderElement.getChild("trg").getText());
-            setTargetVillage(DataHolder.getSingleton().getVillagesById().get(target));
+            this.targetVillage = DataHolder.getSingleton().getVillagesById().get(target);
             int defenderId = Integer.parseInt(defenderElement.getChild("id").getText());
             Tribe defendingTribe = DataHolder.getSingleton().getTribes().get(defenderId);
             if (defendingTribe != null) {
                 setDefender(defendingTribe);
             } else {
-                if (defenderId > 0 && getTargetVillage() != null && getTargetVillage().getTribe() != null) {
-                    setDefender(getTargetVillage().getTribe());
+                if (defenderId > 0 && targetVillage != null && targetVillage.getTribe() != null) {
+                    setDefender(targetVillage.getTribe());
                 } else {
                     if (defenderId == -666) {
                         setDefender(InvalidTribe.getSingleton());
@@ -222,21 +223,21 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
 
             try {
                 dDefendersOnTheWay = defenderElement.getChild("ontheway");
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
 
             Element dDefendersOutside = null;
             try {
                 dDefendersOutside = defenderElement.getChild("outside");
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
 
-            attackers = new Hashtable<UnitHolder, Integer>();
-            diedAttackers = new Hashtable<UnitHolder, Integer>();
-            defenders = new Hashtable<UnitHolder, Integer>();
-            diedDefenders = new Hashtable<UnitHolder, Integer>();
-            defendersOnTheWay = new Hashtable<UnitHolder, Integer>();
-            defendersOutside = new Hashtable<Village, Hashtable<UnitHolder, Integer>>();
+            attackers = new Hashtable<>();
+            diedAttackers = new Hashtable<>();
+            defenders = new Hashtable<>();
+            diedDefenders = new Hashtable<>();
+            defendersOnTheWay = new Hashtable<>();
+            defendersOutside = new Hashtable<>();
             for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
                 String unitName = unit.getPlainName();
                 attackers.put(unit, aAmount.getAttribute(unitName).getIntValue());
@@ -254,7 +255,7 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
                         if (v != null) {
                             Hashtable<UnitHolder, Integer> unitsInvillage = defendersOutside.get(v);
                             if (unitsInvillage == null) {
-                                unitsInvillage = new Hashtable<UnitHolder, Integer>();
+                                unitsInvillage = new Hashtable<>();
                                 defendersOutside.put(v, unitsInvillage);
                             }
                             unitsInvillage.put(unit, amount);
@@ -265,30 +266,30 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
 
             try {
                 Element e = pElement.getChild("wall");
-                setWallBefore(Byte.parseByte(e.getAttribute("before").getValue()));
-                setWallAfter(Byte.parseByte(e.getAttribute("after").getValue()));
+                this.wallBefore = Byte.parseByte(e.getAttribute("before").getValue());
+                this.wallAfter = Byte.parseByte(e.getAttribute("after").getValue());
             } catch (Exception e) {
-                setWallBefore((byte) -1);
-                setWallAfter((byte) -1);
+                this.wallBefore = (byte) -1;
+                this.wallAfter = (byte) -1;
             }
             try {
                 Element e = pElement.getChild("building");
-                setAimedBuilding(URLDecoder.decode(e.getAttribute("target").getValue(), "UTF-8"));
-                setBuildingBefore(Byte.parseByte(e.getAttribute("before").getValue()));
-                setBuildingAfter(Byte.parseByte(e.getAttribute("after").getValue()));
+                this.aimedBuilding = URLDecoder.decode(e.getAttribute("target").getValue(), "UTF-8");
+                this.buildingBefore = Byte.parseByte(e.getAttribute("before").getValue());
+                this.buildingAfter = Byte.parseByte(e.getAttribute("after").getValue());
             } catch (Exception e) {
-                setBuildingBefore((byte) -1);
-                setBuildingAfter((byte) -1);
+                this.buildingBefore = (byte) -1;
+                this.buildingAfter = (byte) -1;
             }
             try {
                 Element e = pElement.getChild("acceptance");
-                setAcceptanceBefore(Byte.parseByte(e.getAttribute("before").getValue()));
-                setAcceptanceAfter(Byte.parseByte(e.getAttribute("after").getValue()));
+                this.acceptanceBefore = Byte.parseByte(e.getAttribute("before").getValue());
+                this.acceptanceAfter = Byte.parseByte(e.getAttribute("after").getValue());
             } catch (Exception e) {
-                setAcceptanceBefore((byte) 100);
-                setAcceptanceAfter((byte) 100);
+                this.acceptanceBefore = (byte) 100;
+                this.acceptanceAfter = (byte) 100;
             }
-        } catch (Exception ex) {
+        } catch (Exception ignored) {
         }
     }
 
@@ -297,37 +298,37 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
      */
     public void loadFromXml10(Element pElement) {
         try {
-            setTimestamp(Long.parseLong(pElement.getChild("timestamp").getText()));
-            setMoral(Double.parseDouble(pElement.getChild("moral").getText()));
-            setLuck(Double.parseDouble(pElement.getChild("luck").getText()));
+            this.timestamp = Long.parseLong(pElement.getChild("timestamp").getText());
+            this.moral = Double.parseDouble(pElement.getChild("moral").getText());
+            this.luck = Double.parseDouble(pElement.getChild("luck").getText());
             //attacker stuff
             Element attackerElement = pElement.getChild("attacker");
             Element defenderElement = pElement.getChild("defender");
             int source = Integer.parseInt(attackerElement.getChild("src").getText());
-            setSourceVillage(DataHolder.getSingleton().getVillagesById().get(source));
+            this.sourceVillage = DataHolder.getSingleton().getVillagesById().get(source);
 
             int attackerId = Integer.parseInt(attackerElement.getChild("id").getText());
             Tribe attElement = DataHolder.getSingleton().getTribes().get(attackerId);
             if (attElement != null) {
                 setAttacker(attElement);
             } else {
-                if (attackerId != -666 && getSourceVillage() != null && getSourceVillage().getTribe() != null) {
-                    setAttacker(getSourceVillage().getTribe());
+                if (attackerId != -666 && sourceVillage != null && sourceVillage.getTribe() != null) {
+                    setAttacker(sourceVillage.getTribe());
                 } else {
                     setAttacker(InvalidTribe.getSingleton());
                 }
             }
 
             int target = Integer.parseInt(defenderElement.getChild("trg").getText());
-            setTargetVillage(DataHolder.getSingleton().getVillagesById().get(target));
+            this.targetVillage = DataHolder.getSingleton().getVillagesById().get(target);
 
             int defenderId = Integer.parseInt(defenderElement.getChild("id").getText());
             Tribe defendingTribe = DataHolder.getSingleton().getTribes().get(defenderId);
             if (defendingTribe != null) {
                 setDefender(defendingTribe);
             } else {
-                if (defenderId > 0 && getTargetVillage() != null && getTargetVillage().getTribe() != null) {
-                    setDefender(getTargetVillage().getTribe());
+                if (defenderId > 0 && targetVillage != null && targetVillage.getTribe() != null) {
+                    setDefender(targetVillage.getTribe());
                 } else {
                     if (defenderId == -666) {
                         setDefender(InvalidTribe.getSingleton());
@@ -344,13 +345,13 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
             Element dDefendersOnTheWay = defenderElement.getChild("otw");
             Element dDefendersOutside = defenderElement.getChild("outside");
 
-            setAttackers(XMLHelper.xmlToTroops(aAmount));
-            setDiedAttackers(XMLHelper.xmlToTroops(aDiedAmount));
-            setDefenders(XMLHelper.xmlToTroops(dAmount));
-            setDiedDefenders(XMLHelper.xmlToTroops(dDiedAmount));
+            this.attackers = XMLHelper.xmlToTroops(aAmount);
+            this.diedAttackers = XMLHelper.xmlToTroops(aDiedAmount);
+            this.defenders = XMLHelper.xmlToTroops(dAmount);
+            this.diedDefenders = XMLHelper.xmlToTroops(dDiedAmount);
 
             if (dDefendersOnTheWay != null) {
-                setDefendersOnTheWay(XMLHelper.xmlToTroops(dDefendersOnTheWay));
+                this.defendersOnTheWay = XMLHelper.xmlToTroops(dDefendersOnTheWay);
             }
 
             if (dDefendersOutside != null) {
@@ -378,21 +379,21 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
 
             Element wallElement = pElement.getChild("wall");
             if (wallElement != null) {
-                setWallBefore(Byte.parseByte(wallElement.getAttribute("before").getValue()));
-                setWallAfter(Byte.parseByte(wallElement.getAttribute("after").getValue()));
+                this.wallBefore = Byte.parseByte(wallElement.getAttribute("before").getValue());
+                this.wallAfter = Byte.parseByte(wallElement.getAttribute("after").getValue());
 
             }
             Element buildingElement = pElement.getChild("building");
             if (buildingElement != null) {
-                setAimedBuilding(URLDecoder.decode(buildingElement.getAttribute("target").getValue(), "UTF-8"));
-                setBuildingBefore(Byte.parseByte(buildingElement.getAttribute("before").getValue()));
-                setBuildingAfter(Byte.parseByte(buildingElement.getAttribute("after").getValue()));
+                this.aimedBuilding = URLDecoder.decode(buildingElement.getAttribute("target").getValue(), "UTF-8");
+                this.buildingBefore = Byte.parseByte(buildingElement.getAttribute("before").getValue());
+                this.buildingAfter = Byte.parseByte(buildingElement.getAttribute("after").getValue());
             }
 
             Element accElement = pElement.getChild("acceptance");
             if (accElement != null) {
-                setAcceptanceBefore(Byte.parseByte(accElement.getAttribute("before").getValue()));
-                setAcceptanceAfter(Byte.parseByte(accElement.getAttribute("after").getValue()));
+                this.acceptanceBefore = Byte.parseByte(accElement.getAttribute("before").getValue());
+                this.acceptanceAfter = Byte.parseByte(accElement.getAttribute("after").getValue());
             }
 
             Element haul = pElement.getChild("haul");
@@ -410,16 +411,16 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
 
             Element buildings = pElement.getChild("buildings");
             if (buildings != null) {
-                setWoodLevel(Integer.parseInt(buildings.getAttributeValue("wood")));
-                setClayLevel(Integer.parseInt(buildings.getAttributeValue("clay")));
-                setIronLevel(Integer.parseInt(buildings.getAttributeValue("iron")));
-                setStorageLevel(Integer.parseInt(buildings.getAttributeValue("storage")));
-                setHideLevel(Integer.parseInt(buildings.getAttributeValue("hide")));
+                this.woodLevel = Integer.parseInt(buildings.getAttributeValue("wood"));
+                this.clayLevel = Integer.parseInt(buildings.getAttributeValue("clay"));
+                this.ironLevel = Integer.parseInt(buildings.getAttributeValue("iron"));
+                this.storageLevel = Integer.parseInt(buildings.getAttributeValue("storage"));
+                this.hideLevel = Integer.parseInt(buildings.getAttributeValue("hide"));
                 if (buildingElement.getAttribute("wall") != null) {
-                    setWallLevel(Integer.parseInt(buildings.getAttributeValue("wall")));
+                    this.wallLevel = Integer.parseInt(buildings.getAttributeValue("wall"));
                 }
             }
-        } catch (Exception ex) {
+        } catch (Exception ignored) {
         }
     }
 
@@ -430,13 +431,13 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
             b.append("<report>\n");
             //general part
             b.append("<ver>1.0</ver>\n");
-            b.append("<timestamp>").append(getTimestamp()).append("</timestamp>\n");
-            b.append("<moral>").append(getMoral()).append("</moral>\n");
-            b.append("<luck>").append(getLuck()).append("</luck>\n");
+            b.append("<timestamp>").append(timestamp).append("</timestamp>\n");
+            b.append("<moral>").append(moral).append("</moral>\n");
+            b.append("<luck>").append(luck).append("</luck>\n");
             //attacker part
             b.append("<attacker>\n");
-            b.append("<id>").append(getAttacker().getId()).append("</id>\n");
-            b.append("<src>").append(getSourceVillage().getId()).append("</src>\n");
+            b.append("<id>").append(attacker.getId()).append("</id>\n");
+            b.append("<src>").append(sourceVillage.getId()).append("</src>\n");
             b.append("<before>\n");
             b.append(XMLHelper.troopsToXML(attackers));
             b.append("</before>\n");
@@ -458,8 +459,8 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
              */
             //defender part
             b.append("<defender>\n");
-            b.append("<id>").append(getDefender().getId()).append("</id>\n");
-            b.append("<trg>").append(getTargetVillage().getId()).append("</trg>\n");
+            b.append("<id>").append(defender.getId()).append("</id>\n");
+            b.append("<trg>").append(targetVillage.getId()).append("</trg>\n");
             b.append("<before>\n");
             b.append(XMLHelper.troopsToXML(defenders));
             b.append("</before>\n");
@@ -489,32 +490,32 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
                 b.append("<wall before=\"").append(getWallBefore()).append("\" after=\"").append(getWallAfter()).append("\"/>\n");
             }
             if (wasBuildingDamaged()) {
-                b.append("<building target=\"").append(URLEncoder.encode(getAimedBuilding(), "UTF-8")).append("\" before=\"").append(getBuildingBefore()).append("\" after=\"").append(getBuildingAfter()).append("\"/>\n");
+                b.append("<building target=\"").append(URLEncoder.encode(aimedBuilding, "UTF-8")).append("\" before=\"").append(getBuildingBefore()).append("\" after=\"").append(getBuildingAfter()).append("\"/>\n");
             }
             if (wasSnobAttack()) {
                 b.append("<acceptance before=\"").append(getAcceptanceBefore()).append("\" after=\"").append(getAcceptanceAfter()).append("\"/>\n");
             }
 
-            if (getHaul() != null) {
-                b.append("<haul wood=\"").append(getHaul()[0]).append("\" clay=\"").append(getHaul()[1]).append("\" iron=\"").append(getHaul()[2]).append("\"/>\n");
+            if (haul != null) {
+                b.append("<haul wood=\"").append(haul[0]).append("\" clay=\"").append(haul[1]).append("\" iron=\"").append(haul[2]).append("\"/>\n");
             }
 
-            if (getSpyedResources() != null) {
-                b.append("<spy wood=\"").append(getSpyedResources()[0]).append("\" clay=\"").append(getSpyedResources()[1]).append("\" iron=\"").append(getSpyedResources()[2]).append("\"/>\n");
+            if (spyedResources != null) {
+                b.append("<spy wood=\"").append(spyedResources[0]).append("\" clay=\"").append(spyedResources[1]).append("\" iron=\"").append(spyedResources[2]).append("\"/>\n");
             }
 
             b.append("<buildings wood=\"").
-                    append(getWoodLevel()).
+                    append(woodLevel).
                     append("\" clay=\"").
-                    append(getClayLevel()).
+                    append(clayLevel).
                     append("\" iron=\"").
-                    append(getIronLevel()).
+                    append(ironLevel).
                     append("\" storage=\"").
-                    append(getStorageLevel()).
+                    append(storageLevel).
                     append("\" hide=\"").
-                    append(getHideLevel()).
+                    append(hideLevel).
                     append("\" wall=\"").
-                    append(getWallLevel()).
+                    append(wallLevel).
                     append("\"/>\n");
 
             b.append("</report>");
@@ -586,10 +587,10 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
 
     public Hashtable<UnitHolder, Integer> getSurvivingAttackers() {
         Hashtable<UnitHolder, Integer> result = null;
-        if (!areAttackersHidden() && getAttackers() != null && getDiedAttackers() != null) {
-            result = new Hashtable<UnitHolder, Integer>();
-            Hashtable<UnitHolder, Integer> att = getAttackers();
-            Hashtable<UnitHolder, Integer> diedAtt = getDiedAttackers();
+        if (!areAttackersHidden() && attackers != null && diedAttackers != null) {
+            result = new Hashtable<>();
+            Hashtable<UnitHolder, Integer> att = attackers;
+            Hashtable<UnitHolder, Integer> diedAtt = diedAttackers;
             for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
                 try {
                     int survivors = att.get(unit) - diedAtt.get(unit);
@@ -722,10 +723,10 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
 
     public Hashtable<UnitHolder, Integer> getSurvivingDefenders() {
         Hashtable<UnitHolder, Integer> result = null;
-        if (!wasLostEverything() && getDefenders() != null && getDiedDefenders() != null) {
-            result = new Hashtable<UnitHolder, Integer>();
-            Hashtable<UnitHolder, Integer> def = getDefenders();
-            Hashtable<UnitHolder, Integer> diedDef = getDiedDefenders();
+        if (!wasLostEverything() && defenders != null && diedDefenders != null) {
+            result = new Hashtable<>();
+            Hashtable<UnitHolder, Integer> def = defenders;
+            Hashtable<UnitHolder, Integer> diedDef = diedDefenders;
             for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
                 try {
                     int survivors = def.get(unit) - diedDef.get(unit);
@@ -864,7 +865,7 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
     }
 
     /**
-     * @param defendersOutside the defendersOutside to set
+     * @param defendersOnTheWay the defendersOnTheWay to set
      */
     public void setDefendersOnTheWay(Hashtable<UnitHolder, Integer> defendersOnTheWay) {
         this.defendersOnTheWay = defendersOnTheWay;
@@ -1095,14 +1096,14 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
 //        System.out.println(getDefenders());
 //        System.out.println(getDiedDefenders());
 
-        return (getAttacker() != null
-                && getSourceVillage() != null
-                && !getAttackers().isEmpty()
-                && !getDiedAttackers().isEmpty()
-                && getDefender() != null
-                && getTargetVillage() != null
-                && !getDefenders().isEmpty()
-                && !getDiedDefenders().isEmpty());
+        return (attacker != null
+                && sourceVillage != null
+                && !attackers.isEmpty()
+                && !diedAttackers.isEmpty()
+                && defender != null
+                && targetVillage != null
+                && !defenders.isEmpty()
+                && !diedDefenders.isEmpty());
     }
 
     public byte getVillageEffects() {
@@ -1142,8 +1143,8 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
     public String toString() {
         StringBuilder result = new StringBuilder();
         SimpleDateFormat f = new SimpleDateFormat("dd.MM.yy HH:mm");
-        result.append("Gesendet: ").append(f.format(new Date(getTimestamp()))).append("\n");
-        result.append(isWon() ? "Gewonnen\n" : "Verloren\n");
+        result.append("Gesendet: ").append(f.format(new Date(timestamp))).append("\n");
+        result.append(won ? "Gewonnen\n" : "Verloren\n");
 
         if (isSpyReport()) {
             result.append("Farbe: Blau\n");
@@ -1154,10 +1155,10 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
         } else {
             result.append("Farbe: Gelb\n");
         }
-        result.append("Moral: ").append(getMoral()).append("\n");
-        result.append("Glück: ").append(getLuck()).append("\n");
-        result.append("Angreifer: ").append(getAttacker()).append("\n");
-        result.append("Herkunft: ").append(getSourceVillage()).append("\n");
+        result.append("Moral: ").append(moral).append("\n");
+        result.append("Glück: ").append(luck).append("\n");
+        result.append("Angreifer: ").append(attacker).append("\n");
+        result.append("Herkunft: ").append(sourceVillage).append("\n");
         String sAttackers = "";
         String sAttackersDied = "";
         String sDefenders = "";
@@ -1189,8 +1190,8 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
 
         result.append("Anzahl: ").append(sAttackers);
         result.append("Verluste: ").append(sAttackersDied);
-        result.append("Verteidiger: ").append(getDefender()).append("\n");
-        result.append("Ziel: ").append(getTargetVillage()).append("\n");
+        result.append("Verteidiger: ").append(defender).append("\n");
+        result.append("Ziel: ").append(targetVillage).append("\n");
         result.append("Anzahl: ").append(sDefenders);
         result.append("Verluste: ").append(sDefendersDied);
 
@@ -1204,7 +1205,7 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
                         if (troops != null) {
                             result.append(" -> ").append(v).append(" ");
                             for (UnitHolder u : DataHolder.getSingleton().getUnits()) {
-                                result.append(troops.get(u) + " ");
+                                result.append(troops.get(u)).append(" ");
                             }
                         }
                         result.append("\n");
@@ -1218,7 +1219,7 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
             result.append("Wall zerstört von Stufe ").append(getWallBefore()).append(" auf ").append(getWallAfter()).append("\n");
         }
         if (wasBuildingDamaged()) {
-            result.append(getAimedBuilding()).append(" zerstört von Stufe ").append(getBuildingBefore()).append(" auf ").append(getBuildingAfter()).append("\n");
+            result.append(aimedBuilding).append(" zerstört von Stufe ").append(getBuildingBefore()).append(" auf ").append(getBuildingAfter()).append("\n");
         }
         if (wasSnobAttack()) {
             result.append("Zustimmung gesenkt von ").append(getAcceptanceBefore()).append(" auf ").append(getAcceptanceAfter()).append("\n");

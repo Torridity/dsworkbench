@@ -16,67 +16,30 @@
 package de.tor.tribes.ui.panels;
 
 import de.tor.tribes.control.GenericManagerListener;
-import de.tor.tribes.ui.views.DSWorkbenchStatsFrame;
-import de.tor.tribes.ui.views.DSWorkbenchNotepad;
-import de.tor.tribes.ui.views.DSWorkbenchFormFrame;
-import de.tor.tribes.ui.views.DSWorkbenchSelectionFrame;
 import de.tor.tribes.dssim.ui.DSWorkbenchSimulatorFrame;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
-import de.tor.tribes.types.ext.Ally;
-import de.tor.tribes.types.ext.Barbarians;
 import de.tor.tribes.types.Church;
 import de.tor.tribes.types.FightReport;
+import de.tor.tribes.types.ext.Ally;
+import de.tor.tribes.types.ext.Barbarians;
 import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Village;
-import de.tor.tribes.ui.windows.AttackAddFrame;
-import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
-import de.tor.tribes.ui.windows.FormConfigFrame;
 import de.tor.tribes.ui.ImageManager;
 import de.tor.tribes.ui.MapPanelListener;
-import de.tor.tribes.ui.windows.MarkerAddFrame;
-import de.tor.tribes.ui.windows.VillageSupportFrame;
-import de.tor.tribes.ui.windows.VillageTagFrame;
 import de.tor.tribes.ui.dnd.VillageTransferable;
 import de.tor.tribes.ui.renderer.map.MapRenderer;
-import de.tor.tribes.ui.views.DSWorkbenchSettingsDialog;
+import de.tor.tribes.ui.views.*;
 import de.tor.tribes.ui.windows.*;
 import de.tor.tribes.ui.wiz.tap.AttackSourcePanel;
 import de.tor.tribes.ui.wiz.tap.AttackTargetPanel;
 import de.tor.tribes.ui.wiz.tap.TacticsPlanerWizard;
-import de.tor.tribes.util.BrowserCommandSender;
-import de.tor.tribes.util.GlobalOptions;
-import de.tor.tribes.util.interfaces.ToolChangeListener;
-import java.awt.Desktop;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.MouseInfo;
-import java.awt.Point;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.dnd.DragGestureEvent;
-import java.awt.dnd.DragSourceDragEvent;
-import java.awt.dnd.DragSourceDropEvent;
-import java.awt.dnd.DragSourceEvent;
-import java.awt.dnd.DropTargetDragEvent;
-import java.awt.dnd.DropTargetDropEvent;
-import java.awt.dnd.DropTargetEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
-import java.awt.geom.Rectangle2D;
-import java.util.LinkedList;
-import java.util.List;
-import org.apache.log4j.Logger;
-import de.tor.tribes.util.DSCalculator;
-import de.tor.tribes.util.JOptionPaneHelper;
-import de.tor.tribes.util.interfaces.MapShotListener;
-import de.tor.tribes.util.ScreenshotSaver;
-import de.tor.tribes.util.ServerSettings;
+import de.tor.tribes.util.*;
 import de.tor.tribes.util.attack.AttackManager;
 import de.tor.tribes.util.bb.VillageListFormatter;
 import de.tor.tribes.util.church.ChurchManager;
+import de.tor.tribes.util.interfaces.MapShotListener;
+import de.tor.tribes.util.interfaces.ToolChangeListener;
 import de.tor.tribes.util.mark.MarkerManager;
 import de.tor.tribes.util.note.NoteManager;
 import de.tor.tribes.util.report.ReportManager;
@@ -84,41 +47,24 @@ import de.tor.tribes.util.stat.StatManager;
 import de.tor.tribes.util.tag.TagManager;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
-import java.awt.Color;
-import java.awt.Cursor;
-import java.awt.Paint;
-import java.awt.Rectangle;
-import java.awt.Shape;
-import java.awt.Stroke;
-import java.awt.Toolkit;
+import org.apache.log4j.Logger;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
-import java.awt.dnd.DnDConstants;
-import java.awt.dnd.DragGestureListener;
-import java.awt.dnd.DragSource;
-import java.awt.dnd.DragSourceListener;
-import java.awt.dnd.DropTarget;
-import java.awt.dnd.DropTargetListener;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
+import java.awt.dnd.*;
+import java.awt.event.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Iterator;
+import java.util.*;
+import java.util.List;
 import java.util.Timer;
-import java.util.TimerTask;
-import javax.swing.JComponent;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
 
 /**
  * @author Charon
@@ -220,15 +166,15 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
     MapPanel() {
         initComponents();
         logger.info("Creating MapPanel");
-        mMapPanelListeners = new LinkedList<MapPanelListener>();
-        mToolChangeListeners = new LinkedList<ToolChangeListener>();
+        mMapPanelListeners = new LinkedList<>();
+        mToolChangeListeners = new LinkedList<>();
         mMarkerAddFrame = new MarkerAddFrame();
         setCursor(ImageManager.getCursor(iCurrentCursor));
         setOpaque(true);
         setIgnoreRepaint(true);
         attackAddFrame = new AttackAddFrame();
         mVirtualBounds = new Rectangle2D.Double(0.0, 0.0, 0.0, 0.0);
-        markedVillages = new LinkedList<Village>();
+        markedVillages = new LinkedList<>();
         KeyStroke copy = KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK, false);
         this.registerKeyboardAction(this, "Copy", copy, JComponent.WHEN_IN_FOCUSED_WINDOW);
         KeyStroke bbCopy = KeyStroke.getKeyStroke(KeyEvent.VK_B, ActionEvent.CTRL_MASK, false);
@@ -324,7 +270,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
         shiftDown = pValue;
 
         if (!shiftDown) {
-            int cursor = getCurrentCursor();
+            int cursor = iCurrentCursor;
             boolean villagesHandled = false;
             if (cursor == ImageManager.CURSOR_TAG) {
                 //tag selected villages
@@ -920,8 +866,8 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                     }
                     case ImageManager.CURSOR_DRAW_TEXT: {
                         Point2D.Double pos = mouseToVirtualPos(e.getX(), e.getY());
-                        ((de.tor.tribes.types.drawing.Text) FormConfigFrame.getSingleton().getCurrentForm()).setXPos(pos.x);
-                        ((de.tor.tribes.types.drawing.Text) FormConfigFrame.getSingleton().getCurrentForm()).setYPos(pos.y);
+                        FormConfigFrame.getSingleton().getCurrentForm().setXPos(pos.x);
+                        FormConfigFrame.getSingleton().getCurrentForm().setYPos(pos.y);
                         break;
                     }
                     case ImageManager.CURSOR_DRAW_FREEFORM: {
@@ -1398,7 +1344,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
         } else if (evt.getSource() == jCurrentToAStarAsAttacker || evt.getSource() == jCurrentToAStarAsDefender) {
             VillageTroopsHolder own = TroopsManager.getSingleton().getTroopsForVillage(actionMenuVillage, TroopsManager.TROOP_TYPE.OWN);
 
-            Hashtable<String, Double> values = new Hashtable<String, Double>();
+            Hashtable<String, Double> values = new Hashtable<>();
             if (evt.getSource() == jCurrentToAStarAsAttacker && own == null) {
                 JOptionPaneHelper.showInformationBox(this, "Keine Truppeninformationen (Eigene) vorhanden", "Information");
                 return;
@@ -1528,8 +1474,8 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
 
     @Override
     public void paintComponent(Graphics g) {
-        /**
-         * Draw buffer into panel
+        /*
+          Draw buffer into panel
          */
         try {
             //calculate move direction if mouse is dragged outside the map
@@ -1538,13 +1484,13 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
 
                 int outcodes = mapBounds.outcode(mousePos);
                 if ((outcodes & Rectangle2D.OUT_LEFT) != 0) {
-                    xDir += -1;
+                    xDir -= 1;
                 } else if ((outcodes & Rectangle2D.OUT_RIGHT) != 0) {
                     xDir += 1;
                 }
 
                 if ((outcodes & Rectangle2D.OUT_TOP) != 0) {
-                    yDir += -1;
+                    yDir -= 1;
                 } else if ((outcodes & Rectangle2D.OUT_BOTTOM) != 0) {
                     yDir += 1;
                 }
@@ -1667,10 +1613,8 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
             Point mouse = MouseInfo.getPointerInfo().getLocation();
             mouse.x -= getLocationOnScreen().x;
             mouse.y -= getLocationOnScreen().y;
-            Iterator<Village> villages = mVillagePositions.keySet().iterator();
 
-            while (villages.hasNext()) {
-                Village current = villages.next();
+            for (Village current : mVillagePositions.keySet()) {
                 if (current != null && mVillagePositions.get(current).contains(mouse.x, mouse.y)) {
                     if (current.isVisibleOnMap()) {
                         return current;
@@ -1691,10 +1635,8 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
         }
 
         try {
-            Iterator<Village> villages = mVillagePositions.keySet().iterator();
 
-            while (villages.hasNext()) {
-                Village current = villages.next();
+            for (Village current : mVillagePositions.keySet()) {
                 if (mVillagePositions.get(current).contains(pPos)) {
                     return current;
                 }
@@ -1711,11 +1653,9 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
             return null;
         }
         try {
-            List<Village> result = new ArrayList<Village>();
-            Iterator<Village> villages = mVillagePositions.keySet().iterator();
+            List<Village> result = new ArrayList<>();
 
-            while (villages.hasNext()) {
-                Village currentVillage = villages.next();
+            for (Village currentVillage : mVillagePositions.keySet()) {
                 Rectangle current = mVillagePositions.get(currentVillage);
                 if (pShape.intersects(current)) {
                     result.add(currentVillage);
@@ -1733,11 +1673,9 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
             return null;
         }
         try {
-            List<Village> result = new ArrayList<Village>();
-            Iterator<Village> villages = mVillagePositions.keySet().iterator();
+            List<Village> result = new ArrayList<>();
 
-            while (villages.hasNext()) {
-                Village currentVillage = villages.next();
+            for (Village currentVillage : mVillagePositions.keySet()) {
                 Rectangle current = mVillagePositions.get(currentVillage);
                 if (current.intersectsLine(pShape)) {
                     result.add(currentVillage);
@@ -1767,7 +1705,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
     }
 
     public boolean requiresAlphaBlending() {
-        return (mouseDown && getCurrentCursor() == ImageManager.CURSOR_DEFAULT);
+        return (mouseDown && iCurrentCursor == ImageManager.CURSOR_DEFAULT);
     }
 
     public void planMapShot(String pType, File pLocation, MapShotListener pListener) {
@@ -1791,7 +1729,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
 
     @Override
     public void dragGestureRecognized(DragGestureEvent dge) {
-        if (getCurrentCursor() != ImageManager.CURSOR_DEFAULT) {
+        if (iCurrentCursor != ImageManager.CURSOR_DEFAULT) {
             return;
         }
 
@@ -1829,7 +1767,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
 
     @Override
     public void dragDropEnd(DragSourceDropEvent dsde) {
-        setCurrentCursor(getCurrentCursor());
+        setCurrentCursor(iCurrentCursor);
     }
 
     @Override
@@ -1862,7 +1800,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
 
         Transferable t = dtde.getTransferable();
         List<Village> v;
-        setCurrentCursor(getCurrentCursor());
+        setCurrentCursor(iCurrentCursor);
         try {
             v = (List<Village>) t.getTransferData(VillageTransferable.villageDataFlavor);
             Village target = getVillageAtMousePos();

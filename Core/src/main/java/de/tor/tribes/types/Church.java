@@ -42,8 +42,8 @@ public class Church extends ManageableType {
     public String toXml() {
         try {
             String xml = "<church>\n";
-            xml += "<village>" + getVillage().getId() + "</village>\n";
-            xml += "<range>" + getRange() + "</range>\n";
+            xml += "<village>" + village.getId() + "</village>\n";
+            xml += "<range>" + range + "</range>\n";
             xml += "</church>";
             return xml;
         } catch (Exception e) {
@@ -85,7 +85,7 @@ public class Church extends ManageableType {
      * @return the rangeColor
      */
     public Color getRangeColor() {
-        return getVillage().getTribe().getMarkerColor();
+        return village.getTribe().getMarkerColor();
     }
 
     @Override
@@ -105,7 +105,7 @@ public class Church extends ManageableType {
 
     @Override
     public void loadFromXml(Element pElement) {
-        setVillage(DataHolder.getSingleton().getVillagesById().get(Integer.parseInt(pElement.getChild("village").getText())));
-        setRange(Integer.parseInt(pElement.getChild("range").getText()));
+        this.village = DataHolder.getSingleton().getVillagesById().get(Integer.parseInt(pElement.getChild("village").getText()));
+        this.range = Integer.parseInt(pElement.getChild("range").getText());
     }
 }

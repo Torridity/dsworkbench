@@ -215,7 +215,7 @@ public class OBSTReportHandler {
           report.setDefenders(parseUnits(m.group(1).trim().split("\\s")));
         } else {
           //no second "Amount:" ... lost everything
-          Hashtable<UnitHolder, Integer> amounts = new Hashtable<UnitHolder, Integer>();
+          Hashtable<UnitHolder, Integer> amounts = new Hashtable<>();
           for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
             amounts.put(unit, -1);
           }
@@ -235,7 +235,7 @@ public class OBSTReportHandler {
           report.setDiedDefenders(parseUnits(m.group(1).trim().split("\\s")));
         } else {
           //no second "Losses:" ... lost everything
-          Hashtable<UnitHolder, Integer> amounts = new Hashtable<UnitHolder, Integer>();
+          Hashtable<UnitHolder, Integer> amounts = new Hashtable<>();
           for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
             amounts.put(unit, -1);
           }
@@ -474,7 +474,7 @@ public class OBSTReportHandler {
 
   private static Hashtable<UnitHolder, Integer> parseUnits(String[] pUnits) {
     int cnt = 0;
-    Hashtable<UnitHolder, Integer> units = new Hashtable<UnitHolder, Integer>();
+    Hashtable<UnitHolder, Integer> units = new Hashtable<>();
     for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
       if (cnt < pUnits.length) {
         units.put(unit, Integer.parseInt(pUnits[cnt]));

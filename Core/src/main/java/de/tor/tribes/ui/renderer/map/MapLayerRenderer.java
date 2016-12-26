@@ -82,11 +82,7 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
 
         if (mapPos != null && mLayer != null && !isFullRenderRequired()) {
             Point newMapPos = new Point((int) Math.floor(pSettings.getMapBounds().getX()), (int) Math.floor(pSettings.getMapBounds().getY()));
-            if (mapPos.distance(newMapPos) != 0) {
-                moved = true;
-            } else {
-                moved = false;
-            }
+            moved = mapPos.distance(newMapPos) != 0;
         } else {
             moved = true;
         }
@@ -116,10 +112,10 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
             }
             ImageUtils.setupGraphics(g2d);
 
-            renderedSpriteBounds = new HashMap<Integer, Rectangle>();
-            renderedMarkerBounds = new HashMap<Integer, Rectangle>();
+            renderedSpriteBounds = new HashMap<>();
+            renderedMarkerBounds = new HashMap<>();
 
-            if (isMarkOnTop()) {
+            if (bMarkOnTop) {
                 img = renderVillageRows(pSettings);
             } else {
                 img = renderMarkerRows(pSettings);
@@ -130,7 +126,7 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
 
             float transparency = (float) val / 100.0f;
 
-            if (isMarkOnTop()) {
+            if (bMarkOnTop) {
                 Composite c = ig2d.getComposite();
                 ig2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, transparency));
                 ig2d.drawImage(renderMarkerRows(pSettings), 0, 0, null);
@@ -149,16 +145,16 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
                 //everything was rendered, skip col rendering
                 setFullRenderRequired(false);
             } else {
-                renderedSpriteBounds = new HashMap<Integer, Rectangle>();
-                renderedMarkerBounds = new HashMap<Integer, Rectangle>();
-                if (isMarkOnTop()) {
+                renderedSpriteBounds = new HashMap<>();
+                renderedMarkerBounds = new HashMap<>();
+                if (bMarkOnTop) {
                     img = renderVillageColumns(pSettings);
                 } else {
                     img = renderMarkerColumns(pSettings);
                 }
                 ig2d = (Graphics2D) img.getGraphics();
 
-                if (isMarkOnTop()) {
+                if (bMarkOnTop) {
                     Composite c = ig2d.getComposite();
                     ig2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, transparency));
                     ig2d.drawImage(renderMarkerColumns(pSettings), 0, 0, null);
@@ -311,10 +307,9 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
                 cnt++;
                 Village v = pSettings.getVisibleVillage(x, y);
                 int row = y - firstRow;
-                int col = x;
-                int globalCol = colToGlobalPosition(pSettings, col);
+                int globalCol = colToGlobalPosition(pSettings, x);
                 int globalRow = rowToGlobalPosition(pSettings, y);
-                renderVillageField(v, row, col, globalRow, globalCol, pSettings.getFieldWidth(), pSettings.getFieldHeight(), pSettings.getZoom(), useDecoration, showBarbarian, markedOnly, g2d);
+                renderVillageField(v, row, x, globalRow, globalCol, pSettings.getFieldWidth(), pSettings.getFieldHeight(), pSettings.getZoom(), useDecoration, showBarbarian, markedOnly, g2d);
             }
         }
         g2d.dispose();
@@ -324,7 +319,7 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
     private BufferedImage renderMarkerRows(RenderSettings pSettings) {
         //create new buffer for rendering
         BufferedImage newRows = null;
-        if (isMarkOnTop()) {
+        if (bMarkOnTop) {
             newRows = ImageUtils.createCompatibleBufferedImage(pSettings.getVillagesInX() * pSettings.getFieldWidth(), Math.abs(pSettings.getRowsToRender()) * pSettings.getFieldHeight(), Transparency.TRANSLUCENT);
         } else {
             newRows = ImageUtils.createCompatibleBufferedImage(pSettings.getVillagesInX() * pSettings.getFieldWidth(), Math.abs(pSettings.getRowsToRender()) * pSettings.getFieldHeight(), Transparency.OPAQUE);
@@ -348,8 +343,7 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
                 cnt++;
                 Village v = pSettings.getVisibleVillage(x, y);
                 int row = y - firstRow;
-                int col = x;
-                renderMarkerField(v, row, col, pSettings.getFieldWidth(), pSettings.getFieldHeight(), pSettings.getZoom(), useDecoration, g2d);
+                renderMarkerField(v, row, x, pSettings.getFieldWidth(), pSettings.getFieldHeight(), pSettings.getZoom(), useDecoration, g2d);
             }
         }
         g2d.dispose();
@@ -387,11 +381,10 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
                 cnt++;
                 //iterate from first row for 'pRows' times
                 Village v = pSettings.getVisibleVillage(x, y);
-                int row = y;
                 int col = x - firstCol;
                 int globalCol = colToGlobalPosition(pSettings, x);
-                int globalRow = rowToGlobalPosition(pSettings, row);
-                renderVillageField(v, row, col, globalRow, globalCol, pSettings.getFieldWidth(), pSettings.getFieldHeight(), pSettings.getZoom(), useDecoration, showBarbarian, markedOnly, g2d);
+                int globalRow = rowToGlobalPosition(pSettings, y);
+                renderVillageField(v, y, col, globalRow, globalCol, pSettings.getFieldWidth(), pSettings.getFieldHeight(), pSettings.getZoom(), useDecoration, showBarbarian, markedOnly, g2d);
             }
         }
         g2d.dispose();
@@ -401,7 +394,7 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
     private BufferedImage renderMarkerColumns(RenderSettings pSettings) {
         //create new buffer for rendering
         BufferedImage newColumns = null;
-        if (isMarkOnTop()) {
+        if (bMarkOnTop) {
             newColumns = ImageUtils.createCompatibleBufferedImage(Math.abs(pSettings.getColumnsToRender()) * pSettings.getFieldWidth(), pSettings.getVillagesInY() * pSettings.getFieldHeight(), Transparency.TRANSLUCENT);
         } else {
             newColumns = ImageUtils.createCompatibleBufferedImage(Math.abs(pSettings.getColumnsToRender()) * pSettings.getFieldWidth(), pSettings.getVillagesInY() * pSettings.getFieldHeight(), Transparency.OPAQUE);
@@ -426,9 +419,8 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
                 cnt++;
                 //iterate from first row for 'pRows' times
                 Village v = pSettings.getVisibleVillage(x, y);
-                int row = y;
                 int col = x - firstCol;
-                renderMarkerField(v, row, col, pSettings.getFieldWidth(), pSettings.getFieldHeight(), pSettings.getZoom(), useDecoration, g2d);
+                renderMarkerField(v, y, col, pSettings.getFieldWidth(), pSettings.getFieldHeight(), pSettings.getZoom(), useDecoration, g2d);
             }
         }
         g2d.dispose();
@@ -488,7 +480,7 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
         int posY = row * pFieldHeight;
         if (sprite != null) {
             //render sprite
-            if (isMarkOnTop()) {
+            if (bMarkOnTop) {
                 g2d.setColor(Color.BLACK);
                 g2d.fillRect(posX, posY, pFieldWidth, pFieldHeight);
             }

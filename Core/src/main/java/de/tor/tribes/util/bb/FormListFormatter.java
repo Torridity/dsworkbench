@@ -18,6 +18,7 @@ package de.tor.tribes.util.bb;
 import de.tor.tribes.types.drawing.AbstractForm;
 import de.tor.tribes.types.drawing.Circle;
 import java.text.NumberFormat;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import org.apache.commons.lang.StringUtils;
@@ -31,14 +32,14 @@ public class FormListFormatter extends BasicFormatter<AbstractForm> {
     private final String[] VARIABLES = new String[]{LIST_START, LIST_END, ELEMENT_COUNT, ELEMENT_ID};
     private final String STANDARD_TEMPLATE = "[b]Zeichnungen[/b]\nAnzahl der Zeichnungen: %ELEMENT_COUNT%\n"
             + "%LIST_START%\n" + new Circle().getStandardTemplate() + "\n%LIST_END%";
-    private final String TEMPLATE_PROPERTY = "form.list.bbexport.template";
+    private static final String TEMPLATE_PROPERTY = "form.list.bbexport.template";
 
     @Override
     public String formatElements(List<AbstractForm> pElements, boolean pExtended) {
         StringBuilder b = new StringBuilder();
         int cnt = 1;
 
-        List<AbstractForm> allowedElements = new LinkedList<AbstractForm>();
+        List<AbstractForm> allowedElements = new LinkedList<>();
         if (pElements != null) {
             for (AbstractForm f : pElements.toArray(new AbstractForm[pElements.size()])) {
                 if (f.allowsBBExport()) {
@@ -78,13 +79,9 @@ public class FormListFormatter extends BasicFormatter<AbstractForm> {
 
     @Override
     public String[] getTemplateVariables() {
-        List<String> vars = new LinkedList<String>();
-        for (String var : VARIABLES) {
-            vars.add(var);
-        }
-        for (String var : new Circle().getBBVariables()) {
-            vars.add(var);
-        }
+        List<String> vars = new LinkedList<>();
+        Collections.addAll(vars, VARIABLES);
+        Collections.addAll(vars, new Circle().getBBVariables());
         return vars.toArray(new String[vars.size()]);
     }
 }

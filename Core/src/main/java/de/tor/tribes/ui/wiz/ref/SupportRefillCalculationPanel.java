@@ -102,7 +102,7 @@ public class SupportRefillCalculationPanel extends WizardPage {
         
         try {
             date = Long.parseLong(profile.getProperty("ref.calculation.arrive"));
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         jArriveTime.setDate(new Date(date));
     }
@@ -315,7 +315,7 @@ public class SupportRefillCalculationPanel extends WizardPage {
         //wait until calculation is running
         try {
             Thread.sleep(20);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         
     }//GEN-LAST:event_fireCalculateAttacksEvent
@@ -336,10 +336,10 @@ public class SupportRefillCalculationPanel extends WizardPage {
         }
         TimeFrame f = getTimeFrame();
         calculator = new BruteForce();
-        Hashtable<UnitHolder, List<Village>> sources = new Hashtable<UnitHolder, List<Village>>();
+        Hashtable<UnitHolder, List<Village>> sources = new Hashtable<>();
         UnitHolder slowest = TroopHelper.getSlowestUnit(SupportRefillSettingsPanel.getSingleton().getSplit());
         
-        List<Village> sourceVillages = new LinkedList<Village>();
+        List<Village> sourceVillages = new LinkedList<>();
         for (REFSourceElement element : SupportRefillSourcePanel.getSingleton().getAllElements()) {
             for (int i = 0; i < element.getAvailableSupports(); i++) {
                 sourceVillages.add(element.getVillage());
@@ -347,8 +347,8 @@ public class SupportRefillCalculationPanel extends WizardPage {
         }
         sources.put(slowest, sourceVillages);
         
-        List<Village> targets = new LinkedList<Village>();
-        Hashtable<Village, Integer> maxSupports = new Hashtable<Village, Integer>();
+        List<Village> targets = new LinkedList<>();
+        Hashtable<Village, Integer> maxSupports = new Hashtable<>();
         for (REFTargetElement element : SupportRefillSettingsPanel.getSingleton().getAllElements()) {
             targets.add(element.getVillage());
             maxSupports.put(element.getVillage(), element.getNeededSupports());
@@ -409,7 +409,7 @@ public class SupportRefillCalculationPanel extends WizardPage {
                     scroll();
                 }
             });
-        } catch (BadLocationException ble) {
+        } catch (BadLocationException ignored) {
         }
     }
     

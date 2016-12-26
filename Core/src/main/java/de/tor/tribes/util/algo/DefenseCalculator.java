@@ -52,8 +52,8 @@ public class DefenseCalculator extends Thread {
     public void run() {
         isRunning = true;
         DefenseInformation[] defenses = DefenseAnalysePanel.getSingleton().getAllElements();
-        Hashtable<de.tor.tribes.types.ext.Village, Integer> splits = new Hashtable<de.tor.tribes.types.ext.Village, Integer>();
-        List<de.tor.tribes.types.ext.Village> usedVillages = new LinkedList<de.tor.tribes.types.ext.Village>();
+        Hashtable<de.tor.tribes.types.ext.Village, Integer> splits = new Hashtable<>();
+        List<de.tor.tribes.types.ext.Village> usedVillages = new LinkedList<>();
 
         for (SupportSourceElement element : DefenseFilterPanel.getSingleton().getFilteredElements()) {
             splits.put(element.getVillage(), element.getSupports());

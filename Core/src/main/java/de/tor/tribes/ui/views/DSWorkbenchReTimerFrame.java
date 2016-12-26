@@ -25,59 +25,16 @@ import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.TroopFilterElement;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.types.test.DummyProfile;
-import de.tor.tribes.ui.windows.AbstractDSWorkbenchFrame;
 import de.tor.tribes.ui.panels.GenericTestPanel;
+import de.tor.tribes.ui.renderer.*;
+import de.tor.tribes.ui.windows.AbstractDSWorkbenchFrame;
 import de.tor.tribes.ui.windows.TroopFilterDialog;
-import de.tor.tribes.ui.renderer.DateCellRenderer;
-import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
-import de.tor.tribes.ui.renderer.SortableTableHeaderRenderer;
-import de.tor.tribes.ui.renderer.UnitCellRenderer;
-import de.tor.tribes.ui.renderer.UnitListCellRenderer;
-import de.tor.tribes.util.BBCodeFormatter;
-import de.tor.tribes.util.Constants;
-import de.tor.tribes.util.DSCalculator;
-import de.tor.tribes.util.GlobalOptions;
-import de.tor.tribes.util.JOptionPaneHelper;
-import de.tor.tribes.util.PluginManager;
-import de.tor.tribes.util.PropertyHelper;
-import de.tor.tribes.util.ServerSettings;
+import de.tor.tribes.util.*;
 import de.tor.tribes.util.attack.AttackManager;
 import de.tor.tribes.util.bb.AttackListFormatter;
 import de.tor.tribes.util.tag.TagManager;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.HeadlessException;
-import java.awt.Point;
-import java.awt.Toolkit;
-import java.awt.datatransfer.StringSelection;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.StringTokenizer;
-import javax.swing.AbstractAction;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.DefaultListModel;
-import javax.swing.ImageIcon;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.KeyStroke;
-import javax.swing.UIManager;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableModel;
 import org.apache.commons.configuration.Configuration;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
@@ -85,6 +42,18 @@ import org.jdesktop.swingx.JXButton;
 import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.jdesktop.swingx.painter.MattePainter;
+
+import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+import java.awt.*;
+import java.awt.datatransfer.StringSelection;
+import java.awt.event.*;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.List;
 
 /**
  * @author Torridity
@@ -194,7 +163,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         
         try {
             jAlwaysOnTopBox.setSelected(pConfig.getBoolean(getPropertyPrefix() + ".alwaysOnTop"));
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         
         setAlwaysOnTop(jAlwaysOnTopBox.isSelected());
@@ -376,7 +345,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         if (!ask || JOptionPaneHelper.showQuestionConfirmBox(this, "Willst du " + ((selectedRows.length == 1) ? "den gewählten Eintrag " : "die gewählten Einträge ") + "wirklich löschen?", "Löschen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
             DefaultTableModel model = (DefaultTableModel) jResultTable.getModel();
             int numRows = selectedRows.length;
-            for (int i = 0; i < numRows; i++) {
+            for (int selectedRow : selectedRows) {
                 model.removeRow(jResultTable.convertRowIndexToModel(jResultTable.getSelectedRow()));
             }
             showSuccess("Einträge gelöscht");
@@ -384,7 +353,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
     }
     
     private List<Attack> getSelectedAttacks() {
-        List<Attack> attacks = new LinkedList<Attack>();
+        List<Attack> attacks = new LinkedList<>();
         int[] selectedRows = jResultTable.getSelectedRows();
         if (selectedRows == null || selectedRows.length < 1) {
             showInfo("Keine Einträge ausgewählt");
@@ -428,7 +397,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         DefaultListModel tagModel = new DefaultListModel();
         tagModel.addElement(NoTag.getSingleton());
         for (ManageableType e : TagManager.getSingleton().getAllElements()) {
-            tagModel.addElement((Tag) e);
+            tagModel.addElement(e);
         }
         jTagList.setModel(tagModel);
         jRelationBox.setSelected(true);
@@ -455,10 +424,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
             
             @Override
             public boolean isCellEditable(int row, int col) {
-                if (col == 0) {
-                    return false;
-                }
-                return true;
+                return col != 0;
             }
         };
         
@@ -998,7 +964,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         } else {
             Village source = villages.get(0);
             Village target = villages.get(1);
-            if (jCommandArea.getText().indexOf(PluginManager.getSingleton().getVariableValue("sos.arrive.time")) > -1) {
+            if (jCommandArea.getText().contains(PluginManager.getSingleton().getVariableValue("sos.arrive.time"))) {
                 //change village order for SOS requests
                 source = villages.get(1);
                 target = villages.get(0);
@@ -1011,7 +977,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
                 String text = jCommandArea.getText();
                 String arrive = null;
                 String arriveLine = null;
-                if (text.indexOf(PluginManager.getSingleton().getVariableValue("attack.arrive.time")) > -1) {
+                if (text.contains(PluginManager.getSingleton().getVariableValue("attack.arrive.time"))) {
                     String searchString = PluginManager.getSingleton().getVariableValue("attack.arrive.time");
                     arriveLine = text.substring(text.indexOf(PluginManager.getSingleton().getVariableValue("attack.arrive.time")) + searchString.length());
                 } else {
@@ -1075,7 +1041,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         if (evt.getSource() == jDoCalculateButton) {
             DefaultTableModel model = (DefaultTableModel) jAttackPlanTable.getModel();
             
-            List<String> selectedPlans = new LinkedList<String>();
+            List<String> selectedPlans = new LinkedList<>();
             for (int i = 0; i < jAttackPlanTable.getRowCount(); i++) {
                 int row = jAttackPlanTable.convertRowIndexToModel(i);
                 if ((Boolean) model.getValueAt(row, 1)) {
@@ -1083,7 +1049,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
                 }
             }
             
-            List<Village> ignore = new LinkedList<Village>();
+            List<Village> ignore = new LinkedList<>();
             //process all plans
             for (String plan : selectedPlans) {
                 logger.debug("Checking plan '" + plan + "'");
@@ -1097,13 +1063,13 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
                 }
             }
             
-            Object[] tags = jTagList.getSelectedValues();
-            if (tags == null || tags.length == 0) {
+            List tags = jTagList.getSelectedValuesList();
+            if (tags == null || tags.isEmpty()) {
                 JOptionPaneHelper.showInformationBox(DSWorkbenchReTimerFrame.this, "Keine Dorfgruppe ausgewählt", "Information");
                 return;
             }
             
-            List<Village> candidates = new LinkedList<Village>();
+            List<Village> candidates = new LinkedList<>();
             for (Object o : tags) {
                 Tag t = (Tag) o;
                 List<Integer> ids = t.getVillageIDs();
@@ -1138,7 +1104,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
             
             Village target = parsedAttack.getSource();
             UnitHolder unit = (UnitHolder) jUnitBox.getSelectedItem();
-            Hashtable<Village, Date> timings = new Hashtable<Village, Date>();
+            Hashtable<Village, Date> timings = new Hashtable<>();
             
             for (Village candidate : candidates) {
                 double dist = DSCalculator.calculateDistance(candidate, target);
@@ -1162,7 +1128,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
                         if (sendTime > System.currentTimeMillis() + 60000) {
                             timings.put(candidate, new Date(sendTime));
                         }
-                    } catch (Exception e) {
+                    } catch (Exception ignored) {
                     }
                 }
             }
@@ -1250,7 +1216,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
     private void fireApplyTroopFiltersEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireApplyTroopFiltersEvent
         if (evt.getSource() == jApplyFiltersButton) {
             DefaultListModel filterModel = (DefaultListModel) jFilterList.getModel();
-            List<Integer> rowsToRemove = new LinkedList<Integer>();
+            List<Integer> rowsToRemove = new LinkedList<>();
             int removeCount = 0;
             for (int i = 0; i < jResultTable.getRowCount(); i++) {
                 //go through all rows in attack table and get source village
@@ -1275,11 +1241,11 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
 }//GEN-LAST:event_fireApplyTroopFiltersEvent
     
     private void fireRemoveTroopFilterEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireRemoveTroopFilterEvent
-        Object[] selection = jFilterList.getSelectedValues();
-        if (selection == null || selection.length == 0) {
+        List selection = jFilterList.getSelectedValuesList();
+        if (selection == null || selection.isEmpty()) {
             return;
         }
-        List<TroopFilterElement> toRemove = new LinkedList<TroopFilterElement>();
+        List<TroopFilterElement> toRemove = new LinkedList<>();
         for (Object elem : selection) {
             toRemove.add((TroopFilterElement) elem);
         }
@@ -1303,7 +1269,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         
         TroopFilterDialog filterDialog = new TroopFilterDialog(this, true);
         
-        List<Village> sources = new LinkedList<Village>();
+        List<Village> sources = new LinkedList<>();
         for (int i = 0; i < jResultTable.getRowCount(); i++) {
             //go through all rows in attack table and get source village
             sources.add((Village) jResultTable.getValueAt(i, 0));
@@ -1426,11 +1392,11 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
         try {
             //  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         
         DSWorkbenchReTimerFrame.getSingleton().resetView();
-        DSWorkbenchReTimerFrame.getSingleton().setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        DSWorkbenchReTimerFrame.getSingleton().setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         DSWorkbenchReTimerFrame.getSingleton().setVisible(true);
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables

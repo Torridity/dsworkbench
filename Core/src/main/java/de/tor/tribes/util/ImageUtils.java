@@ -65,8 +65,7 @@ public class ImageUtils {
         GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
         GraphicsDevice device = env.getDefaultScreenDevice();
         GraphicsConfiguration config = device.getDefaultConfiguration();
-        BufferedImage buffy = config.createCompatibleImage(w, h, trans);
-        return buffy;
+        return config.createCompatibleImage(w, h, trans);
     }
 
     /**Create an empty VolatileImage
@@ -80,8 +79,7 @@ public class ImageUtils {
         GraphicsDevice device = env.getDefaultScreenDevice();
         GraphicsConfiguration config = device.getDefaultConfiguration();
 
-        VolatileImage buffy = config.createCompatibleVolatileImage(w, h, trans);
-        return buffy;
+        return config.createCompatibleVolatileImage(w, h, trans);
     }
 
     /**Optimize an image or create a copy of an image if the image was created by getBufferedImage()*/

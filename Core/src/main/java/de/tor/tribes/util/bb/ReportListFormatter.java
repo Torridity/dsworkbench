@@ -17,6 +17,7 @@ package de.tor.tribes.util.bb;
 
 import de.tor.tribes.types.FightReport;
 import java.text.NumberFormat;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import org.apache.commons.lang.StringUtils;
@@ -29,7 +30,7 @@ public class ReportListFormatter extends BasicFormatter<FightReport> {
 
     private final String[] VARIABLES = new String[]{LIST_START, LIST_END, ELEMENT_COUNT, ELEMENT_ID};
     private final String STANDARD_TEMPLATE = new FightReport().getStandardTemplate();
-    private final String TEMPLATE_PROPERTY = "report.list.bbexport.template";
+    private static final String TEMPLATE_PROPERTY = "report.list.bbexport.template";
 
     @Override
     public String getPropertyKey() {
@@ -65,13 +66,9 @@ public class ReportListFormatter extends BasicFormatter<FightReport> {
 
     @Override
     public String[] getTemplateVariables() {
-        List<String> vars = new LinkedList<String>();
-        for (String var : VARIABLES) {
-            vars.add(var);
-        }
-        for (String var : new FightReport().getBBVariables()) {
-            vars.add(var);
-        }
+        List<String> vars = new LinkedList<>();
+        Collections.addAll(vars, VARIABLES);
+        Collections.addAll(vars, new FightReport().getBBVariables());
         return vars.toArray(new String[vars.size()]);
     }
 }

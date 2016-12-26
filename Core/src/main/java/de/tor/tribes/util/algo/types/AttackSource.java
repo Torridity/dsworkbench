@@ -16,7 +16,6 @@
 package de.tor.tribes.util.algo.types;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 /**
  *
@@ -29,7 +28,7 @@ public class AttackSource extends Village implements Source {
      */
     protected int wares;
     protected int ordered;
-    protected ArrayList<Order> orders = new ArrayList<Order>();
+    protected ArrayList<Order> orders = new ArrayList<>();
 
     public AttackSource(Coordinate c, int wares) {
         this.c = c;
@@ -46,9 +45,7 @@ public class AttackSource extends Village implements Source {
             return;
         }
 
-        Iterator<Order> i = this.orders.iterator();
-        while (i.hasNext()) {
-            Order o = i.next();
+        for (Order o : this.orders) {
             if (o.getDestination() == d) {
                 o.setAmount(o.getAmount() + amount);
                 this.ordered += amount;
@@ -64,9 +61,7 @@ public class AttackSource extends Village implements Source {
     }
 
     public void removeOrder(Destination d, int amount) {
-        Iterator<Order> i = this.orders.iterator();
-        while (i.hasNext()) {
-            Order o = i.next();
+        for (Order o : this.orders) {
             if (o.getDestination() == d) {
                 o.setAmount(o.getAmount() - amount);
                 this.ordered -= amount;

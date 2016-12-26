@@ -37,7 +37,7 @@ public class ResourcesInStorageCellRenderer extends DefaultTableRenderer {
             availableIcon = new ImageIcon(FarmStatusCellRenderer.class.getResource("/res/res.png"));
             emptyIcon = new ImageIcon(FarmStatusCellRenderer.class.getResource("/res/nores.png"));
 
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
     }
 

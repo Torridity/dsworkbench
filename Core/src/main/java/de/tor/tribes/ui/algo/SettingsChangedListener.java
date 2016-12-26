@@ -21,5 +21,5 @@ package de.tor.tribes.ui.algo;
  */
 public interface SettingsChangedListener {
 
-    public void fireTimeFrameChangedEvent();
+    void fireTimeFrameChangedEvent();
 }

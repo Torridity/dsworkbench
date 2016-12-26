@@ -38,7 +38,7 @@ public class StandardAttackTypeCellRenderer implements TableCellRenderer {
 
     public StandardAttackTypeCellRenderer() {
         try {
-            icons = new LinkedList<ImageIcon>();
+            icons = new LinkedList<>();
             icons.add(new ImageIcon("./graphics/icons/axe.png"));
             icons.add(new ImageIcon("./graphics/icons/snob.png"));
             icons.add(new ImageIcon("./graphics/icons/def.png"));
@@ -57,25 +57,32 @@ public class StandardAttackTypeCellRenderer implements TableCellRenderer {
         try {
             String type = (String) value;
             ((JLabel) c).setHorizontalAlignment(SwingConstants.CENTER);
-            if (type.equals("Keiner")) {
-                //no icon!?
-                ((JLabel) c).setText("-");
-                ((JLabel) c).setIcon(null);
-            } else if (type.equals("Off")) {
-                ((JLabel) c).setText("");
-                ((JLabel) c).setIcon(icons.get(0));
-            } else if (type.equals("AG")) {
-                ((JLabel) c).setText("");
-                ((JLabel) c).setIcon(icons.get(1));
-            } else if (type.equals("Unterstützung")) {
-                ((JLabel) c).setText("");
-                ((JLabel) c).setIcon(icons.get(2));
-            } else if (type.equals("Fake")) {
-                ((JLabel) c).setText("");
-                ((JLabel) c).setIcon(icons.get(3));
-            } else if (type.equals("Fake (Deff)")) {
-                ((JLabel) c).setText("");
-                ((JLabel) c).setIcon(icons.get(4));
+            switch (type) {
+                case "Keiner":
+                    //no icon!?
+                    ((JLabel) c).setText("-");
+                    ((JLabel) c).setIcon(null);
+                    break;
+                case "Off":
+                    ((JLabel) c).setText("");
+                    ((JLabel) c).setIcon(icons.get(0));
+                    break;
+                case "AG":
+                    ((JLabel) c).setText("");
+                    ((JLabel) c).setIcon(icons.get(1));
+                    break;
+                case "Unterstützung":
+                    ((JLabel) c).setText("");
+                    ((JLabel) c).setIcon(icons.get(2));
+                    break;
+                case "Fake":
+                    ((JLabel) c).setText("");
+                    ((JLabel) c).setIcon(icons.get(3));
+                    break;
+                case "Fake (Deff)":
+                    ((JLabel) c).setText("");
+                    ((JLabel) c).setIcon(icons.get(4));
+                    break;
             }
         } catch (Exception e) {
             //cast problem

@@ -51,7 +51,7 @@ public class SupportLayerRenderer extends AbstractDirectLayerRenderer {
         Point2D.Double mapPos = new Point2D.Double(pSettings.getMapBounds().getX(), pSettings.getMapBounds().getY());
         Stroke s = pG2d.getStroke();
         Color b = pG2d.getColor();
-        List<Village> visibleVillages = new LinkedList<Village>();
+        List<Village> visibleVillages = new LinkedList<>();
         for (int i = 0; i < pSettings.getVillagesInX(); i++) {
             for (int j = 0; j < pSettings.getVillagesInY(); j++) {
                 Village v = pSettings.getVisibleVillage(i, j);
@@ -70,7 +70,7 @@ public class SupportLayerRenderer extends AbstractDirectLayerRenderer {
         for (Village v : DSWorkbenchTroopsFrame.getSingleton().getSelectedSupportVillages()) {
             //process source villages
             if (v.isVisibleOnMap()) {
-                List<Village> villages = new LinkedList<Village>();
+                List<Village> villages = new LinkedList<>();
                 SupportVillageTroopsHolder holder = (SupportVillageTroopsHolder) TroopsManager.getSingleton().getTroopsForVillage(v, TroopsManager.TROOP_TYPE.SUPPORT);
 
                 Hashtable<Village, Hashtable<UnitHolder, Integer>> incs = holder.getIncomingSupports();
@@ -141,7 +141,7 @@ public class SupportLayerRenderer extends AbstractDirectLayerRenderer {
                                         if (inter == null) {
                                             throw new Exception();
                                         }
-                                    } catch (Exception e4) {
+                                    } catch (Exception ignored) {
                                     }
                                 }
                             }
@@ -192,7 +192,7 @@ public class SupportLayerRenderer extends AbstractDirectLayerRenderer {
                                         if (inter == null) {
                                             throw new Exception();
                                         }
-                                    } catch (Exception e4) {
+                                    } catch (Exception ignored) {
                                     }
                                 }
                             }

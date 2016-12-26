@@ -15,7 +15,6 @@
  */
 package de.tor.tribes.util;
 
-import de.tor.tribes.types.Marker;
 import de.tor.tribes.types.SOSRequest;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.types.VillageMerchantInfo;
@@ -81,7 +80,7 @@ public class PluginManager {
     } catch (Exception e) {
       logger.error("Failed to execute village parser", e);
     }
-    return new LinkedList<Village>();
+    return new LinkedList<>();
   }
 
   /**
@@ -97,7 +96,7 @@ public class PluginManager {
     } catch (Exception e) {
       logger.error("Failed to execute merchant parser", e);
     }
-    return new LinkedList<VillageMerchantInfo>();
+    return new LinkedList<>();
   }
 
   public boolean executeDiplomacyParser(String pData) {
@@ -164,7 +163,7 @@ public class PluginManager {
     } catch (Exception e) {
       logger.error("Failed to execute sos request parser", e);
     }
-    return new LinkedList<SOSRequest>();
+    return new LinkedList<>();
   }
 
   public boolean executeTroopsParser(String pData) {

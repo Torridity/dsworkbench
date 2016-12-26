@@ -93,18 +93,17 @@ public class SOSRequest extends ManageableType implements BBSupport {
         String sourceDateTypeVal = "";
         String attackList = "";
         String sourceTypeVal = "";
-        List<Attack> thisAttacks = new ArrayList<Attack>();
-        for (int i = 0; i < atts.size(); i++) {
+        List<Attack> thisAttacks = new ArrayList<>();
+        for (TimedAttack att1 : atts) {
             try {
-                TimedAttack attack = atts.get(i);
                 Attack a = new Attack();
-                a.setSource(attack.getSource());
+                a.setSource(att1.getSource());
                 a.setTarget(pTarget);
-                a.setArriveTime(new Date(attack.getlArriveTime()));
-                if (attack.isPossibleFake()) {
+                a.setArriveTime(new Date(att1.getlArriveTime()));
+                if (att1.isPossibleFake()) {
                     fakeCount++;
                     a.setType(Attack.FAKE_TYPE);
-                } else if (attack.isPossibleSnob()) {
+                } else if (att1.isPossibleSnob()) {
                     snobCount++;
                     a.setType(Attack.SNOB_TYPE);
                     a.setUnit(DataHolder.getSingleton().getUnitByPlainName("snob"));
@@ -113,30 +112,29 @@ public class SOSRequest extends ManageableType implements BBSupport {
                     a.setUnit(UnknownUnit.getSingleton());
                 }
                 thisAttacks.add(a);
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         }
 
         attackList = new AttackListFormatter().formatElements(thisAttacks, pExtended);
 
-        for (int i = 0; i < atts.size(); i++) {
+        for (TimedAttack att : atts) {
             try {
-                TimedAttack attack = atts.get(i);
-                sourceVal += attack.getSource().toBBCode() + "\n";
-                if (attack.isPossibleFake()) {
-                    sourceDateTypeVal += attack.getSource().toBBCode() + " " + dateFormat.format(new Date(attack.getlArriveTime())) + " [b](Fake)[/b]" + "\n";
-                    sourceDateVal += attack.getSource().toBBCode() + " " + dateFormat.format(new Date(attack.getlArriveTime())) + "\n";
-                    sourceTypeVal += attack.getSource().toBBCode() + " [b](Fake)[/b]" + "\n";
-                } else if (attack.isPossibleSnob()) {
-                    sourceDateTypeVal += attack.getSource().toBBCode() + " " + dateFormat.format(new Date(attack.getlArriveTime())) + " [b](AG)[/b]" + "\n";
-                    sourceDateVal += attack.getSource().toBBCode() + " " + dateFormat.format(new Date(attack.getlArriveTime())) + "\n";
-                    sourceTypeVal += attack.getSource().toBBCode() + " [b](AG)[/b]" + "\n";
+                sourceVal += att.getSource().toBBCode() + "\n";
+                if (att.isPossibleFake()) {
+                    sourceDateTypeVal += att.getSource().toBBCode() + " " + dateFormat.format(new Date(att.getlArriveTime())) + " [b](Fake)[/b]" + "\n";
+                    sourceDateVal += att.getSource().toBBCode() + " " + dateFormat.format(new Date(att.getlArriveTime())) + "\n";
+                    sourceTypeVal += att.getSource().toBBCode() + " [b](Fake)[/b]" + "\n";
+                } else if (att.isPossibleSnob()) {
+                    sourceDateTypeVal += att.getSource().toBBCode() + " " + dateFormat.format(new Date(att.getlArriveTime())) + " [b](AG)[/b]" + "\n";
+                    sourceDateVal += att.getSource().toBBCode() + " " + dateFormat.format(new Date(att.getlArriveTime())) + "\n";
+                    sourceTypeVal += att.getSource().toBBCode() + " [b](AG)[/b]" + "\n";
                 } else {
-                    sourceDateTypeVal += attack.getSource().toBBCode() + " " + dateFormat.format(new Date(attack.getlArriveTime())) + "\n";
-                    sourceDateVal += attack.getSource().toBBCode() + " " + dateFormat.format(new Date(attack.getlArriveTime())) + "\n";
-                    sourceTypeVal += attack.getSource().toBBCode() + "\n";
+                    sourceDateTypeVal += att.getSource().toBBCode() + " " + dateFormat.format(new Date(att.getlArriveTime())) + "\n";
+                    sourceDateVal += att.getSource().toBBCode() + " " + dateFormat.format(new Date(att.getlArriveTime())) + "\n";
+                    sourceTypeVal += att.getSource().toBBCode() + "\n";
                 }
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         }
 
@@ -209,13 +207,13 @@ public class SOSRequest extends ManageableType implements BBSupport {
     }
 
     public SOSRequest() {
-        targetInformations = new Hashtable<Village, TargetInformation>();
-        defenseInformations = new Hashtable<Village, DefenseInformation>();
+        targetInformations = new Hashtable<>();
+        defenseInformations = new Hashtable<>();
     }
 
     public SOSRequest(Tribe pDefender) {
         this();
-        setDefender(pDefender);
+        mDefender = pDefender;
     }
 
     public final void setDefender(Tribe pDefender) {
@@ -291,17 +289,16 @@ public class SOSRequest extends ManageableType implements BBSupport {
 
     public String toBBCode(Village pTarget, boolean pDetailed) {
         StringBuilder buffer = new StringBuilder();
-        Village target = pTarget;
-        TargetInformation targetInfo = getTargetInformation(target);
+        TargetInformation targetInfo = getTargetInformation(pTarget);
         if (targetInfo == null) {
             return "";
         }
-        buffer.append(SOSFormater.format(target, targetInfo, pDetailed));
+        buffer.append(SOSFormater.format(pTarget, targetInfo, pDetailed));
         return buffer.toString();
     }
 
     public void merge(SOSRequest pOther) {
-        if (getDefender() == null || pOther == null || pOther.getDefender() == null || getDefender().getId() != pOther.getDefender().getId()) {
+        if (mDefender == null || pOther == null || pOther.getDefender() == null || mDefender.getId() != pOther.getDefender().getId()) {
             throw new IllegalArgumentException("Cannot merge with unequal defender");
         }
 
@@ -325,7 +322,7 @@ public class SOSRequest extends ManageableType implements BBSupport {
 
     @Override
     public String toString() {
-        String result = "Verteidiger: " + getDefender() + "\n";
+        String result = "Verteidiger: " + mDefender + "\n";
         Enumeration<Village> targets = getTargets();
 
         while (targets.hasMoreElements()) {
@@ -357,7 +354,7 @@ public class SOSRequest extends ManageableType implements BBSupport {
     public String toXml() {
         try {
             StringBuilder b = new StringBuilder();
-            b.append("<").append(getElementIdentifier()).append(" defender=\"").append(getDefender().getId()).append("\">\n");
+            b.append("<").append(getElementIdentifier()).append(" defender=\"").append(mDefender.getId()).append("\">\n");
             b.append("<targetInformations>\n");
             Enumeration<Village> targetKeys = getTargets();
             while (targetKeys.hasMoreElements()) {
@@ -398,7 +395,7 @@ public class SOSRequest extends ManageableType implements BBSupport {
     @Override
     public void loadFromXml(Element e) {
         int defenderId = Integer.parseInt(e.getAttributeValue("defender"));
-        setDefender(DataHolder.getSingleton().getTribes().get(defenderId));
+        mDefender = DataHolder.getSingleton().getTribes().get(defenderId);
         for (Element targetInfo : (List<Element>) JaxenUtils.getNodes(e, "targetInformations/targetInformation")) {
             int targetId = Integer.parseInt(targetInfo.getAttributeValue("target"));
             Village target = DataHolder.getSingleton().getVillagesById().get(targetId);

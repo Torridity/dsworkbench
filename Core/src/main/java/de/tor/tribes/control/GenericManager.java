@@ -32,8 +32,8 @@ public abstract class GenericManager<C extends ManageableType> {
 
     public static final String DEFAULT_GROUP = "default";
     private String alternateDefaultGroupName = null;
-    private List<GenericManagerListener> listeners = new ArrayList<GenericManagerListener>();
-    private HashMap<String, List<ManageableType>> managedElementGroups = new HashMap<String, List<ManageableType>>();
+    private List<GenericManagerListener> listeners = new ArrayList<>();
+    private HashMap<String, List<ManageableType>> managedElementGroups = new HashMap<>();
     private boolean groupable = false;
     private boolean valid = true;
 
@@ -200,7 +200,7 @@ public abstract class GenericManager<C extends ManageableType> {
      * @return
      */
     public List<ManageableType> getAllElementsFromAllGroups() {
-        List<ManageableType> allElements = new LinkedList<ManageableType>();
+        List<ManageableType> allElements = new LinkedList<>();
         for (String group : getGroups()) {
             List<ManageableType> elementsInGroup = getAllElements(group);
             Collections.addAll(allElements, elementsInGroup.toArray(new ManageableType[elementsInGroup.size()]));
@@ -214,7 +214,7 @@ public abstract class GenericManager<C extends ManageableType> {
      * @return
      */
     public List<ManageableType> getAllElements(final List<String> pGroups) {
-        List<ManageableType> allElements = new LinkedList<ManageableType>();
+        List<ManageableType> allElements = new LinkedList<>();
         for (String group : pGroups) {
             Collections.addAll(allElements, getAllElements(group).toArray(new ManageableType[]{}));
         }
@@ -240,7 +240,7 @@ public abstract class GenericManager<C extends ManageableType> {
         if (managedElementGroups.containsKey(pGroup)) {
             return Collections.unmodifiableList(managedElementGroups.get(pGroup));
         }
-        return new ArrayList<ManageableType>();
+        return new ArrayList<>();
     }
 
     public boolean groupExists(String pGroup) {
@@ -301,7 +301,7 @@ public abstract class GenericManager<C extends ManageableType> {
         } else {
             List<ManageableType> elems = managedElementGroups.get(pGroup);
             if (elems == null) {
-                elems = new ArrayList<ManageableType>();
+                elems = new ArrayList<>();
                 managedElementGroups.put(pGroup, elems);
                 structureChanged = true;
             }

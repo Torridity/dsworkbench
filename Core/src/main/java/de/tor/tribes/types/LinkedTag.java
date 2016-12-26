@@ -61,9 +61,8 @@ public class LinkedTag extends Tag {
             } catch (Exception e) {
                 setTagIcon(-1);
             }
-            String equation = URLDecoder.decode(pElement.getChild("equation").getTextTrim(), "UTF-8");
-            setEquation(equation);
-        } catch (Exception e) {
+            sEquation = URLDecoder.decode(pElement.getChild("equation").getTextTrim(), "UTF-8");
+        } catch (Exception ignored) {
         }
     }
 
@@ -80,7 +79,7 @@ public class LinkedTag extends Tag {
             b.append("<icon>").append(getTagIcon()).append("</icon>\n");
             b.append("<villages/>\n");
             b.append("<equation>\n");
-            b.append(URLEncoder.encode(getEquation(), "UTF-8")).append("\n");
+            b.append(URLEncoder.encode(sEquation, "UTF-8")).append("\n");
             b.append("</equation>\n");
             b.append("</tag>\n");
             return b.toString();
@@ -113,7 +112,7 @@ public class LinkedTag extends Tag {
     public void updateVillageList() {
         clearTaggedVillages();
         List<ManageableType> elements = TagManager.getSingleton().getAllElements();
-        List<Tag> lTags = new ArrayList<Tag>();
+        List<Tag> lTags = new ArrayList<>();
         for (ManageableType t : elements) {
             lTags.add((Tag) t);
         }
@@ -131,7 +130,7 @@ public class LinkedTag extends Tag {
             try {
                 engine.eval("var b = eval(\"" + equation + "\")");
                 Boolean b = (Boolean) engine.get("b");
-                if (b.booleanValue()) {
+                if (b) {
                     tagVillage(v.getId());
                 }
             } catch (Exception e) {

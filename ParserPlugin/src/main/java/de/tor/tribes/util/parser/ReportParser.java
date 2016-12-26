@@ -98,7 +98,7 @@ public class ReportParser implements SilentParserInterface {
                     debug("  Sent: " + f.format(new Date(result.getTimestamp())));
                     haveTime = true;
                 } catch (Exception e) {
-                    result.setTimestamp(0l);
+                    result.setTimestamp(0L);
                     debug(" Failed to parse sent");
                 }
             } else if (line.contains("hat gewonnen")) {
@@ -146,9 +146,9 @@ public class ReportParser implements SilentParserInterface {
                     double moral = Double.parseDouble(line);
                     debug(" Set moral to " + moral);
                     result.setMoral(moral);
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                 }
-            } else if (line.startsWith("Angreifer") || line.indexOf("Angreifer") > -1) {
+            } else if (line.startsWith("Angreifer") || line.contains("Angreifer")) {
                 attackerPart = true;
                 line = line.replaceAll("Angreifer:", "").trim();
                 debug("Found attacker in normal mode: " + line);
@@ -210,7 +210,7 @@ public class ReportParser implements SilentParserInterface {
                 line = line.replaceAll("Verteidiger:", "").trim();
                 debug("Found defender line: '" + line + "'");
                 result.setDefender(DataHolder.getSingleton().getTribeByName(line));
-            } else if (line.indexOf("Erspähte Rohstoffe:") > -1) {
+            } else if (line.contains("Erspähte Rohstoffe:")) {
                 debug("Found spyed resources");
                 String resources = line.substring(line.lastIndexOf(":") + 1).trim();
                 String[] spyedResources = resources.split(" ");
@@ -377,7 +377,7 @@ public class ReportParser implements SilentParserInterface {
                     result.setAimedBuilding(target);
                     result.setBuildingBefore(buildingBefore);
                     result.setBuildingAfter(buildingAfter);
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                 }
             } else if (line.startsWith("Veränderung der Zustimmung") || line.startsWith("Zustimmung:")) {
                 line = line.replaceAll("Veränderung der Zustimmung", "").trim().replaceAll("Zustimmung gesunken von", "").replaceAll("auf", "");
@@ -436,7 +436,7 @@ public class ReportParser implements SilentParserInterface {
                         result.setTimestamp(d.getTime());
                         haveTime = true;
                     } catch (Exception e) {
-                        result.setTimestamp(0l);
+                        result.setTimestamp(0L);
                     }
                 }
 
@@ -498,7 +498,7 @@ public class ReportParser implements SilentParserInterface {
 
     private static Hashtable<UnitHolder, Integer> parseUnits(String[] pUnits) {
         int cnt = 0;
-        Hashtable<UnitHolder, Integer> units = new Hashtable<UnitHolder, Integer>();
+        Hashtable<UnitHolder, Integer> units = new Hashtable<>();
         for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
             if (cnt < pUnits.length) {
                 units.put(unit, Integer.parseInt(pUnits[cnt]));
@@ -531,7 +531,7 @@ public class ReportParser implements SilentParserInterface {
         ProfileManager.getSingleton().loadProfiles();
         GlobalOptions.setSelectedProfile(ProfileManager.getSingleton().getProfiles("de85")[0]);
         DataHolder.getSingleton().loadData(false); // GlobalOptions.loadUserData(); 
-        Transferable t = (Transferable) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
+        Transferable t = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
         String data = (String) t.getTransferData(DataFlavor.stringFlavor);
         System.out.println(new VillageParser().parse("OMIX-A0001 (280|661) K62"));
         System.out.println(new ReportParser().parse(data));

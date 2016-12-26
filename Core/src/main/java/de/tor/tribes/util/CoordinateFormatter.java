@@ -56,7 +56,7 @@ public class CoordinateFormatter extends DefaultFormatter {
     public Object stringToValue(String text) throws ParseException {
         List<Village> villages = PluginManager.getSingleton().executeVillageParser(text);
         if (villages.size() > 0) {
-            return (Point) villages.get(0).getPosition().clone();
+            return villages.get(0).getPosition().clone();
         } else {
             try {
                 text = text.substring(text.lastIndexOf("(") + 1, text.lastIndexOf(")"));

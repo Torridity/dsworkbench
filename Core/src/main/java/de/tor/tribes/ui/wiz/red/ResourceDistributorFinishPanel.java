@@ -32,21 +32,20 @@ import de.tor.tribes.ui.wiz.red.types.ExtendedTransport;
 import de.tor.tribes.util.BrowserCommandSender;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
-import java.awt.BorderLayout;
-import java.awt.event.*;
-import java.io.*;
-import java.text.NumberFormat;
-import java.util.*;
-import javax.swing.ImageIcon;
-import javax.swing.JComponent;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.netbeans.spi.wizard.Wizard;
 import org.netbeans.spi.wizard.WizardPage;
 import org.netbeans.spi.wizard.WizardPanelNavResult;
+
+import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import java.awt.*;
+import java.awt.event.*;
+import java.io.*;
+import java.text.NumberFormat;
+import java.util.*;
+import java.util.List;
 
 /**
  *
@@ -533,7 +532,7 @@ public class ResourceDistributorFinishPanel extends WizardPage {
 
         VillageMerchantInfo[] infos = ResourceDistributorSettingsPanel.getSingleton().getAllElements();
 
-        Hashtable<Village, VillageMerchantInfo> infoTable = new Hashtable<Village, VillageMerchantInfo>();
+        Hashtable<Village, VillageMerchantInfo> infoTable = new Hashtable<>();
 
         for (VillageMerchantInfo info : infos) {
             infoTable.put(info.getVillage(), info);
@@ -607,7 +606,7 @@ public class ResourceDistributorFinishPanel extends WizardPage {
     private void deleteSelection() {
         int[] selection = jTransportsTable.getSelectedRows();
         if (selection.length > 0) {
-            List<Integer> rows = new LinkedList<Integer>();
+            List<Integer> rows = new LinkedList<>();
             for (int i : selection) {
                 rows.add(jTransportsTable.convertRowIndexToModel(i));
             }
@@ -689,8 +688,7 @@ public class ResourceDistributorFinishPanel extends WizardPage {
                 model.fireTableDataChanged();
                 result = true;
                 focusSubmit();
-            } catch (IOException ioe) {
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             } finally {
                 if (r != null) {
                     try {

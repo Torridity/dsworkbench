@@ -23,11 +23,8 @@ import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
+
 import org.apache.log4j.Logger;
 
 /**
@@ -38,7 +35,7 @@ public class SupportCalculator {
     private static Logger logger = Logger.getLogger("SupportCalculator");
 
     public static List<SupportMovement> calculateSupport(Village pVillage, Date pArrive, boolean pRealDefOnly, List<Tag> pTags, int pMinNumber) {
-        Hashtable<UnitHolder, Integer> unitTable = new Hashtable<UnitHolder, Integer>();
+        Hashtable<UnitHolder, Integer> unitTable = new Hashtable<>();
         if (logger.isDebugEnabled()) {
             logger.debug("Try to find support for village " + pVillage + " at arrival time " + new SimpleDateFormat("dd.MM.yy HH:mm:ss.SSS").format(pArrive));
             if (pTags == null || pTags.isEmpty()) {
@@ -54,16 +51,22 @@ public class SupportCalculator {
             logger.debug("Using only def units");
             //use only "real" def units
             for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
-                if (unit.getPlainName().equals("spear")) {
-                    unitTable.put(unit, cnt);
-                } else if (unit.getPlainName().equals("sword")) {
-                    unitTable.put(unit, cnt);
-                } else if (unit.getPlainName().equals("archer")) {
-                    unitTable.put(unit, cnt);
-                } else if (unit.getPlainName().equals("heavy")) {
-                    unitTable.put(unit, cnt);
-                } else if (unit.getPlainName().equals("knight")) {
-                    unitTable.put(unit, cnt);
+                switch (unit.getPlainName()) {
+                    case "spear":
+                        unitTable.put(unit, cnt);
+                        break;
+                    case "sword":
+                        unitTable.put(unit, cnt);
+                        break;
+                    case "archer":
+                        unitTable.put(unit, cnt);
+                        break;
+                    case "heavy":
+                        unitTable.put(unit, cnt);
+                        break;
+                    case "knight":
+                        unitTable.put(unit, cnt);
+                        break;
                 }
                 cnt++;
             }
@@ -78,19 +81,17 @@ public class SupportCalculator {
             }
         }
 
-        List<SupportMovement> movements = new LinkedList<SupportMovement>();
+        List<SupportMovement> movements = new LinkedList<>();
 
         //get tagged villages
-        List<Village> villages = new LinkedList<Village>();
+        List<Village> villages = new LinkedList<>();
         if (pTags == null || pTags.isEmpty()) {
             Tribe own = GlobalOptions.getSelectedProfile().getTribe();
             if (own == null) {
                 logger.error("Current tribe is 'null'");
                 return movements;
             }
-            for (Village v : own.getVillageList()) {
-                villages.add(v);
-            }
+            Collections.addAll(villages, own.getVillageList());
         } else {
             for (Tag t : pTags) {
                 for (Integer id : t.getVillageIDs()) {
@@ -169,9 +170,9 @@ public class SupportCalculator {
         private Date sendTime = null;
 
         public SupportMovement(Village pSource, UnitHolder pUnit, Date pStartDate) {
-            setSource(pSource);
-            setUnit(pUnit);
-            setSendTime(pStartDate);
+            this.source = pSource;
+            this.unit = pUnit;
+            this.sendTime = pStartDate;
         }
 
         /**
@@ -218,8 +219,7 @@ public class SupportCalculator {
 
         @Override
         public String toString() {
-            String ret = "Von " + source + " am " + new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss.SSS").format(sendTime) + " mit " + unit;
-            return ret;
+            return "Von " + source + " am " + new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss.SSS").format(sendTime) + " mit " + unit;
         }
     }
 }

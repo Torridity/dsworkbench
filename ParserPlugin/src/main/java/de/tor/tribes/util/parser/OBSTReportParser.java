@@ -55,7 +55,7 @@ public class OBSTReportParser implements SilentParserInterface {
                         result.setTimestamp(d.getTime());
                         result.setTimestamp(d.getTime());
                     } catch (Exception inner) {
-                        result.setTimestamp(0l);
+                        result.setTimestamp(0L);
                     }
                 }
             } else if (token.startsWith("Moral")) {

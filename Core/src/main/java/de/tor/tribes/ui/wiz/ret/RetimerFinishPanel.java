@@ -275,7 +275,7 @@ public class RetimerFinishPanel extends WizardPage {
 
     private void fireSelectedToAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSelectedToAttackPlanEvent
         int[] selection = jxResultsTable.getSelectedRows();
-        List<Attack> attacks = new LinkedList<Attack>();
+        List<Attack> attacks = new LinkedList<>();
         for (int row : selection) {
             int modelRow = jxResultsTable.convertRowIndexToModel(row);
             Attack a = getModel().getRow(modelRow);

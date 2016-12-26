@@ -68,14 +68,14 @@ public class Iterix extends AbstractAttackAlgorithm {
         UnitHolder cata = DataHolder.getSingleton().getUnitByPlainName("catapult");
         List<Village> ramAndCataSources = pSources.get(ram);
         if (ramAndCataSources == null || ramAndCataSources.isEmpty()) {
-            ramAndCataSources = new LinkedList<Village>();
+            ramAndCataSources = new LinkedList<>();
         }
         List<Village> cataSources = pSources.get(cata);
         if (cataSources != null && !cataSources.isEmpty()) {
             ramAndCataSources.addAll(cataSources);
         }
-        Hashtable<Village, Off> movements = new Hashtable<Village, Off>();
-        List<AbstractTroopMovement> movementList = new LinkedList<AbstractTroopMovement>();
+        Hashtable<Village, Off> movements = new Hashtable<>();
+        List<AbstractTroopMovement> movementList = new LinkedList<>();
         if (!ramAndCataSources.isEmpty()) {
             //off sources are available
             logText(" - Entferne Herkunftsdörfer, die keins der Ziel erreichen können");
@@ -83,7 +83,7 @@ public class Iterix extends AbstractAttackAlgorithm {
             removeImpossibleSources(ramAndCataSources, pTargets, pTimeFrame);
             if (ramAndCataSources.isEmpty()) {
                 logError("Keine Dörfer übrig, Berechnung wird abgebrochen.");
-                return new LinkedList<AbstractTroopMovement>();
+                return new LinkedList<>();
             }
             //build array of attack amount of each source
             sourceAmounts = resolveDuplicates(ramAndCataSources);
@@ -115,7 +115,7 @@ public class Iterix extends AbstractAttackAlgorithm {
             } catch (Exception ewe) {
                 logger.error("Unexpexted error during off calculation", ewe);
                 logError("Unerwarteter Fehler bei der Off-Berechnung!");
-                return new LinkedList<AbstractTroopMovement>();
+                return new LinkedList<>();
             }
 
             logText(" - Erstelle Ergebnisliste");
@@ -172,7 +172,7 @@ public class Iterix extends AbstractAttackAlgorithm {
         logText("Berechne Fakes");
         List<Village> ramAndCataFakes = pFakes.get(ram);
         if (ramAndCataFakes == null || ramAndCataFakes.isEmpty()) {
-            ramAndCataFakes = new LinkedList<Village>();
+            ramAndCataFakes = new LinkedList<>();
         }
         List<Village> cataFakes = pFakes.get(cata);
         if (cataFakes != null && !cataFakes.isEmpty()) {
@@ -231,9 +231,9 @@ public class Iterix extends AbstractAttackAlgorithm {
         } catch (Exception ewe) {
             logger.error("Unexpexted error during fake calculation", ewe);
             logError("Unerwarteter Fehler bei der Fake-Berechnung!");
-            return new LinkedList<AbstractTroopMovement>();
+            return new LinkedList<>();
         }
-        Hashtable<Village, Fake> fakeMovements = new Hashtable<Village, Fake>();
+        Hashtable<Village, Fake> fakeMovements = new Hashtable<>();
         for (int i = 0; i < ramAndCataFakes.size(); i++) {
             for (int j = 0; j < pTargets.size(); j++) {
                 if (result[i][j] != 0) {
@@ -486,7 +486,7 @@ public class Iterix extends AbstractAttackAlgorithm {
         int[] sourceMappings = buildSourceMappings(pMappings);
         //find single mappings
         int smallesAmount = Integer.MAX_VALUE;
-        List<Integer> idxs = new LinkedList<Integer>();
+        List<Integer> idxs = new LinkedList<>();
         for (int i = 0; i < sourceMappings.length; i++) {
             if (sourceMappings[i] > 0) {
                 //valid source
@@ -508,8 +508,8 @@ public class Iterix extends AbstractAttackAlgorithm {
 
     /**Remove duplicated villages from source list and return amount of each village*/
     private Integer[] resolveDuplicates(List<Village> pVillages) {
-        List<Village> processed = new LinkedList<Village>();
-        List<Integer> amounts = new LinkedList<Integer>();
+        List<Village> processed = new LinkedList<>();
+        List<Integer> amounts = new LinkedList<>();
         for (Village v : pVillages) {
             if (!processed.contains(v)) {
                 //add new village
@@ -531,9 +531,9 @@ public class Iterix extends AbstractAttackAlgorithm {
     /**Count all elements inside one array*/
     private int countResults(double[][] pResult) {
         int count = 0;
-        for (int i = 0; i < pResult.length; i++) {
+        for (double[] aPResult : pResult) {
             for (int j = 0; j < pResult[0].length; j++) {
-                count += pResult[i][j];
+                count += aPResult[j];
             }
         }
         return count;
@@ -542,9 +542,9 @@ public class Iterix extends AbstractAttackAlgorithm {
     /**Count all elements inside one array*/
     private int countMappings(double[][] pMappings) {
         int count = 0;
-        for (int i = 0; i < pMappings.length; i++) {
+        for (double[] pMapping : pMappings) {
             for (int j = 0; j < pMappings[0].length; j++) {
-                count += (pMappings[i][j] != 0) ? 1 : 0;
+                count += (pMapping[j] != 0) ? 1 : 0;
             }
         }
         return count;
@@ -576,9 +576,9 @@ public class Iterix extends AbstractAttackAlgorithm {
         for (int j = 0; j < pMappings[0].length; j++) {
             //target cols
             int amount = 0;
-            for (int i = 0; i < pMappings.length; i++) {
+            for (double[] pMapping : pMappings) {
                 //source rows
-                amount += pMappings[i][j];
+                amount += pMapping[j];
             }
             targetMappings[j] = amount;
         }

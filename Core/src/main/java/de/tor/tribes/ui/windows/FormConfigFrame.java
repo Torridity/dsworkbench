@@ -29,8 +29,8 @@ import de.tor.tribes.util.map.FormManager;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.JFrame;
-import javax.swing.UIManager;
+import javax.swing.*;
+
 import net.java.dev.colorchooser.ColorChooser;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
@@ -674,7 +674,7 @@ public class FormConfigFrame extends javax.swing.JFrame {
 
         //set form values
         mSamplePanel.setText(mCurrentForm.getFormName());
-        mSamplePanel.setTextSize((int) mCurrentForm.getTextSize());
+        mSamplePanel.setTextSize(mCurrentForm.getTextSize());
         mSamplePanel.setTextColor(mCurrentForm.getTextColor());
         mSamplePanel.setTextTransparency(Math.abs(mCurrentForm.getTextAlpha()));
         jFormName.setText(mCurrentForm.getFormName());
@@ -862,18 +862,18 @@ public class FormConfigFrame extends javax.swing.JFrame {
             mCurrentForm.setFormName(jFormName.getText());
 
             if (mCurrentForm instanceof Text) {
-                ((Text) mCurrentForm).setTextColor(mTextColorChooser.getColor());
-                ((Text) mCurrentForm).setTextSize((Integer) jTextHeight.getValue());
-                ((Text) mCurrentForm).setTextAlpha((Float) jTextTransparency.getValue());
+                mCurrentForm.setTextColor(mTextColorChooser.getColor());
+                mCurrentForm.setTextSize((Integer) jTextHeight.getValue());
+                mCurrentForm.setTextAlpha((Float) jTextTransparency.getValue());
                 //sample panel settings
                 mSamplePanel.setType(3);
             } else if (mCurrentForm instanceof Rectangle) {
                 ((Rectangle) mCurrentForm).setStrokeWidth((Float) jStrokeWidth.getValue());
                 ((Rectangle) mCurrentForm).setDrawColor(mDrawColorChooser.getColor());
-                ((Rectangle) mCurrentForm).setTextColor(mTextColorChooser.getColor());
-                ((Rectangle) mCurrentForm).setTextSize((Integer) jTextHeight.getValue());
+                mCurrentForm.setTextColor(mTextColorChooser.getColor());
+                mCurrentForm.setTextSize((Integer) jTextHeight.getValue());
                 ((Rectangle) mCurrentForm).setDrawAlpha((Float) jDrawTransparency.getValue());
-                ((Rectangle) mCurrentForm).setTextAlpha((Float) jTextTransparency.getValue());
+                mCurrentForm.setTextAlpha((Float) jTextTransparency.getValue());
                 ((Rectangle) mCurrentForm).setDrawName(jDrawName.isSelected());
                 ((Rectangle) mCurrentForm).setFilled(jFillForm.isSelected());
                 ((Rectangle) mCurrentForm).setRounding((Integer) jRoundBorders.getValue());
@@ -887,10 +887,10 @@ public class FormConfigFrame extends javax.swing.JFrame {
             } else if (mCurrentForm instanceof Circle) {
                 ((Circle) mCurrentForm).setStrokeWidth((Float) jStrokeWidth.getValue());
                 ((Circle) mCurrentForm).setDrawColor(mDrawColorChooser.getColor());
-                ((Circle) mCurrentForm).setTextColor(mTextColorChooser.getColor());
-                ((Circle) mCurrentForm).setTextSize((Integer) jTextHeight.getValue());
+                mCurrentForm.setTextColor(mTextColorChooser.getColor());
+                mCurrentForm.setTextSize((Integer) jTextHeight.getValue());
                 ((Circle) mCurrentForm).setDrawAlpha((Float) jDrawTransparency.getValue());
-                ((Circle) mCurrentForm).setTextAlpha((Float) jTextTransparency.getValue());
+                mCurrentForm.setTextAlpha((Float) jTextTransparency.getValue());
                 ((Circle) mCurrentForm).setDrawName(jDrawName.isSelected());
                 ((Circle) mCurrentForm).setFilled(jFillForm.isSelected());
                 //sample panel settings
@@ -902,10 +902,10 @@ public class FormConfigFrame extends javax.swing.JFrame {
             } else if (mCurrentForm instanceof Arrow) {
                 ((Arrow) mCurrentForm).setStrokeWidth((Float) jStrokeWidth.getValue());
                 ((Arrow) mCurrentForm).setDrawColor(mDrawColorChooser.getColor());
-                ((Arrow) mCurrentForm).setTextSize((Integer) jTextHeight.getValue());
-                ((Arrow) mCurrentForm).setTextColor(mTextColorChooser.getColor());
+                mCurrentForm.setTextSize((Integer) jTextHeight.getValue());
+                mCurrentForm.setTextColor(mTextColorChooser.getColor());
                 ((Arrow) mCurrentForm).setDrawAlpha((Float) jDrawTransparency.getValue());
-                ((Arrow) mCurrentForm).setTextAlpha((Float) jTextTransparency.getValue());
+                mCurrentForm.setTextAlpha((Float) jTextTransparency.getValue());
                 ((Arrow) mCurrentForm).setDrawName(jDrawName.isSelected());
                 ((Arrow) mCurrentForm).setFilled(jFillForm.isSelected());
                 //sample panel settings
@@ -917,10 +917,10 @@ public class FormConfigFrame extends javax.swing.JFrame {
             } else if (mCurrentForm instanceof Line) {
                 ((Line) mCurrentForm).setStrokeWidth((Float) jStrokeWidth.getValue());
                 ((Line) mCurrentForm).setDrawColor(mDrawColorChooser.getColor());
-                ((Line) mCurrentForm).setTextSize((Integer) jTextHeight.getValue());
-                ((Line) mCurrentForm).setTextColor(mTextColorChooser.getColor());
+                mCurrentForm.setTextSize((Integer) jTextHeight.getValue());
+                mCurrentForm.setTextColor(mTextColorChooser.getColor());
                 ((Line) mCurrentForm).setDrawAlpha((Float) jDrawTransparency.getValue());
-                ((Line) mCurrentForm).setTextAlpha((Float) jTextTransparency.getValue());
+                mCurrentForm.setTextAlpha((Float) jTextTransparency.getValue());
                 ((Line) mCurrentForm).setStartArrow(jDrawStartArrow.isSelected());
                 ((Line) mCurrentForm).setEndArrow(jDrawEndArrow.isSelected());
                 ((Line) mCurrentForm).setDrawName(jDrawName.isSelected());
@@ -934,10 +934,10 @@ public class FormConfigFrame extends javax.swing.JFrame {
             } else if (mCurrentForm instanceof FreeForm) {
                 ((FreeForm) mCurrentForm).setStrokeWidth((Float) jStrokeWidth.getValue());
                 ((FreeForm) mCurrentForm).setDrawColor(mDrawColorChooser.getColor());
-                ((FreeForm) mCurrentForm).setTextColor(mTextColorChooser.getColor());
-                ((FreeForm) mCurrentForm).setTextSize((Integer) jTextHeight.getValue());
+                mCurrentForm.setTextColor(mTextColorChooser.getColor());
+                mCurrentForm.setTextSize((Integer) jTextHeight.getValue());
                 ((FreeForm) mCurrentForm).setDrawAlpha((Float) jDrawTransparency.getValue());
-                ((FreeForm) mCurrentForm).setTextAlpha((Float) jTextTransparency.getValue());
+                mCurrentForm.setTextAlpha((Float) jTextTransparency.getValue());
                 ((FreeForm) mCurrentForm).setDrawName(jDrawName.isSelected());
                 ((FreeForm) mCurrentForm).setFilled(jFillForm.isSelected());
                 ((FreeForm) mCurrentForm).setTolerance((Float) jToleranceSpinner.getValue());
@@ -971,11 +971,11 @@ public class FormConfigFrame extends javax.swing.JFrame {
         try {
             //  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
         FormConfigFrame.getSingleton().setSize(800, 600);
-        FormConfigFrame.getSingleton().setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        FormConfigFrame.getSingleton().setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         FormConfigFrame.getSingleton().setupAndShowInEditMode(new Circle());
 
 

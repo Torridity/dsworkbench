@@ -21,5 +21,5 @@ package de.tor.tribes.util.algo;
  */
 public interface AlgorithmListener {
 
-    public void fireCalculationFinishedEvent(AbstractAttackAlgorithm pParent);
+    void fireCalculationFinishedEvent(AbstractAttackAlgorithm pParent);
 }

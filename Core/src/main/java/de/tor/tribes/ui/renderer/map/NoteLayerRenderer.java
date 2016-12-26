@@ -111,13 +111,12 @@ public class NoteLayerRenderer extends AbstractBufferedLayerRenderer {
                 cnt++;
                 Village v = pSettings.getVisibleVillage(x, y);
                 int row = y - firstRow;
-                int col = x;
                 if (v != null && currentMouseVillage != null && v.equals(currentMouseVillage)) {
                     lastVillageToDraw = currentMouseVillage;
                     lastVillageRow = row;
-                    lastVillageCol = col;
+                    lastVillageCol = x;
                 } else {
-                    renderNoteField(v, noteMap, row, col, pSettings.getFieldWidth(), pSettings.getFieldHeight(), pCopyPosition, g2d);
+                    renderNoteField(v, noteMap, row, x, pSettings.getFieldWidth(), pSettings.getFieldHeight(), pCopyPosition, g2d);
                 }
             }
         }

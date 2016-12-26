@@ -56,7 +56,7 @@ public class SupportDirectionRenderer extends DefaultTableRenderer {
                     label.setToolTipText("Ausgehend");
                     break;
             }
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         return label;
     }

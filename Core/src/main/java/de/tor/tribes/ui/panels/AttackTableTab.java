@@ -15,7 +15,6 @@
  */
 package de.tor.tribes.ui.panels;
 
-import de.tor.tribes.ui.views.DSWorkbenchAttackFrame;
 import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
@@ -26,6 +25,7 @@ import de.tor.tribes.ui.ImageManager;
 import de.tor.tribes.ui.editors.*;
 import de.tor.tribes.ui.models.AttackTableModel;
 import de.tor.tribes.ui.renderer.*;
+import de.tor.tribes.ui.views.DSWorkbenchAttackFrame;
 import de.tor.tribes.ui.views.DSWorkbenchSelectionFrame;
 import de.tor.tribes.ui.windows.AttacksToTextExportDialog;
 import de.tor.tribes.ui.windows.ClockFrame;
@@ -37,10 +37,20 @@ import de.tor.tribes.util.attack.StandardAttackManager;
 import de.tor.tribes.util.bb.AttackListFormatter;
 import de.tor.tribes.util.html.AttackPlanHTMLExporter;
 import de.tor.tribes.util.js.AttackScriptWriter;
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.HeadlessException;
-import java.awt.Toolkit;
+import org.apache.log4j.Logger;
+import org.jdesktop.swingx.JXTable;
+import org.jdesktop.swingx.decorator.*;
+import org.jdesktop.swingx.painter.AbstractLayoutPainter.HorizontalAlignment;
+import org.jdesktop.swingx.painter.AbstractLayoutPainter.VerticalAlignment;
+import org.jdesktop.swingx.painter.ImagePainter;
+import org.jdesktop.swingx.painter.MattePainter;
+import org.jdesktop.swingx.table.TableColumnExt;
+
+import javax.swing.*;
+import javax.swing.event.*;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableModel;
+import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.UnsupportedFlavorException;
@@ -53,40 +63,9 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.LinkedList;
+import java.util.*;
 import java.util.List;
-import java.util.StringTokenizer;
 import java.util.regex.Matcher;
-import javax.swing.AbstractAction;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JComponent;
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-import javax.swing.KeyStroke;
-import javax.swing.RowFilter;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.event.RowSorterEvent;
-import javax.swing.event.RowSorterListener;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableModel;
-import org.apache.log4j.Logger;
-import org.jdesktop.swingx.JXTable;
-import org.jdesktop.swingx.decorator.CompoundHighlighter;
-import org.jdesktop.swingx.decorator.HighlightPredicate;
-import org.jdesktop.swingx.decorator.Highlighter;
-import org.jdesktop.swingx.decorator.HighlighterFactory;
-import org.jdesktop.swingx.decorator.PainterHighlighter;
-import org.jdesktop.swingx.decorator.PatternPredicate;
-import org.jdesktop.swingx.painter.AbstractLayoutPainter.HorizontalAlignment;
-import org.jdesktop.swingx.painter.AbstractLayoutPainter.VerticalAlignment;
-import org.jdesktop.swingx.painter.ImagePainter;
-import org.jdesktop.swingx.painter.MattePainter;
-import org.jdesktop.swingx.table.TableColumnExt;
 
 /**
  *
@@ -96,7 +75,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
 
     private static Logger logger = Logger.getLogger("AttackTableTab");
 
-    public static enum TRANSFER_TYPE {
+    public enum TRANSFER_TYPE {
 
         CLIPBOARD_PLAIN, CLIPBOARD_BB, FILE_HTML, FILE_TEXT, FILE_GM, BROWSER_IGM, DSWB_RETIME, SELECTION_TOOL, BROWSER_LINK, CUT_TO_INTERNAL_CLIPBOARD, COPY_TO_INTERNAL_CLIPBOARD, FROM_INTERNAL_CLIPBOARD
     }
@@ -106,7 +85,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
     private static boolean KEY_LISTENER_ADDED = false;
     private static PainterHighlighter highlighter = null;
     private ActionListener actionListener = null;
-    private static List<Highlighter> highlighters = new ArrayList<Highlighter>();
+    private static List<Highlighter> highlighters = new ArrayList<>();
     private static boolean useSortColoring = false;
 
     static {
@@ -151,7 +130,6 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
     /**
      * Creates new form AttackTablePanel
      *
-     * @param pParent
      * @param pAttackPlan
      * @param pActionListener
      */
@@ -341,7 +319,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
 
     public void updateSortHighlighter() {
         if (useSortColoring) {
-            TableHelper.applyTableColoring(jxAttackTable, getAttackPlan(), highlighters);
+            TableHelper.applyTableColoring(jxAttackTable, sAttackPlan, highlighters);
         }
     }
 
@@ -351,7 +329,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         }
         if (!pFilterRows) {
             jxAttackTable.setRowFilter(null);
-            final List<Integer> relevantCols = new LinkedList<Integer>();
+            final List<Integer> relevantCols = new LinkedList<>();
             List<TableColumn> cols = jxAttackTable.getColumns(true);
             for (int i = 0; i < jxAttackTable.getColumnCount(); i++) {
                 TableColumnExt col = jxAttackTable.getColumnExt(i);
@@ -369,7 +347,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
             jxAttackTable.setRowFilter(new RowFilter<TableModel, Integer>() {
                 @Override
                 public boolean include(Entry<? extends TableModel, ? extends Integer> entry) {
-                    final List<Integer> relevantCols = new LinkedList<Integer>();
+                    final List<Integer> relevantCols = new LinkedList<>();
                     List<TableColumn> cols = jxAttackTable.getColumns(true);
                     for (int i = 0; i < jxAttackTable.getColumnCount(); i++) {
                         TableColumnExt col = jxAttackTable.getColumnExt(i);
@@ -380,11 +358,11 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
 
                     for (Integer col : relevantCols) {
                         if (pCaseSensitive) {
-                            if (entry.getStringValue(col).indexOf(pValue) > -1) {
+                            if (entry.getStringValue(col).contains(pValue)) {
                                 return true;
                             }
                         } else {
-                            if (entry.getStringValue(col).toLowerCase().indexOf(pValue.toLowerCase()) > -1) {
+                            if (entry.getStringValue(col).toLowerCase().contains(pValue.toLowerCase())) {
                                 return true;
                             }
                         }
@@ -1296,12 +1274,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
 
                     c.setTimeInMillis(arrive);
                     int hours = c.get(Calendar.HOUR_OF_DAY);
-                    if (hours >= 0 && hours < 8 && jNotRandomToNightBonus.isSelected()) {
-                        //only invalid if in night bonus and this is not allowed
-                        valid = false;
-                    } else {
-                        valid = true;
-                    }
+                    valid = !(hours >= 0 && hours < 8 && jNotRandomToNightBonus.isSelected());
                 }
                 attack.setArriveTime(c.getTime());
             }
@@ -1378,8 +1351,8 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
     }
 
     public void cleanup() {
-        List<ManageableType> elements = AttackManager.getSingleton().getAllElements(getAttackPlan());
-        List<Attack> toRemove = new LinkedList<Attack>();
+        List<ManageableType> elements = AttackManager.getSingleton().getAllElements(sAttackPlan);
+        List<Attack> toRemove = new LinkedList<>();
         for (ManageableType t : elements) {
             Attack a = (Attack) t;
             long sendTime = a.getArriveTime().getTime() - ((long) DSCalculator.calculateMoveTimeInSeconds(a.getSource(), a.getTarget(), a.getUnit().getSpeed()) * 1000);
@@ -1398,7 +1371,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
 
         logger.debug("Cleaning up " + toRemove.size() + " attacks");
 
-        AttackManager.getSingleton().removeElements(getAttackPlan(), toRemove);
+        AttackManager.getSingleton().removeElements(sAttackPlan, toRemove);
         attackModel.fireTableDataChanged();
         showSuccess(toRemove.size() + " Befehl(e) entfernt");
     }
@@ -1414,7 +1387,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         }
 
         jxAttackTable.editingCanceled(new ChangeEvent(this));
-        AttackManager.getSingleton().removeElements(getAttackPlan(), selectedAttacks);
+        AttackManager.getSingleton().removeElements(sAttackPlan, selectedAttacks);
         attackModel.fireTableDataChanged();
         showSuccess(selectedAttacks.size() + " Befehl(e) gelöscht");
         return true;
@@ -1483,7 +1456,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
             showInfo("Keine Befehle gewählt");
             return;
         }
-        List<Village> villages = new ArrayList<Village>();
+        List<Village> villages = new ArrayList<>();
         int result = JOptionPaneHelper.showQuestionThreeChoicesBox(this, "Herkunft oder Zieldörfer übertragen?", "Übertragen", "Herkunft", "Ziele", "Abbrechen");
         if (result == JOptionPane.YES_OPTION) {
             //target   
@@ -1634,7 +1607,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         if (dir == null) {
             dir = ".";
         }
-        String selectedPlan = getAttackPlan();
+        String selectedPlan = sAttackPlan;
         JFileChooser chooser = null;
         try {
             chooser = new JFileChooser(dir);
@@ -1648,10 +1621,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         chooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
             @Override
             public boolean accept(File f) {
-                if ((f != null) && (f.isDirectory() || f.getName().endsWith(".html"))) {
-                    return true;
-                }
-                return false;
+                return (f != null) && (f.isDirectory() || f.getName().endsWith(".html"));
             }
 
             @Override
@@ -1828,16 +1798,13 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
             for (String line : lines) {
                 Attack a = Attack.fromInternalRepresentation(line);
                 if (a != null) {
-                    AttackManager.getSingleton().addManagedElement(getAttackPlan(), a);
+                    AttackManager.getSingleton().addManagedElement(sAttackPlan, a);
                     cnt++;
                 }
             }
             showSuccess(cnt + ((cnt == 1) ? " Befehl eingefügt" : " Befehle eingefügt"));
-        } catch (UnsupportedFlavorException ufe) {
+        } catch (UnsupportedFlavorException | IOException ufe) {
             logger.error("Failed to copy attacks from internal clipboard", ufe);
-            showError("Fehler beim Einfügen der Befehle");
-        } catch (IOException ioe) {
-            logger.error("Failed to copy attacks from internal clipboard", ioe);
             showError("Fehler beim Einfügen der Befehle");
         }
         attackModel.fireTableDataChanged();
@@ -1849,7 +1816,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
             return;
         }
 
-        jSubject.setText("Deine Befehle (Plan: " + getAttackPlan() + ")");
+        jSubject.setText("Deine Befehle (Plan: " + sAttackPlan + ")");
         jSendAttacksIGMDialog.pack();
         jSendAttacksIGMDialog.setLocationRelativeTo(this);
         jSendAttacksIGMDialog.setVisible(true);
@@ -1883,13 +1850,13 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
     }
 
     private List<Attack> getSelectedAttacks() {
-        final List<Attack> selectedAttacks = new LinkedList<Attack>();
+        final List<Attack> selectedAttacks = new LinkedList<>();
         int[] selectedRows = jxAttackTable.getSelectedRows();
         if (selectedRows != null && selectedRows.length < 1) {
             return selectedAttacks;
         }
         for (Integer selectedRow : selectedRows) {
-            Attack a = (Attack) AttackManager.getSingleton().getAllElements(getAttackPlan()).get(jxAttackTable.convertRowIndexToModel(selectedRow));
+            Attack a = (Attack) AttackManager.getSingleton().getAllElements(sAttackPlan).get(jxAttackTable.convertRowIndexToModel(selectedRow));
             if (a != null) {
                 selectedAttacks.add(a);
             }

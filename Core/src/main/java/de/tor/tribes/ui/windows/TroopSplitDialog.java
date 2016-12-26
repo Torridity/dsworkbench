@@ -27,26 +27,16 @@ import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.ProfileManager;
 import de.tor.tribes.util.SplitSetHelper;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import org.apache.log4j.ConsoleAppender;
+import org.apache.log4j.Logger;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
-import javax.swing.BorderFactory;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.DefaultListModel;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JOptionPane;
-import javax.swing.KeyStroke;
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.Logger;
 
 /**
  * @author Torridity
@@ -55,9 +45,9 @@ public class TroopSplitDialog extends javax.swing.JDialog {
 
     private static Logger logger = Logger.getLogger("TroopSplitDialog");
     private boolean isInitialized = false;
-    private Hashtable<UnitHolder, Integer> mSplitAmounts = new Hashtable<UnitHolder, Integer>();
-    private List<TroopSplit> mSplits = new LinkedList<TroopSplit>();
-    private Hashtable<String, Hashtable<UnitHolder, Integer>> splitSets = new Hashtable<String, Hashtable<UnitHolder, Integer>>();
+    private Hashtable<UnitHolder, Integer> mSplitAmounts = new Hashtable<>();
+    private List<TroopSplit> mSplits = new LinkedList<>();
+    private Hashtable<String, Hashtable<UnitHolder, Integer>> splitSets = new Hashtable<>();
 
     /**
      * Creates new form TroopSplitDialog
@@ -553,8 +543,8 @@ public class TroopSplitDialog extends javax.swing.JDialog {
     }
 
     private void removeSplitEnty() {
-        Object[] selection = jTroopsPerSplitList.getSelectedValues();
-        List<UnitHolder> units = new LinkedList<UnitHolder>();
+        List selection = jTroopsPerSplitList.getSelectedValuesList();
+        List<UnitHolder> units = new LinkedList<>();
         for (Object o : selection) {
             String unit = ((String) o).split(" ")[1].trim();
             UnitHolder u = DataHolder.getSingleton().getUnitByPlainName(unit);

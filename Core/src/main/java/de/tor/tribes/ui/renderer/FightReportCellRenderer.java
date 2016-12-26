@@ -42,7 +42,7 @@ public class FightReportCellRenderer extends DefaultTableRenderer {
             YELLOW_ICON = new ImageIcon(this.getClass().getResource("/res/ui/bullet_ball_yellow.png"));
             RED_ICON = new ImageIcon(this.getClass().getResource("/res/ui/bullet_ball_red.png"));
             GREY_ICON = new ImageIcon(this.getClass().getResource("/res/ui/bullet_ball_grey.png"));
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
     }
 
@@ -66,7 +66,7 @@ public class FightReportCellRenderer extends DefaultTableRenderer {
                 label.setIcon(YELLOW_ICON);
             }
            // label.setToolTipText(FightReportHTMLToolTipGenerator.buildToolTip(rep));
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         return label;
     }

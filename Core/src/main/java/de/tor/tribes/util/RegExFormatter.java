@@ -41,7 +41,7 @@ public class RegExFormatter extends DefaultFormatter {
      */
     public RegExFormatter(String pattern) throws PatternSyntaxException {
         this();
-        setPattern(Pattern.compile(pattern));
+        this.pattern = Pattern.compile(pattern);
     }
 
     /**
@@ -51,7 +51,7 @@ public class RegExFormatter extends DefaultFormatter {
      */
     public RegExFormatter(Pattern pattern) {
         this();
-        setPattern(pattern);
+        this.pattern = pattern;
     }
 
     /**
@@ -97,13 +97,13 @@ public class RegExFormatter extends DefaultFormatter {
      * @return Object representation of text
      */
     public Object stringToValue(String text) throws ParseException {
-        Pattern pattern = getPattern();
+        Pattern pattern = this.pattern;
 
         if (pattern != null) {
             Matcher matcher = pattern.matcher(text);
 
             if (matcher.matches()) {
-                setMatcher(matcher);
+                this.matcher = matcher;
                 return super.stringToValue(text);
             }
             throw new ParseException("Pattern did not match", 0);

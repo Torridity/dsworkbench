@@ -160,7 +160,7 @@ public class SupportRefillSettingsPanel extends WizardPage implements ActionList
         for (REFTargetElement defense : selection) {
             Village target = defense.getVillage();
             int needed = defense.getNeededSupports();
-            Hashtable<UnitHolder, Integer> need = new Hashtable<UnitHolder, Integer>();
+            Hashtable<UnitHolder, Integer> need = new Hashtable<>();
             Set<Map.Entry<UnitHolder, Integer>> entries = split.entrySet();
             for (Map.Entry<UnitHolder, Integer> entry : entries) {
                 need.put(entry.getKey(), needed * entry.getValue());
@@ -579,7 +579,7 @@ public class SupportRefillSettingsPanel extends WizardPage implements ActionList
     }
 
     public REFTargetElement[] getAllElements() {
-        List<REFTargetElement> result = new LinkedList<REFTargetElement>();
+        List<REFTargetElement> result = new LinkedList<>();
         REFSettingsTableModel model = getModel();
         for (int i = 0; i < model.getRowCount(); i++) {
             result.add(model.getRow(jVillageTable.convertRowIndexToModel(i)));
@@ -588,7 +588,7 @@ public class SupportRefillSettingsPanel extends WizardPage implements ActionList
     }
 
     public REFTargetElement[] getSelectedElements() {
-        List<REFTargetElement> result = new LinkedList<REFTargetElement>();
+        List<REFTargetElement> result = new LinkedList<>();
         REFSettingsTableModel model = getModel();
 
         for (int i : jVillageTable.getSelectedRows()) {

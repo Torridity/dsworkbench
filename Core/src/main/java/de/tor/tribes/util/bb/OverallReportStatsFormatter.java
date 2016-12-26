@@ -16,6 +16,8 @@
 package de.tor.tribes.util.bb;
 
 import de.tor.tribes.types.OverallStatResult;
+
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import org.apache.commons.lang.StringUtils;
@@ -27,13 +29,13 @@ import org.apache.commons.lang.StringUtils;
 public class OverallReportStatsFormatter extends BasicFormatter<OverallStatResult> {
 
     private final String STANDARD_TEMPLATE = new OverallStatResult().getStandardTemplate();
-    private final String TEMPLATE_PROPERTY = "overall.report.stats.bbexport.template";
+    private static final String TEMPLATE_PROPERTY = "overall.report.stats.bbexport.template";
 
     @Override
     public String formatElements(List<OverallStatResult> pElements, boolean pExtended) {
         OverallStatResult res = pElements.get(0);
         String[] replacements = res.getReplacements(pExtended);
-        String template = getStandardTemplate();
+        String template = STANDARD_TEMPLATE;
         template = StringUtils.replaceEach(template, res.getBBVariables(), replacements);
         return template;
     }
@@ -50,10 +52,8 @@ public class OverallReportStatsFormatter extends BasicFormatter<OverallStatResul
 
     @Override
     public String[] getTemplateVariables() {
-        List<String> vars = new LinkedList<String>();
-        for (String var : new OverallStatResult().getBBVariables()) {
-            vars.add(var);
-        }
+        List<String> vars = new LinkedList<>();
+        Collections.addAll(vars, new OverallStatResult().getBBVariables());
         return vars.toArray(new String[vars.size()]);
     }
 }

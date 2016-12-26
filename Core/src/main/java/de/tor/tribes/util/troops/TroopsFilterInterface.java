@@ -23,7 +23,7 @@ import de.tor.tribes.types.ext.Village;
  */
 public interface TroopsFilterInterface {
 
-    public void setup(Object pFilterComponent);
+    void setup(Object pFilterComponent);
 
-    public boolean isValid(Village pVillage);
+    boolean isValid(Village pVillage);
 }

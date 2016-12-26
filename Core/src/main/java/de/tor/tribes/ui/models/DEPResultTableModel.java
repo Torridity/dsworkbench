@@ -34,7 +34,7 @@ public class DEPResultTableModel extends AbstractTableModel {
     private Class[] types = new Class[]{
         Village.class, String.class, DEFENSE_STATUS.class
     };
-    private final List<DefenseInformation> elements = new LinkedList<DefenseInformation>();
+    private final List<DefenseInformation> elements = new LinkedList<>();
 
     public DEPResultTableModel() {
         super();

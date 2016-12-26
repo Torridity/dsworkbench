@@ -34,7 +34,7 @@ public class TAPResultTableModel extends AbstractTableModel {
     private Class[] types = new Class[]{
         Village.class, UnitHolder.class, String.class
     };
-    private final List<AbstractTroopMovement> elements = new LinkedList<AbstractTroopMovement>();
+    private final List<AbstractTroopMovement> elements = new LinkedList<>();
 
     public TAPResultTableModel() {
         super();

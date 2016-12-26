@@ -16,21 +16,12 @@
 package de.tor.tribes.util;
 
 import de.tor.tribes.io.DataHolder;
-import de.tor.tribes.types.ext.Ally;
-import de.tor.tribes.types.ext.Barbarians;
-import de.tor.tribes.types.ext.NoAlly;
-import de.tor.tribes.types.ext.Tribe;
-import de.tor.tribes.types.ext.Village;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Enumeration;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Set;
+import de.tor.tribes.types.ext.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
+
+import java.util.*;
+import java.util.Map.Entry;
 
 /**
  *
@@ -44,7 +35,7 @@ public class AllyUtils {
         }
         final String filter = pFilter.toLowerCase();
 
-        List<Ally> allies = new LinkedList<Ally>();
+        List<Ally> allies = new LinkedList<>();
         CollectionUtils.addAll(allies, DataHolder.getSingleton().getAllies().elements());
 
         if (filter.length() > 0) {
@@ -52,7 +43,7 @@ public class AllyUtils {
 
                 @Override
                 public boolean evaluate(Object o) {
-                    return pFilter.length() == 0 || ((Ally) o).getName().toLowerCase().indexOf(filter) >= 0 || ((Ally) o).getTag().toLowerCase().indexOf(filter) >= 0;
+                    return pFilter.length() == 0 || ((Ally) o).getName().toLowerCase().contains(filter) || ((Ally) o).getTag().toLowerCase().contains(filter);
                 }
             });
         }
@@ -61,19 +52,18 @@ public class AllyUtils {
             Collections.sort(allies, pComparator);
         }
         allies.add(0, NoAlly.getSingleton());
-        Ally[] result = allies.toArray(new Ally[allies.size()]);
         //result = (Ally[]) ArrayUtils.add(result, 0, NoAlly.getSingleton());
-        return result;
+        return allies.toArray(new Ally[allies.size()]);
     }
 
     public static Ally[] filterAllies(Ally[] pAllies, String pFilter, Comparator<Ally> pComparator) {
-        List<Ally> result = new LinkedList<Ally>();
+        List<Ally> result = new LinkedList<>();
         if (pFilter == null || pFilter.length() == 0) {
             Collections.addAll(result, pAllies);
         } else {
             String filter = pFilter.toLowerCase();
             for (Ally a : pAllies) {
-                if (a.getName().toLowerCase().indexOf(filter) >= 0 || a.getTag().toLowerCase().indexOf(filter) >= 0) {
+                if (a.getName().toLowerCase().contains(filter) || a.getTag().toLowerCase().contains(filter)) {
                     result.add(a);
                 }
             }
@@ -91,7 +81,7 @@ public class AllyUtils {
         if (pAlly == null) {
             return new Tribe[0];
         } else if (pAlly.equals(NoAlly.getSingleton())) {
-            List<Tribe> tribes = new LinkedList<Tribe>();
+            List<Tribe> tribes = new LinkedList<>();
             Enumeration<Tribe> keys = DataHolder.getSingleton().getTribes().elements();
             while (keys.hasMoreElements()) {
                 tribes.add(keys.nextElement());
@@ -121,7 +111,7 @@ public class AllyUtils {
     }
 
     public static Ally[] getAlliesByVillage(Village[] pVillages, boolean pIncludeBarbarians, Comparator<Ally> pComparator) {
-        List<Ally> allies = new LinkedList<Ally>();
+        List<Ally> allies = new LinkedList<>();
         if (pVillages == null || pVillages.length == 0) {
             Set<Entry<Integer, Ally>> entries = DataHolder.getSingleton().getAllies().entrySet();
             for (Entry<Integer, Ally> entry : entries) {

@@ -20,10 +20,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import javax.swing.JFrame;
-import javax.swing.JList;
-import javax.swing.JScrollPane;
-import javax.swing.ListCellRenderer;
+import javax.swing.*;
 
 /**
  *
@@ -95,7 +92,7 @@ public class GroupListCellRenderer extends javax.swing.JPanel implements ListCel
 
     public void view() {
         JFrame f = new JFrame();
-        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         JScrollPane p = new JScrollPane();
         p.setViewportView(new GroupSelectionList(""));
         f.getContentPane().add(p);

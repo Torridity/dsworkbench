@@ -43,8 +43,8 @@ public class Marker extends ManageableType implements BBSupport {
     public String[] getReplacements(boolean pExtended) {
         String nameVal = null;
         String bbCodeVal = null;
-        if (getMarkerType() == Marker.ALLY_MARKER_TYPE) {
-            Ally a = DataHolder.getSingleton().getAllies().get(getMarkerID());
+        if (markerType == Marker.ALLY_MARKER_TYPE) {
+            Ally a = DataHolder.getSingleton().getAllies().get(markerID);
             if (a != null) {
                 bbCodeVal = a.toBBCode();
                 nameVal = a.getName();
@@ -53,7 +53,7 @@ public class Marker extends ManageableType implements BBSupport {
                 nameVal = "Ungültiger Stamm";
             }
         } else {
-            Tribe t = DataHolder.getSingleton().getTribes().get(getMarkerID());
+            Tribe t = DataHolder.getSingleton().getTribes().get(markerID);
             if (t != null) {
                 bbCodeVal = t.toBBCode();
                 nameVal = t.getName();
@@ -62,7 +62,7 @@ public class Marker extends ManageableType implements BBSupport {
                 bbCodeVal = "Ungültiger Spieler";
             }
         }
-        String colorVal = Integer.toHexString(getMarkerColor().getRGB());
+        String colorVal = Integer.toHexString(markerColor.getRGB());
         colorVal = "#" + colorVal.substring(2, colorVal.length());
 
         return new String[]{nameVal, bbCodeVal, colorVal};
@@ -133,8 +133,6 @@ public class Marker extends ManageableType implements BBSupport {
             m.setMarkerType(Integer.parseInt(split[1]));
             m.setMarkerColor(new Color(Integer.parseInt(split[2]), Integer.parseInt(split[3]), Integer.parseInt(split[4])));
             m.setShownOnMap(Boolean.parseBoolean(split[5]));
-        } catch (NumberFormatException nfe) {
-            m = null;
         } catch (IllegalArgumentException iae) {
             m = null;
         }
@@ -146,14 +144,14 @@ public class Marker extends ManageableType implements BBSupport {
         try {
             StringBuilder b = new StringBuilder();
             b.append("<marker>\n");
-            b.append("<type>").append(getMarkerType()).append("</type>\n");
-            b.append("<id>").append(getMarkerID()).append("</id>\n");
-            int red = getMarkerColor().getRed();
-            int green = getMarkerColor().getGreen();
-            int blue = getMarkerColor().getBlue();
-            int alpha = getMarkerColor().getAlpha();
+            b.append("<type>").append(markerType).append("</type>\n");
+            b.append("<id>").append(markerID).append("</id>\n");
+            int red = markerColor.getRed();
+            int green = markerColor.getGreen();
+            int blue = markerColor.getBlue();
+            int alpha = markerColor.getAlpha();
             b.append("<color r=\"").append(red).append("\" g=\"").append(green).append("\" b=\"").append(blue).append("\" a=\"").append(alpha).append("\"/>\n");
-            b.append("<shownOnMap>").append(isShownOnMap()).append("</shownOnMap>\n");
+            b.append("<shownOnMap>").append(shownOnMap).append("</shownOnMap>\n");
             b.append("</marker>");
             return b.toString();
         } catch (Exception e) {
@@ -184,7 +182,7 @@ public class Marker extends ManageableType implements BBSupport {
         } catch (Exception e) {
             //try to read old marker version with plain text value
             String value = pElement.getChild("value").getText();
-            if (getMarkerType() == Marker.TRIBE_MARKER_TYPE) {
+            if (markerType == Marker.TRIBE_MARKER_TYPE) {
                 setMarkerID(DataHolder.getSingleton().getTribeByName(value).getId());
             } else {
                 setMarkerID(DataHolder.getSingleton().getAllyByName(value).getId());
@@ -196,17 +194,17 @@ public class Marker extends ManageableType implements BBSupport {
             int green = e.getAttribute("g").getIntValue();
             int blue = e.getAttribute("b").getIntValue();
             int alpha = e.getAttribute("a").getIntValue();
-            setMarkerColor(new Color(red, green, blue, alpha));
+            this.markerColor = new Color(red, green, blue, alpha);
         } catch (Exception e) {
             //try to read old color value
-            setMarkerColor(Color.decode(pElement.getChild("color").getText()));
+            this.markerColor = Color.decode(pElement.getChild("color").getText());
         }
         try {
             String value = pElement.getChild("shownOnMap").getText();
-            setShownOnMap(Boolean.parseBoolean(value));
+            this.shownOnMap = Boolean.parseBoolean(value);
         } catch (Exception e) {
             //try to read old format
-            setShownOnMap(true);
+            this.shownOnMap = true;
         }
     }
 

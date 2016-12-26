@@ -44,7 +44,7 @@ public class NoTag extends Tag {
 
     @Override
     public List<Integer> getVillageIDs() {
-        List<Integer> ids = new LinkedList<Integer>();
+        List<Integer> ids = new LinkedList<>();
         Tribe user = GlobalOptions.getSelectedProfile().getTribe();
         if (user != null) {
             for (Village v : user.getVillageList()) {

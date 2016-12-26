@@ -56,14 +56,8 @@ import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.Map.Entry;
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.ImageIcon;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.KeyStroke;
-import javax.swing.UIManager;
+import javax.swing.*;
+
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.ConsoleAppender;
@@ -184,7 +178,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
 
         try {
             jAlwaysOnTopBox.setSelected(pConfig.getBoolean(getPropertyPrefix() + ".alwaysOnTop"));
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
         setAlwaysOnTop(jAlwaysOnTopBox.isSelected());
@@ -306,7 +300,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
     }
 
     public boolean sendDataToDefensePlaner() {
-        List<DefenseInformation> infos = new LinkedList<DefenseInformation>();
+        List<DefenseInformation> infos = new LinkedList<>();
         if (getModel().getRowCount() == 0) {
             return false;
         } else {
@@ -413,7 +407,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
                 int needed = defense.getNeededSupports();
                 int available = defense.getSupports().length;
                 Hashtable<UnitHolder, Integer> split = DSWorkbenchSettingsDialog.getSingleton().getDefense();
-                Hashtable<UnitHolder, Integer> need = new Hashtable<UnitHolder, Integer>();
+                Hashtable<UnitHolder, Integer> need = new Hashtable<>();
                 Set<Entry<UnitHolder, Integer>> entries = split.entrySet();
                 for (Entry<UnitHolder, Integer> entry : entries) {
                     need.put(entry.getKey(), (needed - available) * entry.getValue());
@@ -516,7 +510,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
     }
 
     private void copySelectionToClipboardAsBBCode() {
-        Hashtable<Tribe, SOSRequest> selectedRequests = new Hashtable<Tribe, SOSRequest>();
+        Hashtable<Tribe, SOSRequest> selectedRequests = new Hashtable<>();
         List<DefenseInformation> selection = getSelectedRows();
         if (selection.isEmpty()) {
             showInfo("Keine SOS Anfragen eingelesen");
@@ -544,7 +538,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
                 buffer.append("[u]SOS Anfragen[/u]\n\n");
             }
 
-            List<SOSRequest> requests = new LinkedList<SOSRequest>();
+            List<SOSRequest> requests = new LinkedList<>();
 
             Enumeration<Tribe> tribeKeys = selectedRequests.keys();
             while (tribeKeys.hasMoreElements()) {
@@ -595,7 +589,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
 
             DefenseToolModel model = TableHelper.getTableModel(jAttacksTable);
             int numRows = selectedRows.length;
-            List<DefenseInformation> toRemove = new LinkedList<DefenseInformation>();
+            List<DefenseInformation> toRemove = new LinkedList<>();
             for (int row : selectedRows) {
                 toRemove.add(model.getRows()[jAttacksTable.convertRowIndexToModel(row)]);
             }
@@ -619,7 +613,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
     }
 
     private List<DefenseInformation> getSelectedRows() {
-        List<DefenseInformation> infos = new LinkedList<DefenseInformation>();
+        List<DefenseInformation> infos = new LinkedList<>();
         if (getModel().getRowCount() == 0) {
             showInfo("Keine SOS Anfragen vorhanden");
         } else {
@@ -842,11 +836,7 @@ private void fireAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRS
             }
             updateView();
             analyzeData();
-        } catch (HeadlessException he) {
-            showInfo("Fehler beim Lesen aus der Zwischenablage");
-        } catch (UnsupportedFlavorException usfe) {
-            showInfo("Fehler beim Lesen aus der Zwischenablage");
-        } catch (IOException ioe) {
+        } catch (HeadlessException | IOException | UnsupportedFlavorException he) {
             showInfo("Fehler beim Lesen aus der Zwischenablage");
         }
     }
@@ -1013,12 +1003,12 @@ private void fireAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRS
         try {
             //  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         // createSampleRequests();
         new SOSGenerator().setVisible(true);
         DSWorkbenchSOSRequestAnalyzer.getSingleton().resetView();
-        DSWorkbenchSOSRequestAnalyzer.getSingleton().setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        DSWorkbenchSOSRequestAnalyzer.getSingleton().setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         DSWorkbenchSOSRequestAnalyzer.getSingleton().setVisible(true);
     }
 
@@ -1055,9 +1045,9 @@ class SupportColorUpdateThread extends Thread {
                 DSWorkbenchSOSRequestAnalyzer.getSingleton().updateTime();
                 try {
                     Thread.sleep(10000);
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                 }
-            } catch (Throwable t) {
+            } catch (Throwable ignored) {
             }
         }
     }
@@ -1089,7 +1079,7 @@ class SupportCountdownThread extends Thread {
                     // yield();
                     sleep(1000);
                 }
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         }
     }

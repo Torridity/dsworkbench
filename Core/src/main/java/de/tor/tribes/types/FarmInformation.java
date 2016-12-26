@@ -22,17 +22,20 @@ import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.ext.Barbarians;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.views.DSWorkbenchFarmManager;
-import de.tor.tribes.util.*;
+import de.tor.tribes.util.BrowserCommandSender;
+import de.tor.tribes.util.DSCalculator;
+import de.tor.tribes.util.TroopHelper;
 import de.tor.tribes.util.conquer.ConquerManager;
 import de.tor.tribes.util.report.ReportManager;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
-import java.util.*;
-import java.util.Map.Entry;
 import org.apache.commons.lang.math.IntRange;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
 import org.jdom.Element;
+
+import java.util.*;
+import java.util.Map.Entry;
 
 /**
  *
@@ -190,7 +193,7 @@ public class FarmInformation extends ManageableType {
         //  double speed = TroopHelper.getTroopSpeed(units);
         long arriveTimeRelativeToNow = farmTroopArrive - System.currentTimeMillis();//farmTroopArrive - DSCalculator.calculateMoveTimeInMillis(getVillage(), DataHolder.getSingleton().getVillagesById().get(farmSourceId), speed) - lastRuntimeUpdate;
         if (arriveTimeRelativeToNow <= 0) {//farm was reached...return time until return
-            if (getStatus().equals(FARM_STATUS.FARMING)) {
+            if (status.equals(FARM_STATUS.FARMING)) {
                 setStatus(FARM_STATUS.REPORT_EXPECTED);
             }
             arriveTimeRelativeToNow = 0;
@@ -299,7 +302,7 @@ public class FarmInformation extends ManageableType {
         Collections.sort(reports, new Comparator<FightReport>() {
             @Override
             public int compare(FightReport o1, FightReport o2) {
-                return Long.valueOf(o1.getTimestamp()).compareTo(Long.valueOf(o2.getTimestamp()));
+                return Long.valueOf(o1.getTimestamp()).compareTo(o2.getTimestamp());
             }
         });
 
@@ -342,13 +345,13 @@ public class FarmInformation extends ManageableType {
             int resourceBuildingLevel = DSCalculator.calculateEstimatedResourceBuildingLevel(dResource, dt);
             switch (i) {
                 case 0:
-                    setWoodLevel(Math.max(getWoodLevel(), resourceBuildingLevel));
+                    setWoodLevel(Math.max(woodLevel, resourceBuildingLevel));
                     break;
                 case 1:
-                    setClayLevel(Math.max(getClayLevel(), resourceBuildingLevel));
+                    setClayLevel(Math.max(clayLevel, resourceBuildingLevel));
                     break;
                 case 2:
-                    setIronLevel(Math.max(getIronLevel(), resourceBuildingLevel));
+                    setIronLevel(Math.max(ironLevel, resourceBuildingLevel));
                     break;
             }
         }
@@ -380,9 +383,9 @@ public class FarmInformation extends ManageableType {
         int woodBuildingLevel = DSCalculator.calculateEstimatedResourceBuildingLevel(wood, dt);
         int clayBuildingLevel = DSCalculator.calculateEstimatedResourceBuildingLevel(clay, dt);
         int ironBuildingLevel = DSCalculator.calculateEstimatedResourceBuildingLevel(iron, dt);
-        setWoodLevel(Math.max(getWoodLevel(), woodBuildingLevel));
-        setClayLevel(Math.max(getClayLevel(), clayBuildingLevel));
-        setIronLevel(Math.max(getIronLevel(), ironBuildingLevel));
+        setWoodLevel(Math.max(woodLevel, woodBuildingLevel));
+        setClayLevel(Math.max(clayLevel, clayBuildingLevel));
+        setIronLevel(Math.max(ironLevel, ironBuildingLevel));
     }
 
     private void guessStorage(FightReport pReport) {
@@ -395,13 +398,13 @@ public class FarmInformation extends ManageableType {
             int guessedStorageLevel = DSCalculator.calculateEstimatedStorageLevel(resourceInStorage);
             switch (i) {
                 case 0:
-                    setStorageLevel(Math.max(getStorageLevel(), guessedStorageLevel));
+                    setStorageLevel(Math.max(storageLevel, guessedStorageLevel));
                     break;
                 case 1:
-                    setStorageLevel(Math.max(getStorageLevel(), guessedStorageLevel));
+                    setStorageLevel(Math.max(storageLevel, guessedStorageLevel));
                     break;
                 case 2:
-                    setStorageLevel(Math.max(getStorageLevel(), guessedStorageLevel));
+                    setStorageLevel(Math.max(storageLevel, guessedStorageLevel));
                     break;
             }
         }
@@ -443,7 +446,7 @@ public class FarmInformation extends ManageableType {
         farmTroopArrive = -1;
         lastResult = FARM_RESULT.UNKNOWN;
         lastSendInformation = null;
-        if (!isInactive()) {
+        if (!inactive) {
             if (spyed) {
                 setStatus(FARM_STATUS.READY);
             } else {
@@ -484,7 +487,7 @@ public class FarmInformation extends ManageableType {
             updateCorrectionFactor(pReport);
             //update spy information
             updateSpyInformation(pReport);
-            if (!isSpyed()) {
+            if (!spyed) {
                 guessResourceBuildings(pReport);
             }
             //update haul information (hauled resources sums, storage status if no spy information is available)
@@ -668,7 +671,7 @@ public class FarmInformation extends ManageableType {
     /**
      * Farm this farm
      *
-     * @param The troops used for farming or 'null' if the needed amount of
+     * @param pConfig The troops used for farming or 'null' if the needed amount of
      * troops should be calculated
      */
     public FARM_RESULT farmFarm(DSWorkbenchFarmManager.FARM_CONFIGURATION pConfig) {
@@ -711,9 +714,9 @@ public class FarmInformation extends ManageableType {
                 } else {
                     info.append(unitsAndVillages.size()).append(" Dorf/Dörfer mit freien Truppen gefunden.\n");
                     //villages with enough troops found
-                    final HashMap<Village, Hashtable<UnitHolder, Integer>> carriageMap = new HashMap<Village, Hashtable<UnitHolder, Integer>>();
+                    final HashMap<Village, Hashtable<UnitHolder, Integer>> carriageMap = new HashMap<>();
                     Enumeration<Village> villageKeys = unitsAndVillages.keys();
-                    List<Village> villages = new LinkedList<Village>();
+                    List<Village> villages = new LinkedList<>();
                     while (villageKeys.hasMoreElements()) {
                         Village selectedVillage = villageKeys.nextElement();
                         Hashtable<UnitHolder, Integer> units;
@@ -721,7 +724,7 @@ public class FarmInformation extends ManageableType {
                             //calculate needed units
                             units = TroopHelper.getTroopsForCarriage(pConfig, unitsAndVillages.get(selectedVillage), this);
                         } else {//use provided units for A/B-Scenario
-                            units = new Hashtable<UnitHolder, Integer>();
+                            units = new Hashtable<>();
                             Hashtable<UnitHolder, Integer> configTroops = DSWorkbenchFarmManager.getSingleton().getTroops(pConfig);
                             Enumeration<UnitHolder> unitKeys = configTroops.keys();
                             while (unitKeys.hasMoreElements()) {
@@ -759,7 +762,7 @@ public class FarmInformation extends ManageableType {
                                     double speed2 = TroopHelper.getTroopSpeed(carriageMap.get(o2));
 
                                     return new Double(DSCalculator.calculateMoveTimeInMinutes(o1, getVillage(), speed1)).compareTo(
-                                            new Double(DSCalculator.calculateMoveTimeInMinutes(o2, getVillage(), speed2)));
+                                            DSCalculator.calculateMoveTimeInMinutes(o2, getVillage(), speed2));
                                 }
                             });
                         }

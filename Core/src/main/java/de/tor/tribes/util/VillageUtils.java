@@ -43,14 +43,14 @@ public class VillageUtils {
     public enum RELATION {
 
         AND, OR
-    };
+    }
 
     public static Village[] getVillages(Tribe pTribe) {
         return getVillages(new Tribe[0]);
     }
 
     public static Village[] getVillages(Tribe[] pTribes) {
-        List<Village> villageList = new LinkedList<Village>();
+        List<Village> villageList = new LinkedList<>();
         if (pTribes == null || pTribes.length == 0) {
             Set<Entry<Integer, Village>> entries = DataHolder.getSingleton().getVillagesById().entrySet();
             for (Entry<Integer, Village> entry : entries) {
@@ -75,8 +75,8 @@ public class VillageUtils {
         if (pTags == null) {
             return new Village[0];
         }
-        List<Village> villages = new ArrayList<Village>();
-        Hashtable<Village, Integer> usageCount = new Hashtable<Village, Integer>();
+        List<Village> villages = new ArrayList<>();
+        Hashtable<Village, Integer> usageCount = new Hashtable<>();
         for (Tag tag : pTags) {
             for (Integer id : tag.getVillageIDs()) {
                 Village v = DataHolder.getSingleton().getVillagesById().get(id);
@@ -130,7 +130,7 @@ public class VillageUtils {
         if (pContinents == null || pContinents.length == 0) {
             return pVillages;
         }
-        List<Village> villages = new LinkedList<Village>();
+        List<Village> villages = new LinkedList<>();
         Collections.addAll(villages, pVillages);
 
         CollectionUtils.filter(villages, new Predicate() {
@@ -147,7 +147,7 @@ public class VillageUtils {
     }
 
     public static String[] getContinents(Village[] pVillages) {
-        List<String> continents = new ArrayList<String>();
+        List<String> continents = new ArrayList<>();
 
         for (Village v : pVillages) {
             int cont = v.getContinent();
@@ -164,7 +164,7 @@ public class VillageUtils {
         if (pTribe == null || pTribe.equals(Barbarians.getSingleton())) {
             return new String[0];
         }
-        List<String> continents = new ArrayList<String>();
+        List<String> continents = new ArrayList<>();
 
         for (Village v : pTribe.getVillageList()) {
             int cont = v.getContinent();
@@ -182,7 +182,7 @@ public class VillageUtils {
     }
 
     public static Village[] getVillagesByAlly(Ally[] pAllies, Comparator<Village> pComparator) {
-        List<Village> villages = new LinkedList<Village>();
+        List<Village> villages = new LinkedList<>();
 
         for (Ally a : pAllies) {
             Tribe[] tribes = AllyUtils.getTribes(a, null);

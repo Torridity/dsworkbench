@@ -71,7 +71,7 @@ public class FightReportHTMLToolTipGenerator {
             if (fr != null) {
                 try {
                     fr.close();
-                } catch (IOException ioe) {
+                } catch (IOException ignored) {
                 }
             }
         }

@@ -17,21 +17,15 @@ package de.tor.tribes.types.drawing;
 
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.panels.MapPanel;
-import java.awt.AlphaComposite;
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Composite;
-import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.Stroke;
-import java.awt.geom.Rectangle2D;
-import java.net.URLDecoder;
-import org.jdom.Element;
 import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
 import de.tor.tribes.util.bb.VillageListFormatter;
-import java.awt.Font;
+import org.jdom.Element;
+
+import java.awt.*;
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
+import java.net.URLDecoder;
 import java.util.List;
 
 /**
@@ -60,20 +54,20 @@ public class Rectangle extends AbstractForm {
             setTextColor(new Color(Integer.parseInt(elem.getAttributeValue("r")), Integer.parseInt(elem.getAttributeValue("g")), Integer.parseInt(elem.getAttributeValue("b"))));
             setTextAlpha(Float.parseFloat(elem.getAttributeValue("a")));
             elem = e.getChild("drawColor");
-            setDrawColor(new Color(Integer.parseInt(elem.getAttributeValue("r")), Integer.parseInt(elem.getAttributeValue("g")), Integer.parseInt(elem.getAttributeValue("b"))));
-            setDrawAlpha(Float.parseFloat(elem.getAttributeValue("a")));
+            this.drawColor = new Color(Integer.parseInt(elem.getAttributeValue("r")), Integer.parseInt(elem.getAttributeValue("g")), Integer.parseInt(elem.getAttributeValue("b")));
+            this.drawAlpha = Float.parseFloat(elem.getAttributeValue("a"));
             elem = e.getChild("stroke");
-            setStrokeWidth(Float.parseFloat(elem.getAttributeValue("width")));
+            this.strokeWidth = Float.parseFloat(elem.getAttributeValue("width"));
             elem = e.getChild("end");
-            setXPosEnd(Double.parseDouble(elem.getAttributeValue("x")));
-            setYPosEnd(Double.parseDouble(elem.getAttributeValue("y")));
+            this.xPosEnd = Double.parseDouble(elem.getAttributeValue("x"));
+            this.yPosEnd = Double.parseDouble(elem.getAttributeValue("y"));
             elem = e.getChild("filled");
-            setFilled(Boolean.parseBoolean(elem.getTextTrim()));
+            this.filled = Boolean.parseBoolean(elem.getTextTrim());
             elem = e.getChild("textSize");
             setTextSize(Integer.parseInt(elem.getTextTrim()));
             elem = e.getChild("drawName");
-            setDrawName(Boolean.parseBoolean(elem.getTextTrim()));
-        } catch (Exception ex) {
+            this.drawName = Boolean.parseBoolean(elem.getTextTrim());
+        } catch (Exception ignored) {
         }
     }
 
@@ -89,13 +83,13 @@ public class Rectangle extends AbstractForm {
         }
         String startXVal = Integer.toString((int) Math.rint(getXPos()));
         String startYVal = Integer.toString((int) Math.rint(getYPos()));
-        String endXVal = Integer.toString((int) Math.rint(getXPosEnd()));
-        String endYVal = Integer.toString((int) Math.rint(getYPosEnd()));
-        String widthVal = Integer.toString((int) Math.rint(getXPosEnd() - getXPos()));
-        String heightVal = Integer.toString((int) Math.rint(getYPosEnd() - getYPos()));
+        String endXVal = Integer.toString((int) Math.rint(xPosEnd));
+        String endYVal = Integer.toString((int) Math.rint(yPosEnd));
+        String widthVal = Integer.toString((int) Math.rint(xPosEnd - getXPos()));
+        String heightVal = Integer.toString((int) Math.rint(yPosEnd - getYPos()));
         String colorVal = "";
-        if (getDrawColor() != null) {
-            colorVal = "#" + Integer.toHexString(getDrawColor().getRGB() & 0x00ffffff);
+        if (drawColor != null) {
+            colorVal = "#" + Integer.toHexString(drawColor.getRGB() & 0x00ffffff);
         } else {
             colorVal = "#" + Integer.toHexString(Color.BLACK.getRGB() & 0x00ffffff);
         }
@@ -115,7 +109,7 @@ public class Rectangle extends AbstractForm {
             return;
         }
         Point s = MapPanel.getSingleton().virtualPosToSceenPos(getXPos(), getYPos());
-        Point e = MapPanel.getSingleton().virtualPosToSceenPos(getXPosEnd(), getYPosEnd());
+        Point e = MapPanel.getSingleton().virtualPosToSceenPos(xPosEnd, yPosEnd);
         int x = ((s.x < e.x) ? s.x : e.x);
         int y = ((s.y < e.y) ? s.y : e.y);
         int w = (int) Math.rint(Math.abs(s.x - e.x));
@@ -134,17 +128,17 @@ public class Rectangle extends AbstractForm {
         Font fBefore = g2d.getFont();
         //draw
         g2d.setStroke(getStroke());
-        checkShowMode(g2d, getDrawColor());
-        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, getDrawAlpha()));
+        checkShowMode(g2d, drawColor);
+        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, drawAlpha));
 
-        if (isFilled()) {
+        if (filled) {
 
             g2d.fill(new RoundRectangle2D.Double(x, y, w, h, rounding, rounding));
         } else {
             g2d.draw(new RoundRectangle2D.Double(x, y, w, h, rounding, rounding));
         }
 
-        if (isDrawName()) {
+        if (drawName) {
             g2d.setColor(getTextColor());
             g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, getTextAlpha()));
             g2d.setFont(fBefore.deriveFont((float) getTextSize()));
@@ -161,7 +155,7 @@ public class Rectangle extends AbstractForm {
     @Override
     public List<Village> getContainedVillages() {
         Point s = MapPanel.getSingleton().virtualPosToSceenPos(getXPos(), getYPos());
-        Point e = MapPanel.getSingleton().virtualPosToSceenPos(getXPosEnd(), getYPosEnd());
+        Point e = MapPanel.getSingleton().virtualPosToSceenPos(xPosEnd, yPosEnd);
         int x = ((s.x < e.x) ? s.x : e.x);
         int y = ((s.y < e.y) ? s.y : e.y);
         int w = (int) Math.rint(Math.abs(s.x - e.x));
@@ -176,7 +170,7 @@ public class Rectangle extends AbstractForm {
 
     public void renderPreview(Graphics2D g2d) {
         Point2D.Double s = new Point2D.Double(getXPos(), getYPos());
-        Point2D.Double e = new Point2D.Double(getXPosEnd(), getYPosEnd());
+        Point2D.Double e = new Point2D.Double(xPosEnd, yPosEnd);
         int x = (int) ((s.x < e.x) ? s.x : e.x);
         int y = (int) ((s.y < e.y) ? s.y : e.y);
         int w = (int) Math.rint(Math.abs(s.x - e.x));
@@ -188,16 +182,16 @@ public class Rectangle extends AbstractForm {
         Font fBefore = g2d.getFont();
         //draw
         g2d.setStroke(getStroke());
-        g2d.setColor(getDrawColor());
-        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, getDrawAlpha()));
+        g2d.setColor(drawColor);
+        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, drawAlpha));
 
-        if (isFilled()) {
+        if (filled) {
             g2d.fill(new RoundRectangle2D.Double(x, y, w, h, rounding, rounding));
         } else {
             g2d.draw(new RoundRectangle2D.Double(x, y, w, h, rounding, rounding));
         }
 
-        if (isDrawName()) {
+        if (drawName) {
             g2d.setColor(getTextColor());
             g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, getTextAlpha()));
             g2d.setFont(fBefore.deriveFont((float) getTextSize()));
@@ -215,7 +209,7 @@ public class Rectangle extends AbstractForm {
     @Override
     public java.awt.Rectangle getBounds() {
         Point2D.Double s = new Point2D.Double(getXPos(), getYPos());
-        Point2D.Double e = new Point2D.Double(getXPosEnd(), getYPosEnd());
+        Point2D.Double e = new Point2D.Double(xPosEnd, yPosEnd);
         int x = (int) Math.round((s.x < e.x) ? s.x : e.x);
         int y = (int) Math.round((s.y < e.y) ? s.y : e.y);
         int w = (int) Math.round(Math.abs(s.x - e.x));
@@ -225,12 +219,12 @@ public class Rectangle extends AbstractForm {
 
     @Override
     protected String getFormXml() {
-        String xml = "<end x=\"" + getXPosEnd() + "\" y=\"" + getYPosEnd() + "\"/>\n";
-        xml += "<drawColor r=\"" + getDrawColor().getRed() + "\" g=\"" + getDrawColor().getGreen() + "\" b=\"" + getDrawColor().getBlue() + "\" a=\"" + getDrawAlpha() + "\"/>\n";
-        xml += "<rounding>" + getRounding() + "</rounding>\n";
-        xml += "<filled>" + isFilled() + "</filled>\n";
-        xml += "<stroke width=\"" + getStrokeWidth() + "\"/>\n";
-        xml += "<drawName>" + isDrawName() + "</drawName>\n";
+        String xml = "<end x=\"" + xPosEnd + "\" y=\"" + yPosEnd + "\"/>\n";
+        xml += "<drawColor r=\"" + drawColor.getRed() + "\" g=\"" + drawColor.getGreen() + "\" b=\"" + drawColor.getBlue() + "\" a=\"" + drawAlpha + "\"/>\n";
+        xml += "<rounding>" + rounding + "</rounding>\n";
+        xml += "<filled>" + filled + "</filled>\n";
+        xml += "<stroke width=\"" + strokeWidth + "\"/>\n";
+        xml += "<drawName>" + drawName + "</drawName>\n";
         return xml;
     }
 
@@ -271,7 +265,7 @@ public class Rectangle extends AbstractForm {
      * @return the stroke
      */
     public BasicStroke getStroke() {
-        float w = (float) (getStrokeWidth() / DSWorkbenchMainFrame.getSingleton().getZoomFactor());
+        float w = (float) (strokeWidth / DSWorkbenchMainFrame.getSingleton().getZoomFactor());
         return new BasicStroke(w);
     }
 
@@ -279,15 +273,15 @@ public class Rectangle extends AbstractForm {
     public void setXPos(double xPos) {
         super.setXPos(xPos);
         if (xPosEnd == -1) {
-            setXPosEnd(xPos);
+            this.xPosEnd = xPos;
         }
     }
 
     @Override
     public void setYPos(double yPos) {
         super.setYPos(yPos);
-        if (xPosEnd == -1) {
-            setXPosEnd(yPos);
+        if (yPosEnd == -1) {
+            this.yPosEnd = yPos;
         }
     }
 

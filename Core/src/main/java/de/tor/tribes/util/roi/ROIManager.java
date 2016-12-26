@@ -44,7 +44,7 @@ public class ROIManager {
     }
 
     ROIManager() {
-        rois = new LinkedList<String>();
+        rois = new LinkedList<>();
     }
 
     /**Load ROIs for server from file
@@ -97,12 +97,12 @@ public class ROIManager {
         }
         try {
 
-            StringBuffer b = new StringBuffer();
+            StringBuilder b = new StringBuilder();
             b.append("<rois>\n");
 
             for (String r : rois) {
                 String text = URLEncoder.encode(r, "UTF-8");
-                b.append("<roi>" + text + "</roi>\n");
+                b.append("<roi>").append(text).append("</roi>\n");
             }
             b.append("</rois>");
             FileWriter w = new FileWriter(pFile);

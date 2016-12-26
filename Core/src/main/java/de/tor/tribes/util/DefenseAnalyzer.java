@@ -68,15 +68,15 @@ public class DefenseAnalyzer extends Thread {
         setDaemon(true);
     }
 
-    public static interface DefenseAnalyzerListener {
+    public interface DefenseAnalyzerListener {
 
-        public void fireProceedEvent(double pStatus);
+        void fireProceedEvent(double pStatus);
 
-        public void fireFinishedEvent();
+        void fireFinishedEvent();
     }
 
     private Hashtable<UnitHolder, AbstractUnitElement> dswbUnitsToSimulatorUnits(Hashtable<de.tor.tribes.io.UnitHolder, Integer> pInput) {
-        Hashtable<UnitHolder, AbstractUnitElement> result = new Hashtable<UnitHolder, AbstractUnitElement>();
+        Hashtable<UnitHolder, AbstractUnitElement> result = new Hashtable<>();
         for (de.tor.tribes.io.UnitHolder unit : DataHolder.getSingleton().getUnits()) {
             Integer value = pInput.get(unit);
             if (value == null) {
@@ -99,7 +99,7 @@ public class DefenseAnalyzer extends Thread {
         running = true;
         try {
             UnitManager.getSingleton().setUnits("./servers/" + GlobalOptions.getSelectedServer() + "/units.xml");
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         updateStatus();
         running = false;
@@ -188,7 +188,7 @@ public class DefenseAnalyzer extends Thread {
 
     private Hashtable<UnitHolder, AbstractUnitElement> getDefense(TargetInformation pTargetInfo, DefenseInformation pInfo, int pAdditionalSplits) {
         int supportCount = pInfo.getSupports().length;
-        Hashtable<de.tor.tribes.io.UnitHolder, Integer> units = new Hashtable<de.tor.tribes.io.UnitHolder, Integer>();
+        Hashtable<de.tor.tribes.io.UnitHolder, Integer> units = new Hashtable<>();
         VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(pTargetInfo.getTarget(), TroopsManager.TROOP_TYPE.IN_VILLAGE);
         if (holder != null) {
             units = holder.getTroops();

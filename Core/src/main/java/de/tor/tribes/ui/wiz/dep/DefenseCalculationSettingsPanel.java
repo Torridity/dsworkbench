@@ -350,7 +350,7 @@ public class DefenseCalculationSettingsPanel extends WizardPage {
         //wait until calculation is running
         try {
             Thread.sleep(20);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
     }//GEN-LAST:event_fireCalculateSupportsEvent
@@ -388,7 +388,7 @@ public class DefenseCalculationSettingsPanel extends WizardPage {
                     scroll();
                 }
             });
-        } catch (BadLocationException ble) {
+        } catch (BadLocationException ignored) {
         }
     }
 

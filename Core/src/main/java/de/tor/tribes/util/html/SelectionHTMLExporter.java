@@ -152,7 +152,7 @@ public class SelectionHTMLExporter {
         // </editor-fold>
 
         Collections.sort(pVillages, Village.ALLY_TRIBE_VILLAGE_COMPARATOR);
-        Hashtable<Ally, Hashtable<Tribe, List<Village>>> data = new Hashtable<Ally, Hashtable<Tribe, List<Village>>>();
+        Hashtable<Ally, Hashtable<Tribe, List<Village>>> data = new Hashtable<>();
         for (Village v : pVillages) {
             Tribe t = v.getTribe();
             Ally a = null;
@@ -167,13 +167,13 @@ public class SelectionHTMLExporter {
             }
             Hashtable<Tribe, List<Village>> allyData = data.get(a);
             if (allyData == null) {
-                allyData = new Hashtable<Tribe, List<Village>>();
+                allyData = new Hashtable<>();
                 data.put(a, allyData);
             }
 
             List<Village> tribeData = allyData.get(t);
             if (tribeData == null) {
-                tribeData = new LinkedList<Village>();
+                tribeData = new LinkedList<>();
                 allyData.put(t, tribeData);
             }
             tribeData.add(v);

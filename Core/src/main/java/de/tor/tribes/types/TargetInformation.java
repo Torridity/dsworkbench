@@ -50,8 +50,8 @@ public class TargetInformation {
     
     public TargetInformation(Village pTarget) {
         target = pTarget;
-        troops = new Hashtable<UnitHolder, Integer>();
-        timedAttacks = new Hashtable<Village, List<TimedAttack>>();
+        troops = new Hashtable<>();
+        timedAttacks = new Hashtable<>();
     }
     
     private void updateAttackInfo() {
@@ -95,7 +95,7 @@ public class TargetInformation {
      */
     public List<TimedAttack> getAttacks() {
         Enumeration<Village> sourceKeys = timedAttacks.keys();
-        List<TimedAttack> result = new LinkedList<TimedAttack>();
+        List<TimedAttack> result = new LinkedList<>();
         while (sourceKeys.hasMoreElements()) {
             Village source = sourceKeys.nextElement();
             List<TimedAttack> attacksFromSource = timedAttacks.get(source);
@@ -127,7 +127,7 @@ public class TargetInformation {
         if (atts != null) {
             return atts;
         } else {
-            return new LinkedList<TimedAttack>();
+            return new LinkedList<>();
         }
     }
     
@@ -138,7 +138,7 @@ public class TargetInformation {
     public boolean addAttack(final Village pSource, final Date pArrive, UnitHolder pUnit, boolean fake, boolean snob) {
         List<TimedAttack> attacksFromSource = timedAttacks.get(pSource);
         if (attacksFromSource == null) {
-            attacksFromSource = new LinkedList<TimedAttack>();
+            attacksFromSource = new LinkedList<>();
             timedAttacks.put(pSource, attacksFromSource);
         }
         
@@ -164,16 +164,10 @@ public class TargetInformation {
         return false;
     }
 
-    /**
-     * @param attacks the attacks to set
-     */
     public boolean addAttack(final Village pSource, final Date pArrive) {
         return addAttack(pSource, pArrive, null);
     }
 
-    /**
-     * @param attacks the attacks to set
-     */
     public boolean addAttack(final Village pSource, final Date pArrive, UnitHolder pUnit) {
         return addAttack(pSource, pArrive, false, false);
     }
@@ -200,7 +194,7 @@ public class TargetInformation {
             Village source = sources.nextElement();
             List<TimedAttack> attsForSource = timedAttacks.get(source);
             for (TimedAttack a : attsForSource) {
-                if (a.getlArriveTime() == getFirstAttack()) {
+                if (a.getlArriveTime() == first) {
                     return a;
                 }
             }
@@ -259,7 +253,6 @@ public class TargetInformation {
         if (pInfo != null) {
             theOtherAttacks = pInfo.getAttacks();
         }
-        setWallLevel(getWallLevel());
         Hashtable<UnitHolder, Integer> theOtherTroopInfo = pInfo.getTroops();
         Enumeration<UnitHolder> units = theOtherTroopInfo.keys();
         while (units.hasMoreElements()) {
@@ -286,13 +279,13 @@ public class TargetInformation {
                 }
             }
         }
-        setDelta(getAttacks().size() - attCount);
+        delta = getAttacks().size() - attCount;
         updateAttackInfo();
     }
     
     @Override
     public String toString() {
-        String result = " Stufe des Walls: " + getWallLevel() + "\n";
+        String result = " Stufe des Walls: " + iWallLevel + "\n";
         Enumeration<UnitHolder> units = troops.keys();
         if (troops.isEmpty()) {
             result += " Truppen im Dorf: -Keine Informationen-\n\n";
@@ -314,7 +307,7 @@ public class TargetInformation {
     
     public String toXml() {
         StringBuilder b = new StringBuilder();
-        b.append("<wall>").append(getWallLevel()).append("</wall>\n");
+        b.append("<wall>").append(iWallLevel).append("</wall>\n");
         b.append(XMLHelper.troopsToXML(troops));
         b.append("<attacks>\n");
         for (TimedAttack a : getAttacks()) {
@@ -327,7 +320,7 @@ public class TargetInformation {
     }
     
     public void loadFromXml(Element e) {
-        setWallLevel(Integer.parseInt(e.getChild("wall").getText()));
+        this.iWallLevel = Integer.parseInt(e.getChild("wall").getText());
         Hashtable<UnitHolder, Integer> troops = XMLHelper.xmlToTroops(e);
         Enumeration<UnitHolder> keys = troops.keys();
         while (keys.hasMoreElements()) {

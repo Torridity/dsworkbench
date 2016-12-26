@@ -16,29 +16,34 @@
 package de.tor.tribes.ui.views;
 
 import de.tor.tribes.control.GenericManagerListener;
-import de.tor.tribes.types.ext.Ally;
 import de.tor.tribes.types.Conquer;
-import de.tor.tribes.types.test.DummyVillage;
+import de.tor.tribes.types.ext.Ally;
 import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Village;
-import de.tor.tribes.ui.windows.AbstractDSWorkbenchFrame;
-import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
-import de.tor.tribes.ui.panels.GenericTestPanel;
+import de.tor.tribes.types.test.DummyVillage;
 import de.tor.tribes.ui.models.ConquerTableModel;
+import de.tor.tribes.ui.panels.GenericTestPanel;
 import de.tor.tribes.ui.renderer.DateCellRenderer;
 import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
-import de.tor.tribes.util.BrowserCommandSender;
-import de.tor.tribes.util.Constants;
-import de.tor.tribes.util.GlobalOptions;
-import de.tor.tribes.util.ImageUtils;
-import de.tor.tribes.util.PropertyHelper;
+import de.tor.tribes.ui.windows.AbstractDSWorkbenchFrame;
+import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
+import de.tor.tribes.util.*;
 import de.tor.tribes.util.conquer.ConquerManager;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Graphics;
-import java.awt.Point;
-import java.awt.TexturePaint;
+import org.apache.commons.configuration.Configuration;
+import org.apache.log4j.ConsoleAppender;
+import org.apache.log4j.Logger;
+import org.jdesktop.swingx.JXButton;
+import org.jdesktop.swingx.JXTaskPane;
+import org.jdesktop.swingx.decorator.*;
+import org.jdesktop.swingx.painter.MattePainter;
+import org.jdesktop.swingx.table.TableColumnExt;
+
+import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableModel;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -52,29 +57,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.swing.AbstractAction;
-import javax.swing.DefaultListModel;
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.RowFilter;
-import javax.swing.UIManager;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableModel;
-import org.apache.commons.configuration.Configuration;
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.Logger;
-import org.jdesktop.swingx.JXButton;
-import org.jdesktop.swingx.JXTaskPane;
-import org.jdesktop.swingx.decorator.ColorHighlighter;
-import org.jdesktop.swingx.decorator.ComponentAdapter;
-import org.jdesktop.swingx.decorator.HighlightPredicate;
-import org.jdesktop.swingx.decorator.HighlighterFactory;
-import org.jdesktop.swingx.decorator.PainterHighlighter;
-import org.jdesktop.swingx.decorator.PatternPredicate;
-import org.jdesktop.swingx.painter.MattePainter;
-import org.jdesktop.swingx.table.TableColumnExt;
 
 /**
  * @author Charon
@@ -176,7 +158,7 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
 
         try {
             jConquersFrameAlwaysOnTop.setSelected(pConfig.getBoolean(getPropertyPrefix() + ".alwaysOnTop"));
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
         setAlwaysOnTop(jConquersFrameAlwaysOnTop.isSelected());
@@ -522,13 +504,13 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
         if (highlighter != null) {
             jConquersTable.removeHighlighter(highlighter);
         }
-        final List<String> columns = new LinkedList<String>();
+        final List<String> columns = new LinkedList<>();
         for (Object o : jXColumnList.getSelectedValues()) {
             columns.add((String) o);
         }
         if (!jFilterRows.isSelected()) {
             jConquersTable.setRowFilter(null);
-            final List<Integer> relevantCols = new LinkedList<Integer>();
+            final List<Integer> relevantCols = new LinkedList<>();
             List<TableColumn> cols = jConquersTable.getColumns(true);
             for (int i = 0; i < jConquersTable.getColumnCount(); i++) {
                 TableColumnExt col = jConquersTable.getColumnExt(i);
@@ -547,7 +529,7 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
 
                 @Override
                 public boolean include(Entry<? extends TableModel, ? extends Integer> entry) {
-                    final List<Integer> relevantCols = new LinkedList<Integer>();
+                    final List<Integer> relevantCols = new LinkedList<>();
                     List<TableColumn> cols = jConquersTable.getColumns(true);
                     for (int i = 0; i < jConquersTable.getColumnCount(); i++) {
                         TableColumnExt col = jConquersTable.getColumnExt(i);
@@ -558,11 +540,11 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
 
                     for (Integer col : relevantCols) {
                         if (jFilterCaseSensitive.isSelected()) {
-                            if (entry.getStringValue(col).indexOf(jTextField1.getText()) > -1) {
+                            if (entry.getStringValue(col).contains(jTextField1.getText())) {
                                 return true;
                             }
                         } else {
-                            if (entry.getStringValue(col).toLowerCase().indexOf(jTextField1.getText().toLowerCase()) > -1) {
+                            if (entry.getStringValue(col).toLowerCase().contains(jTextField1.getText().toLowerCase())) {
                                 return true;
                             }
                         }
@@ -644,7 +626,7 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
     }
 
     private List<Conquer> getSelectedConquers() {
-        final List<Conquer> elements = new LinkedList<Conquer>();
+        final List<Conquer> elements = new LinkedList<>();
         int[] selectedRows = jConquersTable.getSelectedRows();
         if (selectedRows != null && selectedRows.length < 1) {
             return elements;
@@ -671,7 +653,7 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
         } catch (Exception e) {
             e.printStackTrace();
         }
-        DSWorkbenchConquersFrame.getSingleton().setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        DSWorkbenchConquersFrame.getSingleton().setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         for (int i = 0; i < 50; i++) {
             Conquer c = new Conquer();
             c.setTimestamp((int) System.currentTimeMillis());
@@ -763,7 +745,6 @@ class ColumnEqualsPredicate implements HighlightPredicate {
      * Instantiates a Predicate with the given Pattern and testColumn index (in model coordinates) highlighting all columns. A column index
      * of -1 is interpreted as "all".
      *
-     * @param pattern the Pattern to test the cell value against
      * @param testColumn the column index in model coordinates of the cell which contains the value to test against the pattern
      */
     public ColumnEqualsPredicate(int... testColumn) {
@@ -780,10 +761,7 @@ class ColumnEqualsPredicate implements HighlightPredicate {
      */
     @Override
     public boolean isHighlighted(Component renderer, ComponentAdapter adapter) {
-        if (isHighlightCandidate(adapter)) {
-            return test(adapter);
-        }
-        return false;
+        return isHighlightCandidate(adapter) && test(adapter);
     }
 
     /**
@@ -795,10 +773,10 @@ class ColumnEqualsPredicate implements HighlightPredicate {
     private boolean test(ComponentAdapter adapter) {
         // test all
         Object value = null;
-        for (int column = 0; column < testColumn.length; column++) {
+        for (int aTestColumn : testColumn) {
             if (value == null) {
-                value = adapter.getValue(testColumn[column]);
-            } else if (!value.equals(adapter.getValue(testColumn[column]))) {
+                value = adapter.getValue(aTestColumn);
+            } else if (!value.equals(adapter.getValue(aTestColumn))) {
                 return false;
             }
         }

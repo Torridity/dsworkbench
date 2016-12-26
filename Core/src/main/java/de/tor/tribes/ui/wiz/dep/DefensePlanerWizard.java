@@ -89,7 +89,7 @@ public class DefensePlanerWizard extends WizardPanelProvider {
         int maxAttackCount = 50;
         int maxFakeCount = 0;
 
-        List<SOSRequest> result = new LinkedList<SOSRequest>();
+        List<SOSRequest> result = new LinkedList<>();
         Village[] villages = GlobalOptions.getSelectedProfile().getTribe().getVillageList();
         Village[] attackerVillages = DataHolder.getSingleton().getTribeByName("Alexander25").getVillageList();
 
@@ -165,7 +165,7 @@ public class DefensePlanerWizard extends WizardPanelProvider {
         try {
             // UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
         Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));

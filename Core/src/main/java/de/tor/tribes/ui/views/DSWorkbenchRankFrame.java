@@ -40,10 +40,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.LinkedList;
 import java.util.List;
-import javax.swing.DefaultListModel;
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.UIManager;
+import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
@@ -168,11 +165,11 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame implements Ac
         centerPanel.setMenuVisible(pConfig.getBoolean(getPropertyPrefix() + ".menu.visible", true));
         try {
             jRankTabPane.setSelectedIndex(pConfig.getInteger(getPropertyPrefix() + ".tab.selection", 0));
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         try {
             jAlwaysOnTop.setSelected(pConfig.getBoolean(getPropertyPrefix() + ".alwaysOnTop"));
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         
         setAlwaysOnTop(jAlwaysOnTop.isSelected());
@@ -451,7 +448,7 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame implements Ac
     private void updateFilter() {
         RankTableTab tab = getActiveTab();
         if (tab != null) {
-            final List<String> selection = new LinkedList<String>();
+            final List<String> selection = new LinkedList<>();
             for (Object o : jXColumnList.getSelectedValues()) {
                 selection.add((String) o);
             }
@@ -473,7 +470,7 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame implements Ac
         try {
             //  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
         DSWorkbenchRankFrame.getSingleton().setSize(800, 600);
@@ -481,7 +478,7 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame implements Ac
         
         
         DSWorkbenchRankFrame.getSingleton().resetView();
-        DSWorkbenchRankFrame.getSingleton().setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        DSWorkbenchRankFrame.getSingleton().setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         DSWorkbenchRankFrame.getSingleton().setVisible(true);
         
     }

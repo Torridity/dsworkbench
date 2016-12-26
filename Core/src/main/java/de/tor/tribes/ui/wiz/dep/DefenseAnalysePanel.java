@@ -129,7 +129,7 @@ public class DefenseAnalysePanel extends WizardPage {
     private void deleteSelection() {
         int[] selection = jxAttacksTable.getSelectedRows();
         if (selection.length > 0) {
-            List<Integer> rows = new LinkedList<Integer>();
+            List<Integer> rows = new LinkedList<>();
             for (int i : selection) {
                 rows.add(jxAttacksTable.convertRowIndexToModel(i));
             }

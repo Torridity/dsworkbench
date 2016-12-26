@@ -17,8 +17,6 @@ package de.tor.tribes.ui.panels;
 
 import de.tor.tribes.control.GenericManagerListener;
 import de.tor.tribes.io.DataHolder;
-import de.tor.tribes.types.ext.Ally;
-import de.tor.tribes.types.ext.Barbarians;
 import de.tor.tribes.types.Marker;
 import de.tor.tribes.types.UserProfile;
 import de.tor.tribes.types.ext.*;
@@ -60,9 +58,7 @@ import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import javax.imageio.ImageIO;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
+import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
@@ -108,8 +104,8 @@ public class MinimapPanel extends javax.swing.JPanel implements GenericManagerLi
     private static final int ID_MINIMAP = 0;
     private static final int ID_ALLY_CHART = 1;
     private static final int ID_TRIBE_CHART = 2;
-    private Hashtable<Integer, Rectangle> minimapButtons = new Hashtable<Integer, Rectangle>();
-    private Hashtable<Integer, BufferedImage> minimapIcons = new Hashtable<Integer, BufferedImage>();
+    private Hashtable<Integer, Rectangle> minimapButtons = new Hashtable<>();
+    private Hashtable<Integer, BufferedImage> minimapIcons = new Hashtable<>();
     private int iCurrentView = ID_MINIMAP;
     private BufferedImage mChartImage;
     private int lastHash = 0;
@@ -127,8 +123,8 @@ public class MinimapPanel extends javax.swing.JPanel implements GenericManagerLi
     MinimapPanel() {
         initComponents();
         setSize(300, 300);
-        mMinimapListeners = new LinkedList<MinimapListener>();
-        mToolChangeListeners = new LinkedList<ToolChangeListener>();
+        mMinimapListeners = new LinkedList<>();
+        mToolChangeListeners = new LinkedList<>();
         setCursor(ImageManager.getCursor(iCurrentCursor));
         mScreenshotPanel = new ScreenshotPanel();
         minimapButtons.put(ID_MINIMAP, new Rectangle(2, 2, 26, 26));
@@ -138,7 +134,7 @@ public class MinimapPanel extends javax.swing.JPanel implements GenericManagerLi
             minimapIcons.put(ID_MINIMAP, ImageIO.read(new File("./graphics/icons/minimap.png")));
             minimapIcons.put(ID_ALLY_CHART, ImageIO.read(new File("./graphics/icons/ally_chart.png")));
             minimapIcons.put(ID_TRIBE_CHART, ImageIO.read(new File("./graphics/icons/tribe_chart.png")));
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         jPanel1.add(mScreenshotPanel);
         int mapWidth = (int) ServerSettings.getSingleton().getMapDimension().getWidth();
@@ -576,7 +572,7 @@ public class MinimapPanel extends javax.swing.JPanel implements GenericManagerLi
     }
 
     private void renderChartInfo() {
-        Hashtable<Object, Marker> marks = new Hashtable<Object, Marker>();
+        Hashtable<Object, Marker> marks = new Hashtable<>();
         DefaultPieDataset dataset = buildDataset(marks);
 
         JFreeChart chart = ChartFactory.createPieChart(
@@ -664,7 +660,7 @@ public class MinimapPanel extends javax.swing.JPanel implements GenericManagerLi
             while (keys.hasMoreElements()) {
                 Ally a = keys.nextElement();
                 Integer v = allyCount.get(a);
-                Double perc = new Double((double) v / (double) overallVillages * 100);
+                Double perc = (double) v / (double) overallVillages * 100;
 
                 if (perc > 5.0) {
                     dataset.setValue(a.getTag(), perc);
@@ -700,7 +696,7 @@ public class MinimapPanel extends javax.swing.JPanel implements GenericManagerLi
 
                 Integer v = tribeCount.get(t);
 
-                Double perc = new Double((double) v / (double) overallVillages * 100);
+                Double perc = (double) v / (double) overallVillages * 100;
                 if (perc > 5.0) {
                     dataset.setValue(t.getName(), perc);
                     Marker m = MarkerManager.getSingleton().getMarker(t);
@@ -723,7 +719,7 @@ public class MinimapPanel extends javax.swing.JPanel implements GenericManagerLi
 
         try {
             MinimapRepaintThread.getSingleton().update();
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
     }
 
@@ -932,10 +928,7 @@ private void fireSaveScreenshotEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST
 
         @Override
         public boolean accept(File f) {
-            if ((f != null) && (f.isDirectory() || f.getName().endsWith(type))) {
-                return true;
-            }
-            return false;
+            return (f != null) && (f.isDirectory() || f.getName().endsWith(type));
         }
 
         @Override
@@ -988,7 +981,7 @@ private void fireScreenshotControlClosingEvent(java.awt.event.WindowEvent evt) {
         JFrame f = new JFrame();
         f.getContentPane().add(MinimapPanel.getSingleton());
         f.pack();
-        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         f.setVisible(true);
 
     }
@@ -1068,7 +1061,7 @@ class MinimapRepaintThread extends Thread {
                 MinimapPanel.getSingleton().updateComplete(mBuffer);
                 try {
                     Thread.sleep(100);
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                 }
             } catch (Exception oe) {
                 if (mBuffer == null) {

@@ -15,15 +15,17 @@
  */
 package de.tor.tribes.util.algo;
 
+import de.tor.tribes.util.algo.types.Coordinate;
+import de.tor.tribes.util.algo.types.Destination;
 import de.tor.tribes.util.algo.types.OffVillage;
 import de.tor.tribes.util.algo.types.TargetVillage;
-import de.tor.tribes.util.algo.types.Destination;
-import de.tor.tribes.util.algo.types.Coordinate;
+
+import javax.swing.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Hashtable;
-
-import java.io.*;
-import javax.swing.JFrame;
 
 /**
  * Demonstrates how to make use of the stp package.
@@ -35,8 +37,8 @@ public class AAPTest {
     @SuppressWarnings("unchecked")
     public static void main(String args[]) {
         // Source and destination lists
-        ArrayList<OffVillage> offs = new ArrayList<OffVillage>();
-        ArrayList<TargetVillage> targets = new ArrayList<TargetVillage>();
+        ArrayList<OffVillage> offs = new ArrayList<>();
+        ArrayList<TargetVillage> targets = new ArrayList<>();
 
         // Sources
         String input_offs[] = {"100|100", "150|200", "200|200", "250|250", "300|300", "350|350", "400|400", "377|244"};
@@ -63,18 +65,18 @@ public class AAPTest {
         // Transport costs
         Hashtable<Destination, Double> costs[] = new Hashtable[offs.size()];
         for (int i = 0; i < offs.size(); i++) {
-            costs[i] = new Hashtable<Destination, Double>();
-            for (int j = 0; j < targets.size(); j++) {
-                
-                
-                costs[i].put(targets.get(j), offs.get(i).distanceTo(targets.get(j)));
-                System.out.println(targets.get(j).getC().getX() + "|" + (targets.get(j)).getC().getY());
-                System.out.println(offs.get(i).distanceTo(targets.get(j)));
+            costs[i] = new Hashtable<>();
+            for (TargetVillage target : targets) {
+
+
+                costs[i].put(target, offs.get(i).distanceTo(target));
+                System.out.println(target.getC().getX() + "|" + target.getC().getY());
+                System.out.println(offs.get(i).distanceTo(target));
             }
         }
 
         // Create an algorithm instance
-        Optex<OffVillage, TargetVillage> algo = new Optex<OffVillage, TargetVillage>(offs, targets, costs);
+        Optex<OffVillage, TargetVillage> algo = new Optex<>(offs, targets, costs);
 
         // Run the algorithm
         try {
@@ -91,7 +93,7 @@ public class AAPTest {
         stpdrawer.setSize(500, 500);
         drawer.add(stpdrawer);
 
-        drawer.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        drawer.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         drawer.setSize(500, 500);
         drawer.setVisible(true);
     }

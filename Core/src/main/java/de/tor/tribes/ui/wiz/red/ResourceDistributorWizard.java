@@ -108,7 +108,7 @@ public class ResourceDistributorWizard extends WizardPanelProvider {
                 try {
                     GlobalOptions.addProperty("red.width", Integer.toString(parent.getWidth()));
                     GlobalOptions.addProperty("red.height", Integer.toString(parent.getHeight()));
-                } catch (Exception ex) {
+                } catch (Exception ignored) {
                 }
                 super.windowClosing(e);
                 parent = null;
@@ -133,7 +133,7 @@ public class ResourceDistributorWizard extends WizardPanelProvider {
         try {
             // UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
         Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));

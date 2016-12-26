@@ -133,15 +133,15 @@ public class TimeSpan implements Comparable<TimeSpan> {
   }
 
   public boolean isValidAtExactTime() {
-    return (getDate() != null && span == null);
+      return (date != null && span == null);
   }
 
   public boolean isValidAtEveryDay() {
-    return (getDate() == null && span != null);
+      return (date == null && span != null);
   }
 
   public boolean isValidAtSpecificDay() {
-    return (getDate() != null && span != null);
+      return (date != null && span != null);
   }
 
   public boolean isValid() {
@@ -191,34 +191,31 @@ public class TimeSpan implements Comparable<TimeSpan> {
   }
 
   public boolean intersectsWithNightBonus() {
-    if (!ServerSettings.getSingleton().isNightBonusActive()) {
-      return false;
-    }
+      if (!ServerSettings.getSingleton().isNightBonusActive()) {
+          return false;
+      }
 
-    IntRange nightBonusRange = new IntRange(ServerSettings.getSingleton().getNightBonusStartHour(), ServerSettings.getSingleton().getNightBonusEndHour());
-    IntRange thisRange = getSpan();
-    if (thisRange == null) {
-      Calendar cal = Calendar.getInstance();
-      cal.setTime(getDate());
-      thisRange = new IntRange(cal.get(Calendar.HOUR_OF_DAY));
-    }
+      IntRange nightBonusRange = new IntRange(ServerSettings.getSingleton().getNightBonusStartHour(), ServerSettings.getSingleton().getNightBonusEndHour());
+      IntRange thisRange = getSpan();
+      if (thisRange == null) {
+          Calendar cal = Calendar.getInstance();
+          cal.setTime(date);
+          thisRange = new IntRange(cal.get(Calendar.HOUR_OF_DAY));
+      }
 
-    if (thisRange.getMinimumInteger() == nightBonusRange.getMaximumInteger()) {
-      return false;
-    }
+      return thisRange.getMinimumInteger() != nightBonusRange.getMaximumInteger() && thisRange.overlapsRange(nightBonusRange);
 
-    return thisRange.overlapsRange(nightBonusRange);
   }
 
   public Date getAtDate() {
-    return getDate();
+      return date;
   }
 
   public IntRange getSpan() {
     if (span == null) {
       //no span defined, return new span valid for hour of 'atDay'
       Calendar cal = Calendar.getInstance();
-      cal.setTime(getDate());
+        cal.setTime(date);
       return new IntRange(cal.get(Calendar.HOUR_OF_DAY));
     }
     return span;
@@ -351,11 +348,11 @@ public class TimeSpan implements Comparable<TimeSpan> {
       res += getSpan().getMinimumInteger() + "," + getSpan().getMaximumInteger();
     } else if (isValidAtSpecificDay()) {
       res += "1,";
-      res += getDate().getTime() + ",";
+        res += date.getTime() + ",";
       res += getSpan().getMinimumInteger() + "," + getSpan().getMaximumInteger();
     } else if (isValidAtExactTime()) {
       res += "2,";
-      res += getDate().getTime();
+        res += date.getTime();
     }
 
     res += getDirection().equals(DIRECTION.SEND) ? ",0" : ",1";
@@ -365,24 +362,24 @@ public class TimeSpan implements Comparable<TimeSpan> {
   @Override
   public String toString() {
     String result = null;
-    if (getDate() != null && span != null) {
+      if (date != null && span != null) {
       SimpleDateFormat f = new SimpleDateFormat("dd.MM.yy");
-      result = "Am " + f.format(getDate()) + ", von " + getSpan().getMinimumInteger() + " Uhr bis " + getSpan().getMaximumInteger() + " Uhr";
+          result = "Am " + f.format(date) + ", von " + getSpan().getMinimumInteger() + " Uhr bis " + getSpan().getMaximumInteger() + " Uhr";
       if (validFor != null) {
         result += " (" + validFor.toString() + ")";
       } else {
         result += " (Alle)";
       }
-    } else if (getDate() == null && span != null) {
+    } else if (date == null && span != null) {
       result = "Täglich, von " + getSpan().getMinimumInteger() + " Uhr bis " + getSpan().getMaximumInteger() + " Uhr";
       if (validFor != null) {
         result += " (" + validFor.toString() + ")";
       } else {
         result += " (Alle)";
       }
-    } else if (getDate() != null && span == null) {
+    } else if (date != null && span == null) {
       SimpleDateFormat f = new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss 'Uhr'");
-      result = "Am " + f.format(getDate());
+        result = "Am " + f.format(date);
       if (validFor != null) {
         result += " (" + validFor.toString() + ")";
       } else {

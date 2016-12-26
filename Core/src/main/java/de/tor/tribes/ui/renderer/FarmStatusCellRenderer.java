@@ -47,7 +47,7 @@ public class FarmStatusCellRenderer extends DefaultTableRenderer {
             farmingIcon = new ImageIcon(FarmStatusCellRenderer.class.getResource("/res/ui/trade_in.png"));
             reportIcon = new ImageIcon(FarmStatusCellRenderer.class.getResource("/res/ui/report.png"));
             lockedIcon = new ImageIcon(FarmStatusCellRenderer.class.getResource("/res/ui/lock.png"));
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
     }
 

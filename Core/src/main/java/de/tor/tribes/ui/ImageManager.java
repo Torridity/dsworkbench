@@ -221,12 +221,12 @@ public class ImageManager {
         }
     }
     //</editor-fold>
-    private static final List<Cursor> CURSORS = new LinkedList<Cursor>();
-    private static final List<ImageIcon> CURSOR_IMAGES = new LinkedList<ImageIcon>();
-    private static final List<BufferedImage> UNIT_IMAGES = new LinkedList<BufferedImage>();
-    private static final List<ImageIcon> UNIT_ICONS = new LinkedList<ImageIcon>();
-    private static final List<BufferedImage> NOTE_ICONS = new LinkedList<BufferedImage>();
-    private static final List<BufferedImage> NOTE_SYMBOLS = new LinkedList<BufferedImage>();
+    private static final List<Cursor> CURSORS = new LinkedList<>();
+    private static final List<ImageIcon> CURSOR_IMAGES = new LinkedList<>();
+    private static final List<BufferedImage> UNIT_IMAGES = new LinkedList<>();
+    private static final List<ImageIcon> UNIT_ICONS = new LinkedList<>();
+    private static final List<BufferedImage> NOTE_ICONS = new LinkedList<>();
+    private static final List<BufferedImage> NOTE_SYMBOLS = new LinkedList<>();
     private static boolean cursorSupported = true;
     private static BufferedImage noNoteIcon = null;
 
@@ -290,7 +290,6 @@ public class ImageManager {
         if (Toolkit.getDefaultToolkit().getMaximumCursorColors() < 16) {
             logger.warn("Insufficient color depth for custom cursors on current platform. Setting sytem-cursor mode.");
             cursorSupported = false;
-            return;
         }
     }
 
@@ -372,7 +371,7 @@ public class ImageManager {
             i.getGraphics().setColor(Color.BLACK);
             i.getGraphics().drawString(Integer.toString(pVillageCount), 5, 12);
             return Toolkit.getDefaultToolkit().createCustomCursor(i, new Point(0, 0), "Village");
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         return Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
     }
@@ -570,34 +569,35 @@ public class ImageManager {
         if (pUnit == null) {
             return null;
         }
-        if (pUnit.getPlainName().equals("spear")) {
-            return UNIT_IMAGES.get(ICON_SPEAR);
-        } else if (pUnit.getPlainName().equals("sword")) {
-            return UNIT_IMAGES.get(ICON_SWORD);
-        } else if (pUnit.getPlainName().equals("axe")) {
-            return UNIT_IMAGES.get(ICON_AXE);
-        } else if (pUnit.getPlainName().equals("archer")) {
-            return UNIT_IMAGES.get(ICON_ARCHER);
-        } else if (pUnit.getPlainName().equals("spy")) {
-            return UNIT_IMAGES.get(ICON_SPY);
-        } else if (pUnit.getPlainName().equals("light")) {
-            return UNIT_IMAGES.get(ICON_LKAV);
-        } else if (pUnit.getPlainName().equals("marcher")) {
-            return UNIT_IMAGES.get(ICON_MARCHER);
-        } else if (pUnit.getPlainName().equals("heavy")) {
-            return UNIT_IMAGES.get(ICON_HEAVY);
-        } else if (pUnit.getPlainName().equals("ram")) {
-            return UNIT_IMAGES.get(ICON_RAM);
-        } else if (pUnit.getPlainName().equals("catapult")) {
-            return UNIT_IMAGES.get(ICON_CATA);
-        } else if (pUnit.getPlainName().equals("snob")) {
-            return UNIT_IMAGES.get(ICON_SNOB);
-        } else if (pUnit.getPlainName().equals("knight")) {
-            return UNIT_IMAGES.get(ICON_KNIGHT);
-        } else if (pUnit.getPlainName().equals("militia")) {
-            return UNIT_IMAGES.get(ICON_MILITIA);
-        } else {
-            return UNIT_IMAGES.get(ICON_UNKNOWN);
+        switch (pUnit.getPlainName()) {
+            case "spear":
+                return UNIT_IMAGES.get(ICON_SPEAR);
+            case "sword":
+                return UNIT_IMAGES.get(ICON_SWORD);
+            case "axe":
+                return UNIT_IMAGES.get(ICON_AXE);
+            case "archer":
+                return UNIT_IMAGES.get(ICON_ARCHER);
+            case "spy":
+                return UNIT_IMAGES.get(ICON_SPY);
+            case "light":
+                return UNIT_IMAGES.get(ICON_LKAV);
+            case "marcher":
+                return UNIT_IMAGES.get(ICON_MARCHER);
+            case "heavy":
+                return UNIT_IMAGES.get(ICON_HEAVY);
+            case "ram":
+                return UNIT_IMAGES.get(ICON_RAM);
+            case "catapult":
+                return UNIT_IMAGES.get(ICON_CATA);
+            case "snob":
+                return UNIT_IMAGES.get(ICON_SNOB);
+            case "knight":
+                return UNIT_IMAGES.get(ICON_KNIGHT);
+            case "militia":
+                return UNIT_IMAGES.get(ICON_MILITIA);
+            default:
+                return UNIT_IMAGES.get(ICON_UNKNOWN);
         }
 
     }

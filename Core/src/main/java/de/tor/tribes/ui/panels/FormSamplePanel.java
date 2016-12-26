@@ -64,7 +64,7 @@ public class FormSamplePanel extends javax.swing.JPanel {
         initComponents();
         try {
             sampleTexture = ImageIO.read(new File("graphics/skins/default/v6.png"));
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
     }
 
@@ -248,7 +248,7 @@ public class FormSamplePanel extends javax.swing.JPanel {
                 l.setYPos(10);
                 l.addPoint(new Point2D.Double(getWidth() - 10, getHeight() - 10));
                 l.addPoint(new Point2D.Double(10, getHeight() - 10));
-                l.setTolerance(getTolerance());
+                l.setTolerance(tolerance);
                 l.renderPreview(g2d);
                 break;
             }

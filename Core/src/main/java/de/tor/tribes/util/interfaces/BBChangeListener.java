@@ -21,5 +21,5 @@ package de.tor.tribes.util.interfaces;
  */
 public interface BBChangeListener {
 
-    public void fireBBChangedEvent();
+    void fireBBChangedEvent();
 }

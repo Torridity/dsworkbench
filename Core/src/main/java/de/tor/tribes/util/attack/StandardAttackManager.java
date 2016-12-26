@@ -19,14 +19,15 @@ import de.tor.tribes.control.GenericManager;
 import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.types.StandardAttack;
 import de.tor.tribes.util.xml.JaxenUtils;
-import java.io.File;
-import java.io.FileWriter;
-import java.util.List;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.log4j.Logger;
 import org.jdom.Document;
 import org.jdom.Element;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.util.List;
 
 /**
  * @author Charon
@@ -131,16 +132,13 @@ public class StandardAttackManager extends GenericManager<StandardAttack> {
     }
 
     public boolean isAllowedName(String pName) {
-        if (pName == null
+        return !(pName == null
                 || pName.equals(StandardAttackManager.NO_TYPE_NAME)
                 || pName.equals(StandardAttackManager.OFF_TYPE_NAME)
                 || pName.equals(StandardAttackManager.FAKE_TYPE_NAME)
                 || pName.equals(StandardAttackManager.SNOB_TYPE_NAME)
                 || pName.equals(StandardAttackManager.SUPPORT_TYPE_NAME)
-                || pName.equals(StandardAttackManager.FAKE_SUPPORT_TYPE_NAME)) {
-            return false;
-        }
-        return true;
+                || pName.equals(StandardAttackManager.FAKE_SUPPORT_TYPE_NAME));
     }
 
     public boolean isAllowedIcon(int pIcon) {
@@ -171,9 +169,7 @@ public class StandardAttackManager extends GenericManager<StandardAttack> {
         initialize();
         File attackFile = new File(pFile);
         if (attackFile.exists()) {
-            if (logger.isDebugEnabled()) {
-                logger.info("Loading standard attacks from '" + pFile + "'");
-            }
+            logger.info("Loading standard attacks from '" + pFile + "'");
             try {
                 Document d = JaxenUtils.getDocument(attackFile);
                 for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//stdAttacks/stdAttack")) {
@@ -201,7 +197,7 @@ public class StandardAttackManager extends GenericManager<StandardAttack> {
             w.write("<stdAttacks>\n");
 
             for (ManageableType element : getAllElements()) {
-                w.write(((StandardAttack) element).toXml());
+                w.write(element.toXml());
             }
             w.write("</stdAttacks>\n");
             w.flush();

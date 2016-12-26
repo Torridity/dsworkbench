@@ -61,8 +61,8 @@ public class StatManager {
                 logger.debug(" * Created stats directory");
             }
         }
-        data = new Hashtable<Integer, Hashtable<Integer, TribeStatsElement>>();
-        monitoredAllies = new LinkedList<Integer>();
+        data = new Hashtable<>();
+        monitoredAllies = new LinkedList<>();
         File[] allyDirs = new File(dataPath).listFiles(new FileFilter() {
 
             @Override
@@ -104,7 +104,7 @@ public class StatManager {
     }
 
     private Hashtable<Integer, TribeStatsElement> readTribeStats(File pStatDir) {
-        Hashtable<Integer, TribeStatsElement> tribeStats = new Hashtable<Integer, TribeStatsElement>();
+        Hashtable<Integer, TribeStatsElement> tribeStats = new Hashtable<>();
         File[] tribeStatDirs = pStatDir.listFiles(new FileFilter() {
 
             @Override
@@ -138,7 +138,7 @@ public class StatManager {
     private void updateAllyChanges() {
         logger.debug(" * Updating ally changes");
         Enumeration<Integer> allyKeys = data.keys();
-        List<TribeStatsElement> outdatedElements = new LinkedList<TribeStatsElement>();
+        List<TribeStatsElement> outdatedElements = new LinkedList<>();
         logger.debug("  - Checking " + data.size() + " allies");
         while (allyKeys.hasMoreElements()) {
             //check all allies
@@ -147,7 +147,7 @@ public class StatManager {
             Hashtable<Integer, TribeStatsElement> tribesData = data.get(allyKey);
             if (tribesData == null) {
                 //avoid NPE
-                tribesData = new Hashtable<Integer, TribeStatsElement>();
+                tribesData = new Hashtable<>();
             }
 
             logger.debug(" - Checking monitored allies for integrity");
@@ -168,7 +168,7 @@ public class StatManager {
 
             Enumeration<Integer> tribeKeys = tribesData.keys();
             //get tribes that have changed the ally
-            List<Tribe> outdatedTribes = new LinkedList<Tribe>();
+            List<Tribe> outdatedTribes = new LinkedList<>();
             String allyPath = "./servers/" + GlobalOptions.getSelectedServer() + "/stats/" + allyKey;
             if (logger.isDebugEnabled()) {
                 logger.debug("  - Checking " + tribesData.size() + " tribes");
@@ -213,7 +213,7 @@ public class StatManager {
                     logger.debug("  - Creating new ally stats for ally '" + a + "'");
                 }
                 //add new tribe and ally data elements
-                tribeData = new Hashtable<Integer, TribeStatsElement>();
+                tribeData = new Hashtable<>();
                 tribeData.put(outdatedElem.getTribe().getId(), outdatedElem);
                 data.put(a.getId(), tribeData);
             } else {
@@ -294,7 +294,7 @@ public class StatManager {
         }
 
         if (allyData == null) {
-            allyData = new Hashtable<Integer, TribeStatsElement>();
+            allyData = new Hashtable<>();
             data.put(allyId, allyData);
         }
 
@@ -363,7 +363,7 @@ public class StatManager {
     }
 
     public Ally[] getMonitoredAllies() {
-        List<Ally> allies = new LinkedList<Ally>();
+        List<Ally> allies = new LinkedList<>();
         Enumeration<Integer> allyKeys = data.keys();
         while (allyKeys.hasMoreElements()) {
             Integer allyKey = allyKeys.nextElement();
@@ -381,7 +381,7 @@ public class StatManager {
 
     public Tribe[] getMonitoredTribes(Ally pAlly) {
         Hashtable<Integer, TribeStatsElement> tribeData = data.get(pAlly.getId());
-        List<Tribe> tribes = new LinkedList<Tribe>();
+        List<Tribe> tribes = new LinkedList<>();
         if (tribeData == null) {
             return new Tribe[]{};
         }
@@ -397,18 +397,17 @@ public class StatManager {
     }
 
     public boolean deleteDirectory(File directory) {
-        File fileToDelete = directory;
         boolean result = false;
-        if (fileToDelete.exists()) {
-            File directoryFiles[] = fileToDelete.listFiles();
-            for (int i = 0; i < directoryFiles.length; i++) {
-                if (directoryFiles[i].isFile()) {
-                    directoryFiles[i].delete();
+        if (directory.exists()) {
+            File directoryFiles[] = directory.listFiles();
+            for (File directoryFile : directoryFiles) {
+                if (directoryFile.isFile()) {
+                    directoryFile.delete();
                 } else {
-                    deleteDirectory(directoryFiles[i]);
+                    deleteDirectory(directoryFile);
                 }
             }
-            fileToDelete.delete();
+            directory.delete();
             result = true;
         }
 

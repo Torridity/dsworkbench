@@ -18,6 +18,7 @@ package de.tor.tribes.util.bb;
 import de.tor.tribes.types.SOSRequest;
 import de.tor.tribes.types.ext.Village;
 import java.text.NumberFormat;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
@@ -31,7 +32,7 @@ public class SosListFormatter extends BasicFormatter<SOSRequest> {
 
     private final String[] VARIABLES = new String[]{LIST_START, LIST_END, ELEMENT_COUNT, ELEMENT_ID};
     private final String STANDARD_TEMPLATE = new SOSRequest().getStandardTemplate();
-    private final String TEMPLATE_PROPERTY = "sos.list.bbexport.template";
+    private static final String TEMPLATE_PROPERTY = "sos.list.bbexport.template";
 
     @Override
     public String getPropertyKey() {
@@ -71,13 +72,9 @@ public class SosListFormatter extends BasicFormatter<SOSRequest> {
 
     @Override
     public String[] getTemplateVariables() {
-        List<String> vars = new LinkedList<String>();
-        for (String var : VARIABLES) {
-            vars.add(var);
-        }
-        for (String var : new SOSRequest().getBBVariables()) {
-            vars.add(var);
-        }
+        List<String> vars = new LinkedList<>();
+        Collections.addAll(vars, VARIABLES);
+        Collections.addAll(vars, new SOSRequest().getBBVariables());
         return vars.toArray(new String[vars.size()]);
     }
 }

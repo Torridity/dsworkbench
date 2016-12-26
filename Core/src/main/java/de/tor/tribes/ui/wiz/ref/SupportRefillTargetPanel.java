@@ -376,16 +376,14 @@ public class SupportRefillTargetPanel extends WizardPage {
             if (!villages.isEmpty()) {
                 addVillages(villages.toArray(new Village[villages.size()]));
             }
-        } catch (HeadlessException he) {
-        } catch (UnsupportedFlavorException ufe) {
-        } catch (IOException ioe) {
+        } catch (HeadlessException | IOException | UnsupportedFlavorException ignored) {
         }
     }
 
     private void deleteSelection() {
         int[] selection = jVillageTable.getSelectedRows();
         if (selection.length > 0) {
-            List<Integer> rows = new LinkedList<Integer>();
+            List<Integer> rows = new LinkedList<>();
             for (int i : selection) {
                 rows.add(jVillageTable.convertRowIndexToModel(i));
             }
@@ -412,7 +410,7 @@ public class SupportRefillTargetPanel extends WizardPage {
     }
 
     public Village[] getAllElements() {
-        List<Village> result = new LinkedList<Village>();
+        List<Village> result = new LinkedList<>();
         REFTargetTableModel model = getModel();
         for (int i = 0; i < model.getRowCount(); i++) {
             result.add(model.getRow(jVillageTable.convertRowIndexToModel(i)));

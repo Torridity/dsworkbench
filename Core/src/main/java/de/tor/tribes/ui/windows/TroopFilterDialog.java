@@ -52,7 +52,7 @@ public class TroopFilterDialog extends javax.swing.JDialog {
 
     private static Logger logger = Logger.getLogger("TroopFilter");
     private boolean doFilter = false;
-    private Hashtable<String, List<TroopFilterElement>> filterSets = new Hashtable<String, List<TroopFilterElement>>();
+    private Hashtable<String, List<TroopFilterElement>> filterSets = new Hashtable<>();
 
     /**
      * Creates new form TroopFilterDialog
@@ -79,11 +79,11 @@ public class TroopFilterDialog extends javax.swing.JDialog {
     }
 
     private void removeSelectedFilters() {
-        Object[] selection = jFilterList.getSelectedValues();
-        if (selection == null || selection.length == 0) {
+        List selection = jFilterList.getSelectedValuesList();
+        if (selection == null || selection.isEmpty()) {
             return;
         }
-        List<TroopFilterElement> toRemove = new LinkedList<TroopFilterElement>();
+        List<TroopFilterElement> toRemove = new LinkedList<>();
         for (Object elem : selection) {
             toRemove.add((TroopFilterElement) elem);
         }
@@ -555,7 +555,7 @@ public class TroopFilterDialog extends javax.swing.JDialog {
 
         StringBuilder b = new StringBuilder();
         b.append(setName).append(",");
-        List<TroopFilterElement> elements = new LinkedList<TroopFilterElement>();
+        List<TroopFilterElement> elements = new LinkedList<>();
         for (int j = 0; j < filterModel.size(); j++) {
             TroopFilterElement elem = (TroopFilterElement) filterModel.get(j);
             elements.add(new TroopFilterElement(elem.getUnit(), elem.getMin(), elem.getMax()));
@@ -617,7 +617,7 @@ public class TroopFilterDialog extends javax.swing.JDialog {
         } finally {
             try {
                 w.close();
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         }
     }
@@ -638,7 +638,7 @@ public class TroopFilterDialog extends javax.swing.JDialog {
             while ((line = r.readLine()) != null) {
                 String[] split = line.split(",");
                 String name = split[0];
-                List<TroopFilterElement> elements = new LinkedList<TroopFilterElement>();
+                List<TroopFilterElement> elements = new LinkedList<>();
                 for (int i = 1; i < split.length; i++) {
                     String[] elemSplit = split[i].split("/");
                     TroopFilterElement elem = new TroopFilterElement(DataHolder.getSingleton().getUnitByPlainName(elemSplit[0]), Integer.parseInt(elemSplit[1]), Integer.parseInt(elemSplit[2]));
@@ -728,7 +728,7 @@ public class TroopFilterDialog extends javax.swing.JDialog {
     }
 
     public Village[] getIgnoredVillages(Village[] pVillageToFilter) {
-        List<Village> ignored = new LinkedList<Village>();
+        List<Village> ignored = new LinkedList<>();
         //update list if filter is enabled
         DefaultListModel filterModel = (DefaultListModel) jFilterList.getModel();
 

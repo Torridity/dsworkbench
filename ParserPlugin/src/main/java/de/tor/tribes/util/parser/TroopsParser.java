@@ -49,17 +49,17 @@ public class TroopsParser implements SilentParserInterface {
         //boolean haveVillage = false;
         Village v = null;
         // List<Integer> troops = new LinkedList<Integer>();
-        Hashtable<UnitHolder, Integer> ownTroops = new Hashtable<UnitHolder, Integer>();
-        Hashtable<UnitHolder, Integer> troopsInVillage = new Hashtable<UnitHolder, Integer>();
-        Hashtable<UnitHolder, Integer> troopsOutside = new Hashtable<UnitHolder, Integer>();
-        Hashtable<UnitHolder, Integer> troopsOnTheWay = new Hashtable<UnitHolder, Integer>();
+        Hashtable<UnitHolder, Integer> ownTroops = new Hashtable<>();
+        Hashtable<UnitHolder, Integer> troopsInVillage = new Hashtable<>();
+        Hashtable<UnitHolder, Integer> troopsOutside = new Hashtable<>();
+        Hashtable<UnitHolder, Integer> troopsOnTheWay = new Hashtable<>();
         TroopsManager.getSingleton().invalidate();
         // used to update group on the fly, if not "all" selected
         String groupName = null;
         // groups could be multiple lines, detection is easiest for first line (starts with "Gruppen:")
         boolean groupLines = false;
         // store visited villages, so we can add em to selected group
-        List<Village> villages = new LinkedList<Village>();
+        List<Village> villages = new LinkedList<>();
         while (lineTok.hasMoreElements()) {
             //parse single line for village
             String line = lineTok.nextToken();
@@ -184,7 +184,7 @@ public class TroopsParser implements SilentParserInterface {
         
         //update selected group, if any
         if(groupName != null && !groupName.equals(ParserVariableManager.getSingleton().getProperty("groups.all"))){
-        	Hashtable<String, List<Village>> groupTable = new Hashtable<String, List<Village>>();
+        	Hashtable<String, List<Village>> groupTable = new Hashtable<>();
         	groupTable.put(groupName, villages);
         	DSWorkbenchMainFrame.getSingleton().fireGroupParserEvent(groupTable);
         }
@@ -222,7 +222,7 @@ public class TroopsParser implements SilentParserInterface {
                         String[] split = coord.trim().split("[(\\|)]");
                         return DataHolder.getSingleton().getVillages()[Integer.parseInt(split[0])][Integer.parseInt(split[1])];
                     }
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                 }
             }
         }

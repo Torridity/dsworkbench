@@ -63,7 +63,7 @@ public class ProfileTreeNodeRenderer extends DefaultTreeCellRenderer {
                     setIcon(mainProfile);
                 }
             }
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         return this;
     }

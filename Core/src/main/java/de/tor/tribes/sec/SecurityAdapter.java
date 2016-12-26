@@ -74,8 +74,8 @@ public class SecurityAdapter {
              * Extract each array of mac address and convert it to hexa with the 
              * following format 08-00-27-DC-4A-9E.
              */
-            for (int i = 0; i < mac.length; i++) {
-                result += String.format("%02X", mac[i]);
+            for (byte aMac : mac) {
+                result += String.format("%02X", aMac);
             }
         } catch (Exception e) {
             logger.error("Failed to get unique ID", e);

@@ -52,7 +52,7 @@ public class Tag extends ManageableType implements Comparable<Tag>, BBSupport {
             + "Dörfer: %VILLAGE_COUNT%\n"
             + "[quote]%VILLAGE_LIST%[/quote]";
     private String sName = null;
-    private List<Integer> mVillageIDs = new LinkedList<Integer>();
+    private List<Integer> mVillageIDs = new LinkedList<>();
     //-1 means no icon
     private TagMapMarker mapMarker = null;
     private boolean showOnMap = true;
@@ -64,8 +64,8 @@ public class Tag extends ManageableType implements Comparable<Tag>, BBSupport {
 
     @Override
     public String[] getReplacements(boolean pExtended) {
-        String nameVal = getName();
-        List<Village> villages = new LinkedList<Village>();
+        String nameVal = sName;
+        List<Village> villages = new LinkedList<>();
         for (Integer id : getVillageIDs()) {
             Village v = DataHolder.getSingleton().getVillagesById().get(id);
             if (v != null) {
@@ -105,8 +105,8 @@ public class Tag extends ManageableType implements Comparable<Tag>, BBSupport {
         try {
             String name = URLDecoder.decode(pElement.getChild("name").getTextTrim(), "UTF-8");
             boolean bShowOnMap = Boolean.parseBoolean(pElement.getAttributeValue("shownOnMap"));
-            setName(name);
-            setShowOnMap(bShowOnMap);
+            this.sName = name;
+            showOnMap = bShowOnMap;
             try {
                 Element color = pElement.getChild("color");
                 int r = color.getAttribute("r").getIntValue();
@@ -127,20 +127,20 @@ public class Tag extends ManageableType implements Comparable<Tag>, BBSupport {
             for (Element e : (List<Element>) JaxenUtils.getNodes(pElement, "villages/village")) {
                 tagVillage(Integer.parseInt(e.getValue()));
             }
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
     }
 
     public Tag() {
-        setMapMarker(new TagMapMarker());
+        this.mapMarker = new TagMapMarker();
 
     }
 
     /**Default constructor*/
     public Tag(String pName, boolean pShowOnMap) {
-        setName(pName);
-        setShowOnMap(pShowOnMap);
-        setMapMarker(new TagMapMarker());
+        this.sName = pName;
+        showOnMap = pShowOnMap;
+        this.mapMarker = new TagMapMarker();
     }
 
     /**Get the tag name
@@ -216,7 +216,7 @@ public class Tag extends ManageableType implements Comparable<Tag>, BBSupport {
 
     @Override
     public String toString() {
-        return getName();
+        return sName;
     }
 
     /**Convert this tag into its XML representation
@@ -225,8 +225,8 @@ public class Tag extends ManageableType implements Comparable<Tag>, BBSupport {
     @Override
     public String toXml() {
         try {
-            String ret = "<tag shownOnMap=\"" + isShowOnMap() + "\">\n";
-            ret += "<name><![CDATA[" + URLEncoder.encode(getName(), "UTF-8") + "]]></name>\n";
+            String ret = "<tag shownOnMap=\"" + showOnMap + "\">\n";
+            ret += "<name><![CDATA[" + URLEncoder.encode(sName, "UTF-8") + "]]></name>\n";
             Color c = getTagColor();
             if (c != null) {
                 ret += "<color r=\"" + c.getRed() + "\" g=\"" + c.getGreen() + "\" b=\"" + c.getBlue() + "\"/>\n";
@@ -248,28 +248,28 @@ public class Tag extends ManageableType implements Comparable<Tag>, BBSupport {
      * @return Color the TagMapMarker's color
      */
     public Color getTagColor() {
-        return getMapMarker().getTagColor();
+        return mapMarker.getTagColor();
     }
 
     /**Set the color of the associated TagMapMarker
      * @param tagColor the TagMapMarker's color
      */
     public void setTagColor(Color tagColor) {
-        getMapMarker().setTagColor(tagColor);
+        mapMarker.setTagColor(tagColor);
     }
 
     /**Get the icon's ID of the associated TagMapMarker
      * @return the tagIcon
      */
     public int getTagIcon() {
-        return getMapMarker().getTagIcon();
+        return mapMarker.getTagIcon();
     }
 
     /**Set the icon's ID of the associated TagMapMarker
      * @param tagIcon the tagIcon to set
      */
     public void setTagIcon(int tagIcon) {
-        getMapMarker().setTagIcon(tagIcon);
+        mapMarker.setTagIcon(tagIcon);
     }
 
     /**Set the associated TagMapMarker
@@ -328,7 +328,7 @@ public class Tag extends ManageableType implements Comparable<Tag>, BBSupport {
 
         @Override
         public int compare(Tag s1, Tag s2) {
-            return new Integer(s2.getName().length()).compareTo(new Integer(s1.getName().length()));
+            return new Integer(s2.getName().length()).compareTo(s1.getName().length());
         }
     }
 

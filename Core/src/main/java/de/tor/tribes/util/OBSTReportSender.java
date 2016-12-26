@@ -65,17 +65,17 @@ public class OBSTReportSender {
         try {
             HttpEntity[] requestBodies = { new StringEntity(pData)};
 
-            
-            for (int i = 0; i < requestBodies.length; i++) {
+
+            for (HttpEntity requestBody : requestBodies) {
                 if (!conn.isOpen()) {
                     Socket socket = new Socket(host.getHostName(), host.getPort());
                     conn.bind(socket, params);
                 }
                 BasicHttpEntityEnclosingRequest request = new BasicHttpEntityEnclosingRequest("POST",
                         pTarget.getPath() + "?" + pTarget.getQuery());
-                
-                request.setEntity(requestBodies[i]);
-               // System.out.println(">> Request URI: " + request.getRequestLine().getUri());
+
+                request.setEntity(requestBody);
+                // System.out.println(">> Request URI: " + request.getRequestLine().getUri());
 
                 request.setParams(params);
                 httpexecutor.preProcess(request, httpproc, context);
@@ -83,9 +83,9 @@ public class OBSTReportSender {
                 response.setParams(params);
                 httpexecutor.postProcess(response, httpproc, context);
 
-             //   System.out.println("<< Response: " + response.getStatusLine());
-               // System.out.println(EntityUtils.toString(response.getEntity()));
-               // System.out.println("==============");
+                //   System.out.println("<< Response: " + response.getStatusLine());
+                // System.out.println(EntityUtils.toString(response.getEntity()));
+                // System.out.println("==============");
                 if (!connStrategy.keepAlive(response, context)) {
                     conn.close();
                 } else {

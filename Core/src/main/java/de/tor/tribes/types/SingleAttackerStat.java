@@ -51,12 +51,12 @@ public class SingleAttackerStat {
 
     public SingleAttackerStat(Tribe pTribe) {
         attacker = pTribe;
-        usedVillages = new LinkedList<Village>();
-        sentUnits = new Hashtable<UnitHolder, Integer>();
-        killedUnits = new Hashtable<UnitHolder, Integer>();
-        lostUnits = new Hashtable<UnitHolder, Integer>();
-        destroyedBuildingLevels = new Hashtable<String, Integer>();
-        silentKills = new Hashtable<UnitHolder, Integer>();
+        usedVillages = new LinkedList<>();
+        sentUnits = new Hashtable<>();
+        killedUnits = new Hashtable<>();
+        lostUnits = new Hashtable<>();
+        destroyedBuildingLevels = new Hashtable<>();
+        silentKills = new Hashtable<>();
     }
 
     public static SingleAttackerStat createRandomElement(Tribe pTribe) {
@@ -360,11 +360,11 @@ public class SingleAttackerStat {
         res += "  SilentKills: " + silentKills + "\n";
         res += "  Killed: " + getSummedKills() + "\n";
         res += "  Lost: " + getSummedLosses() + "\n";
-        res += "  UnknownDamage: " + getUnknownDamageCount() + "\n";
-        res += "  AtLeast2KDamage: " + getAtLeast2KDamageCount() + "\n";
-        res += "  AtLeast4KDamage: " + getAtLeast4KDamageCount() + "\n";
-        res += "  AtLeast6KDamage: " + getAtLeast6KDamageCount() + "\n";
-        res += "  AtLeast8KDamage: " + getAtLeast8KDamageCount() + "\n";
+        res += "  UnknownDamage: " + unknownDamage + "\n";
+        res += "  AtLeast2KDamage: " + atLeast2KDamage + "\n";
+        res += "  AtLeast4KDamage: " + atLeast4KDamage + "\n";
+        res += "  AtLeast6KDamage: " + atLeast6KDamage + "\n";
+        res += "  AtLeast8KDamage: " + atLeast8KDamage + "\n";
         res += " DestructionStats\n";
         res += " ................\n";
         res += "  Wall: " + destroyedWallLevels + "\n";

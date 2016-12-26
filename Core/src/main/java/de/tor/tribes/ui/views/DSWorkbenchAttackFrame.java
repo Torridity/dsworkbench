@@ -55,14 +55,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import javax.swing.AbstractAction;
-import javax.swing.DefaultListModel;
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
+import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
@@ -206,14 +199,8 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
 
             @Override
             public boolean isValid(int tabIndex, String tabText) {
-                if (tabText.trim().length() == 0) {
-                    return false;
-                }
+                return tabText.trim().length() != 0 && !AttackManager.getSingleton().groupExists(tabText);
 
-                if (AttackManager.getSingleton().groupExists(tabText)) {
-                    return false;
-                }
-                return true;
             }
 
             @Override
@@ -272,11 +259,11 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         centerPanel.setMenuVisible(pConfig.getBoolean(getPropertyPrefix() + ".menu.visible", true));
         try {
             jAttackTabPane.setSelectedIndex(pConfig.getInteger(getPropertyPrefix() + ".tab.selection", 0));
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         try {
             jAttackFrameAlwaysOnTop.setSelected(pConfig.getBoolean(getPropertyPrefix() + ".alwaysOnTop"));
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
         setAlwaysOnTop(jAttackFrameAlwaysOnTop.isSelected());
@@ -744,7 +731,6 @@ private void fireCreateAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
     }
     if (unusedId == 1000) {
         JOptionPaneHelper.showErrorBox(DSWorkbenchAttackFrame.this, "Du hast mehr als 1000 Befehlspläne. Bitte lösche zuerst ein paar bevor du Neue erstellst.", "Fehler");
-        return;
     }
 }//GEN-LAST:event_fireCreateAttackPlanEvent
 
@@ -754,7 +740,7 @@ private void fireCreateAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
     private void updateFilter() {
         AttackTableTab tab = getActiveTab();
         if (tab != null) {
-            final List<String> selection = new LinkedList<String>();
+            final List<String> selection = new LinkedList<>();
             for (Object o : jXColumnList.getSelectedValues()) {
                 selection.add((String) o);
             }
@@ -854,7 +840,7 @@ private void fireCreateAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
             public void run() {
                 try {
                     ((AttackTableTab) jAttackTabPane.getSelectedComponent()).updateCountdown();
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                 }
             }
         });
@@ -871,7 +857,7 @@ private void fireCreateAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
             public void run() {
                 try {
                     ((AttackTableTab) jAttackTabPane.getSelectedComponent()).updateTime();
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                 }
             }
         });
@@ -894,7 +880,7 @@ private void fireCreateAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
         try {
             //  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
         //  DSWorkbenchAttackFrame.getSingleton().setSize(800, 600);
@@ -923,7 +909,7 @@ private void fireCreateAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
             AttackManager.getSingleton().addManagedElement("asd2", a2);
         }
         DSWorkbenchAttackFrame.getSingleton().resetView();
-        DSWorkbenchAttackFrame.getSingleton().setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        DSWorkbenchAttackFrame.getSingleton().setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         DSWorkbenchAttackFrame.getSingleton().setVisible(true);
     }
     // <editor-fold defaultstate="collapsed" desc="Gesture Handling">
@@ -1011,9 +997,9 @@ class ColorUpdateThread extends Thread {
                 DSWorkbenchAttackFrame.getSingleton().updateTime();
                 try {
                     Thread.sleep(10000);
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                 }
-            } catch (Throwable t) {
+            } catch (Throwable ignored) {
             }
         }
     }
@@ -1045,7 +1031,7 @@ class CountdownThread extends Thread {
                     // yield();
                     sleep(1000);
                 }
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         }
     }

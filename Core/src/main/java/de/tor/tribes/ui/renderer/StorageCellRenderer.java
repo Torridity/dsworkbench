@@ -53,7 +53,7 @@ public class StorageCellRenderer extends DefaultTableRenderer {
             double iron = status.getIronStatus();
             label.setData(new double[]{wood, clay, iron}, status.getCapacity());
 
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         return label;
     }

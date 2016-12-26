@@ -191,9 +191,9 @@ public class TagManager extends GenericManager<Tag> {
     /**Get all tags for a village*/
     public synchronized List<Tag> getTags(Village pVillage) {
         if (pVillage == null) {
-            return new LinkedList<Tag>();
+            return new LinkedList<>();
         }
-        List<Tag> tags = new LinkedList<Tag>();
+        List<Tag> tags = new LinkedList<>();
         for (ManageableType e : getAllElements()) {
             Tag t = (Tag) e;
             if (t.tagsVillage(pVillage.getId())) {

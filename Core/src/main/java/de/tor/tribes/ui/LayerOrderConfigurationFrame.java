@@ -30,7 +30,7 @@ import java.util.HashMap;
 public class LayerOrderConfigurationFrame extends javax.swing.JFrame implements LayerOrderTooltipListener {
 
     private static LayerOrderConfigurationFrame SINGLETON = null;
-    private HashMap<String, String> tooltips = new HashMap<String, String>();
+    private HashMap<String, String> tooltips = new HashMap<>();
     private String tooltipLayer = null;
     private String generalInformation = null;
     private LayerOrderPanel panel = null;
@@ -88,7 +88,7 @@ public class LayerOrderConfigurationFrame extends javax.swing.JFrame implements 
         URL warnURL = null;
         try {
             warnURL = new File("./graphics/icons/warning.png").toURI().toURL();
-        } catch (MalformedURLException mue) {
+        } catch (MalformedURLException ignored) {
         }
         tooltips.put("Markierungen", "<html><font font size='-1'><b>Markierungen</b><br/>Diese Ebene enthält Farbmarkierungen von Spielern und St&auml;mmen."
                 + " Sie ist immer sichtbar, kann jedoch entweder unterhalb oder oberhalb der Dorfebene gezeichnet werden, wodurch Markierungen"
@@ -220,13 +220,7 @@ public class LayerOrderConfigurationFrame extends javax.swing.JFrame implements 
                     break;
                 }
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(LayerOrderConfigurationFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(LayerOrderConfigurationFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(LayerOrderConfigurationFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+        } catch (ClassNotFoundException | javax.swing.UnsupportedLookAndFeelException | IllegalAccessException | InstantiationException ex) {
             java.util.logging.Logger.getLogger(LayerOrderConfigurationFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>

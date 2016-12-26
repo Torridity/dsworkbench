@@ -181,7 +181,7 @@ public class AttackPlanHTMLExporter {
             return;
         }
         SimpleDateFormat f = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         //append header
         result.append(replaceHeadFootVariables(HEADER, pPlanName, pAttacks));
 

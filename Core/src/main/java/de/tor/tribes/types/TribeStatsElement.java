@@ -77,14 +77,14 @@ public class TribeStatsElement {
 
     public TribeStatsElement(Tribe pTribe) {
         tribe = pTribe;
-        timestampList = new LinkedList<Long>();
-        rankList = new LinkedList<Integer>();
-        pointList = new LinkedList<Long>();
-        villageList = new LinkedList<Short>();
-        bashOffList = new LinkedList<Long>();
-        rankOffList = new LinkedList<Short>();
-        bashDefList = new LinkedList<Long>();
-        rankDefList = new LinkedList<Short>();
+        timestampList = new LinkedList<>();
+        rankList = new LinkedList<>();
+        pointList = new LinkedList<>();
+        villageList = new LinkedList<>();
+        bashOffList = new LinkedList<>();
+        rankOffList = new LinkedList<>();
+        bashDefList = new LinkedList<>();
+        rankDefList = new LinkedList<>();
     }
 
     protected void addLoadedData(long pTimestamp, int pRank, long pPoints, short pVillages, long pBashOff, short pRankOff, long pBashDef, short pRankDef) {
@@ -203,7 +203,7 @@ public class TribeStatsElement {
         Long[] timestamps = timestampList.toArray(new Long[]{});
         int cnt = 0;
         pTimestamp -= 1000;
-        List<Integer> toRemove = new LinkedList<Integer>();
+        List<Integer> toRemove = new LinkedList<>();
         for (long timestamp : timestamps) {
             if (timestamp < pTimestamp) {
                 toRemove.add(cnt);
@@ -229,7 +229,7 @@ public class TribeStatsElement {
         Long[] timestamps = timestampList.toArray(new Long[]{});
         int cnt = 0;
         pTimestamp += 1000;
-        List<Integer> toRemove = new LinkedList<Integer>();
+        List<Integer> toRemove = new LinkedList<>();
         for (long timestamp : timestamps) {
             if (timestamp > pTimestamp) {
                 toRemove.add(cnt);
@@ -255,7 +255,7 @@ public class TribeStatsElement {
         int cnt = 0;
         pStartTimestamp += 1000;
         pEndTimestamp -= 1000;
-        List<Integer> toRemove = new LinkedList<Integer>();
+        List<Integer> toRemove = new LinkedList<>();
         for (long timestamp : timestamps) {
             if (timestamp > pStartTimestamp && timestamp < pEndTimestamp) {
                 toRemove.add(cnt);
@@ -530,13 +530,13 @@ public class TribeStatsElement {
             }
             double pDiff = getPointDiff();
             pDiff = (pDiff == 0) ? 1 : pDiff;
-            return (double) bashOffDiff / (double) pDiff;
+            return (double) bashOffDiff / pDiff;
         }
 
         public Double getExpansion() {
             double perc = 0;
-            if (getPointStart() > 0) {
-                perc = (double) 100 * (double) getPointDiff() / (double) getPointStart();
+            if (pointStart > 0) {
+                perc = (double) 100 * (double) getPointDiff() / (double) pointStart;
             }
             return perc;
         }

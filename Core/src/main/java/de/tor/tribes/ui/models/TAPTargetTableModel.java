@@ -36,7 +36,7 @@ public class TAPTargetTableModel extends AbstractTableModel {
     private Class[] types = new Class[]{
         Tribe.class, Village.class, Boolean.class, Integer.class
     };
-    private final List<TAPAttackTargetElement> elements = new LinkedList<TAPAttackTargetElement>();
+    private final List<TAPAttackTargetElement> elements = new LinkedList<>();
 
     public TAPTargetTableModel() {
         super();

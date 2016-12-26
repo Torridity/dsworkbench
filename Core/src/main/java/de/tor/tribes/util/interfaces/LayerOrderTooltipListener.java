@@ -21,5 +21,5 @@ package de.tor.tribes.util.interfaces;
  */
 public interface LayerOrderTooltipListener {
 
-    public void fireShowTooltipEvent(String pLayer);
+    void fireShowTooltipEvent(String pLayer);
 }

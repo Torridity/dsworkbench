@@ -19,7 +19,6 @@ import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.ext.Ally;
 import de.tor.tribes.types.Marker;
 import de.tor.tribes.util.Constants;
-import de.tor.tribes.util.GenericParserInterface;
 import de.tor.tribes.util.SilentParserInterface;
 import de.tor.tribes.util.mark.MarkerManager;
 
@@ -38,13 +37,13 @@ import java.util.StringTokenizer;
  */
 public class DiplomacyParser implements SilentParserInterface {
 
-    private final boolean DEBUG = false;
+    private static final boolean DEBUG = false;
 
     public boolean parse(String pData) {
     	// TODO: Sprachabhängige Version von "Verbündete", "Nicht-Angriffs-Pakt (NAP)", "Feinde" aus ParserVariableManager.getSingleton().getProperty() laden
     	
         StringTokenizer lineTok = new StringTokenizer(pData, "\n\r");
-        List<Marker> markers = new ArrayList<Marker>();
+        List<Marker> markers = new ArrayList<>();
         boolean allies = false;
         boolean naps = false;
         boolean enemies = false;
@@ -53,17 +52,17 @@ public class DiplomacyParser implements SilentParserInterface {
             String line = lineTok.nextToken();
             debug("Try line " + line);
 
-            if (line.trim().indexOf("Verbündete") > -1) {
+            if (line.trim().contains("Verbündete")) {
                 debug("Got allies");
                 allies = true;
                 naps = false;
                 enemies = false;
-            } else if (line.trim().indexOf("Nicht-Angriffs-Pakt (NAP)") > -1) {
+            } else if (line.trim().contains("Nicht-Angriffs-Pakt (NAP)")) {
                 debug("Got naps");
                 naps = true;
                 allies = false;
                 enemies = false;
-            } else if (line.trim().indexOf("Feinde") > -1) {
+            } else if (line.trim().contains("Feinde")) {
                 debug("Got enemies");
                 enemies = true;
                 naps = false;

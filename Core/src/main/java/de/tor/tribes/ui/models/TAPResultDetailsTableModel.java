@@ -35,7 +35,7 @@ public class TAPResultDetailsTableModel extends AbstractTableModel {
     private Class[] types = new Class[]{
         Village.class, Village.class, UnitHolder.class, Date.class, Date.class, Integer.class
     };
-    private final List<Attack> elements = new LinkedList<Attack>();
+    private final List<Attack> elements = new LinkedList<>();
 
     public TAPResultDetailsTableModel() {
         super();

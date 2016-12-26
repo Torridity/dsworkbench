@@ -72,7 +72,7 @@ public class ColorFilter implements ReportRuleInterface {
     @Override
     public String getStringRepresentation() {
         StringBuilder result = new StringBuilder();
-        List<String> validFor = new LinkedList<String>();
+        List<String> validFor = new LinkedList<>();
         if ((color & GREY) > 0) {
             validFor.add("grau");
         }

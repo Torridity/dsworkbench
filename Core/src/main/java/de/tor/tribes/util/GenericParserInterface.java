@@ -23,5 +23,5 @@ import java.util.List;
  */
 public interface GenericParserInterface<T> {
 
-    public List<T> parse(String pData);
+    List<T> parse(String pData);
 }

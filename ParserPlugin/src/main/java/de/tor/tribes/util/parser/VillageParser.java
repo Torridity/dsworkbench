@@ -23,8 +23,6 @@ import de.tor.tribes.util.ServerSettings;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * @author Charon
@@ -32,7 +30,7 @@ import java.util.regex.Pattern;
 public class VillageParser implements GenericParserInterface<Village> {
 
     public List<Village> parse(String pVillagesString) {
-        List<Village> villages = new LinkedList<Village>();
+        List<Village> villages = new LinkedList<>();
         if (pVillagesString == null) {
             return villages;
         }

@@ -39,8 +39,8 @@ public abstract class AbstractTroopMovement {
   private List<Attack> finalizedAttacks = null;
 
   public AbstractTroopMovement(Village pTarget, int pMinOffs, int pMaxOffs) {
-    setTarget(pTarget);
-    mOffs = new Hashtable<UnitHolder, List<Village>>();
+      mTarget = pTarget;
+      mOffs = new Hashtable<>();
     iMinOffs = pMinOffs;
     iMaxOffs = pMaxOffs;
   }
@@ -56,7 +56,7 @@ public abstract class AbstractTroopMovement {
   public void addOff(UnitHolder pUnit, Village mSource) {
     List<Village> sourcesForUnit = mOffs.get(pUnit);
     if (sourcesForUnit == null) {
-      sourcesForUnit = new LinkedList<Village>();
+      sourcesForUnit = new LinkedList<>();
       sourcesForUnit.add(mSource);
       mOffs.put(pUnit, sourcesForUnit);
     } else {

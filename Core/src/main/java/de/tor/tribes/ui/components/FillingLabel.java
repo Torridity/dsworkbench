@@ -20,8 +20,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.text.NumberFormat;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
+import javax.swing.*;
 
 /**
  *
@@ -73,7 +72,7 @@ public class FillingLabel extends JLabel {
 
     public static void main(String[] args) {
         JFrame f = new JFrame();
-        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         FillingLabel l = new FillingLabel();
         l.setPreferredSize(new Dimension(100, 24));
         l.setData(new double[]{134644.0 / 400000.0, 180000.0 / 400000.0, 161743.0 / 400000.0}, 400000.0);

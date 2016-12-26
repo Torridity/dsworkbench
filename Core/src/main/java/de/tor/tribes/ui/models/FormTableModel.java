@@ -93,30 +93,30 @@ public class FormTableModel extends AbstractTableModel {
             case 4:
                 switch (type) {
                     case ARROW:
-                        return ((Arrow) f).getBounds().width;
+                        return f.getBounds().width;
                     case CIRCLE:
-                        return ((Circle) f).getBounds().width;
+                        return f.getBounds().width;
                     case FREEFORM:
                         return 0;
                     case LINE:
-                        return ((Line) f).getBounds().width;
+                        return f.getBounds().width;
                     case RECTANGLE:
-                        return ((Rectangle) f).getBounds().width;
+                        return f.getBounds().width;
                     default:
                         return 0;
                 }
             case 5:
                 switch (type) {
                     case ARROW:
-                        return ((Arrow) f).getBounds().height;
+                        return f.getBounds().height;
                     case CIRCLE:
-                        return ((Circle) f).getBounds().height;
+                        return f.getBounds().height;
                     case FREEFORM:
                         return 0;
                     case LINE:
-                        return ((Line) f).getBounds().height;
+                        return f.getBounds().height;
                     case RECTANGLE:
-                        return ((Rectangle) f).getBounds().height;
+                        return f.getBounds().height;
                     default:
                         return 0;
                 }

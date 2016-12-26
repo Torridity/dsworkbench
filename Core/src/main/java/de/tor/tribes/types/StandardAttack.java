@@ -54,9 +54,9 @@ public class StandardAttack extends ManageableType {
     }
 
     public StandardAttack(String pName, int pIcon) {
-        setName(pName);
-        setIcon(pIcon);
-        elements = new ArrayList<StandardAttackElement>();
+        name = pName;
+        icon = pIcon;
+        elements = new ArrayList<>();
         for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
             elements.add(new StandardAttackElement(unit, 0));
         }
@@ -108,7 +108,7 @@ public class StandardAttack extends ManageableType {
     public String toXml() {
         StringBuilder b = new StringBuilder();
         try {
-            b.append("<").append(getElementIdentifier()).append(" name=\"").append(URLEncoder.encode(name, "UTF-8")).append("\" icon=\"").append(getIcon()).append("\">\n");
+            b.append("<").append(getElementIdentifier()).append(" name=\"").append(URLEncoder.encode(name, "UTF-8")).append("\" icon=\"").append(icon).append("\">\n");
             b.append("<attackElements>\n");
             for (StandardAttackElement elem : elements) {
                 b.append(elem.toXml());
@@ -124,15 +124,15 @@ public class StandardAttack extends ManageableType {
     @Override
     public void loadFromXml(Element e) {
         try {
-            setName(URLDecoder.decode(e.getAttribute("name").getValue(), "UTF-8"));
+            name = URLDecoder.decode(e.getAttribute("name").getValue(), "UTF-8");
         } catch (IOException ioe) {
-            setName("");
+            name = "";
         }
 
         try {
-            setIcon(Integer.parseInt(e.getAttribute("icon").getValue()));
+            icon = Integer.parseInt(e.getAttribute("icon").getValue());
         } catch (Exception ex) {
-            setIcon(-1);
+            icon = -1;
         }
 
         elements.clear();
@@ -156,7 +156,7 @@ public class StandardAttack extends ManageableType {
 
     @Override
     public String toString() {
-        return getName();
+        return name;
     }
 
     public final void setIcon(int pIcon) {

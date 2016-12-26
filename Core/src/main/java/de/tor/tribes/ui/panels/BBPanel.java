@@ -21,25 +21,20 @@ import de.tor.tribes.types.ext.Ally;
 import de.tor.tribes.types.ext.InvalidTribe;
 import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Village;
+import de.tor.tribes.util.*;
 import de.tor.tribes.util.interfaces.BBChangeListener;
-import de.tor.tribes.util.BBCodeFormatter;
-import de.tor.tribes.util.BrowserCommandSender;
-import de.tor.tribes.util.Constants;
-import de.tor.tribes.util.GlobalOptions;
-import de.tor.tribes.util.PluginManager;
+import net.java.dev.colorchooser.ColorChooser;
+import org.apache.log4j.Logger;
+
+import javax.swing.*;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
+import javax.swing.text.BadLocationException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.regex.Matcher;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.DefaultStyledDocument;
-import net.java.dev.colorchooser.ColorChooser;
-import org.apache.log4j.Logger;
 
 /**
  *
@@ -528,10 +523,10 @@ public class BBPanel extends javax.swing.JPanel {
             jSizeChooseDialog.setVisible(true);
         } else if (evt.getSource() == jTableButton) {
             try {
-                ((DefaultStyledDocument) jTextPane1.getDocument()).insertString(jTextPane1.getCaretPosition(), "[table]\n[**]head1[||]head2[/**]\n[*]test1[|]test2\n[/table]", null);
-            } catch (BadLocationException ble) {
+                jTextPane1.getDocument().insertString(jTextPane1.getCaretPosition(), "[table]\n[**]head1[||]head2[/**]\n[*]test1[|]test2\n[/table]", null);
+            } catch (BadLocationException ignored) {
             }
-            /**
+            /*
             
             [table][**]head1[||]head2[/**][*]test1[|]test2[/*][/table]
              */
@@ -586,9 +581,9 @@ public class BBPanel extends javax.swing.JPanel {
             String pCloseCode = "[/color]";
             int s = jTextPane1.getSelectionStart();
             int e = jTextPane1.getSelectionEnd();
-            String t = ((DefaultStyledDocument) jTextPane1.getDocument()).getText(s, e - s);
-            ((DefaultStyledDocument) jTextPane1.getDocument()).remove(s, e - s);
-            ((DefaultStyledDocument) jTextPane1.getDocument()).insertString(s, pOpenCode + t + pCloseCode, null);
+            String t = jTextPane1.getDocument().getText(s, e - s);
+            jTextPane1.getDocument().remove(s, e - s);
+            jTextPane1.getDocument().insertString(s, pOpenCode + t + pCloseCode, null);
             if (t.length() == 0) {
                 jTextPane1.setCaretPosition(s + pOpenCode.length());
             } else {
@@ -607,9 +602,9 @@ public class BBPanel extends javax.swing.JPanel {
             String pCloseCode = "[/size]";
             int s = jTextPane1.getSelectionStart();
             int e = jTextPane1.getSelectionEnd();
-            String t = ((DefaultStyledDocument) jTextPane1.getDocument()).getText(s, e - s);
-            ((DefaultStyledDocument) jTextPane1.getDocument()).remove(s, e - s);
-            ((DefaultStyledDocument) jTextPane1.getDocument()).insertString(s, pOpenCode + t + pCloseCode, null);
+            String t = jTextPane1.getDocument().getText(s, e - s);
+            jTextPane1.getDocument().remove(s, e - s);
+            jTextPane1.getDocument().insertString(s, pOpenCode + t + pCloseCode, null);
             if (t.length() == 0) {
                 jTextPane1.setCaretPosition(s + pOpenCode.length());
             } else {
@@ -625,9 +620,9 @@ public class BBPanel extends javax.swing.JPanel {
         try {
             int s = jTextPane1.getSelectionStart();
             int e = jTextPane1.getSelectionEnd();
-            String t = ((DefaultStyledDocument) jTextPane1.getDocument()).getText(s, e - s);
-            ((DefaultStyledDocument) jTextPane1.getDocument()).remove(s, e - s);
-            ((DefaultStyledDocument) jTextPane1.getDocument()).insertString(s, pOpenCode + t + pCloseCode, null);
+            String t = jTextPane1.getDocument().getText(s, e - s);
+            jTextPane1.getDocument().remove(s, e - s);
+            jTextPane1.getDocument().insertString(s, pOpenCode + t + pCloseCode, null);
             if (t.length() == 0) {
                 jTextPane1.setCaretPosition(s + pOpenCode.length());
             } else {
@@ -706,7 +701,7 @@ public class BBPanel extends javax.swing.JPanel {
 
     public static void main(String[] args) {
         JFrame f = new JFrame();
-        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         f.setSize(400, 300);
         f.add(new BBPanel(null));
         f.setVisible(true);

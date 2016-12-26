@@ -118,7 +118,7 @@ public class ServerManager {
             if (sum % 500 == 0) {
                 try {
                     Thread.sleep(50);
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                 }
             }
         }
@@ -130,7 +130,7 @@ public class ServerManager {
      * Get the listof locally stored servers
      */
     public static String[] getLocalServers() {
-        List<String> servers = new LinkedList<String>();
+        List<String> servers = new LinkedList<>();
         for (File serverDir : new File(Constants.SERVER_DIR).listFiles()) {
             if (serverDir.isDirectory()) {
                 servers.add(serverDir.getName());

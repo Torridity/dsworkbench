@@ -61,7 +61,7 @@ public class AnimatedVillageInfoRenderer {
     }
 
     public void update(Village pCurrentVillage, Rectangle pCurrentLocation, Graphics2D g2d) {
-        if (pCurrentLocation == null || isFinished()) {
+        if (pCurrentLocation == null || bFinished) {
             bFinished = true;
             return;
         }
@@ -82,11 +82,7 @@ public class AnimatedVillageInfoRenderer {
     }
 
     private void renderTroopInfo(Village pCurrentVillage, Graphics2D g2d) {
-        if (mVillage != null && mVillage.equals(pCurrentVillage)) {
-            pRise = true;
-        } else {
-            pRise = false;
-        }
+        pRise = mVillage != null && mVillage.equals(pCurrentVillage);
 
         VillageTroopsHolder holder = null;
         int centerX = (int) Math.floor(mCurrentLocation.getCenterX());
@@ -206,11 +202,7 @@ public class AnimatedVillageInfoRenderer {
 
     private void renderNoteInfo(Village pCurrentVillage, Graphics2D g2d) {
 
-        if (mVillage != null && mVillage.equals(pCurrentVillage)) {
-            pRise = true;
-        } else {
-            pRise = false;
-        }
+        pRise = mVillage != null && mVillage.equals(pCurrentVillage);
         int noteCount = NoteManager.getSingleton().getNotesForVillage(mVillage).size();
         double deg = 0;
         if (noteCount != 0) {

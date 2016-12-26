@@ -287,7 +287,7 @@ public class NoteManager extends GenericManager<Note> {
         if (pVillage == null) {
             return null;
         }
-        List<Note> noteList = new LinkedList<Note>();
+        List<Note> noteList = new LinkedList<>();
         for (ManageableType t : getAllElementsFromAllGroups()) {
             Note n = (Note) t;
             if (n.getVillageIds().contains(pVillage.getId())) {
@@ -298,7 +298,7 @@ public class NoteManager extends GenericManager<Note> {
     }
 
     public Hashtable<Village, List<Note>> getNotesMap() {
-        Hashtable<Village, List<Note>> noteMap = new Hashtable<Village, List<Note>>();
+        Hashtable<Village, List<Note>> noteMap = new Hashtable<>();
         for (ManageableType t : getAllElementsFromAllGroups()) {
             Note n = (Note) t;
             for (Integer id : n.getVillageIds()) {
@@ -306,7 +306,7 @@ public class NoteManager extends GenericManager<Note> {
                 if (v != null) {
                     List<Note> list = noteMap.get(v);
                     if (list == null) {
-                        list = new ArrayList<Note>();
+                        list = new ArrayList<>();
                         noteMap.put(v, list);
                     }
                     list.add(n);

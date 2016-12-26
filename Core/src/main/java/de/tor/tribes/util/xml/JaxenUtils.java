@@ -247,8 +247,8 @@ public class JaxenUtils {
     protected static XPath createFilter(String xPath, Namespace[] context) throws JaxenException {
         XPath filter = new JDOMXPath(xPath);
         if (context != null) {
-            for (int i = 0; i < context.length; i++) {
-                filter.addNamespace(context[i].getPrefix(), context[i].getURI());
+            for (Namespace aContext : context) {
+                filter.addNamespace(aContext.getPrefix(), aContext.getURI());
             }
         }
         return filter;
@@ -405,8 +405,8 @@ public class JaxenUtils {
     protected static XPath createW3CFilter(String xPath, Namespace[] context) throws JaxenException {
         XPath filter = new DOMXPath(xPath);
         if (context != null) {
-            for (int i = 0; i < context.length; i++) {
-                filter.addNamespace(context[i].getPrefix(), context[i].getURI());
+            for (Namespace aContext : context) {
+                filter.addNamespace(aContext.getPrefix(), aContext.getURI());
             }
         }
         return filter;

@@ -27,18 +27,11 @@ import de.tor.tribes.types.*;
 import de.tor.tribes.types.ext.Ally;
 import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Village;
-import de.tor.tribes.ui.windows.AbstractDSWorkbenchFrame;
 import de.tor.tribes.ui.panels.GenericTestPanel;
 import de.tor.tribes.ui.panels.ReportTableTab;
+import de.tor.tribes.ui.windows.AbstractDSWorkbenchFrame;
 import de.tor.tribes.ui.windows.ReportRulesDialog;
-import de.tor.tribes.util.BBCodeFormatter;
-import de.tor.tribes.util.Constants;
-import de.tor.tribes.util.GlobalOptions;
-import de.tor.tribes.util.ImageUtils;
-import de.tor.tribes.util.JOptionPaneHelper;
-import de.tor.tribes.util.MouseGestureHandler;
-import de.tor.tribes.util.ProfileManager;
-import de.tor.tribes.util.PropertyHelper;
+import de.tor.tribes.util.*;
 import de.tor.tribes.util.bb.AllyReportStatsFormatter;
 import de.tor.tribes.util.bb.OverallReportStatsFormatter;
 import de.tor.tribes.util.bb.TribeReportStatsFormatter;
@@ -46,47 +39,27 @@ import de.tor.tribes.util.farm.FarmManager;
 import de.tor.tribes.util.generator.ui.ReportGenerator;
 import de.tor.tribes.util.report.ReportManager;
 import de.tor.tribes.util.report.ReportStatBuilder;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Point;
-import java.awt.TexturePaint;
-import java.awt.Toolkit;
-import java.awt.datatransfer.StringSelection;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
-import java.text.NumberFormat;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.LinkedList;
-import java.util.List;
-import javax.swing.AbstractAction;
-import javax.swing.DefaultListModel;
-import javax.swing.ImageIcon;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.KeyStroke;
-import javax.swing.UIManager;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import org.apache.commons.configuration.Configuration;
 import org.apache.log4j.ConsoleAppender;
-
 import org.apache.log4j.Logger;
 import org.jdesktop.swingx.JXButton;
 import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.painter.MattePainter;
 import org.jdesktop.swingx.table.TableColumnExt;
+
+import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import java.awt.*;
+import java.awt.datatransfer.StringSelection;
+import java.awt.event.*;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
+import java.text.NumberFormat;
+import java.util.*;
+import java.util.List;
 
 /**
  * @author Torridity
@@ -231,14 +204,8 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
 
             @Override
             public boolean isValid(int tabIndex, String tabText) {
-                if (tabText.trim().length() == 0) {
-                    return false;
-                }
+                return tabText.trim().length() != 0 && !ReportManager.getSingleton().groupExists(tabText);
 
-                if (ReportManager.getSingleton().groupExists(tabText)) {
-                    return false;
-                }
-                return true;
             }
 
             @Override
@@ -312,11 +279,11 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         centerPanel.setMenuVisible(pConfig.getBoolean(getPropertyPrefix() + ".menu.visible", true));
         try {
             jReportsTabbedPane.setSelectedIndex(pConfig.getInteger(getPropertyPrefix() + ".tab.selection", 0));
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         try {
             jAlwaysOnTopBox.setSelected(pConfig.getBoolean(getPropertyPrefix() + ".alwaysOnTop"));
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
         setAlwaysOnTop(jAlwaysOnTopBox.isSelected());
@@ -474,7 +441,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
             return;
         }
         String set = tab.getReportSet();
-        List<FightReport> old = new LinkedList<FightReport>();
+        List<FightReport> old = new LinkedList<>();
         int currentIndex = 0;
         for (ManageableType elem : ReportManager.getSingleton().getAllElements(set)) {
             FightReport r = (FightReport) elem;
@@ -1009,13 +976,13 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
     }//GEN-LAST:event_fireAlwaysOnTopEvent
 
     private void fireDoCreateStatsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireDoCreateStatsEvent
-        Object[] selection = jReportSetsForStatsList.getSelectedValues();
-        if (selection == null || selection.length == 0) {
+        List selection = jReportSetsForStatsList.getSelectedValuesList();
+        if (selection == null || selection.isEmpty()) {
             JOptionPaneHelper.showInformationBox(jCreateStatsFrame, "Kein Berichtset ausgewählt", "Information");
             return;
         }
 
-        List<String> reportSets = new LinkedList<String>();
+        List<String> reportSets = new LinkedList<>();
         for (Object o : selection) {
             reportSets.add((String) o);
         }
@@ -1062,7 +1029,6 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         }
         if (unusedId == 1000) {
             JOptionPaneHelper.showErrorBox(DSWorkbenchReportFrame.this, "Du hast mehr als 1000 Berichtsets. Bitte lösche zuerst ein paar bevor du Neue erstellst.", "Fehler");
-            return;
         }
 }//GEN-LAST:event_fireCreateAttackPlanEvent
 
@@ -1075,8 +1041,8 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
 }//GEN-LAST:event_fireEnterEvent
 
     private void fireRebuildStatsEvent() {
-        Object[] selection = jList1.getSelectedValues();
-        if (selection == null || selection.length == 0) {
+        List selection = jList1.getSelectedValuesList();
+        if (selection == null || selection.isEmpty()) {
             jOverallStatsArea.setText("<html>Kein Stamm ausgewählt</html>");
             jAllyStatsArea.setText("<html>Kein Stamm ausgewählt</html>");
             jTribeStatsArea.setText("<html>Kein Stamm ausgewählt</html>");
@@ -1091,7 +1057,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
 
         StringBuilder allyBuffer = new StringBuilder();
         StringBuilder tribeBuffer = new StringBuilder();
-        Hashtable<Ally, AllyStatResult> allyResults = new Hashtable<Ally, AllyStatResult>();
+        Hashtable<Ally, AllyStatResult> allyResults = new Hashtable<>();
         OverallStatResult overallResult = new OverallStatResult();
         for (Object o : selection) {
             Ally a = (Ally) o;
@@ -1108,7 +1074,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         overallResult.setStartDate(lastStats.getStartDate());
         overallResult.setEndDate(lastStats.getEndDate());
         overallResult.setReportCount(lastStats.getReportCount());
-        overallResult.setAttackerAllies(selection.length);
+        overallResult.setAttackerAllies(selection.size());
         overallResult.setDefenders(overallDefTribes);
         overallResult.setDefenderAllies(overallDefAllies);
 
@@ -1138,7 +1104,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
             logger.error("Failed to render overall BB representation", e);
         }
         try {
-            List<AllyStatResult> list = new LinkedList<AllyStatResult>();
+            List<AllyStatResult> list = new LinkedList<>();
             Enumeration<Ally> allyKeys = allyResults.keys();
             while (allyKeys.hasMoreElements()) {
                 Ally a = allyKeys.nextElement();
@@ -1153,7 +1119,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         }
 
         try {
-            List<TribeStatResult> list = new LinkedList<TribeStatResult>();
+            List<TribeStatResult> list = new LinkedList<>();
             Enumeration<Ally> allyKeys = allyResults.keys();
             while (allyKeys.hasMoreElements()) {
                 AllyStatResult allyStat = allyResults.get(allyKeys.nextElement());
@@ -1205,7 +1171,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
     private void updateFilter() {
         ReportTableTab tab = getActiveTab();
         if (tab != null) {
-            final List<String> selection = new LinkedList<String>();
+            final List<String> selection = new LinkedList<>();
             for (Object o : jXColumnList.getSelectedValues()) {
                 selection.add((String) o);
             }
@@ -1273,7 +1239,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         try {
             //  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
 
@@ -1283,7 +1249,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
 
         DSWorkbenchReportFrame.getSingleton().setSize(800, 600);
         DSWorkbenchReportFrame.getSingleton().resetView();
-        DSWorkbenchReportFrame.getSingleton().setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        DSWorkbenchReportFrame.getSingleton().setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         DSWorkbenchReportFrame.getSingleton().setVisible(true);
 

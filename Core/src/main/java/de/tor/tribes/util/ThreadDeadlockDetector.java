@@ -27,7 +27,7 @@ public class ThreadDeadlockDetector {
     private final ThreadMXBean mbean =
             ManagementFactory.getThreadMXBean();
     private final Collection<Listener> listeners =
-            new CopyOnWriteArraySet<Listener>();
+            new CopyOnWriteArraySet<>();
     /**
      * The number of milliseconds between checking for deadlocks. It may be expensive to check for deadlocks, and it is not critical to know
      * so quickly.

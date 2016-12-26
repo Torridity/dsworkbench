@@ -108,7 +108,7 @@ public class AttackCalculationPanel extends WizardPage {
         int type = 0;
         try {
             type = Integer.parseInt(value);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         if (type == 0) {
             jBruteForce.setSelected(true);
@@ -449,7 +449,7 @@ public class AttackCalculationPanel extends WizardPage {
         //wait until calculation is running
         try {
             Thread.sleep(20);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
     }//GEN-LAST:event_fireCalculateAttacksEvent
@@ -464,28 +464,28 @@ public class AttackCalculationPanel extends WizardPage {
         } else if (jSystematicCalculation.isSelected()) {
             calculator = new Iterix();
         }
-        Hashtable<UnitHolder, List<Village>> sources = new Hashtable<UnitHolder, List<Village>>();
-        Hashtable<UnitHolder, List<Village>> fakeSources = new Hashtable<UnitHolder, List<Village>>();
+        Hashtable<UnitHolder, List<Village>> sources = new Hashtable<>();
+        Hashtable<UnitHolder, List<Village>> fakeSources = new Hashtable<>();
         for (TAPAttackSourceElement element : AttackSourceFilterPanel.getSingleton().getFilteredElements()) {
             List<Village> sourcesForUnit;
             if (element.isFake()) {
                 sourcesForUnit = fakeSources.get(element.getUnit());
                 if (sourcesForUnit == null) {
-                    sourcesForUnit = new LinkedList<Village>();
+                    sourcesForUnit = new LinkedList<>();
                     fakeSources.put(element.getUnit(), sourcesForUnit);
                 }
             } else {
                 sourcesForUnit = sources.get(element.getUnit());
                 if (sourcesForUnit == null) {
-                    sourcesForUnit = new LinkedList<Village>();
+                    sourcesForUnit = new LinkedList<>();
                     sources.put(element.getUnit(), sourcesForUnit);
                 }
             }
             sourcesForUnit.add(element.getVillage());
         }
-        List<Village> targets = new LinkedList<Village>();
-        List<Village> fakeTargets = new LinkedList<Village>();
-        Hashtable<Village, Integer> maxAttacks = new Hashtable<Village, Integer>();
+        List<Village> targets = new LinkedList<>();
+        List<Village> fakeTargets = new LinkedList<>();
+        Hashtable<Village, Integer> maxAttacks = new Hashtable<>();
         for (TAPAttackTargetElement element : AttackTargetFilterPanel.getSingleton().getFilteredElements()) {
             if (element.isFake()) {
                 fakeTargets.add(element.getVillage());
@@ -569,7 +569,7 @@ public class AttackCalculationPanel extends WizardPage {
                     scroll();
                 }
             });
-        } catch (BadLocationException ble) {
+        } catch (BadLocationException ignored) {
         }
     }
 

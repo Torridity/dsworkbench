@@ -34,7 +34,7 @@ import java.util.List;
 public class TagUtils {
 
     public static Tag[] getTags(Comparator<Tag> pComparator) {
-        List<Tag> result = new LinkedList<Tag>();
+        List<Tag> result = new LinkedList<>();
         for (ManageableType type : TagManager.getSingleton().getAllElements()) {
             result.add((Tag) type);
         }
@@ -56,7 +56,7 @@ public class TagUtils {
 
     public static Tag[] getTagsByTribe(Tribe pTribe, Comparator<Tag> pComparator) {
         Tag[] tags = getTags(null);
-        List<Tag> result = new LinkedList<Tag>();
+        List<Tag> result = new LinkedList<>();
         for (Tag tag : tags) {
             List<Integer> ids = tag.getVillageIDs();
             for (Integer id : ids) {
@@ -64,7 +64,6 @@ public class TagUtils {
                 if (tagged != null && tagged.getTribe() != null && tagged.getTribe().equals(pTribe)) {
                     if (!result.contains(tag)) {//add tag and continue with next
                         result.add(tag);
-                        continue;
                     }
                 }
             }

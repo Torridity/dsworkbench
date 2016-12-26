@@ -348,13 +348,13 @@ public class DefenseSourcePanel extends WizardPage {
     protected void update() {
         overviewPanel.reset();
         DefenseInformation[] elements = DefenseAnalysePanel.getSingleton().getAllElements();
-        List<Village> attackedVillages = new LinkedList<Village>();
+        List<Village> attackedVillages = new LinkedList<>();
         for (DefenseInformation element : elements) {
             attackedVillages.add(element.getTarget());
             overviewPanel.addVillage(element.getTarget(), Color.RED);
         }
         DEPSourceTableModel model = getModel();
-        List<Village> villages = new LinkedList<Village>();
+        List<Village> villages = new LinkedList<>();
         for (int i = 0; i < model.getRowCount(); i++) {
             villages.add(model.getRow(i).getVillage());
         }
@@ -364,7 +364,7 @@ public class DefenseSourcePanel extends WizardPage {
 
     private void addVillages(Village[] pVillages) {
         DEPSourceTableModel model = getModel();
-        Hashtable<Village, Integer> supports = new Hashtable<Village, Integer>();
+        Hashtable<Village, Integer> supports = new Hashtable<>();
         for (Village village : pVillages) {
             supports.put(village, getSplits(village));
         }
@@ -399,7 +399,7 @@ public class DefenseSourcePanel extends WizardPage {
         int supportTolerance = 10;
         try {
             supportTolerance = GlobalOptions.getProperties().getInt("support.tolerance", 10);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
         split.update(DSWorkbenchSettingsDialog.getSingleton().getDefense(), supportTolerance);
@@ -430,16 +430,14 @@ public class DefenseSourcePanel extends WizardPage {
             if (!villages.isEmpty()) {
                 addVillages(villages.toArray(new Village[villages.size()]));
             }
-        } catch (HeadlessException he) {
-        } catch (UnsupportedFlavorException ufe) {
-        } catch (IOException ioe) {
+        } catch (HeadlessException | IOException | UnsupportedFlavorException ignored) {
         }
     }
 
     private void deleteSelection() {
         int[] selection = jVillageTable.getSelectedRows();
         if (selection.length > 0) {
-            List<Integer> rows = new LinkedList<Integer>();
+            List<Integer> rows = new LinkedList<>();
             for (int i : selection) {
                 rows.add(jVillageTable.convertRowIndexToModel(i));
             }
@@ -457,7 +455,7 @@ public class DefenseSourcePanel extends WizardPage {
     }
 
     public Village[] getUsedVillages() {
-        List<Village> result = new LinkedList<Village>();
+        List<Village> result = new LinkedList<>();
         DEPSourceTableModel model = getModel();
         for (int i = 0; i < model.getRowCount(); i++) {
             result.add(model.getRow(i).getVillage());
@@ -466,7 +464,7 @@ public class DefenseSourcePanel extends WizardPage {
     }
 
     public List<SupportSourceElement> getAllElements() {
-        List<SupportSourceElement> elements = new LinkedList<SupportSourceElement>();
+        List<SupportSourceElement> elements = new LinkedList<>();
         DEPSourceTableModel model = getModel();
         for (int i = 0; i < model.getRowCount(); i++) {
             elements.add(model.getRow(i));
@@ -496,7 +494,7 @@ public class DefenseSourcePanel extends WizardPage {
             setProblem("Keine Dörfer gewählt");
             return WizardPanelNavResult.REMAIN_ON_PAGE;
         }
-        List<SupportSourceElement> result = new LinkedList<SupportSourceElement>();
+        List<SupportSourceElement> result = new LinkedList<>();
         DEPSourceTableModel model = getModel();
         int supportCount = 0;
         for (int i = 0; i < model.getRowCount(); i++) {

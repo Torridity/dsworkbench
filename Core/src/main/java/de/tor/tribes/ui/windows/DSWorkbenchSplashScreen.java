@@ -17,7 +17,6 @@ package de.tor.tribes.ui.windows;
 
 import de.tor.tribes.ui.views.DSWorkbenchSettingsDialog;
 import de.tor.tribes.io.DataHolder;
-import de.tor.tribes.util.GlobalOptions;
 import org.apache.log4j.Logger;
 import de.tor.tribes.io.DataHolderListener;
 import de.tor.tribes.types.UserProfile;
@@ -55,7 +54,8 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
     protected enum HIDE_RESULT {
 
         SUCCESS, RESTART_NEEDED, ERROR
-    };
+    }
+
     private static Logger logger = Logger.getLogger("Launcher");
     private final DSWorkbenchSplashScreen self = this;
     private final SplashRepaintThread t;
@@ -163,7 +163,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
         UserProfile profile = null;
         try {
             profile = (UserProfile) ((DefaultMutableTreeNode) path[2]).getUserObject();
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         if (profile == null) {
             JOptionPaneHelper.showWarningBox(jProfileDialog, "Bitte eine Profil auswählen.", "Bitte wählen");
@@ -205,7 +205,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
                 //first start wizard
                 if (!new File("./hfsw").exists()) {
                     logger.debug(" - Initializing first start wizard");
-                    Map result = new HashMap<String, String>();
+                    Map result = new HashMap<>();
 
                     try {
                         WizardPanelProvider provider = new FirstStartWizard();
@@ -236,7 +236,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
                     GlobalOptions.addProperty("account.name", (String) result.get("account.name"));
                     GlobalOptions.addProperty("account.password", (String) result.get("account.password"));
                     GlobalOptions.addProperty("default.server", (String) result.get("server"));
-                    GlobalOptions.addProperty("player." + (String) result.get("server"), (String) result.get("tribe"));
+                    GlobalOptions.addProperty("player." + result.get("server"), (String) result.get("tribe"));
                     logger.debug("Creating initial profile");
                     UserProfile p = UserProfile.create(GlobalOptions.getProperty("default.server"), GlobalOptions.getProperty("player." + GlobalOptions.getProperty("default.server")));
                     GlobalOptions.setSelectedProfile(p);
@@ -277,7 +277,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
             } else {
                 logger.debug("More than one profiles exist. Showing selection dialog");
                 File f = new File("./servers");
-                List<String> servers = new LinkedList<String>();
+                List<String> servers = new LinkedList<>();
                 for (File server : f.listFiles()) {
                     servers.add(server.getName());
                 }
@@ -293,12 +293,12 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
                         return o1.compareTo(o2);
                     }
                 });
-                List<Object> path = new LinkedList<Object>();
+                List<Object> path = new LinkedList<>();
                 DefaultMutableTreeNode root = new DefaultMutableTreeNode("Profile");
                 long selectedProfile = -1;
                 try {
                     selectedProfile = Long.parseLong(GlobalOptions.getProperty("selected.profile"));
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                 }
                 path.add(root);
                 for (String server : servers) {
@@ -445,18 +445,25 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
         boolean ssd = false;
         if (args != null) {
             for (String arg : args) {
-                if (arg.equals("-d") || arg.equals("--debug")) {
-                    //debug mode
-                    mode = 1;
-                    SystrayHelper.showInfoMessage("Running in debug mode");
-                } else if (arg.equals("-i") || arg.equals("--info")) {
-                    //info mode
-                    mode = 0;
-                    SystrayHelper.showInfoMessage("Running in info mode");
-                } else if (arg.equals("-m")) {
-                    minimal = 1;
-                } else if (arg.equals("-ssd")) {
-                    ssd = true;
+                switch (arg) {
+                    case "-d":
+                    case "--debug":
+                        //debug mode
+                        mode = 1;
+                        SystrayHelper.showInfoMessage("Running in debug mode");
+                        break;
+                    case "-i":
+                    case "--info":
+                        //info mode
+                        mode = 0;
+                        SystrayHelper.showInfoMessage("Running in info mode");
+                        break;
+                    case "-m":
+                        minimal = 1;
+                        break;
+                    case "-ssd":
+                        ssd = true;
+                        break;
                 }
             }
         }
@@ -598,7 +605,7 @@ class SplashRepaintThread extends Thread {
             DSWorkbenchSplashScreen.getSingleton().updateStatus();
             try {
                 Thread.sleep(50);
-            } catch (InterruptedException ie) {
+            } catch (InterruptedException ignored) {
             }
         }
     }

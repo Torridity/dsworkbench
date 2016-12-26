@@ -27,11 +27,8 @@ import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.LinkedList;
 import java.util.StringTokenizer;
 
 /**
@@ -43,10 +40,10 @@ public class NonPAPlaceParser implements SilentParserInterface {
         StringTokenizer lineTok = new StringTokenizer(pTroopsString, "\n\r");
         //boolean haveVillage = false;
         Village v = null;
-        Hashtable<UnitHolder, Integer> ownTroops = new Hashtable<UnitHolder, Integer>();
-        Hashtable<UnitHolder, Integer> troopsInVillage = new Hashtable<UnitHolder, Integer>();
-        Hashtable<Village, Hashtable<UnitHolder, Integer>> supportsToThis = new Hashtable<Village, Hashtable<UnitHolder, Integer>>();
-        Hashtable<Village, Hashtable<UnitHolder, Integer>> supportsFromThis = new Hashtable<Village, Hashtable<UnitHolder, Integer>>();
+        Hashtable<UnitHolder, Integer> ownTroops = new Hashtable<>();
+        Hashtable<UnitHolder, Integer> troopsInVillage = new Hashtable<>();
+        Hashtable<Village, Hashtable<UnitHolder, Integer>> supportsToThis = new Hashtable<>();
+        Hashtable<Village, Hashtable<UnitHolder, Integer>> supportsFromThis = new Hashtable<>();
         while (lineTok.hasMoreElements()) {
             String currentLine = lineTok.nextToken();
             //walk through all lines
@@ -88,7 +85,7 @@ public class NonPAPlaceParser implements SilentParserInterface {
                             if (supportingVillage != null) {
                                 int[] support = parseUnits(currentLine);
                                 cnt = 0;
-                                Hashtable<UnitHolder, Integer> supportTroops = new Hashtable<UnitHolder, Integer>();
+                                Hashtable<UnitHolder, Integer> supportTroops = new Hashtable<>();
                                 for (int i : support) {
                                     //all units in village
                                     supportTroops.put(DataHolder.getSingleton().getUnits().get(cnt), i);
@@ -113,7 +110,7 @@ public class NonPAPlaceParser implements SilentParserInterface {
                         if (supportedVillage != null) {
                             int[] outside = parseUnits(currentLine);
                             int cnt = 0;
-                            Hashtable<UnitHolder, Integer> supportTroops = new Hashtable<UnitHolder, Integer>();
+                            Hashtable<UnitHolder, Integer> supportTroops = new Hashtable<>();
                             for (int i : outside) {
                                 //all units in village
                                 supportTroops.put(DataHolder.getSingleton().getUnits().get(cnt), i);
@@ -274,7 +271,7 @@ public class NonPAPlaceParser implements SilentParserInterface {
                         return DataHolder.getSingleton().getVillages()[Integer.parseInt(split[0])][Integer.parseInt(split[1])];
                     }
 
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                 }
             }
         }
@@ -306,7 +303,7 @@ public class NonPAPlaceParser implements SilentParserInterface {
 
     public static void main(String[] args) {
 
-        Transferable t = (Transferable) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
+        Transferable t = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
         try {
             /*String s = " 003 | Spitfire (471|482) K44\n" +
             "eigene	2500	1500	0	1964	500	0	0	1396	0	0	0	0	Befehle\n" +

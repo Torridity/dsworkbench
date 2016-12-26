@@ -15,18 +15,6 @@
  */
 package de.tor.tribes.util.parser;
 
-import java.awt.Toolkit;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
-import java.util.Hashtable;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.StringTokenizer;
-import java.util.regex.Pattern;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.ext.Village;
@@ -35,6 +23,17 @@ import de.tor.tribes.ui.windows.NotifierFrame;
 import de.tor.tribes.util.SilentParserInterface;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+
+import java.awt.*;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.util.Hashtable;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.StringTokenizer;
+import java.util.regex.Pattern;
 
 /**
  * @author Charon
@@ -46,7 +45,7 @@ public class TroopsParser70 implements SilentParserInterface {
 
     private static Hashtable<UnitHolder, Integer> parseUnits(String[] pUnits) {
         int cnt = 0;
-        Hashtable<UnitHolder, Integer> units = new Hashtable<UnitHolder, Integer>();
+        Hashtable<UnitHolder, Integer> units = new Hashtable<>();
         for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
             if (cnt < pUnits.length) {
                 units.put(unit, Integer.parseInt(pUnits[cnt]));
@@ -125,7 +124,7 @@ public class TroopsParser70 implements SilentParserInterface {
 
 */
         StringTokenizer lineTokenizer = new StringTokenizer(pData, "\n\r");
-        List<String> lineList = new LinkedList<String>();
+        List<String> lineList = new LinkedList<>();
 
         while (lineTokenizer.hasMoreElements()) {
             String line = lineTokenizer.nextToken();
@@ -142,7 +141,7 @@ public class TroopsParser70 implements SilentParserInterface {
         // groups could be multiple lines, detection is easiest for first line (starts with "Gruppen:")
         boolean groupLines = false;
         // store visited villages, so we can add em to selected group
-        List<Village> villages = new LinkedList<Village>();
+        List<Village> villages = new LinkedList<>();
 
         int foundTroops = 0;
         TroopsManager.getSingleton().invalidate();
@@ -187,7 +186,7 @@ public class TroopsParser70 implements SilentParserInterface {
 
         //update selected group, if any
         if(groupName != null && !groupName.equals(ParserVariableManager.getSingleton().getProperty("groups.all"))){
-        	Hashtable<String, List<Village>> groupTable = new Hashtable<String, List<Village>>();
+        	Hashtable<String, List<Village>> groupTable = new Hashtable<>();
         	groupTable.put(groupName, villages);
         	DSWorkbenchMainFrame.getSingleton().fireGroupParserEvent(groupTable);
         }
@@ -196,7 +195,6 @@ public class TroopsParser70 implements SilentParserInterface {
     }
 
     private boolean processEntry(Village pVillage, String pCurrentLine, List<String> pLineStack) {
-        String ownTroopsLine = pCurrentLine;
         String inVillageLine = null;
         String outsideLine = null;
         String onTheWayLine = null;
@@ -206,7 +204,7 @@ public class TroopsParser70 implements SilentParserInterface {
             onTheWayLine = pLineStack.remove(0);
             debug("Processing village " + pVillage);
 
-            int[] ownUnits = handleLine(ownTroopsLine, ParserVariableManager.getSingleton().getProperty("troops.own"));
+            int[] ownUnits = handleLine(pCurrentLine, ParserVariableManager.getSingleton().getProperty("troops.own"));
             if (ownUnits == null) {
                 throw new Exception("OwnTroops line is invalid");
             }
@@ -225,10 +223,10 @@ public class TroopsParser70 implements SilentParserInterface {
             //add troops to troops manager
             if (!IS_DEBUG) {
                 int cnt = 0;
-                Hashtable<UnitHolder, Integer> ownTroops = new Hashtable<UnitHolder, Integer>();
-                Hashtable<UnitHolder, Integer> troopsInVillage = new Hashtable<UnitHolder, Integer>();
-                Hashtable<UnitHolder, Integer> troopsOutside = new Hashtable<UnitHolder, Integer>();
-                Hashtable<UnitHolder, Integer> troopsOnTheWay = new Hashtable<UnitHolder, Integer>();
+                Hashtable<UnitHolder, Integer> ownTroops = new Hashtable<>();
+                Hashtable<UnitHolder, Integer> troopsInVillage = new Hashtable<>();
+                Hashtable<UnitHolder, Integer> troopsOutside = new Hashtable<>();
+                Hashtable<UnitHolder, Integer> troopsOnTheWay = new Hashtable<>();
                 for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
                     ownTroops.put(unit, ownUnits[cnt]);
                     troopsInVillage.put(unit, inVillageUnits[cnt]);
@@ -277,7 +275,7 @@ public class TroopsParser70 implements SilentParserInterface {
     private int[] handleLine(String pLine, String pTypeProperty) {
         try {
             debug("Test line '" + pLine + "' for property '" + pTypeProperty + "'");
-            if (pLine.trim().indexOf(pTypeProperty) > -1) {
+            if (pLine.trim().contains(pTypeProperty)) {
                 debug("Handle line '" + pLine + "' for property '" + pTypeProperty + "'");
                 int[] units = parseUnits(pLine.substring(pLine.indexOf(pTypeProperty)));
                 if (units.length == 0) {
@@ -389,7 +387,7 @@ public class TroopsParser70 implements SilentParserInterface {
 
     public static void main(String[] args) {
     	
-        Transferable t = (Transferable) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
+        Transferable t = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
         try {
 
             /*

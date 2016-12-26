@@ -45,12 +45,12 @@ public class FightStats {
     private Hashtable<Tribe, SingleAttackerStat> attackerList = null;
 
     public FightStats() {
-        attackerList = new Hashtable<Tribe, SingleAttackerStat>();
-        attackingAllies = new LinkedList<Ally>();
-        defendingAllies = new LinkedList<Ally>();
-        defendingTribes = new LinkedList<Tribe>();
-        defendingVillages = new LinkedList<Village>();
-        conqueredVillages = new LinkedList<Village>();
+        attackerList = new Hashtable<>();
+        attackingAllies = new LinkedList<>();
+        defendingAllies = new LinkedList<>();
+        defendingTribes = new LinkedList<>();
+        defendingVillages = new LinkedList<>();
+        conqueredVillages = new LinkedList<>();
     }
 
     public void includeReport(FightReport pReport) {
@@ -202,7 +202,7 @@ public class FightStats {
 
     public Tribe[] getAttackingTribes(Ally pAlly) {
         Enumeration<Tribe> tribes = attackerList.keys();
-        List<Tribe> result = new LinkedList<Tribe>();
+        List<Tribe> result = new LinkedList<>();
         while (tribes.hasMoreElements()) {
             Tribe next = tribes.nextElement();
             if (next != null && next.getAlly() != null && next.getAlly().equals(pAlly)) {

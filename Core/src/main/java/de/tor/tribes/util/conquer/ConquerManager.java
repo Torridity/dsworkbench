@@ -99,10 +99,10 @@ public class ConquerManager extends GenericManager<Conquer> {
             try {
                 Document d = JaxenUtils.getDocument(conquerFile);
                 String lastup = JaxenUtils.getNodeValue(d, "//conquers/lastUpdate");
-                setLastUpdate(Long.parseLong(lastup));
-                if (getLastUpdate() == -1) {
+                this.lastUpdate = Long.parseLong(lastup);
+                if (lastUpdate == -1) {
                     //set update correct on error
-                    setLastUpdate(0);
+                    this.lastUpdate = (long) 0;
                 }
                 for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//conquers/conquer")) {
                     try {
@@ -153,7 +153,7 @@ public class ConquerManager extends GenericManager<Conquer> {
             updateAcceptance();
             try {
                 MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.TAG_MARKER_LAYER);
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         } else {
             lastUpdate = 0;
@@ -179,7 +179,7 @@ public class ConquerManager extends GenericManager<Conquer> {
 
             StringBuilder b = new StringBuilder();
             b.append("<conquers>\n");
-            b.append("<lastUpdate>").append(getLastUpdate()).append("</lastUpdate>\n");
+            b.append("<lastUpdate>").append(lastUpdate).append("</lastUpdate>\n");
             for (ManageableType t : getAllElements()) {
                 Conquer c = (Conquer) t;
                 if (c != null) {
@@ -213,7 +213,7 @@ public class ConquerManager extends GenericManager<Conquer> {
         logger.debug("Filtering conquers");
         double risePerHour = ServerSettings.getSingleton().getSpeed() * ServerSettings.getSingleton().getRiseSpeed();
         logger.debug(" - using " + risePerHour + " as acceptance increment value");
-        List<Conquer> toRemove = new LinkedList<Conquer>();
+        List<Conquer> toRemove = new LinkedList<>();
         for (ManageableType t : getAllElements().toArray(new ManageableType[]{})) {
             Conquer c = (Conquer) t;
             Village v = c.getVillage();
@@ -263,7 +263,7 @@ public class ConquerManager extends GenericManager<Conquer> {
             r = new BufferedReader(new InputStreamReader(uc.getInputStream()));
             String line;
             while ((line = r.readLine()) != null) {
-                if (line.indexOf("ONLY_ONE_DAY_AGO") != -1) {
+                if (line.contains("ONLY_ONE_DAY_AGO")) {
                     logger.warn("Update still more than 24h ago. Diff to server clock > 1h ?");
                 } else {
                     String[] data = line.split(",");
@@ -347,7 +347,7 @@ public class ConquerManager extends GenericManager<Conquer> {
                 if (r != null) {
                     r.close();
                 }
-            } catch (Exception inner) {
+            } catch (Exception ignored) {
             }
         }
         if (!error) {
@@ -405,7 +405,7 @@ public class ConquerManager extends GenericManager<Conquer> {
                         if (loserAlly != null && winnerAlly != null) {
                             String lAllyName = loserAlly.getName().toLowerCase();
                             String wAllyName = winnerAlly.getName().toLowerCase();
-                            if (lAllyName.indexOf(wAllyName) > -1 || wAllyName.indexOf(lAllyName) > -1) {
+                            if (lAllyName.contains(wAllyName) || wAllyName.contains(lAllyName)) {
                                 friendly++;
                             }
                         }
@@ -442,7 +442,7 @@ public class ConquerManager extends GenericManager<Conquer> {
 
 class ConquerUpdateThread extends Thread {
 
-    private final long FIVE_MINUTES = 1000 * 60 * 5;
+    private static final long FIVE_MINUTES = 1000 * 60 * 5;
 
     public ConquerUpdateThread() {
         setName("ConquerUpdateThread");

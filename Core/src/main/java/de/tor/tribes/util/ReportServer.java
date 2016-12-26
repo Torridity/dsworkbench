@@ -121,7 +121,7 @@ public class ReportServer {
             if (target.contains("ajax.php?action=parse_report")) {
                 String data = URLDecoder.decode(b.toString(), "UTF-8");
                 String obstServer = GlobalOptions.getProperty("obst.server");
-                if (obstServer != null && !obstServer.equals("")) {
+                if (obstServer != null && !obstServer.isEmpty()) {
                     obstServer += "/" + target;
                     try {
                         OBSTReportSender.sendReport(new URL(obstServer), b.toString());
@@ -217,7 +217,7 @@ public class ReportServer {
         public void close() {
             try {
                 this.serversocket.close();
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         }
 

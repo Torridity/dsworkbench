@@ -34,7 +34,7 @@ public class TAPTargetFilterTableModel extends AbstractTableModel {
     private Class[] types = new Class[]{
         Tribe.class, Village.class, Boolean.class
     };
-    private final List<TAPAttackTargetElement> elements = new LinkedList<TAPAttackTargetElement>();
+    private final List<TAPAttackTargetElement> elements = new LinkedList<>();
 
     public TAPTargetFilterTableModel() {
         super();

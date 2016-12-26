@@ -19,16 +19,20 @@ package de.tor.tribes.ui.components;
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
+import org.netbeans.lib.awtextra.AbsoluteConstraints;
+import org.netbeans.lib.awtextra.AbsoluteLayout;
+
+import javax.swing.*;
+import javax.swing.plaf.basic.BasicArrowButton;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import javax.swing.*;
-import javax.swing.plaf.basic.BasicArrowButton;
-import org.netbeans.lib.awtextra.AbsoluteConstraints;
-import org.netbeans.lib.awtextra.AbsoluteLayout;
 
 // Referenced classes of package com.theotherbell.ui:
 //            DatePicker
@@ -93,7 +97,7 @@ public final class DateField extends JPanel {
 
     private void onButtonClick(ActionEvent actionevent) {
         if (actionevent.getSource() == dateDropdownButton) {
-            if ("".equals(dateText.getText())) {
+            if (dateText.getText() != null && dateText.getText().isEmpty()) {
                 dp = new DatePicker();
             } else {
                 dp = new DatePicker(stringToDate(dateText.getText()));
@@ -133,11 +137,11 @@ public final class DateField extends JPanel {
     public static void main(String[] args) {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         JFrame f = new JFrame();
         f.add(new DateField(Calendar.getInstance().getTime()));
-        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         f.pack();
         f.setVisible(true);
     }

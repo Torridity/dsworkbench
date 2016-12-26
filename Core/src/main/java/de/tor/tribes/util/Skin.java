@@ -31,7 +31,6 @@ import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Transparency;
 import java.util.HashMap;
-import java.util.Iterator;
 
 /**
  * @author Charon
@@ -69,36 +68,36 @@ public class Skin {
     public static int ID_B5_LEFT = 23;
     public static int ID_B6_LEFT = 24;
     /**Filenames*/
-    private final String V1_FILE = "v1.png";
-    private final String V2_FILE = "v2.png";
-    private final String V3_FILE = "v3.png";
-    private final String V4_FILE = "v4.png";
-    private final String V5_FILE = "v5.png";
-    private final String V6_FILE = "v6.png";
-    private final String V1_LEFT_FILE = "v1_left.png";
-    private final String V2_LEFT_FILE = "v2_left.png";
-    private final String V3_LEFT_FILE = "v3_left.png";
-    private final String V4_LEFT_FILE = "v4_left.png";
-    private final String V5_LEFT_FILE = "v5_left.png";
-    private final String V6_LEFT_FILE = "v6_left.png";
-    private final String B1_FILE = "b1.png";
-    private final String B2_FILE = "b2.png";
-    private final String B3_FILE = "b3.png";
-    private final String B4_FILE = "b4.png";
-    private final String B5_FILE = "b5.png";
-    private final String B6_FILE = "b6.png";
-    private final String B1_LEFT_FILE = "b1_left.png";
-    private final String B2_LEFT_FILE = "b2_left.png";
-    private final String B3_LEFT_FILE = "b3_left.png";
-    private final String B4_LEFT_FILE = "b4_left.png";
-    private final String B5_LEFT_FILE = "b5_left.png";
-    private final String B6_LEFT_FILE = "b6_left.png";
-    private final String DEFAULT_UNDERGROUND = "default_underground.png";
-    private final int TEXTURE_COUNT = 25;
+    private static final String V1_FILE = "v1.png";
+    private static final String V2_FILE = "v2.png";
+    private static final String V3_FILE = "v3.png";
+    private static final String V4_FILE = "v4.png";
+    private static final String V5_FILE = "v5.png";
+    private static final String V6_FILE = "v6.png";
+    private static final String V1_LEFT_FILE = "v1_left.png";
+    private static final String V2_LEFT_FILE = "v2_left.png";
+    private static final String V3_LEFT_FILE = "v3_left.png";
+    private static final String V4_LEFT_FILE = "v4_left.png";
+    private static final String V5_LEFT_FILE = "v5_left.png";
+    private static final String V6_LEFT_FILE = "v6_left.png";
+    private static final String B1_FILE = "b1.png";
+    private static final String B2_FILE = "b2.png";
+    private static final String B3_FILE = "b3.png";
+    private static final String B4_FILE = "b4.png";
+    private static final String B5_FILE = "b5.png";
+    private static final String B6_FILE = "b6.png";
+    private static final String B1_LEFT_FILE = "b1_left.png";
+    private static final String B2_LEFT_FILE = "b2_left.png";
+    private static final String B3_LEFT_FILE = "b3_left.png";
+    private static final String B4_LEFT_FILE = "b4_left.png";
+    private static final String B5_LEFT_FILE = "b5_left.png";
+    private static final String B6_LEFT_FILE = "b6_left.png";
+    private static final String DEFAULT_UNDERGROUND = "default_underground.png";
+    private static final int TEXTURE_COUNT = 25;
     private static String BASE_PATH = "graphics/skins";
     private HashMap<Integer, BufferedImage> mTextures = null;
     private String sSkinID = null;
-    private HashMap<Integer, HashMap<Double, BufferedImage>> cache = new HashMap<Integer, HashMap<Double, BufferedImage>>();
+    private HashMap<Integer, HashMap<Double, BufferedImage>> cache = new HashMap<>();
 
     public Skin() throws Exception {
         loadSkin("default");
@@ -109,13 +108,13 @@ public class Skin {
             loadSkin(pSkinPath);
             try {
                 WorldDecorationHolder.loadTextures();
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         } else {
             loadMinimapSkin();
             try {
                 WorldDecorationHolder.loadTextures();
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         }
     }
@@ -123,7 +122,7 @@ public class Skin {
     public boolean isMinimapSkin() {
         try {
             return (sSkinID.equals(MINIMAP_SKIN_ID));
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         return false;
     }
@@ -137,7 +136,7 @@ public class Skin {
         return BASE_PATH + "/" + sSkinID + "/preview.png";
     }
 
-    public static void showPreview(String pSkinID, Point pPos) throws Exception {
+    public static void showPreview(String pSkinID, Point pPos) {
         try {
             SkinPreviewFrame f = new SkinPreviewFrame(new Skin(pSkinID));
             f.setLocation(pPos);
@@ -151,11 +150,11 @@ public class Skin {
         return sSkinID;
     }
 
-    private void loadMinimapSkin() throws Exception {
+    private void loadMinimapSkin() {
         sSkinID = MINIMAP_SKIN_ID;
         iFieldWidth = 10;
         iFieldHeight = 10;
-        mTextures = new HashMap<Integer, BufferedImage>();
+        mTextures = new HashMap<>();
         cache.clear();
         for (int i = 0; i < 25; i++) {
             //BufferedImage image = new BufferedImage(iFieldWidth, iFieldHeight, BufferedImage.TYPE_INT_ARGB);
@@ -178,7 +177,7 @@ public class Skin {
 
         sSkinID = pSkinID;
         String path = BASE_PATH + "/" + pSkinID;
-        mTextures = new HashMap<Integer, BufferedImage>();
+        mTextures = new HashMap<>();
         cache.clear();
         try {
             mTextures.put(ID_DEFAULT_UNDERGROUND, ImageUtils.loadImage(new File(path + "/" + DEFAULT_UNDERGROUND)));
@@ -213,9 +212,7 @@ public class Skin {
                 throw new Exception("#Texturen < " + TEXTURE_COUNT);
             }
 
-            Iterator<Integer> imageIDs = mTextures.keySet().iterator();
-            while (imageIDs.hasNext()) {
-                Integer id = imageIDs.next();
+            for (Integer id : mTextures.keySet()) {
                 Image current = mTextures.get(id);
                 if ((current.getWidth(null) != iFieldWidth) || (current.getHeight(null) != iFieldHeight)) {
                     throw new Exception("Textur " + id + " hat nicht die erwartete Größe " + iFieldWidth + "x" + iFieldHeight);
@@ -236,7 +233,7 @@ public class Skin {
         try {
             HashMap<Double, BufferedImage> imageCache = cache.get(pID);
             if (imageCache == null) {
-                imageCache = new HashMap<Double, BufferedImage>();
+                imageCache = new HashMap<>();
                 cache.put(pID, imageCache);
             }
 
@@ -263,7 +260,7 @@ public class Skin {
         try {
             HashMap<Double, BufferedImage> imageCache = cache.get(pID);
             if (imageCache == null) {
-                imageCache = new HashMap<Double, BufferedImage>();
+                imageCache = new HashMap<>();
                 cache.put(pID, imageCache);
             }
 

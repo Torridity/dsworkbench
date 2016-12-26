@@ -21,5 +21,5 @@ package de.tor.tribes.util.attack;
  */
 public interface AttackManagerListener {
 
-    public void fireAttacksChangedEvent(String pPlan);
+    void fireAttacksChangedEvent(String pPlan);
 }

@@ -36,11 +36,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JScrollPane;
-import javax.swing.UIManager;
+import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import org.apache.log4j.ConsoleAppender;
@@ -151,7 +147,7 @@ public class VillageSelectionPanel extends javax.swing.JPanel{
                         return new Tribe[]{GlobalOptions.getSelectedProfile().getTribe()};
                     }
 
-                    List<Tribe> res = new LinkedList<Tribe>();
+                    List<Tribe> res = new LinkedList<>();
                     for (Object o : getSelection()) {
                         Ally a = (Ally) o;
                         res.addAll(Arrays.asList(a.getTribes()));
@@ -168,9 +164,9 @@ public class VillageSelectionPanel extends javax.swing.JPanel{
 
                 @Override
                 public GroupSelectionList.ListItem[] filter() {
-                    List<Tag> usedTags = new LinkedList<Tag>();
-                    List<Village> villages = new LinkedList<Village>();
-                    List<GroupSelectionList.ListItem> items = new LinkedList<GroupSelectionList.ListItem>();
+                    List<Tag> usedTags = new LinkedList<>();
+                    List<Village> villages = new LinkedList<>();
+                    List<GroupSelectionList.ListItem> items = new LinkedList<>();
                     for (Object o : getSelection()) {
                         Tribe t = (Tribe) o;
                         Collections.addAll(villages, t.getVillageList());
@@ -191,7 +187,7 @@ public class VillageSelectionPanel extends javax.swing.JPanel{
 
                 @Override
                 public ContinentVillageSelection[] filter() {
-                    HashMap<Integer, ContinentVillageSelection> map = new HashMap<Integer, ContinentVillageSelection>();
+                    HashMap<Integer, ContinentVillageSelection> map = new HashMap<>();
                     for (Village v : ((GroupSelectionList) getInputList()).getValidVillages()) {
                         int cont = v.getContinent();
                         ContinentVillageSelection s = map.get(cont);
@@ -225,7 +221,7 @@ public class VillageSelectionPanel extends javax.swing.JPanel{
 
                 @Override
                 public Village[] filter() {
-                    List<Village> res = new LinkedList<Village>();
+                    List<Village> res = new LinkedList<>();
                     for (Object o : getSelection()) {
                         ContinentVillageSelection c = (ContinentVillageSelection) o;
                         Collections.addAll(res, c.getVillages());
@@ -250,7 +246,7 @@ public class VillageSelectionPanel extends javax.swing.JPanel{
             } else {
                 ((GridBagLayout) getLayout()).getConstraints(jVillageScrollPane).gridheight -= 1;
             }
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
     }
 
@@ -262,7 +258,7 @@ public class VillageSelectionPanel extends javax.swing.JPanel{
             } else {
                 ((GridBagLayout) getLayout()).getConstraints(jVillageScrollPane).gridheight -= 1;
             }
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
     }
 
@@ -275,7 +271,7 @@ public class VillageSelectionPanel extends javax.swing.JPanel{
             } else {
                 ((GridBagLayout) getLayout()).getConstraints(jVillageScrollPane).gridheight -= 1;
             }
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
     }
 
@@ -307,9 +303,9 @@ public class VillageSelectionPanel extends javax.swing.JPanel{
         pList.setVisible(pShow);
     }
 
-    public static interface VillageSelectionPanelListener {
+    public interface VillageSelectionPanelListener {
 
-        public void fireVillageSelectionEvent(Village[] pSelection);
+        void fireVillageSelectionEvent(Village[] pSelection);
     }
 
     /**
@@ -514,7 +510,7 @@ public class VillageSelectionPanel extends javax.swing.JPanel{
     }// </editor-fold>//GEN-END:initComponents
 
     private void fireTransferVillageSelectionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireTransferVillageSelectionEvent
-        List<Village> result = new LinkedList<Village>();
+        List<Village> result = new LinkedList<>();
         Object[] selection = villageList.getSelectedValues();
         if (selection == null || selection.length == 0) {
             //transfer all
@@ -555,9 +551,7 @@ public class VillageSelectionPanel extends javax.swing.JPanel{
         String clipboard;
 		try {
 			clipboard = (String) t.getTransferData(DataFlavor.stringFlavor);
-		} catch (UnsupportedFlavorException e) {
-			return;
-		} catch (IOException e) {
+		} catch (UnsupportedFlavorException | IOException e) {
 			return;
 		}
         List<Village> villages = PluginManager.getSingleton().executeVillageParser(clipboard);
@@ -619,7 +613,7 @@ public class VillageSelectionPanel extends javax.swing.JPanel{
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             //UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
         GlobalOptions.setSelectedServer("de43");
@@ -628,7 +622,7 @@ public class VillageSelectionPanel extends javax.swing.JPanel{
         GlobalOptions.setSelectedProfile(ProfileManager.getSingleton().getProfiles("de43")[0]);
         GlobalOptions.loadUserData();
         JFrame f = new JFrame();
-        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         VillageSelectionPanel p = new VillageSelectionPanel(new VillageSelectionPanelListener() {
 
             @Override
@@ -677,7 +671,7 @@ abstract class FilterPipeline<C, D> implements ListSelectionListener {
     }
 
     public Object[] getSelection() {
-        List<C> result = new LinkedList<C>();
+        List<C> result = new LinkedList<>();
         if (inputList.isVisible() || inputList.getSelectedValues().length > 0) {
             for (Object o : inputList.getSelectedValues()) {
                 result.add((C) o);
@@ -721,7 +715,7 @@ class ContinentVillageSelection {
     public ContinentVillageSelection(int pContinent) {
         continent = pContinent;
         continentString = "K" + ((continent < 10) ? "0" + continent : continent);
-        villages = new LinkedList<Village>();
+        villages = new LinkedList<>();
     }
 
     public void addVillage(Village pVillage) {

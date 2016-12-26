@@ -341,8 +341,8 @@ public class ValidationPanel extends WizardPage implements SettingsChangedListen
         TAPAttackSourceElement[] sourceElements = AttackSourceFilterPanel.getSingleton().getFilteredElements();
         List<TAPAttackTargetElement> targetElements = AttackTargetPanel.getSingleton().getAllElements();
 
-        Hashtable<Village, Integer> validSources = new Hashtable<Village, Integer>();
-        Hashtable<Village, Integer> validTargets = new Hashtable<Village, Integer>();
+        Hashtable<Village, Integer> validSources = new Hashtable<>();
+        Hashtable<Village, Integer> validTargets = new Hashtable<>();
 
         TimeFrame f = TimeSettingsPanel.getSingleton().getTimeFrame();
         for (TAPAttackSourceElement sourceElement : sourceElements) {
@@ -442,7 +442,7 @@ class VillageUsageTableModel extends AbstractTableModel {
     private Class[] types = new Class[]{
         Tribe.class, Village.class, Float.class
     };
-    private final List<VillageUsageElement> elements = new LinkedList<VillageUsageElement>();
+    private final List<VillageUsageElement> elements = new LinkedList<>();
 
     public VillageUsageTableModel() {
         super();
@@ -523,10 +523,7 @@ class VillageUsageElement {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof TAPAttackSourceElement) {
-            return ((TAPAttackSourceElement) obj).getVillage().equals(getVillage());
-        }
-        return false;
+        return obj instanceof TAPAttackSourceElement && ((TAPAttackSourceElement) obj).getVillage().equals(village);
     }
 
     public Village getVillage() {

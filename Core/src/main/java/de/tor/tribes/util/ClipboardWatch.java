@@ -149,12 +149,12 @@ public class ClipboardWatch extends Thread {
                 //clipboard watch is disabled, sleep 9 + 1 seconds
                 try {
                     Thread.sleep(9000);
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                 }
             }
             try {
                 Thread.sleep(1000);
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         }
     }

@@ -15,21 +15,22 @@
  */
 package de.tor.tribes.util.algo;
 
-import de.tor.tribes.util.algo.types.DistanceMapping;
-import de.tor.tribes.util.algo.types.TimeFrame;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.AbstractTroopMovement;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.algo.AlgorithmLogPanel;
 import de.tor.tribes.util.ServerSettings;
+import de.tor.tribes.util.algo.types.DistanceMapping;
+import de.tor.tribes.util.algo.types.TimeFrame;
+import org.apache.log4j.Logger;
+
 import java.util.Collections;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
-import org.apache.log4j.Logger;
 
 /**
- * @TOTO (DIFF) Check max. snob runtime
+ * @TODO (DIFF) Check max. snob runtime
  *
  * @author Torridity
  */
@@ -164,7 +165,7 @@ public abstract class AbstractAttackAlgorithm extends Thread {
     }
     
     public static List<DistanceMapping> buildSourceTargetsMapping(Village pSource, List<Village> pTargets, boolean pIsSnob) {
-        List<DistanceMapping> mappings = new LinkedList<DistanceMapping>();
+        List<DistanceMapping> mappings = new LinkedList<>();
         
         for (Village target : pTargets) {
             DistanceMapping mapping = new DistanceMapping(pSource, target);
@@ -190,7 +191,7 @@ public abstract class AbstractAttackAlgorithm extends Thread {
         } catch (Exception e) {
             //an error occured
             logger.error("An error occured during calculation", e);
-            results = new LinkedList<AbstractTroopMovement>();
+            results = new LinkedList<>();
         }
         running = false;
         if (listener != null) {
@@ -209,12 +210,12 @@ public abstract class AbstractAttackAlgorithm extends Thread {
         return running;
     }
     
-    public static interface LogListener {
+    public interface LogListener {
         
-        public void logMessage(String pMessage);
+        void logMessage(String pMessage);
         
-        public void updateProgress(double pPercent);
+        void updateProgress(double pPercent);
         
-        public void calculationFinished();
+        void calculationFinished();
     }
 }

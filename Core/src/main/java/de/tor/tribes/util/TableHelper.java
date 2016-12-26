@@ -38,7 +38,7 @@ import org.jdesktop.swingx.painter.MattePainter;
  */
 public class TableHelper {
 
-    private final static List<Color> highlightColors = new ArrayList<Color>();
+    private final static List<Color> highlightColors = new ArrayList<>();
     private static boolean sortBySaturation = false;
 
     static {
@@ -148,7 +148,7 @@ public class TableHelper {
             return 0;
         }
 
-        List<Integer> rowsToDelete = new ArrayList<Integer>();
+        List<Integer> rowsToDelete = new ArrayList<>();
 
         for (int row : selrows) {
             rowsToDelete.add(pTable.convertRowIndexToModel(row));
@@ -187,7 +187,7 @@ public class TableHelper {
         pHighlighters.clear();
         int modelIdx = pTable.convertColumnIndexToModel(pTable.getSortedColumnIndex());
         List<ManageableType> attacks = AttackManager.getSingleton().getAllElements(pPlan);
-        List<Object> sortedOjs = new ArrayList<Object>();
+        List<Object> sortedOjs = new ArrayList<>();
         for (ManageableType t : attacks) {
             Attack a = (Attack) t;
             Object idxElem = null;

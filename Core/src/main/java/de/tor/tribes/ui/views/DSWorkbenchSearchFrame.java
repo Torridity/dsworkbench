@@ -30,10 +30,8 @@ import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.UIManager;
+import javax.swing.*;
+
 import org.apache.log4j.Logger;
 
 /**
@@ -457,9 +455,9 @@ private void fireSearchFrameAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) 
         try {
             //  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
-        DSWorkbenchSearchFrame.getSingleton().setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        DSWorkbenchSearchFrame.getSingleton().setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         DSWorkbenchSearchFrame.getSingleton().setVisible(true);
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -493,7 +491,7 @@ private void fireSearchFrameAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) 
             String result = t.length + " Spieler gefunden";
             ((DefaultComboBoxModel) jTribesList.getModel()).insertElementAt(result, 0);
             jTribesList.setSelectedIndex(0);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
     }
     
@@ -507,16 +505,16 @@ private void fireSearchFrameAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) 
             
             ((DefaultComboBoxModel) jAllyList.getModel()).insertElementAt(result, 0);
             jAllyList.setSelectedIndex(0);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
     }
 }
 
 interface SearchListener {
     
-    public void fireTribesFoundEvent(Tribe[] t);
+    void fireTribesFoundEvent(Tribe[] t);
     
-    public void fireAlliesFoundEvent(Ally[] a);
+    void fireAlliesFoundEvent(Ally[] a);
 }
 
 class SearchThread extends Thread {
@@ -551,19 +549,19 @@ class SearchThread extends Thread {
         while (running) {
             if (!searchDone) {
                 if (sSearchTerm.length() >= 1) {
-                    List<Tribe> tribeList = new LinkedList<Tribe>();
-                    List<Ally> allyList = new LinkedList<Ally>();
+                    List<Tribe> tribeList = new LinkedList<>();
+                    List<Ally> allyList = new LinkedList<>();
                     Enumeration<Integer> tribes = DataHolder.getSingleton().getTribes().keys();
                     while (tribes.hasMoreElements()) {
                         Tribe t = DataHolder.getSingleton().getTribes().get(tribes.nextElement());
-                        if (t.getName().toLowerCase().indexOf(sSearchTerm.toLowerCase()) > -1) {
+                        if (t.getName().toLowerCase().contains(sSearchTerm.toLowerCase())) {
                             if (!tribeList.contains(t)) {
                                 tribeList.add(t);
                             }
                         }
                         Ally a = t.getAlly();
                         if (a != null) {
-                            if ((a.getName().toLowerCase().indexOf(sSearchTerm.toLowerCase()) > -1) || (a.getTag().toLowerCase().indexOf(sSearchTerm.toLowerCase())) > -1) {
+                            if ((a.getName().toLowerCase().contains(sSearchTerm.toLowerCase())) || (a.getTag().toLowerCase().indexOf(sSearchTerm.toLowerCase())) > -1) {
                                 if (!allyList.contains(a)) {
                                     allyList.add(a);
                                 }
@@ -585,7 +583,7 @@ class SearchThread extends Thread {
             }
             try {
                 Thread.sleep(100);
-            } catch (InterruptedException e) {
+            } catch (InterruptedException ignored) {
             }
         }
     }

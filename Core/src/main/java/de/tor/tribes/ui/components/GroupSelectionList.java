@@ -38,9 +38,8 @@ import java.util.List;
 import java.util.regex.Pattern;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
-import javax.swing.DefaultListModel;
-import javax.swing.JFrame;
-import javax.swing.UIManager;
+import javax.swing.*;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
@@ -223,7 +222,7 @@ public class GroupSelectionList extends IconizedList implements GenericManagerLi
     }
 
     private void resetModel() {
-        HashMap<Tag, ListItem.RELATION_TYPE> storedState = new HashMap<Tag, ListItem.RELATION_TYPE>();
+        HashMap<Tag, ListItem.RELATION_TYPE> storedState = new HashMap<>();
         for (int i = 0; i < getModel().getSize(); i++) {
             ListItem item = getItemAt(i);
             storedState.put(item.getTag(), item.getState());
@@ -248,7 +247,7 @@ public class GroupSelectionList extends IconizedList implements GenericManagerLi
     }
 
     public boolean isVillageValid(Village pVillage) {
-        if (isExpertSelection() && getItemAt(0).getState() != ListItem.RELATION_TYPE.DISABLED) {
+        if (expertSelection && getItemAt(0).getState() != ListItem.RELATION_TYPE.DISABLED) {
             //NoTag selected
             if (TagManager.getSingleton().getTags(pVillage).isEmpty()) {
                 return true;
@@ -262,7 +261,7 @@ public class GroupSelectionList extends IconizedList implements GenericManagerLi
     }
 
     public List<Village> getValidVillages() {
-        List<Village> result = new LinkedList<Village>();
+        List<Village> result = new LinkedList<>();
         if (relevantVillages == null) {
             relevantVillages = GlobalOptions.getSelectedProfile().getTribe().getVillageList();
         }
@@ -277,12 +276,12 @@ public class GroupSelectionList extends IconizedList implements GenericManagerLi
         }
 
 
-        if (!isExpertSelection()) {
+        if (!expertSelection) {
             Object[] values = getSelectedValues();
             if (values.length == 0) {
                 return result;
             }
-            List<Tag> selection = new LinkedList<Tag>();
+            List<Tag> selection = new LinkedList<>();
             for (Object v : values) {
                 ListItem i = (ListItem) v;
                 selection.add(i.getTag());
@@ -318,7 +317,7 @@ public class GroupSelectionList extends IconizedList implements GenericManagerLi
     private List<Village> getVillagesByEquation() {
         StringBuilder b = new StringBuilder();
         boolean isFirst = true;
-        List<Tag> relevantTags = new LinkedList<Tag>();
+        List<Tag> relevantTags = new LinkedList<>();
         for (int i = 1; i < getModel().getSize(); i++) {
             ListItem item = getItemAt(i);
             boolean ignore = false;
@@ -357,7 +356,7 @@ public class GroupSelectionList extends IconizedList implements GenericManagerLi
         ScriptEngine engine = factory.getEngineByName("JavaScript");
         String baseEquation = b.toString();
 
-        List<Village> result = new LinkedList<Village>();
+        List<Village> result = new LinkedList<>();
         try {
             if (relevantVillages == null) {
                 relevantVillages = GlobalOptions.getSelectedProfile().getTribe().getVillageList();
@@ -380,7 +379,7 @@ public class GroupSelectionList extends IconizedList implements GenericManagerLi
 
     public String getRelationAsPlainText() {
         StringBuilder b = new StringBuilder();
-        if (isExpertSelection()) {
+        if (expertSelection) {
             b.append("Alle Dörfer die ");
             boolean isFirst = true;
             for (int i = 0; i < getElementCount(); i++) {
@@ -414,7 +413,7 @@ public class GroupSelectionList extends IconizedList implements GenericManagerLi
             if (values.length == 0) {
                 b.append("Keine Einträge gewählt");
             } else {
-                List<Tag> selection = new LinkedList<Tag>();
+                List<Tag> selection = new LinkedList<>();
                 for (Object v : values) {
                     ListItem i = (ListItem) v;
                     selection.add(i.getTag());
@@ -449,13 +448,13 @@ public class GroupSelectionList extends IconizedList implements GenericManagerLi
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             // UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
         GroupSelectionList ren = new GroupSelectionList("");
         ren.setExpertSelection(true);
         JFrame f = new JFrame();
-        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         f.getContentPane().setLayout(new BorderLayout());
         f.getContentPane().add(ren, BorderLayout.CENTER);
         f.setVisible(true);
@@ -474,7 +473,7 @@ public class GroupSelectionList extends IconizedList implements GenericManagerLi
             OR(0), AND(1), NOT(2), DISABLED(3);
             private int value = 0;
 
-            private RELATION_TYPE(int pValue) {
+            RELATION_TYPE(int pValue) {
                 value = pValue;
             }
 

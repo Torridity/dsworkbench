@@ -27,7 +27,7 @@ public class REFTargetElement {
     private int neededSupports = 0;
 
     public REFTargetElement(Village pVillage) {
-        setVillage(pVillage);
+        this.village = pVillage;
     }
 
     public final void setVillage(Village village) {

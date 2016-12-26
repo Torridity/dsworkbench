@@ -30,7 +30,7 @@ public class TribeReportStatsFormatter extends BasicFormatter<TribeStatResult> {
 
      private final String[] VARIABLES = new String[]{LIST_START, LIST_END, ELEMENT_COUNT, ELEMENT_ID};
     private final String STANDARD_TEMPLATE = new TribeStatResult().getStandardTemplate();
-    private final String TEMPLATE_PROPERTY = "tribe.report.stats.bbexport.template";
+    private static final String TEMPLATE_PROPERTY = "tribe.report.stats.bbexport.template";
     
     @Override
     public String formatElements(List<TribeStatResult> pElements, boolean pExtended) {
@@ -66,7 +66,7 @@ public class TribeReportStatsFormatter extends BasicFormatter<TribeStatResult> {
 
     @Override
     public String[] getTemplateVariables() {
-        List<String> vars = new LinkedList<String>();
+        List<String> vars = new LinkedList<>();
         vars.addAll(Arrays.asList(VARIABLES));
         vars.addAll(Arrays.asList(new TribeStatResult().getBBVariables()));
         return vars.toArray(new String[vars.size()]);

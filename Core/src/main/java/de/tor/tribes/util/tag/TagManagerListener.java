@@ -21,5 +21,5 @@ package de.tor.tribes.util.tag;
  */
 public interface TagManagerListener {
 
-    public void fireTagsChangedEvent();
+    void fireTagsChangedEvent();
 }

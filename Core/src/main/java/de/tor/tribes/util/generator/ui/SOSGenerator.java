@@ -278,15 +278,15 @@ public class SOSGenerator extends javax.swing.JFrame {
             }
         }
 
-        /**
-         * [b]Dorf:[/b] [coord]112|87[/coord] [b]Wallstufe:[/b] 20 [b]Verteidiger:[/b] 23011 22928 0 266 0 814 0 0 0
-         *
-         * bäääng! [coord]282|306[/coord] --> Ankunftszeit: 11.10.11 14:37:57 [player]MrBlue76[/player]
-         *
-         * [b]Dorf:[/b] [coord]114|84[/coord] [b]Wallstufe:[/b] 20 [b]Verteidiger:[/b] 9079 9080 0 100 0 300 0 0 0
-         *
-         * bäääng! [coord]318|272[/coord] --> Ankunftszeit: 11.10.11 14:42:49 [player]MrBlue76[/player] bäääng! [coord]211|345[/coord] -->
-         * Ankunftszeit: 11.10.11 16:45:37 [player]MrBlue76[/player]
+        /*
+          [b]Dorf:[/b] [coord]112|87[/coord] [b]Wallstufe:[/b] 20 [b]Verteidiger:[/b] 23011 22928 0 266 0 814 0 0 0
+
+          bäääng! [coord]282|306[/coord] --> Ankunftszeit: 11.10.11 14:37:57 [player]MrBlue76[/player]
+
+          [b]Dorf:[/b] [coord]114|84[/coord] [b]Wallstufe:[/b] 20 [b]Verteidiger:[/b] 9079 9080 0 100 0 300 0 0 0
+
+          bäääng! [coord]318|272[/coord] --> Ankunftszeit: 11.10.11 14:42:49 [player]MrBlue76[/player] bäääng! [coord]211|345[/coord] -->
+          Ankunftszeit: 11.10.11 16:45:37 [player]MrBlue76[/player]
          */
         Enumeration<Village> targets = sos.getTargets();
         StringBuilder b = new StringBuilder();
@@ -312,18 +312,25 @@ public class SOSGenerator extends javax.swing.JFrame {
                         b.append("Fake, ");
                     } else {
                         if (a.getUnit() != null) {
-                            if (a.getUnit().getPlainName().equals("axe")) {
-                                b.append("Axt, ");
-                            } else if (a.getUnit().getPlainName().equals("light")) {
-                                b.append("LKAV, ");
-                            } else if (a.getUnit().getPlainName().equals("snob")) {
-                                b.append("AG, ");
-                            } else if (a.getUnit().getPlainName().equals("heavy")) {
-                                b.append("SKAV, ");
-                            } else if (a.getUnit().getPlainName().equals("sword")) {
-                                b.append("Schwert, ");
-                            } else if (a.getUnit().getPlainName().equals("catapult")) {
-                                b.append("Kata, ");
+                            switch (a.getUnit().getPlainName()) {
+                                case "axe":
+                                    b.append("Axt, ");
+                                    break;
+                                case "light":
+                                    b.append("LKAV, ");
+                                    break;
+                                case "snob":
+                                    b.append("AG, ");
+                                    break;
+                                case "heavy":
+                                    b.append("SKAV, ");
+                                    break;
+                                case "sword":
+                                    b.append("Schwert, ");
+                                    break;
+                                case "catapult":
+                                    b.append("Kata, ");
+                                    break;
                             }
                         }
                     }
@@ -340,7 +347,7 @@ public class SOSGenerator extends javax.swing.JFrame {
     }
 
     private Hashtable<UnitHolder, Integer> getDefendingTroops() {
-        Hashtable<String, Integer> units = new Hashtable<String, Integer>();
+        Hashtable<String, Integer> units = new Hashtable<>();
         if (jMedDef.isSelected()) {
             units.put("spear", getRandomValueInRange(1000, 2000));
             units.put("sword", getRandomValueInRange(1000, 2000));
@@ -370,7 +377,7 @@ public class SOSGenerator extends javax.swing.JFrame {
     }
 
     private int getRandomValueInRange(int min, int max) {
-        return Math.max(min, (int) Math.random() * max);
+        return Math.max(min, (int) (Math.random() * max));
     }
 
     /**
@@ -392,13 +399,7 @@ public class SOSGenerator extends javax.swing.JFrame {
                     break;
                 }
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(SOSGenerator.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(SOSGenerator.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(SOSGenerator.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+        } catch (ClassNotFoundException | javax.swing.UnsupportedLookAndFeelException | IllegalAccessException | InstantiationException ex) {
             java.util.logging.Logger.getLogger(SOSGenerator.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>

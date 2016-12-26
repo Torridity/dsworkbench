@@ -19,16 +19,11 @@ import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.DataHolderListener;
 import de.tor.tribes.io.ServerManager;
 import de.tor.tribes.types.ext.Tribe;
-import de.tor.tribes.util.GlobalOptions;
+
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
-import java.net.URL;
-import java.net.URLConnection;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -96,7 +91,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         // </editor-fold>
 
         // <editor-fold defaultstate="collapsed" desc="Network Setup">
-        boolean useProxy = Boolean.parseBoolean(GlobalOptions.getProperty("proxySet"));;
+        boolean useProxy = Boolean.parseBoolean(GlobalOptions.getProperty("proxySet"));
 
         jDirectConnectOption.setSelected(!useProxy);
         jProxyConnectOption.setSelected(useProxy);
@@ -247,7 +242,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
     }
 
     public Hashtable<UnitHolder, Integer> getDefense() {
-        Hashtable<UnitHolder, Integer> result = new Hashtable<UnitHolder, Integer>();
+        Hashtable<UnitHolder, Integer> result = new Hashtable<>();
         Set<Entry<String, Integer>> entries = getDefenseInternal().entrySet();
         for (Entry<String, Integer> e : entries) {
             UnitHolder unit = DataHolder.getSingleton().getUnitByPlainName(e.getKey());
@@ -259,7 +254,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
     }
 
     private Hashtable<String, Integer> getDefenseInternal() {
-        Hashtable<String, Integer> result = new Hashtable<String, Integer>();
+        Hashtable<String, Integer> result = new Hashtable<>();
         result.put("spear", UIHelper.parseIntFromField(jDefSpear, 500));
         result.put("sword", UIHelper.parseIntFromField(jDefSword, 500));
         result.put("archer", UIHelper.parseIntFromField(jDefArcher, 500));
@@ -277,7 +272,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
     }
 
     public Hashtable<UnitHolder, Integer> getOffense() {
-        Hashtable<UnitHolder, Integer> result = new Hashtable<UnitHolder, Integer>();
+        Hashtable<UnitHolder, Integer> result = new Hashtable<>();
         Set<Entry<String, Integer>> entries = getOffenseInternal().entrySet();
         for (Entry<String, Integer> e : entries) {
             UnitHolder unit = DataHolder.getSingleton().getUnitByPlainName(e.getKey());
@@ -289,7 +284,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
     }
 
     private Hashtable<String, Integer> getOffenseInternal() {
-        Hashtable<String, Integer> result = new Hashtable<String, Integer>();
+        Hashtable<String, Integer> result = new Hashtable<>();
         result.put("axe", UIHelper.parseIntFromField(jOffAxe, 7000));
         result.put("light", UIHelper.parseIntFromField(jOffLight, 3000));
         result.put("marcher", UIHelper.parseIntFromField(jOffMarcher, 500));
@@ -2618,13 +2613,13 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             return;
         }
         try {
-            /**
-             * Validate player settings
+            /*
+              Validate player settings
              */
             UserProfile selectedProfile = null;
             try {
                 selectedProfile = (UserProfile) jProfileBox.getSelectedItem();
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
             if (selectedProfile != null) {
                 if (selectedProfile.getTribe() == null) {
@@ -2661,8 +2656,8 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 return;
             }
 
-            /**
-             * Update attack vector colors
+            /*
+              Update attack vector colors
              */
             DefaultTableModel model = ((DefaultTableModel) jAttackColorTable.getModel());
             for (int i = 0; i < model.getRowCount(); i++) {
@@ -2673,8 +2668,8 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 GlobalOptions.addProperty(unit + ".color", hexCol);
             }
 
-            /**
-             * Validate misc properties
+            /*
+              Validate misc properties
              */
             int sortType = jVillageSortTypeChooser.getSelectedIndex();
             Village.setOrderType(sortType);
@@ -3148,7 +3143,7 @@ private void fireProfileActionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
         } else {
             try {
                 profileId = Long.parseLong(GlobalOptions.getProperty("player." + GlobalOptions.getProperty("default.server")));
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         }
         jProfileBox.setModel(model);
@@ -3215,7 +3210,7 @@ private void fireProfileActionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
                 return;
             }
             vp.setViewPosition(point);
-        } catch (Throwable t) {
+        } catch (Throwable ignored) {
         }
     }
 
@@ -3236,7 +3231,7 @@ private void fireProfileActionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
                     long profileId = -1;
                     try {
                         profileId = Long.parseLong(GlobalOptions.getProperty("player." + GlobalOptions.getSelectedServer()));
-                    } catch (Exception e) {
+                    } catch (Exception ignored) {
                     }
                     if (profileId != -1) {
                         for (UserProfile profile : profiles) {

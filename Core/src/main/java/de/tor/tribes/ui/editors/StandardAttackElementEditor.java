@@ -15,7 +15,6 @@
  */
 package de.tor.tribes.ui.editors;
 
-import de.tor.tribes.types.StandardAttackElement;
 import java.awt.Component;
 import javax.swing.AbstractCellEditor;
 import javax.swing.JTable;
@@ -37,7 +36,7 @@ public class StandardAttackElementEditor extends AbstractCellEditor implements T
 
     @Override
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-        editor.setText(((StandardAttackElement) value).toString());
+        editor.setText(value.toString());
         return editor;
     }
 }

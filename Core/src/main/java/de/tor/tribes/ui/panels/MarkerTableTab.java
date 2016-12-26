@@ -27,7 +27,6 @@ import de.tor.tribes.ui.renderer.VisibilityCellRenderer;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.ImageUtils;
 import de.tor.tribes.util.JOptionPaneHelper;
-import de.tor.tribes.util.PluginManager;
 import de.tor.tribes.util.bb.MarkerListFormatter;
 import de.tor.tribes.util.mark.MarkerManager;
 import java.awt.Color;
@@ -80,7 +79,7 @@ public class MarkerTableTab extends javax.swing.JPanel implements ListSelectionL
 
     private static Logger logger = Logger.getLogger("MarkerTableTab");
 
-    public static enum TRANSFER_TYPE {
+    public enum TRANSFER_TYPE {
 
         CLIPBOARD_PLAIN, CLIPBOARD_BB, CUT_TO_INTERNAL_CLIPBOARD, COPY_TO_INTERNAL_CLIPBOARD, FROM_EXTERNAL_CLIPBOARD
     }
@@ -233,7 +232,7 @@ public class MarkerTableTab extends javax.swing.JPanel implements ListSelectionL
         }
         if (!pFilterRows) {
             jxMarkerTable.setRowFilter(null);
-            final List<Integer> relevantCols = new LinkedList<Integer>();
+            final List<Integer> relevantCols = new LinkedList<>();
             List<TableColumn> cols = jxMarkerTable.getColumns(true);
             for (int i = 0; i < jxMarkerTable.getColumnCount(); i++) {
                 TableColumnExt col = jxMarkerTable.getColumnExt(i);
@@ -252,7 +251,7 @@ public class MarkerTableTab extends javax.swing.JPanel implements ListSelectionL
 
                 @Override
                 public boolean include(Entry<? extends TableModel, ? extends Integer> entry) {
-                    final List<Integer> relevantCols = new LinkedList<Integer>();
+                    final List<Integer> relevantCols = new LinkedList<>();
                     List<TableColumn> cols = jxMarkerTable.getColumns(true);
                     for (int i = 0; i < jxMarkerTable.getColumnCount(); i++) {
                         TableColumnExt col = jxMarkerTable.getColumnExt(i);
@@ -263,11 +262,11 @@ public class MarkerTableTab extends javax.swing.JPanel implements ListSelectionL
 
                     for (Integer col : relevantCols) {
                         if (pCaseSensitive) {
-                            if (entry.getStringValue(col).indexOf(pValue) > -1) {
+                            if (entry.getStringValue(col).contains(pValue)) {
                                 return true;
                             }
                         } else {
-                            if (entry.getStringValue(col).toLowerCase().indexOf(pValue.toLowerCase()) > -1) {
+                            if (entry.getStringValue(col).toLowerCase().contains(pValue.toLowerCase())) {
                                 return true;
                             }
                         }
@@ -414,7 +413,7 @@ public class MarkerTableTab extends javax.swing.JPanel implements ListSelectionL
             for (String line : lines) {
                 Marker a = Marker.fromInternalRepresentation(line);
                 if (a != null) {
-                    MarkerManager.getSingleton().addManagedElement(getMarkerSet(), a);
+                    MarkerManager.getSingleton().addManagedElement(sMarkerSet, a);
                     cnt++;
                 }
             }
@@ -488,7 +487,7 @@ public class MarkerTableTab extends javax.swing.JPanel implements ListSelectionL
             }
         }
         jxMarkerTable.editingCanceled(new ChangeEvent(this));
-        MarkerManager.getSingleton().removeElements(getMarkerSet(), selectedMarkers);
+        MarkerManager.getSingleton().removeElements(sMarkerSet, selectedMarkers);
         markerModel.fireTableDataChanged();
         showSuccess(selectedMarkers.size() + " Markierung(en) gelöscht");
         return true;
@@ -499,13 +498,13 @@ public class MarkerTableTab extends javax.swing.JPanel implements ListSelectionL
     }
 
     private List<Marker> getSelectedMarkers() {
-        final List<Marker> selectedMarkers = new LinkedList<Marker>();
+        final List<Marker> selectedMarkers = new LinkedList<>();
         int[] selectedRows = jxMarkerTable.getSelectedRows();
         if (selectedRows != null && selectedRows.length < 1) {
             return selectedMarkers;
         }
         for (Integer selectedRow : selectedRows) {
-            Marker a = (Marker) MarkerManager.getSingleton().getAllElements(getMarkerSet()).get(jxMarkerTable.convertRowIndexToModel(selectedRow));
+            Marker a = (Marker) MarkerManager.getSingleton().getAllElements(sMarkerSet).get(jxMarkerTable.convertRowIndexToModel(selectedRow));
             if (a != null) {
                 selectedMarkers.add(a);
             }

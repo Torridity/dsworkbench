@@ -43,7 +43,7 @@ public class XMLHelper {
     }
 
     public static Hashtable<UnitHolder, Integer> xmlToTroops(Element pElement) {
-        Hashtable<UnitHolder, Integer> troops = new Hashtable<UnitHolder, Integer>();
+        Hashtable<UnitHolder, Integer> troops = new Hashtable<>();
 
         Element troopsElement = (Element) JaxenUtils.getNodes(pElement, "troops").get(0);
         if (troopsElement == null) {
@@ -55,10 +55,10 @@ public class XMLHelper {
                 if (attrib != null) {
                     troops.put(unit, attrib.getIntValue());
                 } else {
-                    troops.put(unit, Integer.valueOf(0));
+                    troops.put(unit, 0);
                 }
             } catch (Exception ex) {
-                troops.put(unit, Integer.valueOf(0));
+                troops.put(unit, 0);
             }
         }
         return troops;

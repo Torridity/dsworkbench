@@ -22,57 +22,18 @@ import de.tor.tribes.types.LinkedTag;
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.TagMapMarker;
 import de.tor.tribes.types.ext.Village;
-import de.tor.tribes.ui.windows.AbstractDSWorkbenchFrame;
-import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
-import de.tor.tribes.ui.panels.GenericTestPanel;
-import de.tor.tribes.ui.windows.LinkTagsDialog;
 import de.tor.tribes.ui.editors.TagMapMarkerCellEditor;
 import de.tor.tribes.ui.models.TagTableModel;
+import de.tor.tribes.ui.panels.GenericTestPanel;
 import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
 import de.tor.tribes.ui.renderer.TagMapMarkerRenderer;
-import de.tor.tribes.util.BrowserCommandSender;
-import de.tor.tribes.util.Constants;
-import de.tor.tribes.util.GlobalOptions;
-import de.tor.tribes.util.ImageUtils;
-import de.tor.tribes.util.JOptionPaneHelper;
-import de.tor.tribes.util.MouseGestureHandler;
-import de.tor.tribes.util.PluginManager;
-import de.tor.tribes.util.PropertyHelper;
+import de.tor.tribes.ui.windows.AbstractDSWorkbenchFrame;
+import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
+import de.tor.tribes.ui.windows.LinkTagsDialog;
+import de.tor.tribes.util.*;
 import de.tor.tribes.util.bb.TagListFormatter;
 import de.tor.tribes.util.bb.VillageListFormatter;
 import de.tor.tribes.util.tag.TagManager;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.HeadlessException;
-import java.awt.Point;
-import java.awt.Toolkit;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.StringSelection;
-import java.awt.datatransfer.Transferable;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.geom.GeneralPath;
-import java.awt.image.BufferedImage;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.StringTokenizer;
-import javax.swing.AbstractAction;
-import javax.swing.DefaultListModel;
-import javax.swing.ImageIcon;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.KeyStroke;
-import javax.swing.UIManager;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import org.apache.commons.configuration.Configuration;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
@@ -87,6 +48,20 @@ import org.jdesktop.swingx.painter.AbstractLayoutPainter.VerticalAlignment;
 import org.jdesktop.swingx.painter.ImagePainter;
 import org.jdesktop.swingx.painter.MattePainter;
 import org.jdesktop.swingx.table.TableColumnExt;
+
+import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import java.awt.*;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
+import java.awt.event.*;
+import java.awt.geom.GeneralPath;
+import java.awt.image.BufferedImage;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.List;
 
 /**
  * @author Torridity
@@ -187,7 +162,7 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame implements Gen
 
         try {
             jAlwaysOnTopBox.setSelected(pConfig.getBoolean(getPropertyPrefix() + ".alwaysOnTop"));
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
         setAlwaysOnTop(jAlwaysOnTopBox.isSelected());
@@ -242,7 +217,6 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame implements Gen
                 }
                 if (unusedId == 1000) {
                     JOptionPaneHelper.showErrorBox(DSWorkbenchTagFrame.this, "Du hast mehr als 1000 Gruppen. Bitte lösche zuerst ein paar bevor du Neue erstellst.", "Fehler");
-                    return;
                 }
             }
         });
@@ -370,7 +344,7 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame implements Gen
         List<Tag> selection = getSelectedTags();
         DefaultListModel model = new DefaultListModel();
 
-        List<Village> villages = new LinkedList<Village>();
+        List<Village> villages = new LinkedList<>();
         for (Tag t : selection) {
             for (Integer id : t.getVillageIDs()) {
                 Village v = DataHolder.getSingleton().getVillagesById().get(id);
@@ -406,13 +380,13 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame implements Gen
     }
 
     private void untagSelectedVillages() {
-        Object[] villageSelection = jVillageList.getSelectedValues();
-        if (villageSelection == null || villageSelection.length == 0) {
+        List villageSelection = jVillageList.getSelectedValuesList();
+        if (villageSelection == null || villageSelection.isEmpty()) {
             showInfo("Keine Dörfer ausgewählt");
             return;
         }
 
-        if (JOptionPaneHelper.showQuestionConfirmBox(this, "Willst du" + ((villageSelection.length == 1) ? " das gewählte Dorf " : " die gewählten Dörfer ") + "wirklich aus den gewählten Gruppen entfernen?", "Löschen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
+        if (JOptionPaneHelper.showQuestionConfirmBox(this, "Willst du" + ((villageSelection.size() == 1) ? " das gewählte Dorf " : " die gewählten Dörfer ") + "wirklich aus den gewählten Gruppen entfernen?", "Löschen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
             List<Tag> selection = getSelectedTags();
             TagManager.getSingleton().invalidate();
             for (Tag t : selection) {
@@ -427,13 +401,13 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame implements Gen
     }
 
     private void copyVillageAsBBCode() {
-        Object[] villageSelection = jVillageList.getSelectedValues();
-        if (villageSelection == null || villageSelection.length == 0) {
+        List villageSelection = jVillageList.getSelectedValuesList();
+        if (villageSelection == null || villageSelection.isEmpty()) {
             showInfo("Keine Dörfer ausgewählt");
             return;
         }
         try {
-            List<Village> villages = new LinkedList<Village>();
+            List<Village> villages = new LinkedList<>();
             for (Object o : villageSelection) {
                 villages.add((Village) o);
             }
@@ -504,8 +478,7 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame implements Gen
 
         try {
             String formatted = new TagListFormatter().formatElements(selection, extended);
-            String b = formatted;
-            StringTokenizer t = new StringTokenizer(b, "[");
+            StringTokenizer t = new StringTokenizer(formatted, "[");
             int cnt = t.countTokens();
             if (cnt > 1000) {
                 if (JOptionPaneHelper.showQuestionConfirmBox(this, "Die ausgewählten Gruppen benötigen mehr als 1000 BB-Codes\n" + "und können daher im Spiel (Forum/IGM/Notizen) nicht auf einmal dargestellt werden.\nTrotzdem exportieren?", "Zu viele BB-Codes", "Nein", "Ja") == JOptionPane.NO_OPTION) {
@@ -528,7 +501,7 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame implements Gen
             return;
         }
 
-        List<Integer> villageIds = new LinkedList<Integer>();
+        List<Integer> villageIds = new LinkedList<>();
         for (Tag t : selection) {
             for (Integer id : t.getVillageIDs()) {
                 if (!villageIds.contains(id)) {
@@ -679,7 +652,7 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame implements Gen
 }//GEN-LAST:event_jXLabel1fireHideInfoEvent
 
     private List<Tag> getSelectedTags() {
-        final List<Tag> elements = new LinkedList<Tag>();
+        final List<Tag> elements = new LinkedList<>();
         int[] selectedRows = jTagsTable.getSelectedRows();
         if (selectedRows == null || selectedRows.length < 1) {
             return elements;
@@ -734,7 +707,7 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame implements Gen
         try {
             //  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
         Tag t = new Tag("Mein Tag", true);
@@ -743,7 +716,7 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame implements Gen
 
         DSWorkbenchTagFrame.getSingleton().setSize(600, 400);
         DSWorkbenchTagFrame.getSingleton().resetView();
-        DSWorkbenchTagFrame.getSingleton().setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        DSWorkbenchTagFrame.getSingleton().setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         DSWorkbenchTagFrame.getSingleton().setVisible(true);
 
     }

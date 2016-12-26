@@ -165,7 +165,7 @@ public class DoItYourselfAttackTableModel extends AbstractTableModel {
                 default:
                     break;
             }
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         AttackManager.getSingleton().revalidate(AttackManager.MANUAL_ATTACK_PLAN, true);
     }

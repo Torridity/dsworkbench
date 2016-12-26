@@ -33,13 +33,13 @@ public class AttackIGMSender {
     public static final int ID_ERROR_WHILE_SUBMITTING = -2;
 
     public static SenderResult sendAttackNotifications(List<Attack> pAttacks, String pSubject, String pApiKey) {
-        Hashtable<Tribe, List<Attack>> attacks = new Hashtable<Tribe, List<Attack>>();
+        Hashtable<Tribe, List<Attack>> attacks = new Hashtable<>();
         for (Attack a : pAttacks) {
             Tribe sender = a.getSource().getTribe();
             if (sender != null) {
                 List<Attack> attacksForSender = attacks.get(sender);
                 if (attacksForSender == null) {
-                    attacksForSender = new LinkedList<Attack>();
+                    attacksForSender = new LinkedList<>();
                     attacks.put(sender, attacksForSender);
                 }
                 attacksForSender.add(a);
@@ -53,7 +53,7 @@ public class AttackIGMSender {
             Tribe t = tribeKeys.nextElement();
             List<Attack> attacksForTribe = attacks.get(t);
             String message = messageStart;
-            List<String> messages = new LinkedList<String>();
+            List<String> messages = new LinkedList<>();
             for (Attack a : attacksForTribe) {
                 String line = AttackToBBCodeFormater.formatAttack(a, sUrl, false);
                 if (message.length() + line.length() > 2000) {

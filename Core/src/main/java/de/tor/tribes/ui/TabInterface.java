@@ -25,22 +25,22 @@ import java.util.List;
  */
 public interface TabInterface {
 
-    public void deregister();
+    void deregister();
 
-    public void updateFilter(final List<Tag> groups, final boolean pRelation, final boolean pFilterRows);
+    void updateFilter(final List<Tag> groups, final boolean pRelation, final boolean pFilterRows);
 
-    public void transferSelection(TRANSFER_TYPE pType);
+    void transferSelection(TRANSFER_TYPE pType);
 
-    public void updateSet();
+    void updateSet();
 
-    public void deleteSelection();
+    void deleteSelection();
 
-    public void centerVillageInGame();
+    void centerVillageInGame();
 
-    public void openPlaceInGame();
+    void openPlaceInGame();
 
-    public void centerVillage();
+    void centerVillage();
 
-    public void updateSelectionInfo();
+    void updateSelectionInfo();
 
 }

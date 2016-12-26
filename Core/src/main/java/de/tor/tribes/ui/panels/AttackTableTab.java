@@ -304,13 +304,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
 
     public void updatePlan() {
         attackModel.setPlan(sAttackPlan);
-        String[] cols = new String[]{"Einheit", "Typ", "Übertragen", "Einzeichnen"};
-        for (String col : cols) {
-            TableColumnExt columns = jxAttackTable.getColumnExt(col);
-            columns.setPreferredWidth(80);
-            columns.setMaxWidth(80);
-            columns.setWidth(80);
-        }
+        UIHelper.initTableColums(jxAttackTable, "Einheit", "Typ", "Übertragen", "Einzeichnen");
 
         jScrollPane1.setViewportView(jxAttackTable);
         jxAttackTable.getTableHeader().setDefaultRenderer(new DefaultTableHeaderRenderer());

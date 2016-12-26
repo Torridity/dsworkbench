@@ -525,21 +525,8 @@ public class TribeTribeAttackFrame extends DSWorkbenchGesturedFrame implements
 
         jSourcesTable.getTableHeader().setDefaultRenderer(new DefaultTableHeaderRenderer());
         jVictimTable.getTableHeader().setDefaultRenderer(new DefaultTableHeaderRenderer());
-        String[] cols = new String[]{"Einheit", "Fake", "Anwendbar"};
-        for (String col : cols) {
-            TableColumnExt columns = jSourcesTable.getColumnExt(col);
-            columns.setPreferredWidth(80);
-            columns.setMaxWidth(80);
-            columns.setWidth(80);
-        }
-
-        cols = new String[]{"Fake", "Angriffe", "Anwendbar"};
-        for (String col : cols) {
-            TableColumnExt columns = jVictimTable.getColumnExt(col);
-            columns.setPreferredWidth(80);
-            columns.setMaxWidth(80);
-            columns.setWidth(80);
-        }
+        UIHelper.initTableColums(jSourcesTable, "Einheit", "Fake", "Anwendbar");
+        UIHelper.initTableColums(jVictimTable, "Fake", "Angriffe", "Anwendbar");
 
         jSourcesTable.setHighlighters(HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B));
         jVictimTable.setHighlighters(HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B));

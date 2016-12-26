@@ -604,20 +604,9 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
         ConquerManager.getSingleton().addManagerListener(this);
         //update view
         jConquersTable.getTableHeader().setDefaultRenderer(new DefaultTableHeaderRenderer());
-        String[] cols = new String[]{"Dorfpunkte", "Kontinent", "Entfernung"};
-        for (String col : cols) {
-            TableColumnExt columns = jConquersTable.getColumnExt(col);
-            columns.setPreferredWidth(80);
-            columns.setMaxWidth(80);
-            columns.setWidth(80);
-        }
-        cols = new String[]{"Zustimmung"};
-        for (String col : cols) {
-            TableColumnExt columns = jConquersTable.getColumnExt(col);
-            columns.setPreferredWidth(90);
-            columns.setMaxWidth(90);
-            columns.setWidth(90);
-        }
+        UIHelper.initTableColums(jConquersTable, "Dorfpunkte", "Kontinent", "Entfernung");
+        UIHelper.initTableColums(jConquersTable, 90, "Zustimmung");
+
         ((ConquerTableModel) jConquersTable.getModel()).fireTableDataChanged();
     }
 

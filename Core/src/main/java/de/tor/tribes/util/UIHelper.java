@@ -16,6 +16,8 @@
 package de.tor.tribes.util;
 
 import com.jidesoft.swing.LabeledTextField;
+import org.jdesktop.swingx.JXTable;
+import org.jdesktop.swingx.table.TableColumnExt;
 
 import javax.swing.*;
 import java.awt.*;
@@ -95,6 +97,19 @@ public class UIHelper {
             }
             vp.setViewPosition(point);
         } catch (Throwable ignored) {
+        }
+    }
+
+    public static void initTableColums(JXTable table, String... headers) {
+        initTableColums(table, 80, headers);
+    }
+
+    public static void initTableColums(JXTable table, int width, String... headers) {
+        for (String caption : headers) {
+            TableColumnExt columns = table.getColumnExt(caption);
+            columns.setPreferredWidth(width);
+            columns.setMaxWidth(width);
+            columns.setWidth(width);
         }
     }
 }

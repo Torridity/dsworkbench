@@ -52,7 +52,7 @@ public class TroopListFormatter extends BasicFormatter<VillageTroopsHolder> {
         //replace unit icons
         replacedStart = StringUtils.replaceEach(replacedStart, dummyHolder.getBBVariables(), dummyHolder.getReplacements(pExtended));
         b.append(replacedStart).append("\n");
-        cnt += formatElementsCore(b, pElements, pExtended, listItemTemplate, f);
+        formatElementsCore(b, pElements, pExtended, listItemTemplate, f);
         String replacedEnd = StringUtils.replaceEach(afterList, new String[] {ELEMENT_COUNT}, new String[] {f.format(pElements.size())});
         b.append(replacedEnd);
         return b.toString();

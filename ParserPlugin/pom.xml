@@ -4,14 +4,14 @@
     <parent>
         <groupId>de.tor.dswb</groupId>
         <artifactId>dsworkbench</artifactId>
-        <version>3.43</version>
+        <version>3.45</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>parserplugin</artifactId>
     <name>ParserPlugin</name>
     <packaging>jar</packaging>
-    <version>3.43</version>
+    <version>3.45</version>
 
     <description>
         The parser plugin holds those classes that parses information copied from the game
@@ -26,7 +26,7 @@
         <dependency>
             <groupId>de.tor.dswb</groupId>
             <artifactId>Core</artifactId>
-            <version>3.43</version>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 </project>

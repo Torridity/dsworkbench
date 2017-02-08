@@ -90,8 +90,8 @@ public class BruteForce extends AbstractAttackAlgorithm {
                         double time = DSCalculator.calculateMoveTimeInSeconds(source, v, unit.getSpeed());
                         if (unit.getPlainName().equals("snob")) {
                             if (DSCalculator.calculateDistance(source, v) > ServerSettings.getSingleton().getSnobRange()) {
-                                //set move time to "infinite" if distance is too large
-                                time = Double.MAX_VALUE;
+                                //continue with the next destination Village
+                                continue;
                             }
                         }
 
@@ -176,7 +176,7 @@ public class BruteForce extends AbstractAttackAlgorithm {
 
         if (pFakeOffTargets) {
         	/*
-        	 *  why would we do this? We should allow one fake for each missing sff, so we can simply use pTargets as is?
+        	 *  why would we do this? We should allow one fake for each missing off, so we can simply use pTargets as is?
         	 *  
             logger.debug("Removing assigned off targets from fake list");
             Enumeration<Village> targets = attacks.keys();
@@ -227,8 +227,8 @@ public class BruteForce extends AbstractAttackAlgorithm {
                         double time = DSCalculator.calculateMoveTimeInSeconds(source, v, unit.getSpeed());
                         if (unit.getPlainName().equals("snob")) {
                             if (DSCalculator.calculateDistance(source, v) > ServerSettings.getSingleton().getSnobRange()) {
-                                //set move time to "infinite" if distance is too large
-                                time = Double.MAX_VALUE;
+                                //continue with the next destination Village
+                                continue;
                             }
                         }
 
@@ -346,6 +346,10 @@ public class BruteForce extends AbstractAttackAlgorithm {
                     }
                 }
             }
+            if(sourcesForTarget == null && fakes.get(target) != null) {
+                //ignore Off targets, when there are Fakes assigned and no Offs
+                continue;
+            }
             movements.add(f);
         }
 
@@ -364,6 +368,10 @@ public class BruteForce extends AbstractAttackAlgorithm {
                         f.addOff(sourceUnit, source);
                     }
                 }
+            }
+            if(sourcesForTarget == null && allTargets.contains(target)) {
+                //ignore Off targets, where no Fakes were assigned
+                continue;
             }
             movements.add(f);
         }

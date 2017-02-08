@@ -45,4 +45,14 @@ public class REFTargetElement {
     public int getNeededSupports() {
         return neededSupports;
     }
+
+    public void addSupport() {
+        neededSupports++;
+    }
+
+    public boolean removeSupport() {
+        if(neededSupports <= 0) return false;
+        neededSupports--;
+        return true;
+    }
 }

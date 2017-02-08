@@ -495,11 +495,11 @@ public class TroopHelper {
         UnitHolder current = DataHolder.getSingleton().getUnitByPlainName("spear");
         Integer spearGoal = pTargetAmount.get(current);
         defGoal += spearGoal * current.getDefense();
-        defGoal += spearGoal * current.getDefenseCavalry();
+        defCavGoal += spearGoal * current.getDefenseCavalry();
         defArchGoal += (useArcher) ? spearGoal * current.getDefenseArcher() : 0;
         Integer spearSplit = pSplitAmount.get(current);
         defSplit += spearSplit * current.getDefense();
-        defCavSplit += spearSplit * current.getDefense();
+        defCavSplit += spearSplit * current.getDefenseCavalry();
         defArchSplit += (useArcher) ? spearSplit * current.getDefenseArcher() : 0;
         //
         current = DataHolder.getSingleton().getUnitByPlainName("sword");
@@ -509,7 +509,7 @@ public class TroopHelper {
         defArchGoal += (useArcher) ? swordGoal * current.getDefenseArcher() : 0;
         Integer swordSplit = pSplitAmount.get(current);
         defSplit += swordSplit * current.getDefense();
-        defCavSplit += swordSplit * current.getDefense();
+        defCavSplit += swordSplit * current.getDefenseCavalry();
         defArchSplit += (useArcher) ? swordSplit * current.getDefenseArcher() : 0;
         //
         Integer archerGoal = 0;
@@ -522,7 +522,7 @@ public class TroopHelper {
             defArchGoal += (useArcher) ? archerGoal * current.getDefenseArcher() : 0;
             archerSplit = pSplitAmount.get(current);
             defSplit += archerSplit * current.getDefense();
-            defCavSplit += archerSplit * current.getDefense();
+            defCavSplit += archerSplit * current.getDefenseCavalry();
             defArchSplit += (useArcher) ? archerSplit * current.getDefenseArcher() : 0;
         }
         //
@@ -533,7 +533,7 @@ public class TroopHelper {
         defArchGoal += (useArcher) ? spyGoal * current.getDefenseArcher() : 0;
         Integer spySplit = pSplitAmount.get(current);
         defSplit += spySplit * current.getDefense();
-        defCavSplit += spySplit * current.getDefense();
+        defCavSplit += spySplit * current.getDefenseCavalry();
         defArchSplit += (useArcher) ? spySplit * current.getDefenseArcher() : 0;
         //
         current = DataHolder.getSingleton().getUnitByPlainName("heavy");
@@ -543,7 +543,7 @@ public class TroopHelper {
         defArchGoal += (useArcher) ? heavyGoal * current.getDefenseArcher() : 0;
         Integer heavySplit = pSplitAmount.get(current);
         defSplit += heavySplit * current.getDefense();
-        defCavSplit += heavySplit * current.getDefense();
+        defCavSplit += heavySplit * current.getDefenseCavalry();
         defArchSplit += (useArcher) ? heavySplit * current.getDefenseArcher() : 0;
         //
 
@@ -584,7 +584,7 @@ public class TroopHelper {
             int defSupport = (defDiff == 0) ? 0 : (int) (Math.ceil((double) defDiff / (double) defSplit));
             int defCavSupport = (defCavDiff == 0) ? 0 : (int) (Math.ceil((double) defCavDiff / (double) defCavSplit));
             int defArchSupport = (defArchDiff == 0) ? 0 : (int) (Math.ceil((double) defArchDiff / (double) defArchSplit));
-
+            
             return Math.max(Math.max(defSupport, defCavSupport), defArchSupport);
         } else {
             int spearDiff = spearGoal - troops.get(DataHolder.getSingleton().getUnitByPlainName("spear"));

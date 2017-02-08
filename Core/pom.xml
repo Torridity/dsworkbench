@@ -8,7 +8,7 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>core</artifactId>
+    <artifactId>Core</artifactId>
     <name>Core</name>
     <packaging>jar</packaging>
     <version>3.45</version>

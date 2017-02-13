@@ -590,7 +590,7 @@ public class RetimerDataPanel extends WizardPage {
     private void readSOSFromClipboard() {
         try {
             String data = (String) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null).getTransferData(DataFlavor.stringFlavor);
-            List<SOSRequest> sos = PluginManager.getSingleton().executeSOSParserParser(data);
+            List<SOSRequest> sos = PluginManager.getSingleton().executeSOSParser(data);
             DefaultComboBoxModel model = null;
             if (sos.isEmpty()) {
                 model = new DefaultComboBoxModel(new Object[]{"Keine"});

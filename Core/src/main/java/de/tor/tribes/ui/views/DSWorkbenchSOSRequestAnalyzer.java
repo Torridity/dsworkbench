@@ -820,7 +820,7 @@ private void fireAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRS
             Transferable t = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
             String data = (String) t.getTransferData(DataFlavor.stringFlavor);
 
-            List<SOSRequest> requests = PluginManager.getSingleton().executeSOSParserParser(data);
+            List<SOSRequest> requests = PluginManager.getSingleton().executeSOSParser(data);
             if (requests != null && !requests.isEmpty()) {
                 for (SOSRequest request : requests) {
                     SOSManager.getSingleton().addRequest(request);

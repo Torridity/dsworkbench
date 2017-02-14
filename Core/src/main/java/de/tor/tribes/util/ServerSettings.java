@@ -102,9 +102,9 @@ public class ServerSettings {
 
             logger.debug(" - reading rise speed");
             try {
-                this.speed = Double.parseDouble(JaxenUtils.getNodeValue(d, "//snob/rise"));
+                this.riseSpeed = Double.parseDouble(JaxenUtils.getNodeValue(d, "//snob/rise"));
             } catch (Exception inner) {
-                this.speed = 1.0;
+                this.riseSpeed = 1.0;
             }
 
             logger.debug(" - reading night bonus");
@@ -214,11 +214,11 @@ public class ServerSettings {
     }
 
     public void setRiseSpeed(double speed) {
-        this.speed = speed;
+        this.riseSpeed = speed;
     }
 
     public double getRiseSpeed() {
-        return speed;
+        return riseSpeed;
     }
 
     public void setNightBonusActive(boolean nightBonusActive) {

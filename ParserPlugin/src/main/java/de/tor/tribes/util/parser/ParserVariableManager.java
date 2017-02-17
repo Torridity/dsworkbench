@@ -69,6 +69,9 @@ public class ParserVariableManager {
         DEFAULT.put("de.sos.troops.in.village", "Anwesende Truppen");
         DEFAULT.put("de.overview.groups", "Gruppen:");
         DEFAULT.put("de.groups.all", "alle");
+        DEFAULT.put("de.diplomacy.allies", "Verbündete");
+        DEFAULT.put("de.diplomacy.nap", "Nicht-Angriffs-Pakt (NAP)");
+        DEFAULT.put("de.diplomacy.enemy", "Feinde");
     }
 
     public String getProperty(String pProperty) {

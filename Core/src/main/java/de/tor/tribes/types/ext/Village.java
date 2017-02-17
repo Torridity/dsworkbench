@@ -58,7 +58,7 @@ public class Village implements Comparable<Village>, Serializable, BBSupport {
     @Override
     //@TODO ATTENTION: Workaround...check if this causes errors
     public boolean equals(Object obj) {
-        if (obj instanceof Village && obj != null) {
+        if (obj != null && obj instanceof Village) {
             return id == ((Village) obj).getId();
         }
         return super.equals(obj);

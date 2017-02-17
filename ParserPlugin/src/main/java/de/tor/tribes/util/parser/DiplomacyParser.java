@@ -40,8 +40,6 @@ public class DiplomacyParser implements SilentParserInterface {
     private static final boolean DEBUG = false;
 
     public boolean parse(String pData) {
-    	// TODO: Sprachabhängige Version von "Verbündete", "Nicht-Angriffs-Pakt (NAP)", "Feinde" aus ParserVariableManager.getSingleton().getProperty() laden
-    	
         StringTokenizer lineTok = new StringTokenizer(pData, "\n\r");
         List<Marker> markers = new ArrayList<>();
         boolean allies = false;
@@ -52,17 +50,17 @@ public class DiplomacyParser implements SilentParserInterface {
             String line = lineTok.nextToken();
             debug("Try line " + line);
 
-            if (line.trim().contains("Verbündete")) {
+            if (line.trim().contains(ParserVariableManager.getSingleton().getProperty("diplomacy.allies"))) {
                 debug("Got allies");
                 allies = true;
                 naps = false;
                 enemies = false;
-            } else if (line.trim().contains("Nicht-Angriffs-Pakt (NAP)")) {
+            } else if (line.trim().contains(ParserVariableManager.getSingleton().getProperty("diplomacy.nap"))) {
                 debug("Got naps");
                 naps = true;
                 allies = false;
                 enemies = false;
-            } else if (line.trim().contains("Feinde")) {
+            } else if (line.trim().contains(ParserVariableManager.getSingleton().getProperty("diplomacy.enemy"))) {
                 debug("Got enemies");
                 enemies = true;
                 naps = false;

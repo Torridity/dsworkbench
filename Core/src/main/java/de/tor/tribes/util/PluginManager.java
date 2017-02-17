@@ -156,7 +156,7 @@ public class PluginManager {
     return false;
   }
 
-  public List<SOSRequest> executeSOSParserParser(String pData) {
+  public List<SOSRequest> executeSOSParser(String pData) {
     try {
       Object parser = loadParser("de.tor.tribes.util.parser.SOSParser");
       return ((GenericParserInterface<SOSRequest>) parser).parse(pData);

@@ -236,7 +236,7 @@ public class AttackManager extends GenericManager<Attack> {
     }
 
     public void addAttack(Village pSource, Village pTarget, UnitHolder pUnit, Date pArriveTime, String pPlan) {
-        boolean showOnMap = GlobalOptions.getProperties().getBoolean("draw.attacks.by.default", false);
+        boolean showOnMap = GlobalOptions.getProperties().getBoolean("draw.attacks.by.default");
         addAttack(pSource, pTarget, pUnit, pArriveTime, showOnMap, pPlan, -1, false);
     }
 

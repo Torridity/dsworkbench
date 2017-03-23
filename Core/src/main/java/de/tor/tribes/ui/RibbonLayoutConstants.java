@@ -34,7 +34,7 @@ public class RibbonLayoutConstants {
     public static Font FONT = new JButton("").getFont();//12
 
     static {
-        if (Boolean.parseBoolean(GlobalOptions.getProperty("half.ribbon.size"))) {
+        if (GlobalOptions.getProperties().getBoolean("half.ribbon.size")) {
             TASK_BAR_HEIGHT = 16;//24
             TASK_TOGGLE_BUTTON_HEIGHT = 14;//22
             TILE_SIZE = 16;//32

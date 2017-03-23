@@ -91,37 +91,26 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         // </editor-fold>
 
         // <editor-fold defaultstate="collapsed" desc="Network Setup">
-        boolean useProxy = Boolean.parseBoolean(GlobalOptions.getProperty("proxySet"));
+        boolean useProxy = GlobalOptions.getProperties().getBoolean("proxySet");
 
         jDirectConnectOption.setSelected(!useProxy);
         jProxyConnectOption.setSelected(useProxy);
 
-        if (GlobalOptions.getProperty("proxyHost") != null) {
-            //System.setProperty("proxyHost", GlobalOptions.getProperty("proxyHost"));
-            jProxyHost.setText(GlobalOptions.getProperty("proxyHost"));
-        }
-        if (GlobalOptions.getProperty("proxyPort") != null) {
-            //System.setProperty("proxyPort", GlobalOptions.getProperty("proxyPort"));
-            jProxyPort.setText(GlobalOptions.getProperty("proxyPort"));
-        }
-        if (GlobalOptions.getProperty("proxyType") != null) {
-            // System.setProperty("proxyHost", GlobalOptions.getProperty("proxyHost"));
-            try {
-                jProxyTypeChooser.setSelectedIndex(Integer.parseInt(GlobalOptions.getProperty("proxyType")));
-            } catch (Exception e) {
-                jProxyTypeChooser.setSelectedIndex(0);
-            }
-        }
+        //System.setProperty("proxyHost", GlobalOptions.getProperty("proxyHost"));
+        jProxyHost.setText(GlobalOptions.getProperty("proxyHost"));
 
-        if (GlobalOptions.getProperty("proxyUser") != null) {
-            //System.setProperty("proxyPort", GlobalOptions.getProperty("proxyPort"));
-            jProxyUser.setText(GlobalOptions.getProperty("proxyUser"));
-        }
+        //System.setProperty("proxyPort", GlobalOptions.getProperty("proxyPort"));
+        jProxyPort.setText(GlobalOptions.getProperty("proxyPort"));
 
-        if (GlobalOptions.getProperty("proxyPassword") != null) {
-            //System.setProperty("proxyPort", GlobalOptions.getProperty("proxyPort"));
-            jProxyPassword.setText(GlobalOptions.getProperty("proxyPassword"));
-        }
+        // System.setProperty("proxyHost", GlobalOptions.getProperty("proxyHost"));
+        jProxyTypeChooser.setSelectedIndex(GlobalOptions.getProperties().getInt("proxyType"));
+
+        //System.setProperty("proxyPort", GlobalOptions.getProperty("proxyPort"));
+        jProxyUser.setText(GlobalOptions.getProperty("proxyUser"));
+
+        //System.setProperty("proxyPort", GlobalOptions.getProperty("proxyPort"));
+        jProxyPassword.setText(GlobalOptions.getProperty("proxyPassword"));
+        
         if (jProxyConnectOption.isSelected()) {
             SocketAddress addr = new InetSocketAddress(jProxyHost.getText(), Integer.parseInt(jProxyPort.getText()));
             switch (jProxyTypeChooser.getSelectedIndex()) {
@@ -163,74 +152,50 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
 
     public void restoreProperties() {
         //show popup moral
-        jShowPopupMoral.setSelected(GlobalOptions.getProperties().getBoolean("show.popup.moral", true));
-        GlobalOptions.getProperties().setProperty("show.popup.moral", jShowPopupMoral.isSelected());
-        jShowPopupConquers.setSelected(GlobalOptions.getProperties().getBoolean("show.popup.conquers", true));
-        GlobalOptions.getProperties().setProperty("show.popup.conquers", jShowPopupConquers.isSelected());
-        jShowPopupRanks.setSelected(GlobalOptions.getProperties().getBoolean("show.popup.ranks", true));
-        GlobalOptions.getProperties().setProperty("show.popup.ranks", jShowPopupRanks.isSelected());
-        jShowPopupFarmSpace.setSelected(GlobalOptions.getProperties().getBoolean("show.popup.farm.space", true));
-        GlobalOptions.getProperties().setProperty("show.popup.farm.space", jShowPopupFarmSpace.isSelected());
-        jShowContinents.setSelected(GlobalOptions.getProperties().getBoolean("map.showcontinents", true));
-        GlobalOptions.getProperties().setProperty("map.showcontinents", jShowContinents.isSelected());
-        jShowSectorsBox.setSelected(GlobalOptions.getProperties().getBoolean("show.sectors", true));
-        GlobalOptions.getProperties().setProperty("show.sectors", jShowSectorsBox.isSelected());
-        jShowBarbarianBox.setSelected(GlobalOptions.getProperties().getBoolean("show.barbarian", true));
-        GlobalOptions.getProperties().setProperty("show.barbarian", jShowBarbarianBox.isSelected());
-        jMarkerTransparency.setValue(GlobalOptions.getProperties().getInt("map.marker.transparency", 50));
-        GlobalOptions.getProperties().setProperty("map.marker.transparency", jMarkerTransparency.getValue());
-        jShowAttackMovementBox.setSelected(GlobalOptions.getProperties().getBoolean("attack.movement", false));
-        jDrawAttacksByDefaultBox.setSelected(GlobalOptions.getProperties().getBoolean("draw.attacks.by.default", false));
-        jShowLiveCountdown.setSelected(GlobalOptions.getProperties().getBoolean("show.live.countdown", true));
-        GlobalOptions.getProperties().setProperty("show.live.countdown", jShowLiveCountdown.isSelected());
-        jExtendedAttackLineDrawing.setSelected(GlobalOptions.getProperties().getBoolean("extended.attack.vectors", false));
-        jHeaderPath.setText(GlobalOptions.getProperties().getString("attack.template.header", "<Standard>"));
-        jBlockPath.setText(GlobalOptions.getProperties().getString("attack.template.block", "<Standard>"));
-        jFooterPath.setText(GlobalOptions.getProperties().getString("attack.template.footer", "<Standard>"));
+        jShowPopupMoral.setSelected(GlobalOptions.getProperties().getBoolean("show.popup.moral"));
+        jShowPopupConquers.setSelected(GlobalOptions.getProperties().getBoolean("show.popup.conquers"));
+        jShowPopupRanks.setSelected(GlobalOptions.getProperties().getBoolean("show.popup.ranks"));
+        jShowPopupFarmSpace.setSelected(GlobalOptions.getProperties().getBoolean("show.popup.farm.space"));
+        jShowContinents.setSelected(GlobalOptions.getProperties().getBoolean("map.showcontinents"));
+        jShowSectorsBox.setSelected(GlobalOptions.getProperties().getBoolean("show.sectors"));
+        jShowBarbarianBox.setSelected(GlobalOptions.getProperties().getBoolean("show.barbarian"));
+        jMarkerTransparency.setValue(GlobalOptions.getProperties().getInt("map.marker.transparency"));
+        jShowAttackMovementBox.setSelected(GlobalOptions.getProperties().getBoolean("attack.movement"));
+        jDrawAttacksByDefaultBox.setSelected(GlobalOptions.getProperties().getBoolean("draw.attacks.by.default"));
+        
+        jShowLiveCountdown.setSelected(GlobalOptions.getProperties().getBoolean("show.live.countdown"));
+        
+        jExtendedAttackLineDrawing.setSelected(GlobalOptions.getProperties().getBoolean("extended.attack.vectors"));
+        jHeaderPath.setText(GlobalOptions.getProperty("attack.template.header"));
+        jBlockPath.setText(GlobalOptions.getProperty("attack.template.block"));
+        jFooterPath.setText(GlobalOptions.getProperty("attack.template.footer"));
         //reload templates
         AttackPlanHTMLExporter.loadCustomTemplate();
-        jMarkOwnVillagesOnMinimapBox.setSelected(GlobalOptions.getProperties().getBoolean("mark.villages.on.minimap", true));
-        GlobalOptions.getProperties().setProperty("mark.villages.on.minimap", jMarkOwnVillagesOnMinimapBox.isSelected());
-        jDefaultMarkBox.setSelectedIndex(GlobalOptions.getProperties().getInt("default.mark", 0));
-        GlobalOptions.getProperties().setProperty("default.mark", jDefaultMarkBox.getSelectedIndex());
-        jCheckForUpdatesBox.setSelected(GlobalOptions.getProperties().getBoolean("check.updates.on.startup", true));
-        GlobalOptions.getProperties().setProperty("check.updates.on.startup", jCheckForUpdatesBox.isSelected());
-        int villageOrder = GlobalOptions.getProperties().getInt("village.order", 0);
+        jMarkOwnVillagesOnMinimapBox.setSelected(GlobalOptions.getProperties().getBoolean("mark.villages.on.minimap"));
+        jDefaultMarkBox.setSelectedIndex(GlobalOptions.getProperties().getInt("default.mark"));
+        jCheckForUpdatesBox.setSelected(GlobalOptions.getProperties().getBoolean("check.updates.on.startup"));
+        int villageOrder = GlobalOptions.getProperties().getInt("village.order");
         Village.setOrderType(villageOrder);
         jVillageSortTypeChooser.setSelectedIndex(villageOrder);
-        jNotifyDurationBox.setSelectedIndex(GlobalOptions.getProperties().getInt("notify.duration", 1));
-        GlobalOptions.getProperties().setProperty("notify.duration", jNotifyDurationBox.getSelectedIndex());
-        jInformOnUpdates.setSelected(GlobalOptions.getProperties().getBoolean("inform.on.updates", true));
-        GlobalOptions.getProperties().setProperty("inform.on.updates", jInformOnUpdates.isSelected());
-        jMaxTroopDensity.setText(GlobalOptions.getProperties().getString("max.density.troops", "650000"));
-        GlobalOptions.getProperties().setProperty("max.density.troops", jMaxTroopDensity.getText());
-        jHalfSizeMainMenu.setSelected(GlobalOptions.getProperties().getBoolean("half.ribbon.size", false));
-        GlobalOptions.getProperties().setProperty("half.ribbon.size", jHalfSizeMainMenu.isSelected());
-        jClipboardSound.setSelected(GlobalOptions.getProperties().getBoolean("clipboard.notification", true));
-        GlobalOptions.getProperties().setProperty("clipboard.notification", jClipboardSound.isSelected());
+        jNotifyDurationBox.setSelectedIndex(GlobalOptions.getProperties().getInt("notify.duration"));
+        jInformOnUpdates.setSelected(GlobalOptions.getProperties().getBoolean("inform.on.updates"));
+        jMaxTroopDensity.setText(GlobalOptions.getProperty("max.density.troops"));
+        jHalfSizeMainMenu.setSelected(GlobalOptions.getProperties().getBoolean("half.ribbon.size"));
+        jClipboardSound.setSelected(GlobalOptions.getProperties().getBoolean("clipboard.notification"));
         jLabel24.setEnabled(SystrayHelper.isSystraySupported());
         jEnableSystray.setEnabled(SystrayHelper.isSystraySupported());
-        jEnableSystray.setSelected(GlobalOptions.getProperties().getBoolean("systray.enabled", SystrayHelper.isSystraySupported()));
-        GlobalOptions.getProperties().setProperty("systray.enabled", jEnableSystray.isSelected());
-        jDeleteFarmReportsOnExit.setSelected(GlobalOptions.getProperties().getBoolean("delete.farm.reports.on.exit", true));
-        GlobalOptions.getProperties().setProperty("delete.farm.reports.on.exit", jDeleteFarmReportsOnExit.isSelected());
-        jMaxFarmSpace.setText(GlobalOptions.getProperties().getString("max.farm.space", "20000"));
-        GlobalOptions.getProperties().setProperty("max.farm.space", jMaxFarmSpace.getText());
-        jBrowserPath.setText(GlobalOptions.getProperties().getString("default.browser", ""));
-        GlobalOptions.getProperties().setProperty("default.browser", jBrowserPath.getText());
+        jEnableSystray.setSelected(GlobalOptions.getProperties().getBoolean("systray.enabled"));
+        jDeleteFarmReportsOnExit.setSelected(GlobalOptions.getProperties().getBoolean("delete.farm.reports.on.exit"));
+        jMaxFarmSpace.setText(GlobalOptions.getProperty("max.farm.space"));
+        jBrowserPath.setText(GlobalOptions.getProperty("default.browser"));
         jUseStandardBrowser.setSelected(jBrowserPath.getText().length() < 1);
         setOffense(TroopHelper.stringPropertyToUnitTable(GlobalOptions.getProperty("standard.off")));
         setDefense(TroopHelper.stringPropertyToUnitTable(GlobalOptions.getProperty("standard.defense.split")));
-        jMaxSimRounds.setText(GlobalOptions.getProperties().getString("max.sim.rounds", "500"));
-        GlobalOptions.getProperties().setProperty("max.sim.rounds", jMaxSimRounds.getText());
-        jTolerance.setText(GlobalOptions.getProperties().getString("support.tolerance", "10"));
-        GlobalOptions.getProperties().setProperty("support.tolerance", jTolerance.getText());
-        jMaxLossRatio.setText(GlobalOptions.getProperties().getString("max.loss.ratio", "50"));
-        GlobalOptions.getProperties().setProperty("max.loss.ratio", jMaxLossRatio.getText());
-        jReportServerPort.setText(GlobalOptions.getProperties().getString("report.server.port", "8080"));
-        GlobalOptions.getProperties().setProperty("report.server.port", jReportServerPort.getText());
-        jObstServer.setText(GlobalOptions.getProperties().getString("obst.server", ""));
-        GlobalOptions.getProperties().setProperty("obst.server", jObstServer.getText());
+        jMaxSimRounds.setText(GlobalOptions.getProperty("max.sim.rounds"));
+        jTolerance.setText(GlobalOptions.getProperty("support.tolerance"));
+        jMaxLossRatio.setText(GlobalOptions.getProperty("max.loss.ratio"));
+        jReportServerPort.setText(GlobalOptions.getProperty("report.server.port"));
+        jObstServer.setText(GlobalOptions.getProperty("obst.server"));
     }
 
     private void setDefense(Hashtable<String, Integer> pDefense) {
@@ -338,23 +303,15 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jAttackColorTable.getColumnModel().getColumn(1).setMaxWidth(75);
         for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
             String hexColor = GlobalOptions.getProperty(unit.getName() + ".color");
-            if (hexColor == null) {
-                //no color set yet, take red
+            try {
+                Color col = Color.decode(hexColor);
+                model.addRow(new Object[]{unit, col});
+            } catch (Exception e) {
+                logger.warn("Failed to decode color " + hexColor + ". Switch to default");
                 hexColor = Integer.toHexString(Color.RED.getRGB());
                 hexColor = "#" + hexColor.substring(2, hexColor.length());
                 GlobalOptions.addProperty(unit.getName() + ".color", hexColor);
                 model.addRow(new Object[]{unit, Color.RED});
-            } else {
-                try {
-                    Color col = Color.decode(hexColor);
-                    model.addRow(new Object[]{unit, col});
-                } catch (Exception e) {
-                    logger.warn("Failed to decode color " + hexColor + ". Switch to default");
-                    hexColor = Integer.toHexString(Color.RED.getRGB());
-                    hexColor = "#" + hexColor.substring(2, hexColor.length());
-                    GlobalOptions.addProperty(unit.getName() + ".color", hexColor);
-                    model.addRow(new Object[]{unit, Color.RED});
-                }
             }
         }
 
@@ -2486,11 +2443,11 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         } else {
             //store properties
             GlobalOptions.addProperty("proxySet", Boolean.toString(false));
-            GlobalOptions.addProperty("proxyHost", "");
-            GlobalOptions.addProperty("proxyPort", "");
-            GlobalOptions.addProperty("proxyType", "");
-            GlobalOptions.addProperty("proxyUser", "");
-            GlobalOptions.addProperty("proxyPassword", "");
+            GlobalOptions.removeProperty("proxyHost");
+            GlobalOptions.removeProperty("proxyPort");
+            GlobalOptions.removeProperty("proxyType");
+            GlobalOptions.removeProperty("proxyUser");
+            GlobalOptions.removeProperty("proxyPassword");
             //set no proxy and no authentification
             Authenticator.setDefault(null);
             webProxy = Proxy.NO_PROXY;
@@ -2792,9 +2749,6 @@ private void fireSelectBrowserEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
         return;
     }
     String dir = GlobalOptions.getProperty("screen.dir");
-    if (dir == null) {
-        dir = ".";
-    }
 
     JFileChooser chooser = null;
     try {
@@ -3048,7 +3002,7 @@ private void fireProfileActionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
     }//GEN-LAST:event_fireChangeDefEvent
 
     private void fireRestartReportServerEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireRestartReportServerEvent
-        int portBefore = GlobalOptions.getProperties().getInteger("report.server.port", 8080);
+        int portBefore = GlobalOptions.getProperties().getInt("report.server.port");
         int port = UIHelper.parseIntFromField(jReportServerPort, 8080);
 
         if (port != portBefore) {
@@ -3142,7 +3096,7 @@ private void fireProfileActionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
             profileId = GlobalOptions.getSelectedProfile().getProfileId();
         } else {
             try {
-                profileId = Long.parseLong(GlobalOptions.getProperty("player." + GlobalOptions.getProperty("default.server")));
+                profileId = GlobalOptions.getProperties().getLong("player." + GlobalOptions.getProperty("default.server"));
             } catch (Exception ignored) {
             }
         }
@@ -3230,7 +3184,7 @@ private void fireProfileActionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
                     jProfileBox.setModel(model);
                     long profileId = -1;
                     try {
-                        profileId = Long.parseLong(GlobalOptions.getProperty("player." + GlobalOptions.getSelectedServer()));
+                        profileId = GlobalOptions.getProperties().getLong("player." + GlobalOptions.getSelectedServer());
                     } catch (Exception ignored) {
                     }
                     if (profileId != -1) {

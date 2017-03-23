@@ -110,12 +110,8 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
         jChurchTable.registerKeyboardAction(listener, "Delete", delete, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         jChurchTable.registerKeyboardAction(listener, "BBCopy", bbCopy, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
-        try {
-            jChurchFrameAlwaysOnTop.setSelected(Boolean.parseBoolean(GlobalOptions.getProperty("church.frame.alwaysOnTop")));
-            setAlwaysOnTop(jChurchFrameAlwaysOnTop.isSelected());
-        } catch (Exception e) {
-            //setting not available
-        }
+        jChurchFrameAlwaysOnTop.setSelected(GlobalOptions.getProperties().getBoolean("church.frame.alwaysOnTop"));
+        setAlwaysOnTop(jChurchFrameAlwaysOnTop.isSelected());
 
         jChurchTable.setModel(new ChurchTableModel());
         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">

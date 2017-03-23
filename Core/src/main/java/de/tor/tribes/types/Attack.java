@@ -62,7 +62,7 @@ public class Attack extends ManageableType implements Serializable, Comparable<A
     private boolean transferredToBrowser = false;
 
     public Attack() {
-        showOnMap = GlobalOptions.getProperties().getBoolean("draw.attacks.by.default", false);
+        showOnMap = GlobalOptions.getProperties().getBoolean("draw.attacks.by.default");
     }
 
     public Attack(Attack pAttack) {

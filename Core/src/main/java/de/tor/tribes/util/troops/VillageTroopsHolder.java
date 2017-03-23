@@ -129,7 +129,7 @@ public class VillageTroopsHolder extends ManageableType implements BBSupport {
             farmSpace += troops.get(unit) * unit.getPop();
         }
 
-        int max = GlobalOptions.getProperties().getInt("max.farm.space", 20000);
+        int max = GlobalOptions.getProperties().getInt("max.farm.space");
 
         //calculate farm space depending on pop bonus
         float res = (float) (farmSpace / (double) max);

@@ -396,11 +396,7 @@ public class DefenseSourcePanel extends WizardPage {
             return 10;
         }
         TroopSplit split = new TroopSplit(pVillage);
-        int supportTolerance = 10;
-        try {
-            supportTolerance = GlobalOptions.getProperties().getInt("support.tolerance", 10);
-        } catch (Exception ignored) {
-        }
+        int supportTolerance = GlobalOptions.getProperties().getInt("support.tolerance");
 
         split.update(DSWorkbenchSettingsDialog.getSingleton().getDefense(), supportTolerance);
         return split.getSplitCount();

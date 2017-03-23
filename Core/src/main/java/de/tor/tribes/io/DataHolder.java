@@ -20,6 +20,7 @@ import de.tor.tribes.types.ext.*;
 import de.tor.tribes.types.test.DummyUnit;
 import de.tor.tribes.ui.views.DSWorkbenchSettingsDialog;
 import de.tor.tribes.util.Constants;
+import de.tor.tribes.util.GlobalDefaults;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.xml.JaxenUtils;
@@ -363,6 +364,9 @@ public class DataHolder {
       fireDataLoadedEvents(false);
       return false;
     }
+    
+    //reinitialise defaults because of changed units
+    GlobalDefaults.reinit();
     return true;
   }
 
@@ -1260,7 +1264,7 @@ public class DataHolder {
       int xEnd = (pEnd.x > pStart.x) ? pEnd.x : pStart.x;
       int yStart = (pStart.y < pEnd.y) ? pStart.y : pEnd.y;
       int yEnd = (pEnd.y > pStart.y) ? pEnd.y : pStart.y;
-      boolean showBarbarian = GlobalOptions.getProperties().getBoolean("show.barbarian", true);
+      boolean showBarbarian = GlobalOptions.getProperties().getBoolean("show.barbarian");
       for (int x = xStart; x <= xEnd; x++) {
         for (int y = yStart; y <= yEnd; y++) {
           Village v = getVillages()[x][y];

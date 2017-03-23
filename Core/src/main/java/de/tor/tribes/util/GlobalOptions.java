@@ -35,7 +35,6 @@ import de.tor.tribes.util.sos.SOSManager;
 import de.tor.tribes.util.stat.StatManager;
 import de.tor.tribes.util.tag.TagManager;
 import de.tor.tribes.util.troops.TroopsManager;
-import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.log4j.Logger;
 
 import javax.help.CSH;
@@ -47,6 +46,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.net.URL;
 import java.util.*;
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.PropertiesConfiguration;
 
 /**
  * Global settings used by almost all components. e.g. WorldData or UI specific objects
@@ -68,7 +69,7 @@ public class GlobalOptions {
     private static WorldDecorationHolder mDecorationHolder = null;
     private static String SELECTED_SERVER = null;
     //private static Properties GLOBAL_PROPERTIES = new Properties();
-    private static PropertiesConfiguration GLOBAL_PROPERTIES = null;
+    private static DSPropertiesConfiguration GLOBAL_PROPERTIES = null;
     //flag for online/offline mode
     private static boolean isOfflineMode = false;
     //used to store last attack time of AttackAddFrame
@@ -213,7 +214,7 @@ public class GlobalOptions {
      * Load the global properties
      */
     private static void loadProperties() throws Exception {
-        GLOBAL_PROPERTIES = new PropertiesConfiguration();
+        GLOBAL_PROPERTIES = new DSPropertiesConfiguration();
         if (new File("global.properties").exists()) {
             logger.debug("Loading existing properties file");
             FileInputStream fin = new FileInputStream("global.properties");
@@ -281,20 +282,16 @@ public class GlobalOptions {
      * Get the value of a property
      */
     public static String getProperty(String pKey) {
-        if (GLOBAL_PROPERTIES == null || pKey == null) {
-            return null;
+        if (GLOBAL_PROPERTIES == null) {
+            //return standard Value
+            return GlobalDefaults.getProperty(pKey);
         }
-        Object property = GLOBAL_PROPERTIES.getProperty(pKey);
-        if (property != null) {
-            return property.toString();
-        } else {
-            return null;
-        }
+        return GLOBAL_PROPERTIES.getString(pKey);
     }
 
-    public static PropertiesConfiguration getProperties() {
+    public static DSPropertiesConfiguration getProperties() {
         if (GLOBAL_PROPERTIES == null) {//return empty properties if not yet loaded
-            return new PropertiesConfiguration();
+            return new DSPropertiesConfiguration();
         }
         return GLOBAL_PROPERTIES;
     }
@@ -446,5 +443,140 @@ public class GlobalOptions {
 
     public static Date getLastArriveTime() {
         return lastArriveTime;
+    }
+    
+    
+    /**
+     * Simple sub-class to store the GLOBAL_PROPERTIES
+     *
+     * @author extremecrazycoder
+     */
+    public static class DSPropertiesConfiguration {
+        private static PropertiesConfiguration GLOBAL_PROPERTIES = null;
+        
+        public DSPropertiesConfiguration() {
+            GLOBAL_PROPERTIES = new PropertiesConfiguration();
+}
+        
+        public DSPropertiesConfiguration(String fileName) throws ConfigurationException {
+            GLOBAL_PROPERTIES = new PropertiesConfiguration(fileName);
+        }
+        
+        public DSPropertiesConfiguration(File file) throws ConfigurationException {
+            GLOBAL_PROPERTIES = new PropertiesConfiguration(file);
+        }
+        
+        public DSPropertiesConfiguration(URL url) throws ConfigurationException {
+            GLOBAL_PROPERTIES = new PropertiesConfiguration(url);
+        }
+        
+        public synchronized void load(FileInputStream in) throws ConfigurationException {
+            GLOBAL_PROPERTIES.load(in);
+        }
+        
+        public void save(FileOutputStream write) throws ConfigurationException {
+            GLOBAL_PROPERTIES.save(write);
+        }
+        
+        /**
+         * 
+         * @param key the key of the Option we want
+         * @param def get the Default ore the user-defined value?
+         */
+        private Object getObject(String key, boolean def) {
+            /*logger.debug("Fetching " + ((def)?("default of"):("")) + 
+                    "Option '" + key + "'");*/
+            Object obj = GLOBAL_PROPERTIES.getProperty(key);
+            if(obj == null || def) {
+                obj = GlobalDefaults.getProperties().getProperty(key);
+            }
+            return obj;
+        }
+        
+        public String getString(String key) {
+            return getString(key, false);
+        }
+        
+        public String getString(String key, boolean def) {
+            Object obj = getObject(key, def);
+            if(obj instanceof String) return (String) obj;
+            if(obj == null) {
+                if(def) {
+                    logger.fatal("'" + key + "' existiert nicht");
+                }
+                else {
+                    return getString(key, true);
+                }
+            }
+            return obj.toString();
+        }
+        
+        public boolean getBoolean(String key) {
+            return getBoolean(key, false);
+        }
+        
+        public boolean getBoolean(String key, boolean def) {
+            Object obj = getObject(key, def);
+            if(obj instanceof Boolean) return ((Boolean) obj).booleanValue();
+            
+            try {
+                return Boolean.parseBoolean(obj.toString());
+            }
+            catch(Exception e) {
+                if(!def) return getBoolean(key, true);
+                logger.fatal("'" + key + "' ist kein Boolean", e);
+                return false;
+            }
+        }
+        
+        public int getInt(String key) {
+            return getInt(key, false);
+        }
+        
+        public int getInt(String key, boolean def) {
+            Object obj = getObject(key, def);
+            if(obj instanceof Integer) return ((Integer) obj).intValue();
+            
+            try {
+                String objStr = obj.toString();
+                //remove decimals for integers
+                if(objStr.contains(".")) objStr = objStr.substring(0, objStr.indexOf("."));
+                return Integer.parseInt(objStr);
+            }
+            catch(Exception e) {
+                if(!def) return getInt(key, true);
+                logger.fatal("'" + key + "' ist kein Integer", e);
+                return -1;
+            }
+        }
+        
+        public long getLong(String key) {
+            return getLong (key, false);
+        }
+        
+        public long getLong(String key, boolean def) {
+            Object obj = getObject(key, def);
+            if(obj instanceof Long) return ((Long) obj).longValue();
+            
+            try {
+                String objStr = obj.toString();
+                //remove decimals for longs
+                if(objStr.contains(".")) objStr = objStr.substring(0, objStr.indexOf("."));
+                return Long.parseLong(objStr);
+            }
+            catch(Exception e) {
+                if(!def) return getLong(key, true);
+                logger.fatal("'" + key + "' ist kein Long", e);
+                return -1;
+            }
+        }
+        
+        public void setProperty(String pKey, String pValue) {
+            GLOBAL_PROPERTIES.setProperty(pKey, pValue);
+        }
+        
+        public void clearProperty(String pKey) {
+            GLOBAL_PROPERTIES.clearProperty(pKey);
+        }
     }
 }

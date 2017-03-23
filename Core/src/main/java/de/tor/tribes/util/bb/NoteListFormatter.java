@@ -29,7 +29,7 @@ import org.apache.commons.lang.StringUtils;
 public class NoteListFormatter extends BasicFormatter<Note> {
 
     private final String[] VARIABLES = new String[]{LIST_START, LIST_END, ELEMENT_COUNT, ELEMENT_ID};
-    private final String STANDARD_TEMPLATE = new Note().getStandardTemplate();
+    public static String STANDARD_TEMPLATE = new Note().getStandardTemplate();
     private static final String TEMPLATE_PROPERTY = "note.list.bbexport.template";
 
     @Override

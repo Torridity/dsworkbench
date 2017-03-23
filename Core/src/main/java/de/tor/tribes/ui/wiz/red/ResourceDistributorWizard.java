@@ -115,8 +115,8 @@ public class ResourceDistributorWizard extends WizardPanelProvider {
             }
         });
         parent.pack();
-        int w = GlobalOptions.getProperties().getInt("red.width", 0);
-        int h = GlobalOptions.getProperties().getInt("red.height", 0);
+        int w = GlobalOptions.getProperties().getInt("red.width");
+        int h = GlobalOptions.getProperties().getInt("red.height");
         if (w != 0 && h != 0) {
             parent.setSize(w, h);
         }

@@ -230,7 +230,7 @@ public class TimeSpan implements Comparable<TimeSpan> {
   }
 
   public boolean isValidForTribe(Tribe pTribe) {
-    return pTribe == null || (validFor == null || validFor.getId() == pTribe.getId() || (pTribe != null && pTribe.equals(AnyTribe.getSingleton())));
+    return pTribe == null || validFor == null || validFor.getId() == pTribe.getId() || (pTribe != null && pTribe.equals(AnyTribe.getSingleton()));
   }
 
   public boolean intersects(TimeSpan pSpan) {

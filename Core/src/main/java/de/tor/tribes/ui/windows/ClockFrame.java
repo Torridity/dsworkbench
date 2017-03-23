@@ -83,13 +83,8 @@ public class ClockFrame extends javax.swing.JFrame implements ActionListener {
         tThread = new TimerThread(this);
         tThread.start();
 
-        String val = GlobalOptions.getProperty("clock.alwaysOnTop");
-        if (val == null) {
-            jCheckBox1.setSelected(false);
-        } else {
-            jCheckBox1.setSelected(Boolean.parseBoolean(val));
+        jCheckBox1.setSelected(GlobalOptions.getProperties().getBoolean("clock.alwaysOnTop"));
 
-        }
         setAlwaysOnTop(jCheckBox1.isSelected());
         cp = new ColoredProgressBar(0, 1000);
         jPanel1.add(cp, BorderLayout.CENTER);

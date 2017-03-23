@@ -113,8 +113,8 @@ public class TacticsPlanerWizard extends WizardPanelProvider {
         });
         parent.pack();
 
-        int w = GlobalOptions.getProperties().getInt("tap.width", 0);
-        int h = GlobalOptions.getProperties().getInt("tap.height", 0);
+        int w = GlobalOptions.getProperties().getInt("tap.width");
+        int h = GlobalOptions.getProperties().getInt("tap.height");
 
         if (w != 0 && h != 0) {
             parent.setSize(w, h);

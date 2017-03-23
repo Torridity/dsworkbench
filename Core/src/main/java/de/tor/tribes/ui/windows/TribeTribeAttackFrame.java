@@ -508,20 +508,9 @@ public class TribeTribeAttackFrame extends DSWorkbenchGesturedFrame implements
         // </editor-fold>
         dataChangedEvent();
         filterDialog.reset();
-        String prop = GlobalOptions.getProperty("attack.planer.enable.check");
-        if (prop != null) {
-            jEnableWarnBox.setSelected(Boolean.parseBoolean(prop));
-        } else {
-            jEnableWarnBox.setSelected(true);
-        }
-        try {
-            prop = GlobalOptions.getProperty("attack.planer.check.amount");
-            //check for valid value
-            Integer.parseInt(prop);
-            jTextField1.setText(prop);
-        } catch (Exception e) {
-            jTextField1.setText("20000");
-        }
+        jEnableWarnBox.setSelected(GlobalOptions.getProperties().getBoolean("attack.planer.enable.check"));
+
+        jTextField1.setText("" + GlobalOptions.getProperties().getInt("attack.planer.check.amount"));
 
         jSourcesTable.getTableHeader().setDefaultRenderer(new DefaultTableHeaderRenderer());
         jVictimTable.getTableHeader().setDefaultRenderer(new DefaultTableHeaderRenderer());

@@ -198,12 +198,7 @@ public class NotifierFrame extends javax.swing.JDialog {
                             jScrollPane1.getViewport().setViewPosition(new Point(0, 0));
                             repaint();
 
-                            int dur = 1;
-                            try {
-                                dur = Integer.parseInt(GlobalOptions.getProperty("notify.duration"));
-                            } catch (Exception ignored) {
-                            }
-
+                            int dur = GlobalOptions.getProperties().getInt("notify.duration");
                             if (dur > 0) {
                                 //set duration to 'dur' ten-seconds
                                 dur = dur * 10 * 1000;

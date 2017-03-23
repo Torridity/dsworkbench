@@ -56,7 +56,7 @@ public class ClipboardWatch extends Thread {
     private AudioClip ac = null;
 
     private synchronized void playNotification() {
-        if (!Boolean.parseBoolean(GlobalOptions.getProperty("clipboard.notification"))) {
+        if (!GlobalOptions.getProperties().getBoolean("clipboard.notification")) {
             return;
         }
 

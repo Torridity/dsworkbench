@@ -52,10 +52,10 @@ public class VillageHTMLTooltipGenerator {
     }
     
     public static String buildToolTip(Village pVillage, boolean pWithUnits) {
-        boolean showMoral = Boolean.parseBoolean(GlobalOptions.getProperty("show.popup.moral"));
-        boolean showRanks = Boolean.parseBoolean(GlobalOptions.getProperty("show.popup.ranks"));
-        boolean showConquers = Boolean.parseBoolean(GlobalOptions.getProperty("show.popup.conquers"));
-        boolean showFarmSpace = Boolean.parseBoolean(GlobalOptions.getProperty("show.popup.farm.space"));
+        boolean showMoral = GlobalOptions.getProperties().getBoolean("show.popup.moral");
+        boolean showRanks = GlobalOptions.getProperties().getBoolean("show.popup.ranks");
+        boolean showConquers = GlobalOptions.getProperties().getBoolean("show.popup.conquers");
+        boolean showFarmSpace = GlobalOptions.getProperties().getBoolean("show.popup.farm.space");
         StringBuilder b = new StringBuilder();
         b.append("<html><head>").append(BBCodeFormatter.getStyles()).append("</head><table width=\"400\" style=\"border: solid 1px black; cellspacing:0px;cellpadding: 0px;background-color:#EFEBDF;color:black;\">\n");
         b.append(buildVillageRow(pVillage));

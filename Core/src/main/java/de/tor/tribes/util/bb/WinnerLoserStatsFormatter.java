@@ -41,7 +41,7 @@ public class WinnerLoserStatsFormatter extends BasicFormatter<Stats> {
     private static final String LOSER_BY_DEFENSE = "%LOSER_BY_DEFENSE%";
     private final String[] STAT_SPECIFIC_VARIABLES = new String[]{WINNER_BY_POINTS, WINNER_BY_EXPANSION, WINNER_BY_CONQUERS, WINNER_BY_OFFENSE, WINNER_BY_DEFENSE, WINNER_BY_KILLS_PER_POINT, LOSER_BY_POINTS, LOSER_BY_EXPANSION, LOSER_BY_CONQUERS, LOSER_BY_OFFENSE, LOSER_BY_DEFENSE};
     private final String[] VARIABLES = new String[]{};
-    private static final String STANDARD_TEMPLATE = "[b]Gewinner und Verlierer[/b]\n\n"
+    public static final String STANDARD_TEMPLATE = "[b]Gewinner und Verlierer[/b]\n\n"
             + "[table]\n[**]Titel[||]Spieler[/**]\n"
             + "[*][u][b]Gewinner[/b][/u][|][/*]\n"
             + "[*][b]Punktesammler[/b][|]%WINNER_BY_POINTS%[/*]\n"

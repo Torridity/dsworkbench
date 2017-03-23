@@ -74,12 +74,8 @@ public class FormConfigFrame extends javax.swing.JFrame {
         mSamplePanel = new FormSamplePanel();
         jSamplePanel.add(mSamplePanel);
 
-        try {
-            jAlwaysOnTop.setSelected(Boolean.parseBoolean(GlobalOptions.getProperty("form.config.frame.alwaysOnTop")));
+        jAlwaysOnTop.setSelected(GlobalOptions.getProperties().getBoolean("form.config.frame.alwaysOnTop"));
             setAlwaysOnTop(jAlwaysOnTop.isSelected());
-        } catch (Exception e) {
-            //setting not available
-        }
 
         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
         if (!Constants.DEBUG) {

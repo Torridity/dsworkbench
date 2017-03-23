@@ -869,7 +869,9 @@ private void fireAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRS
                 }
             }, DSWorkbenchSettingsDialog.getSingleton().getOffense(),
                     DSWorkbenchSettingsDialog.getSingleton().getDefense(),
-                    GlobalOptions.getProperties().getInt("max.sim.rounds", 500), GlobalOptions.getProperties().getInt("max.loss.ratio", 50), pReAnalyze);
+                    GlobalOptions.getProperties().getInt("max.sim.rounds"),
+                    GlobalOptions.getProperties().getInt("max.loss.ratio"),
+                    pReAnalyze);
             a.start();
         }
     }

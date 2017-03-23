@@ -300,18 +300,16 @@ public class Tribe implements Comparable<Tribe>, Serializable {
             return Color.YELLOW;
         }
         Color DEFAULT = null;
-        try {
-            int mark = Integer.parseInt(GlobalOptions.getProperty("default.mark"));
-            if (mark == 0) {
-                DEFAULT = Constants.DS_DEFAULT_MARKER;
-            } else if (mark == 1) {
+        switch(GlobalOptions.getProperties().getInt("default.mark")) {
+            case 1:
                 DEFAULT = Color.RED;
-            } else if (mark == 2) {
+                break;
+            case 2:
                 DEFAULT = Color.WHITE;
-            }
-
-        } catch (Exception e) {
-            DEFAULT = Constants.DS_DEFAULT_MARKER;
+                break;
+            case 0:
+            default:
+                DEFAULT = Constants.DS_DEFAULT_MARKER;
         }
         return DEFAULT;
     }

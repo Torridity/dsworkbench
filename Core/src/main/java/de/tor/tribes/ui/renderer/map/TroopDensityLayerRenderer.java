@@ -141,7 +141,7 @@ public class TroopDensityLayerRenderer extends AbstractBufferedLayerRenderer {
         ImageUtils.setupGraphics(g2d);
         //iterate through entire row
         int cnt = 0;
-        boolean includeSupport = GlobalOptions.getProperties().getBoolean("include.support", true);
+        boolean includeSupport = GlobalOptions.getProperties().getBoolean("include.support");
         for (int x = firstCol; x < firstCol + Math.abs(pSettings.getColumnsToRender()); x++) {
             for (int y = 0; y < pSettings.getVillagesInY(); y++) {
                 cnt++;
@@ -215,7 +215,7 @@ public class TroopDensityLayerRenderer extends AbstractBufferedLayerRenderer {
         }
 
         if (v != null && v.isVisibleOnMap() && (defIn != 0 || defOwn != 0)) {
-            int maxDef = GlobalOptions.getProperties().getInt("max.density.troops", 65000);
+            int maxDef = GlobalOptions.getProperties().getInt("max.density.troops");
             double percOfMax = defIn / maxDef;
             double percFromOthers = (defIn - defOwn) / defIn;
             double half = (double) maxDef / 2.0;

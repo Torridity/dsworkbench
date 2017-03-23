@@ -35,7 +35,7 @@ public class DefStatsFormatter extends BasicFormatter<Stats> {
     private static final String PERCENT_DIFFERENCE = "%PERCENT_DIFFERENCE%";
     private final String[] STAT_SPECIFIC_VARIABLES = new String[]{TRIBE, KILLS_BEFORE, KILLS_AFTER, KILLS_DIFFERENCE, PERCENT_DIFFERENCE};
     private final String[] VARIABLES = new String[]{LIST_START, LIST_END, ELEMENT_COUNT, ELEMENT_ID};
-    private static final String STANDARD_TEMPLATE = "[b]Verteidigungsstatistik[/b]\nBerücksichtigte Spieler: %ELEMENT_COUNT%\n[table]\n"
+    public static final String STANDARD_TEMPLATE = "[b]Verteidigungsstatistik[/b]\nBerücksichtigte Spieler: %ELEMENT_COUNT%\n[table]\n"
             + "[**]Platz[||]Spieler[||]Besiegte Angreifer (Anfang)[||]Zuwachs[||]Besiegte Angreifer (Ende)[/**]\n"
             + "%LIST_START%[*]%ELEMENT_ID%[|]%TRIBE%[|]%KILLS_START%[|]%KILLS_DIFFERENCE%[|]%KILLS_END%[/*]%LIST_END%\n"
             + "[/table]";

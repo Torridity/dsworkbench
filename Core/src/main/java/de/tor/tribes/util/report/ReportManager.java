@@ -308,7 +308,7 @@ public class ReportManager extends GenericManager<FightReport> {
       Iterator<String> setKeys = getGroupIterator();
       while (setKeys.hasNext()) {
         String set = setKeys.next();
-        if (!set.equals(FARM_SET) || !Boolean.parseBoolean(GlobalOptions.getProperty("delete.farm.reports.on.exit"))) {
+        if (!set.equals(FARM_SET) || !GlobalOptions.getProperties().getBoolean("delete.farm.reports.on.exit")) {
           b.append("<reportSet name=\"").append(set).append("\">\n");
           b.append("<reports>\n");
           for (ManageableType t : getAllElements(set)) {

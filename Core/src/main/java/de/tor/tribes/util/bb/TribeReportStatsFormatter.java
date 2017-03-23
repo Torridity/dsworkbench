@@ -29,7 +29,7 @@ import org.apache.commons.lang.StringUtils;
 public class TribeReportStatsFormatter extends BasicFormatter<TribeStatResult> {
 
      private final String[] VARIABLES = new String[]{LIST_START, LIST_END, ELEMENT_COUNT, ELEMENT_ID};
-    private final String STANDARD_TEMPLATE = new TribeStatResult().getStandardTemplate();
+    public static final String STANDARD_TEMPLATE = new TribeStatResult().getStandardTemplate();
     private static final String TEMPLATE_PROPERTY = "tribe.report.stats.bbexport.template";
     
     @Override

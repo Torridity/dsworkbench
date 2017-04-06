@@ -29,6 +29,7 @@ import java.awt.datatransfer.Transferable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
+import org.apache.log4j.Logger;
 
 /**
  *
@@ -36,9 +37,9 @@ import java.util.StringTokenizer;
  * @author Torridity
  */
 public class DiplomacyParser implements SilentParserInterface {
-
-    private static final boolean DEBUG = false;
-
+    
+    private static Logger logger = Logger.getLogger("DiplomacyParser");
+    
     public boolean parse(String pData) {
         StringTokenizer lineTok = new StringTokenizer(pData, "\n\r");
         List<Marker> markers = new ArrayList<>();
@@ -48,20 +49,20 @@ public class DiplomacyParser implements SilentParserInterface {
         while (lineTok.hasMoreElements()) {
             //parse single line for village
             String line = lineTok.nextToken();
-            debug("Try line " + line);
+            logger.debug("Try line " + line);
 
-            if (line.trim().contains(ParserVariableManager.getSingleton().getProperty("diplomacy.allies"))) {
-                debug("Got allies");
+            if (line.trim().contains(getVariable("diplomacy.allies"))) {
+                logger.debug("Got allies");
                 allies = true;
                 naps = false;
                 enemies = false;
-            } else if (line.trim().contains(ParserVariableManager.getSingleton().getProperty("diplomacy.nap"))) {
-                debug("Got naps");
+            } else if (line.trim().contains(getVariable("diplomacy.nap"))) {
+                logger.debug("Got naps");
                 naps = true;
                 allies = false;
                 enemies = false;
-            } else if (line.trim().contains(ParserVariableManager.getSingleton().getProperty("diplomacy.enemy"))) {
-                debug("Got enemies");
+            } else if (line.trim().contains(getVariable("diplomacy.enemy"))) {
+                logger.debug("Got enemies");
                 enemies = true;
                 naps = false;
                 allies = false;
@@ -69,19 +70,19 @@ public class DiplomacyParser implements SilentParserInterface {
                 if (allies) {
                     Marker m = getMarkerFromLine(line, Constants.ALLY_MARKER);
                     if (m != null) {
-                        debug("Adding ally marker for tag " + m.getView().getAlly());
+                        logger.debug("Adding ally marker for tag " + m.getView().getAlly());
                         markers.add(m);
                     }
                 } else if (naps) {
                     Marker m = getMarkerFromLine(line, Constants.NAP_MARKER);
                     if (m != null) {
-                        debug("Adding nap marker for tag " + m.getView().getAlly());
+                        logger.debug("Adding nap marker for tag " + m.getView().getAlly());
                         markers.add(m);
                     }
                 } else if (enemies) {
                     Marker m = getMarkerFromLine(line, Constants.ENEMY_MARKER);
                     if (m != null) {
-                        debug("Adding enemy marker for tag " + m.getView().getAlly());
+                        logger.debug("Adding enemy marker for tag " + m.getView().getAlly());
                         markers.add(m);
                     }
                 }
@@ -106,7 +107,7 @@ public class DiplomacyParser implements SilentParserInterface {
             } else {
                 tag += " " + allySplit.nextToken();
             }
-            debug("Trying tag '" + tag + "'");
+            logger.debug("Trying tag '" + tag + "'");
             Ally a = DataHolder.getSingleton().getAllyByTagName(tag);
             if (a != null) {
                 Marker m = new Marker();
@@ -118,12 +119,12 @@ public class DiplomacyParser implements SilentParserInterface {
         }
         return null;
     }
+    
 
-    private void debug(String pLine) {
-        if (DEBUG) {
-            System.out.println(pLine);
-        }
+    private String getVariable(String pProperty) {
+        return ParserVariableManager.getSingleton().getProperty(pProperty);
     }
+    
 
     public static void main(String[] args) throws Exception {
         Transferable t = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);

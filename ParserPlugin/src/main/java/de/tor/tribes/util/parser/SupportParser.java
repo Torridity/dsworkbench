@@ -56,7 +56,7 @@ public class SupportParser implements SilentParserInterface {
         while (lineTok.hasMoreElements()) {
             //parse single line for village
             String line = lineTok.nextToken();
-            if (line.indexOf(ParserVariableManager.getSingleton().getProperty("troops.in.village")) > 0) {
+            if (line.indexOf(getVariable("troops.in.village")) > 0) {
                 try {
                     supportSender = new VillageParser().parse(line).get(0);
                 } catch (Exception e) {
@@ -117,8 +117,8 @@ public class SupportParser implements SilentParserInterface {
         return result;
     }
 
-    private static Hashtable<UnitHolder, Integer> parseUnits(String pLine) {
-        String line = pLine.replaceAll(ParserVariableManager.getSingleton().getProperty("troops.own"), "").replaceAll(ParserVariableManager.getSingleton().getProperty("troops.commands"), "").replaceAll(ParserVariableManager.getSingleton().getProperty("troops"), "");
+    private Hashtable<UnitHolder, Integer> parseUnits(String pLine) {
+        String line = pLine.replaceAll(getVariable("troops.own"), "").replaceAll(getVariable("troops.commands"), "").replaceAll(getVariable("troops"), "");
         // System.out.println("Line after: " + line);
         StringTokenizer t = new StringTokenizer(line, " \t");
 
@@ -148,6 +148,11 @@ public class SupportParser implements SilentParserInterface {
         }
         return units;
     }
+
+    private String getVariable(String pProperty) {
+        return ParserVariableManager.getSingleton().getProperty(pProperty);
+    }
+    
 
     public static void main(String[] args) {
         /*

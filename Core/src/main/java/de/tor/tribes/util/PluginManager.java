@@ -100,13 +100,13 @@ public class PluginManager {
   }
 
   public boolean executeDiplomacyParser(String pData) {
+    logger.info("Executing diplomacy parser");
     try {
       Object parser = loadParser("de.tor.tribes.util.parser.DiplomacyParser");
       return ((SilentParserInterface) parser).parse(pData);
     } catch (Exception e) {
       logger.error("Failed to execute diplomacy parser", e);
     }
-    logger.info("Diplomacy parser returned no result");
     return false;
   }
 
@@ -118,7 +118,6 @@ public class PluginManager {
     } catch (Exception e) {
       logger.error("Failed to execute support parser", e);
     }
-    logger.info("Support parser returned no result");
     return false;
   }
 
@@ -130,11 +129,11 @@ public class PluginManager {
     } catch (Exception e) {
       logger.error("Failed to execute group parser", e);
     }
-    logger.info("Group parser returned no result");
     return false;
   }
 
   public boolean executeNonPAPlaceParser(String pData) {
+    logger.info("Executing place parser");
     try {
       Object parser = loadParser("de.tor.tribes.util.parser.NonPAPlaceParser");
       return ((SilentParserInterface) parser).parse(pData);
@@ -152,7 +151,6 @@ public class PluginManager {
     } catch (Exception e) {
       logger.error("Failed to execute report parser", e);
     }
-    logger.info("Report parser returned no result");
     return false;
   }
 
@@ -186,7 +184,16 @@ public class PluginManager {
     } catch (Exception e) {
       logger.error("Failed to execute troops parser", e);
     }
-    logger.info("Troops troops parser");
+    return false;
+  }
+  
+  public boolean executeMovementParser(String pData) {
+    try {
+      Object parser = loadParser("de.tor.tribes.util.parser.MovementParser");
+      return ((SilentParserInterface) parser).parse(pData);
+    } catch (Exception e) {
+      logger.error("Failed to execute Movemen parser", e);
+    }
     return false;
   }
 

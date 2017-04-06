@@ -28,6 +28,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
+import org.apache.log4j.Logger;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.jdom.Element;
@@ -47,6 +48,7 @@ public class TargetInformation {
     private int fakes = 0;
     private long first = Long.MAX_VALUE;
     private long last = Long.MIN_VALUE;
+    private final Logger logger = Logger.getLogger("TargetInformation");
     
     public TargetInformation(Village pTarget) {
         target = pTarget;
@@ -54,7 +56,7 @@ public class TargetInformation {
         timedAttacks = new Hashtable<>();
     }
     
-    private void updateAttackInfo() {
+    public void updateAttackInfo() {
         snobs = 0;
         fakes = 0;
         first = Long.MAX_VALUE;
@@ -72,6 +74,7 @@ public class TargetInformation {
                 last = a.getlArriveTime();
             }
         }
+        logger.debug(target.getCoordAsString() + " found " + snobs + " snobs and " + fakes + " fakes");
     }
     
     public void setTarget(Village target) {
@@ -275,7 +278,8 @@ public class TargetInformation {
                 }
                 if (add) {
                     //attack seems not to exist...add it
-                    addAttack(theOtherAttack.getSource(), new Date(theOtherAttack.getlArriveTime()));
+                    addAttack(theOtherAttack.getSource(), new Date(theOtherAttack.getlArriveTime()),
+                        theOtherAttack.getUnit(), theOtherAttack.isPossibleFake(), theOtherAttack.isPossibleSnob());
                 }
             }
         }

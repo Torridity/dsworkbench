@@ -71,6 +71,7 @@ import org.jdesktop.swingx.table.TableColumnExt;
 /**
  *
  * @author Torridity
+ * @author extremeCrazyCoder
  */
 public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame implements ActionListener {
 
@@ -824,8 +825,8 @@ private void fireAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRS
             if (requests != null && !requests.isEmpty()) {
                 for (SOSRequest request : requests) {
                     SOSManager.getSingleton().addRequest(request);
-                    findFakes(request);
                 }
+                findFakes();
                 if (!ServerSettings.getSingleton().isMillisArrival()) {
                     showInfo("Der aktuelle Server unterstützt keine Millisekunden.\n"
                             + "Daher werden bereits eingelesene Angriffe nicht herausgefiltert.\n"
@@ -897,29 +898,112 @@ private void fireAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRS
         model.fireTableDataChanged();
     }
 
-    private void findFakes(SOSRequest pRequest) {
-        Enumeration<Village> targets = pRequest.getTargets();
-        while (targets.hasMoreElements()) {
-            Village target = targets.nextElement();
-            TargetInformation targetInfo = pRequest.getTargetInformation(target);
+    private void findFakes() {
+        Boolean fakesOrAGsFound = false;
+        
+        if(GlobalOptions.getProperties().getBoolean("sos.mark.all.duplicates.as.fake")) {
+            List<Village> sourcesOnce = new ArrayList<>();
+            List<Village> sourcesMoreThanOnce = new ArrayList<>();
+            
+            for (ManageableType manTyp: SOSManager.getSingleton().getAllElements()) {
+                SOSRequest pRequest = (SOSRequest) manTyp;
+                Enumeration<Village> targets = pRequest.getTargets();
 
-            //check for multiple attacks from same source to same target
-            Enumeration<Village> sources = targetInfo.getSources();
-            while (sources.hasMoreElements()) {
-                Village source = sources.nextElement();
-                if (targetInfo.getAttackCountFromSource(source) > 1) {
-                    for (TimedAttack att : targetInfo.getAttacksFromSource(source)) {
-                        if (!att.isPossibleFake() && !att.isPossibleSnob()) {//check only once
-                            long sendTime = att.getlArriveTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(source, target, DataHolder.getSingleton().getUnitByPlainName("ram").getSpeed()) * 1000);
-                            if (sendTime < System.currentTimeMillis()) {
+                while (targets.hasMoreElements()) {
+                    Village target = targets.nextElement();
+                    TargetInformation targetInfo = pRequest.getTargetInformation(target);
+
+                    Enumeration<Village> targetSources = targetInfo.getSources();
+                    while (targetSources.hasMoreElements()) {
+                        Village targetSource = targetSources.nextElement();
+                        if(sourcesOnce.contains(targetSource) &&
+                                !sourcesMoreThanOnce.contains(targetSource)) {
+                            sourcesMoreThanOnce.add(targetSource);
+                        }
+                        else {
+                            sourcesOnce.add(targetSource);
+                        }
+                    }
+                }
+            }
+            
+            for (ManageableType manTyp: SOSManager.getSingleton().getAllElements()) {
+                SOSRequest pRequest = (SOSRequest) manTyp;
+                Enumeration<Village> targets = pRequest.getTargets();
+
+                while (targets.hasMoreElements()) {
+                    Village target = targets.nextElement();
+                    TargetInformation targetInfo = pRequest.getTargetInformation(target);
+
+                    Enumeration<TimedAttack> attacks = Collections.enumeration(targetInfo.getAttacks());
+                    while (attacks.hasMoreElements()) {
+                        TimedAttack att = attacks.nextElement();
+
+                        //check for snobs
+                        long sendTime = att.getlArriveTime() - (long) (
+                                DSCalculator.calculateMoveTimeInSeconds(att.getSource(), target,
+                                DataHolder.getSingleton().getUnitByPlainName("ram").getSpeed()) * 1000);
+                        if (sendTime >= System.currentTimeMillis()) {
+                            att.setPossibleSnob(true);
+                            att.setPossibleFake(false);
+                            fakesOrAGsFound = true;
+                        }
+
+                        //check for multiple attacks from same source
+                        if(sourcesMoreThanOnce.contains(att.getSource())) {
+                            if (!att.isPossibleSnob()) {//ignore snobs
                                 att.setPossibleSnob(false);
                                 att.setPossibleFake(true);
-                            } else {
-                                att.setPossibleSnob(true);
-                                att.setPossibleFake(false);
+                                fakesOrAGsFound = true;
                             }
                         }
                     }
+                }
+            }
+        }
+        else {
+            for (ManageableType manTyp: SOSManager.getSingleton().getAllElements()) {
+                SOSRequest pRequest = (SOSRequest) manTyp;
+                
+                Enumeration<Village> targets = pRequest.getTargets();
+                while (targets.hasMoreElements()) {
+                    Village target = targets.nextElement();
+                    TargetInformation targetInfo = pRequest.getTargetInformation(target);
+
+                    //check for multiple attacks from same source to same target
+                    Enumeration<Village> sources = targetInfo.getSources();
+                    while (sources.hasMoreElements()) {
+                        Village source = sources.nextElement();
+                        if (targetInfo.getAttackCountFromSource(source) > 1) {
+                            for (TimedAttack att : targetInfo.getAttacksFromSource(source)) {
+                                if (!att.isPossibleFake() && !att.isPossibleSnob()) {//check only once
+                                    long sendTime = att.getlArriveTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(source, target, DataHolder.getSingleton().getUnitByPlainName("ram").getSpeed()) * 1000);
+                                    if (sendTime < System.currentTimeMillis()) {
+                                        att.setPossibleSnob(false);
+                                        att.setPossibleFake(true);
+                                    } else {
+                                        att.setPossibleSnob(true);
+                                        att.setPossibleFake(false);
+                                    }
+                                    fakesOrAGsFound = true;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        if(fakesOrAGsFound) {
+            //if we have found something inside the Atts we have to rebuild the Defence requests
+            logger.debug("refreshing deff requests");
+            
+            for (ManageableType manTyp: SOSManager.getSingleton().getAllElements()) {
+                SOSRequest pRequest = (SOSRequest) manTyp;
+                
+                Enumeration<Village> targets = pRequest.getTargets();
+                while (targets.hasMoreElements()) {
+                    pRequest.getDefenseInformation(targets.nextElement()).updateAttackInfo();
                 }
             }
         }

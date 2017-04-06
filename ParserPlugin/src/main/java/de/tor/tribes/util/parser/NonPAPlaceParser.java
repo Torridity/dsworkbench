@@ -56,7 +56,7 @@ public class NonPAPlaceParser implements SilentParserInterface {
                 }
             } else {
                 //have current village, find troops
-                if (currentLine.trim().startsWith(ParserVariableManager.getSingleton().getProperty("troops.place.from.village"))) {
+                if (currentLine.trim().startsWith(getVariable("troops.place.from.village"))) {
                     //get own troops from this village
                     int[] ownInVillage = parseUnits(currentLine);
                     int cnt = 0;
@@ -68,7 +68,7 @@ public class NonPAPlaceParser implements SilentParserInterface {
                     //get troops from other villages till "Insgesamt" is reached
                     while (true) {
                         currentLine = lineTok.nextToken();
-                        if (currentLine.trim().startsWith(ParserVariableManager.getSingleton().getProperty("troops.place.overall"))) {
+                        if (currentLine.trim().startsWith(getVariable("troops.place.overall"))) {
                             //get all troops in village
                             int[] allInVillage = parseUnits(currentLine);
                             cnt = 0;
@@ -101,7 +101,7 @@ public class NonPAPlaceParser implements SilentParserInterface {
                             return false;
                         }
                     }
-                } else if (currentLine.trim().startsWith(ParserVariableManager.getSingleton().getProperty("troops.place.in.other.villages"))) {
+                } else if (currentLine.trim().startsWith(getVariable("troops.place.in.other.villages"))) {
                     while (true) {
                         currentLine = lineTok.nextToken();
                         //get troops in other village
@@ -240,7 +240,7 @@ public class NonPAPlaceParser implements SilentParserInterface {
         return true;
     }
 
-    private static Village extractVillage(String pLine) {
+    private Village extractVillage(String pLine) {
         //tokenize line by tab and space
         StringTokenizer elemTok = new StringTokenizer(pLine, " \t");
         //try to find village line
@@ -278,8 +278,8 @@ public class NonPAPlaceParser implements SilentParserInterface {
         return null;
     }
 
-    private static int[] parseUnits(String pLine) {
-        String line = pLine.replaceAll(ParserVariableManager.getSingleton().getProperty("troops.place.from.village"), "").replaceAll(ParserVariableManager.getSingleton().getProperty("troops.place.overall"), "");
+    private int[] parseUnits(String pLine) {
+        String line = pLine.replaceAll(getVariable("troops.place.from.village"), "").replaceAll(getVariable("troops.place.overall"), "");
         StringTokenizer t = new StringTokenizer(line, " \t");
         int uCount = DataHolder.getSingleton().getUnits().size();
 
@@ -300,6 +300,11 @@ public class NonPAPlaceParser implements SilentParserInterface {
 
         return units;
     }
+
+    private String getVariable(String pProperty) {
+        return ParserVariableManager.getSingleton().getProperty(pProperty);
+    }
+    
 
     public static void main(String[] args) {
 

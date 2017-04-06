@@ -29,13 +29,14 @@ import java.util.StringTokenizer;
  * @author Torridity
  */
 public class OBSTReportParser implements SilentParserInterface {
+    //TODO remove or rewrite with using Parser variable manager
     
     @Override
     public boolean parse(String pData) {
         return false;
     }
     
-    private static FightReport parseReport(String pData) {
+    private FightReport parseReport(String pData) {
         StringTokenizer t = new StringTokenizer(pData, "\n");
         FightReport result = new FightReport();
         

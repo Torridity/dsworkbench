@@ -93,6 +93,8 @@ public class GlobalDefaults {
         GLOBAL_DEFAULTS.addProperty("no.welcome", false);
         GLOBAL_DEFAULTS.addProperty("notify.duration", 1);
         GLOBAL_DEFAULTS.addProperty("obst.server", "");
+        GLOBAL_DEFAULTS.addProperty("parser.movement.plan", "imported");
+        GLOBAL_DEFAULTS.addProperty("parser.movement.delete.all.on.import", "false");
         GLOBAL_DEFAULTS.addProperty("proxySet", false);
         GLOBAL_DEFAULTS.addProperty("proxyHost", "");
         GLOBAL_DEFAULTS.addProperty("proxyPort", 8080);
@@ -116,6 +118,7 @@ public class GlobalDefaults {
         GLOBAL_DEFAULTS.addProperty("show.popup.ranks", true);
         GLOBAL_DEFAULTS.addProperty("show.sectors", true);
         GLOBAL_DEFAULTS.addProperty("show.ruler", true);
+        GLOBAL_DEFAULTS.addProperty("sos.mark.all.duplicates.as.fake", "true");
         GLOBAL_DEFAULTS.addProperty("standard.defense.split", "heavy=0/spy=50/sword=500/archer=500/spear=500");
         GLOBAL_DEFAULTS.addProperty("standard.off", "catapult=50/light=3000/ram=300/axe=7000/marcher=500");
         GLOBAL_DEFAULTS.addProperty("stats.frame.alwaysOnTop", false);

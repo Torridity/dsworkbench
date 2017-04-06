@@ -136,9 +136,12 @@ public class ClipboardWatch extends Thread {
                             SystrayHelper.showInfoMessage("Kartenmarkierungen aus Diplomatie erfolgreich eingelesen");
                             playNotification();
                             validData = true;
+                        } else if (PluginManager.getSingleton().executeMovementParser(data)) {
+                            logger.info("Movements successfully parsed.");
+                            SystrayHelper.showInfoMessage("Befehle erfolgreich eingelesen");
+                            playNotification();
+                            validData = true;
                         }
-                    }
-                    if (validData) {
                         lastHash = currentHash;
                     }
                 } catch (Exception e) {

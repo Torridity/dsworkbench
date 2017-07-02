@@ -52,7 +52,6 @@ import org.netbeans.spi.wizard.WizardPanelProvider;
 public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataHolderListener {
 
     protected enum HIDE_RESULT {
-
         SUCCESS, RESTART_NEEDED, ERROR
     }
 

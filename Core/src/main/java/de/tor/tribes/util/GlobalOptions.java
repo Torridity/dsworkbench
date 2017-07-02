@@ -503,6 +503,7 @@ public class GlobalOptions {
             if(obj == null) {
                 if(def) {
                     logger.fatal("'" + key + "' existiert nicht");
+                    throw new RuntimeException("'" + key + "' existiert nicht");
                 }
                 else {
                     return getString(key, true);
@@ -525,7 +526,7 @@ public class GlobalOptions {
             catch(Exception e) {
                 if(!def) return getBoolean(key, true);
                 logger.fatal("'" + key + "' ist kein Boolean", e);
-                return false;
+                throw new RuntimeException("'" + key + "' ist kein Boolean", e);
             }
         }
         
@@ -546,7 +547,7 @@ public class GlobalOptions {
             catch(Exception e) {
                 if(!def) return getInt(key, true);
                 logger.fatal("'" + key + "' ist kein Integer", e);
-                return -1;
+                throw new RuntimeException("'" + key + "' ist kein Integer", e);
             }
         }
         
@@ -567,7 +568,7 @@ public class GlobalOptions {
             catch(Exception e) {
                 if(!def) return getLong(key, true);
                 logger.fatal("'" + key + "' ist kein Long", e);
-                return -1;
+                throw new RuntimeException("'" + key + "' ist kein Long", e);
             }
         }
         

@@ -18,6 +18,7 @@ package de.tor.tribes.ui.windows;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.TroopSplit;
+import de.tor.tribes.types.UserProfile;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.components.CollapseExpandTrigger;
 import de.tor.tribes.ui.renderer.TroopAmountListCellRenderer;
@@ -84,7 +85,6 @@ public class TroopSplitDialog extends javax.swing.JDialog {
         });
         jPanel7.setBorder(BorderFactory.createLineBorder(Color.lightGray));
         jPanel7.add(trigger, BorderLayout.CENTER);
-
     }
 
     /**
@@ -100,6 +100,15 @@ public class TroopSplitDialog extends javax.swing.JDialog {
         jSplitsList.setCellRenderer(new TroopSplitListCellRenderer());
         mSplitAmounts.clear();
         isInitialized = true;
+        
+        //TODO re-check where everything is stored and sort correctly
+        try {
+            UserProfile profile = GlobalOptions.getSelectedProfile();
+            jToleranceSlider.setValue(Integer.parseInt(
+                    profile.getProperty("tap.source.split.tolerance")));
+        } catch(Exception e) {
+            jToleranceSlider.setValue(0);
+        }
     }
 
     /**
@@ -227,7 +236,7 @@ public class TroopSplitDialog extends javax.swing.JDialog {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 162, Short.MAX_VALUE)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                     .addGroup(jPanel5Layout.createSequentialGroup()
                         .addComponent(jTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -308,7 +317,6 @@ public class TroopSplitDialog extends javax.swing.JDialog {
         jToleranceSlider.setValue(10);
         jToleranceSlider.setMaximumSize(new java.awt.Dimension(200, 45));
         jToleranceSlider.setMinimumSize(new java.awt.Dimension(100, 45));
-        jToleranceSlider.setOpaque(false);
         jToleranceSlider.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 fireToleranceChangedEvent(evt);
@@ -636,4 +644,9 @@ public class TroopSplitDialog extends javax.swing.JDialog {
     private javax.swing.JComboBox jUnitSelectionBox;
     private org.jdesktop.swingx.JXCollapsiblePane sourceInfoPanel;
     // End of variables declaration//GEN-END:variables
+
+    public void saveSettings() {
+        UserProfile profile = GlobalOptions.getSelectedProfile();
+        profile.addProperty("tap.source.split.tolerance",jToleranceSlider.getValue());
+    }
 }

@@ -81,7 +81,6 @@ public class SupportRefillCalculationPanel extends WizardPage {
         StyleConstants.setItalic(defaultStyle, true);
         StyleConstants.setFontFamily(defaultStyle, "SansSerif");
         dateFormat = new SimpleDateFormat("HH:mm:ss");
-        jSystematicWarning.setVisible(false);
     }
     
     public static String getDescription() {
@@ -138,7 +137,6 @@ public class SupportRefillCalculationPanel extends WizardPage {
         jArriveTime = new de.tor.tribes.ui.components.DateTimeField();
         jBruteForce = new javax.swing.JRadioButton();
         jSystematicCalculation = new javax.swing.JRadioButton();
-        jSystematicWarning = new org.jdesktop.swingx.JXLabel();
 
         jInfoScrollPane.setMinimumSize(new java.awt.Dimension(19, 180));
         jInfoScrollPane.setPreferredSize(new java.awt.Dimension(19, 180));
@@ -284,29 +282,12 @@ public class SupportRefillCalculationPanel extends WizardPage {
 
         buttonGroup1.add(jSystematicCalculation);
         jSystematicCalculation.setText("Systematische Berechnung");
-        jSystematicCalculation.addChangeListener(new javax.swing.event.ChangeListener() {
-            public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                jSystematicCalculationfireSystematicSelectionChangedEvent(evt);
-            }
-        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel3.add(jSystematicCalculation, gridBagConstraints);
-
-        jSystematicWarning.setForeground(new java.awt.Color(102, 102, 102));
-        jSystematicWarning.setText("Du hast die systematische Berechnung gewählt. Diese Art der Berechnung ist für wenige Ziele gedacht, da die Berechnung sehr zeitintensiv ist. Sind bei der Angriffsplanung mehr als 100 Dörfer beteiligt wird dringend empfohlen, die 'Zufällige Berechnung' zu wählen.");
-        jSystematicWarning.setFont(new java.awt.Font("Tahoma", 0, 9)); // NOI18N
-        jSystematicWarning.setLineWrap(true);
-        jSystematicWarning.setPreferredSize(new java.awt.Dimension(100, 40));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        jPanel3.add(jSystematicWarning, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -364,10 +345,6 @@ public class SupportRefillCalculationPanel extends WizardPage {
             }
         }
     }//GEN-LAST:event_fireCalculateAttacksEvent
-
-    private void jSystematicCalculationfireSystematicSelectionChangedEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jSystematicCalculationfireSystematicSelectionChangedEvent
-        jSystematicWarning.setVisible(jSystematicCalculation.isSelected());
-    }//GEN-LAST:event_jSystematicCalculationfireSystematicSelectionChangedEvent
     
     protected TimeFrame getTimeFrame() {
         Date arrive = jArriveTime.getSelectedDate();
@@ -499,7 +476,6 @@ public class SupportRefillCalculationPanel extends WizardPage {
     private javax.swing.JProgressBar jProgressBar1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JRadioButton jSystematicCalculation;
-    private org.jdesktop.swingx.JXLabel jSystematicWarning;
     private javax.swing.JTextPane jTextPane1;
     private org.jdesktop.swingx.JXCollapsiblePane jXCollapsiblePane1;
     // End of variables declaration//GEN-END:variables

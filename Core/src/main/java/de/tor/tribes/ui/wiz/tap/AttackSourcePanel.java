@@ -487,6 +487,7 @@ public class AttackSourcePanel extends WizardPage {
         }
         TroopSplitDialog dialog = new TroopSplitDialog(null, true);
         dialog.setupAndShow(villages);
+        dialog.saveSettings();
         TroopSplit[] splits = dialog.getSplits();
         List<Village> toAdd = new LinkedList<>();
         
@@ -498,8 +499,6 @@ public class AttackSourcePanel extends WizardPage {
         
         
         addVillages(toAdd.toArray(new Village[toAdd.size()]));
-        
-        
     }//GEN-LAST:event_fireSplitSelectionEvent
     
     private TAPSourceTableModel getModel() {

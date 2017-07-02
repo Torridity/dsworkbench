@@ -79,7 +79,6 @@ public class AttackCalculationPanel extends WizardPage {
         StyleConstants.setItalic(defaultStyle, true);
         StyleConstants.setFontFamily(defaultStyle, "SansSerif");
         dateFormat = new SimpleDateFormat("HH:mm:ss");
-        jSystematicWarning.setVisible(false);
     }
 
     public static String getDescription() {
@@ -112,10 +111,8 @@ public class AttackCalculationPanel extends WizardPage {
         }
         if (type == 0) {
             jBruteForce.setSelected(true);
-            jSystematicWarning.setVisible(false);
         } else {
             jSystematicCalculation.setSelected(true);
-            jSystematicWarning.setVisible(true);
         }
         jAllowFakeOffs.setSelected(Boolean.parseBoolean(profile.getProperty("tap.calculation.fake.off")));
     }
@@ -139,7 +136,6 @@ public class AttackCalculationPanel extends WizardPage {
         jAllowFakeOffs = new javax.swing.JCheckBox();
         jBruteForce = new javax.swing.JRadioButton();
         jSystematicCalculation = new javax.swing.JRadioButton();
-        jSystematicWarning = new org.jdesktop.swingx.JXLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextPane1 = new javax.swing.JTextPane();
         jCalculateButton = new javax.swing.JButton();
@@ -161,7 +157,7 @@ public class AttackCalculationPanel extends WizardPage {
         jInfoScrollPane.setMinimumSize(new java.awt.Dimension(19, 180));
         jInfoScrollPane.setPreferredSize(new java.awt.Dimension(19, 180));
 
-        jInfoTextPane.setContentType("text/html");
+        jInfoTextPane.setContentType("text/html"); // NOI18N
         jInfoTextPane.setEditable(false);
         jInfoTextPane.setText("<html>Du befindest dich im <b>Angriffsmodus</b>. Hier kannst du die Herkunftsd&ouml;rfer ausw&auml;hlen, die f&uuml;r Angriffe verwendet werden d&uuml;rfen. Hierf&uuml;r hast die folgenden M&ouml;glichkeiten:\n<ul>\n<li>Einf&uuml;gen von Dorfkoordinaten aus der Zwischenablage per STRG+V</li>\n<li>Einf&uuml;gen der Herkunftsd&ouml;rfer aus der Gruppen&uuml;bersicht</li>\n<li>Einf&uuml;gen der Herkunftsd&ouml;rfer aus dem SOS-Analyzer</li>\n<li>Einf&uuml;gen der Herkunftsd&ouml;rfer aus Berichten</li>\n<li>Einf&uuml;gen aus der Auswahlübersicht</li>\n<li>Manuelle Eingabe</li>\n</ul>\n</html>\n");
         jInfoScrollPane.setViewportView(jInfoTextPane);
@@ -219,31 +215,12 @@ public class AttackCalculationPanel extends WizardPage {
 
         buttonGroup1.add(jSystematicCalculation);
         jSystematicCalculation.setText("Systematische Berechnung");
-        jSystematicCalculation.addChangeListener(new javax.swing.event.ChangeListener() {
-            public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                fireSystematicSelectionChangedEvent(evt);
-            }
-        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel3.add(jSystematicCalculation, gridBagConstraints);
-
-        jSystematicWarning.setForeground(new java.awt.Color(102, 102, 102));
-        jSystematicWarning.setText("Du hast die systematische Berechnung gewählt. Diese Art der Berechnung ist für wenige Ziele gedacht, da die Berechnung sehr zeitintensiv ist. Sind bei der Angriffsplanung mehr als 100 Dörfer beteiligt wird dringend empfohlen, die 'Zufällige Berechnung' zu wählen.");
-        jSystematicWarning.setFont(new java.awt.Font("Tahoma", 0, 9)); // NOI18N
-        jSystematicWarning.setLineWrap(true);
-        jSystematicWarning.setPreferredSize(new java.awt.Dimension(100, 40));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel3.add(jSystematicWarning, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -454,10 +431,6 @@ public class AttackCalculationPanel extends WizardPage {
 
     }//GEN-LAST:event_fireCalculateAttacksEvent
 
-    private void fireSystematicSelectionChangedEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fireSystematicSelectionChangedEvent
-        jSystematicWarning.setVisible(jSystematicCalculation.isSelected());
-    }//GEN-LAST:event_fireSystematicSelectionChangedEvent
-
     private void initializeCalculation() {
         if (jBruteForce.isSelected()) {
             calculator = new BruteForce();
@@ -609,7 +582,6 @@ public class AttackCalculationPanel extends WizardPage {
     private javax.swing.JProgressBar jProgressBar1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JRadioButton jSystematicCalculation;
-    private org.jdesktop.swingx.JXLabel jSystematicWarning;
     private javax.swing.JLabel jTargetAttacks;
     private javax.swing.JLabel jTargetFakes;
     private javax.swing.JTextPane jTextPane1;

@@ -17,13 +17,17 @@ package de.tor.tribes.util.parser;
 
 import de.tor.tribes.util.GlobalOptions;
 import java.io.FileInputStream;
+import java.io.File;
 import java.util.Properties;
+import org.apache.log4j.Logger;
 
 /**
  *
  * @author Torridity
  */
 public class ParserVariableManager {
+    
+    private static Logger logger = Logger.getLogger("ParserVariableManager");
 
     private static ParserVariableManager SINGLETON = null;
     private Properties variableMappings = null;
@@ -38,14 +42,26 @@ public class ParserVariableManager {
 
     ParserVariableManager() {
         variableMappings = new Properties();
-        try {
-            variableMappings.load(new FileInputStream("./templates/parser.properties"));
-        } catch (Exception e) {
-            variableMappings = null;
+        File[] files = new File("./templates/Parser Lang").listFiles();
+        for (File file : files) {
+            if (file.isFile() && fileExtension(file).equals("parserprop")) {
+                try {
+                    logger.debug("Loading Parser Language file: " + file.getName());
+                    variableMappings.load(new FileInputStream(file));
+                } catch (Exception e) {
+                    logger.warn("Failed to load Parser Language file: " + file.getName());
+                }
+            }
+            else if(file.isFile()) {
+                logger.debug("File with wrong extension ignored: " + file.getName());
+            }
         }
         loadDefaultProperties();
     }
-
+    
+    /**
+     * All Variables that are stored here are stored inside the template files too...
+     */
     private void loadDefaultProperties() {
         DEFAULT.put("de.troops.own", "eigene");
         DEFAULT.put("de.troops.in.village", "im Dorf");
@@ -124,15 +140,15 @@ public class ParserVariableManager {
         DEFAULT.put("de.report.full.destruction", "Keiner deiner Kämpfer ist lebend zurückgekehrt");
         DEFAULT.put("de.report.win.win", "gewonnen");
         DEFAULT.put("de.report.win.spy", "ausgekundschaftet");
-        DEFAULT.put("de.report.", "");
     }
 
     public String getProperty(String pProperty) {
         String serverID = GlobalOptions.getSelectedServer();
-        if (serverID == null) {
-            serverID = "de43";
+        String countryID = "de";
+        if (serverID != null) {
+            countryID = serverID.replaceAll("[0-9]", "");
         }
-        String countryID = serverID.replaceAll("[0-9]", "");
+        
         String property = null;
         if (variableMappings != null) {
             property = variableMappings.getProperty(countryID + "." + pProperty);
@@ -140,11 +156,21 @@ public class ParserVariableManager {
         if (property == null) {
             property = DEFAULT.getProperty(countryID + "." + pProperty);
         }
+        if (variableMappings != null && property == null) {
+            property = variableMappings.getProperty("de." + pProperty);
+        }
         if (property == null) {
             return DEFAULT.getProperty("de." + pProperty);
         }
         return property;
-    }
+    }   
 
-   
+    private String fileExtension(File file) {
+        String fileName = file.getName().toLowerCase();
+        int index = fileName.lastIndexOf('.');
+        if(index != -1) {
+            return fileName.substring(index + 1);
+        }
+        return fileName;
+    }
 }

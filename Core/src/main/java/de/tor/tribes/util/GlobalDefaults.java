@@ -114,7 +114,6 @@ public class GlobalDefaults {
         GLOBAL_DEFAULTS.addProperty("show.mouseover.info", false);
         GLOBAL_DEFAULTS.addProperty("show.popup.conquers", true);
         GLOBAL_DEFAULTS.addProperty("show.popup.farm.space", true);
-        GLOBAL_DEFAULTS.addProperty("show.popup.moral", true);
         GLOBAL_DEFAULTS.addProperty("show.popup.ranks", true);
         GLOBAL_DEFAULTS.addProperty("show.sectors", true);
         GLOBAL_DEFAULTS.addProperty("show.ruler", true);
@@ -208,6 +207,9 @@ public class GlobalDefaults {
         GLOBAL_DEFAULTS.addProperty("winner.loser.stats.bbexport.template",
                 de.tor.tribes.util.bb.WinnerLoserStatsFormatter.STANDARD_TEMPLATE);
         
+        //TODO set to true after Moral is working
+        GLOBAL_DEFAULTS.addProperty("show.popup.moral", ServerSettings.getSingleton()
+                .getMoralType() == ServerSettings.POINTBASED_MORAL);
     }
     
     /**

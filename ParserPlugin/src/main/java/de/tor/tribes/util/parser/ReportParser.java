@@ -99,39 +99,21 @@ public class ReportParser implements SilentParserInterface {
             } else if (line.contains(getVariable("report.has.won"))) {
                 logger.debug("Found 'won' line: " + line);
                 winString = line;
-            } else if (line.startsWith(getVariable("report.spy"))) {
+            } else if (line.contains(getVariable("report.spy"))) {
                 logger.debug("Found 'spied' line: " + line);
                 winString = line;
             } else if (line.startsWith(getVariable("report.att.luck"))) {
                 logger.debug("Found luck line");
-                line = line.replaceAll(getVariable("report.att.luck"), "").trim();
-                if (line.indexOf("%") > 0) {
-                    //negative luck is in same line, try it!
-                    try {
-                        double luck = Double.parseDouble(
-                                line.replaceAll(getVariable("report.att"), "")
-                                .replaceAll("%", "").trim());
-                        result.setLuck(luck);
-                        logger.debug(" Luck: " + luck);
-                    } catch (Exception e) {
-                        //e.printStackTrace();
-                        result.setLuck(0.0);
-                        logger.debug(" Failed to parse luck");
-                    }
-                    luckPart = false;
-                } else {
-                    //probably positive luck, handle with next line
-                    luckPart = true;
-                }
-            } else if (line.startsWith(getVariable("report.att"))) {
+                luckPart = true;
+            } else if (line.startsWith(getVariable("report.moral"))) {
                 logger.debug("Found moral line");
-                line = line.replaceAll(getVariable("report.moral"), "").trim().replaceAll("%", "");
+                line = line.replaceAll(getVariable("report.moral") + ":", "").trim().replaceAll("%", "");
                 if (line.contains(getVariable("report.att.player"))) {
                     //Opera only -.-
                     logger.debug(" Special moral handling (Opera)");
                     attackerPart = true;
                     int attackerPos = line.indexOf(getVariable("report.att.player"));
-                    String attacker = line.substring(attackerPos).replaceAll(getVariable("report.att.player"), "").trim();
+                    String attacker = line.substring(attackerPos).replaceAll(getVariable("report.att.player") + ":", "").trim();
                     logger.debug(" Found attacker: " + attacker);
                     result.setAttacker(DataHolder.getSingleton().getTribeByName(attacker));
                     line = line.substring(0, attackerPos);
@@ -142,7 +124,7 @@ public class ReportParser implements SilentParserInterface {
                     result.setMoral(moral);
                 } catch (Exception ignored) {
                 }
-            } else if (line.startsWith(getVariable("report.att.player")) || line.contains(getVariable("report.att.player"))) {
+            } else if (line.contains(getVariable("report.att.player"))) {
                 attackerPart = true;
                 line = line.replaceAll(getVariable("report.att.player") + ":", "").trim();
                 logger.debug("Found attacker in normal mode: " + line);
@@ -162,7 +144,7 @@ public class ReportParser implements SilentParserInterface {
                     result.setTargetVillage(new VillageParser().parse(line).get(0));
                 }
             } else if (line.startsWith(getVariable("report.num"))) {
-                line = line.replaceAll(getVariable("report.num"), "").trim();
+                line = line.replaceAll(getVariable("report.num") + ":", "").trim();
                 logger.debug("Found amount line: '" + line + "'");
                 if (attackerPart) {
                     logger.debug(" Use amount for attacker");
@@ -179,7 +161,7 @@ public class ReportParser implements SilentParserInterface {
                     }
                 }
             } else if (line.startsWith(getVariable("report.loss"))) {
-                line = line.replaceAll(getVariable("report.loss"), "").trim();
+                line = line.replaceAll(getVariable("report.loss") + ":", "").trim();
                 logger.debug("Found losses line: '" + line + "'");
                 if (attackerPart) {
                     logger.debug(" Use losses for attacker");
@@ -205,12 +187,12 @@ public class ReportParser implements SilentParserInterface {
                 }
             } else if (line.startsWith(getVariable("report.defender.player"))) {
                 defenderPart = true;
-                line = line.replaceAll(getVariable("report.defender.player"), "").trim();
+                line = line.replaceAll(getVariable("report.defender.player") + ":", "").trim();
                 logger.debug("Found defender line: '" + line + "'");
                 result.setDefender(DataHolder.getSingleton().getTribeByName(line));
             } else if (line.contains(getVariable("report.spy.res"))) {
                 logger.debug("Found spyed resources");
-                String resources = line.replaceAll(getVariable("report.spy.res"), "").trim();
+                String resources = line.replaceAll(getVariable("report.spy.res") + ":", "").trim();
                 String[] spyedResources = resources.split(" ");
                 //TODO handle only one or two resources (zero resources aren't displayed
                 try {
@@ -225,7 +207,7 @@ public class ReportParser implements SilentParserInterface {
                 }
             } else if (line.contains(getVariable("report.haul"))) {
                 logger.debug("Found haul");
-                String haul = line.replaceAll(getVariable("report.haul"), "").trim();
+                String haul = line.replaceAll(getVariable("report.haul") + ":", "").trim();
                 String[] hauledResource = haul.split(" ");
                 try {
                     int wood = 0;
@@ -245,8 +227,8 @@ public class ReportParser implements SilentParserInterface {
                 }
             } else if (line.contains(getVariable("report.buildings.wood"))) {
                 logger.debug("Parse wood mine");
-                //int val = parseIntFromPattern(line, "Holzfäller(.*)\\(Stufe(.*?)\\)", 2);
-                int val = parseIntFromPattern(line, getVariable("report.buildings.wood") + "(.*)(.*?)", 2);
+                //int val = parseIntFromReportTable(line, "Holzfäller(.*)\\(Stufe(.*?)\\)", 2);
+                int val = parseIntFromReportTable(line, getVariable("report.buildings.wood"));
                 if (val != -1) {
                     logger.debug("Got wood mine level " + val);
                     result.setWoodLevel(val);
@@ -255,8 +237,8 @@ public class ReportParser implements SilentParserInterface {
                 }
             } else if (line.contains(getVariable("report.buildings.clay"))) {
                 logger.debug("Parse clay mine");
-                //int val = parseIntFromPattern(line, "Lehmgrube(.*)\\(Stufe(.*?)\\)", 2);
-                int val = parseIntFromPattern(line, getVariable("report.buildings.clay") + "(.*)(.*?)", 2);
+                //int val = parseIntFromReportTable(line, "Lehmgrube(.*)\\(Stufe(.*?)\\)", 2);
+                int val = parseIntFromReportTable(line, getVariable("report.buildings.clay"));
                 if (val != -1) {
                     logger.debug("Got clay mine level " + val);
                     result.setClayLevel(val);
@@ -265,8 +247,8 @@ public class ReportParser implements SilentParserInterface {
                 }
             } else if (line.contains(getVariable("report.buildings.iron"))) {
                 logger.debug("Parse clay mine");
-                // int val = parseIntFromPattern(line, "Eisenmine(.*)\\(Stufe(.*?)\\)", 2);
-                int val = parseIntFromPattern(line, getVariable("report.buildings.iron") + "(.*)(.*?)", 2);
+                // int val = parseIntFromReportTable(line, "Eisenmine(.*)\\(Stufe(.*?)\\)", 2);
+                int val = parseIntFromReportTable(line, getVariable("report.buildings.iron"));
                 if (val != -1) {
                     logger.debug("Got iron mine level " + val);
                     result.setIronLevel(val);
@@ -275,8 +257,8 @@ public class ReportParser implements SilentParserInterface {
                 }
             } else if (line.contains(getVariable("report.buildings.storage"))) {
                 logger.debug("Parse storage");
-                // int val = parseIntFromPattern(line, "Speicher(.*)\\(Stufe(.*?)\\)", 2);
-                int val = parseIntFromPattern(line, getVariable("report.buildings.storage") + "(.*)(.*?)", 2);
+                // int val = parseIntFromReportTable(line, "Speicher(.*)\\(Stufe(.*?)\\)", 2);
+                int val = parseIntFromReportTable(line, getVariable("report.buildings.storage"));
                 if (val != -1) {
                     logger.debug("Got storage level " + val);
                     result.setStorageLevel(val);
@@ -285,8 +267,8 @@ public class ReportParser implements SilentParserInterface {
                 }
             } else if (line.contains(getVariable("report.buildings.hide"))) {
                 logger.debug("Parse hide");
-                //int val = parseIntFromPattern(line, "Versteck(.*)\\(Stufe(.*?)\\)", 2);
-                int val = parseIntFromPattern(line, getVariable("report.buildings.hide") + "(.*)(.*?)", 2);
+                //int val = parseIntFromReportTable(line, "Versteck(.*)\\(Stufe(.*?)\\)", 2);
+                int val = parseIntFromReportTable(line, getVariable("report.buildings.hide"));
                 if (val != -1) {
                     logger.debug("Got hide level " + val);
                     result.setHideLevel(val);
@@ -295,8 +277,8 @@ public class ReportParser implements SilentParserInterface {
                 }
             } else if (line.contains(getVariable("report.buildings.wall"))) {
                 logger.debug("Parse wall");
-                //int val = parseIntFromPattern(line, "Wall(.*)\\(Stufe(.*?)\\)", 2);
-                int val = parseIntFromPattern(line, getVariable("report.buildings.wall") + "(.*)(.*?)", 2);
+                //int val = parseIntFromReportTable(line, "Wall(.*)\\(Stufe(.*?)\\)", 2);
+                int val = parseIntFromReportTable(line, getVariable("report.buildings.wall"));
                 if (val != -1) {
                     logger.debug("Got wall level " + val);
                     result.setWallLevel(val);
@@ -312,8 +294,8 @@ public class ReportParser implements SilentParserInterface {
                 }
             } else if (searchChurch && line.contains(getVariable("report.buildings.curch"))) {
                 logger.debug("Parse church");
-                //int val = parseIntFromPattern(line, "Kirche(.*)\\(Stufe(.*?)\\)", 2);
-                int val = parseIntFromPattern(line, getVariable("report.buildings.curch") + "(.*)(.*?)", 2);
+                //int val = parseIntFromReportTable(line, "Kirche(.*)\\(Stufe(.*?)\\)", 2);
+                int val = parseIntFromReportTable(line, getVariable("report.buildings.curch"));
                 switch (val) {
                     case 1:
                         ChurchManager.getSingleton().addChurch(result.getTargetVillage(), 4);
@@ -458,6 +440,7 @@ public class ReportParser implements SilentParserInterface {
                             // System.out.println("LuckLine " + line);
                             double luck = Double.parseDouble(line
                                     .replaceAll(getVariable("report.badluck"), "")
+                                    .replaceAll(getVariable("report.luck"), "")
                                     .replaceAll("%", "").trim());
                             //System.out.println("L " + luck);
                             result.setLuck(luck);
@@ -474,10 +457,10 @@ public class ReportParser implements SilentParserInterface {
             logger.debug("No winString found. Leaving isWon as it is.");
         } else {
             if (attacker != null && defender != null) {
-                if (winString.contains(getVariable("de.report.win.win"))) {
+                if (winString.contains(getVariable("report.win.win"))) {
                     result.setWon(winString.contains(attacker.getName()));
                     logger.debug("'won' set to " + result.isWon() + " due to winString " + winString + " and attacker " + attacker.getName());
-                } else if (winString.contains(getVariable("de.report.win.spy"))) {
+                } else if (winString.contains(getVariable("report.spy"))) {
                     result.setWon(winString.indexOf(attacker.getName()) < winString.indexOf(defender.getName()));
                     logger.debug("'won' set to " + result.isWon() + " due to winString " + winString + " and attacker " + attacker.getName());
                 }
@@ -503,9 +486,9 @@ public class ReportParser implements SilentParserInterface {
         return units;
     }
 
-    public int parseIntFromPattern(String pLine, String pPattern, int pGroupIndex) {
+    public int parseIntFromReportTable(String pLine, String pName) {
         try {
-            String val = pLine.replaceAll(pPattern, "$" + pGroupIndex).trim();
+            String val = pLine.trim().replaceAll(pName + "(.*?)(\\d+)", "$2").trim();
             return Integer.parseInt(val);
         } catch (Exception e) {
             return -1;

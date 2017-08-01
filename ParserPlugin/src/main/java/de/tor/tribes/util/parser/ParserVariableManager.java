@@ -65,11 +65,11 @@ public class ParserVariableManager {
     private void loadDefaultProperties() {
         DEFAULT.put("de.troops.own", "eigene");
         DEFAULT.put("de.troops.in.village", "im Dorf");
-        DEFAULT.put("de.troops.outside", "auswärts");
+        DEFAULT.put("de.troops.outside", "ausw\u00E4rts");
         DEFAULT.put("de.troops.on.the.way", "unterwegs");
         DEFAULT.put("de.troops.place.from.village", "Aus diesem Dorf");
         DEFAULT.put("de.troops.place.overall", "Insgesamt");
-        DEFAULT.put("de.troops.place.in.other.villages", "Truppen in anderen Dörfern");
+        DEFAULT.put("de.troops.place.in.other.villages", "Truppen in anderen D\u00F4rfern");
         DEFAULT.put("de.troops.commands", "Befehle");
         DEFAULT.put("de.troops", "Truppen");
         DEFAULT.put("de.overview.groups", "Gruppen:");
@@ -89,17 +89,17 @@ public class ParserVariableManager {
         DEFAULT.put("de.sos.short.wall.level", "Wallstufe:");
         DEFAULT.put("de.sos.short.defender", "Verteidiger:");
         DEFAULT.put("de.sos.short.movement", "-->");
-        DEFAULT.put("de.diplomacy.allies", "Verbündete");
+        DEFAULT.put("de.diplomacy.allies", "Verb\u00fcndete");
         DEFAULT.put("de.diplomacy.nap", "Nicht-Angriffs-Pakt (NAP)");
         DEFAULT.put("de.diplomacy.enemy", "Feinde");
         DEFAULT.put("de.movement.tableHeader.command", "Befehl");
         DEFAULT.put("de.movement.tableHeader.srcVillage", "Herkunftsdorf");
         DEFAULT.put("de.movement.tableHeader.arriveTime", "Ankunft");
-        DEFAULT.put("de.movement.type.returning.1", "Zurückgeschickt");
-        DEFAULT.put("de.movement.type.returning.2", "Rückzug");
+        DEFAULT.put("de.movement.type.returning.1", "Zur\u00fcckgeschickt");
+        DEFAULT.put("de.movement.type.returning.2", "R\u00fcckzug");
         DEFAULT.put("de.movement.type.abortedMovement", "Abgebrochener Befehl");
         DEFAULT.put("de.movement.type.attack", "Angriff");
-        DEFAULT.put("de.movement.type.support", "Unterstützung");
+        DEFAULT.put("de.movement.type.support", "Unterst\u00fctzung");
         DEFAULT.put("de.movement.date.today", "heute");
         DEFAULT.put("de.movement.date.tomorrow", "morgen");
         DEFAULT.put("de.movement.date.format", "'am' dd.MM. 'um' HH:mm:ss");
@@ -108,15 +108,20 @@ public class ParserVariableManager {
         DEFAULT.put("de.report.fight.time", "Kampfzeit");
         DEFAULT.put("de.report.has.won", "hat gewonnen");
         DEFAULT.put("de.report.spy", "ausgekundschaftet");
-        DEFAULT.put("de.report.att.luck", "Angreiferglück");
-        DEFAULT.put("de.report.luck", "Glück");
+        DEFAULT.put("de.report.att.luck", "Angreifergl\u00fcck");
+        DEFAULT.put("de.report.luck", "Gl\u00fcck");
         DEFAULT.put("de.report.badluck", "Pech");
         DEFAULT.put("de.report.moral", "Moral:");
         DEFAULT.put("de.report.att.player", "Angreifer");
         DEFAULT.put("de.report.village.1", "Dorf");
         DEFAULT.put("de.report.village.2", "Herkunft");
         DEFAULT.put("de.report.village.3", "Ziel");
-        DEFAULT.put("de.report.buildings.wood", "Holzfäller");
+        DEFAULT.put("de.report.num", "Anzahl");
+        DEFAULT.put("de.report.loss", "Verluste");
+        DEFAULT.put("de.report.defender.player", "Verteidiger");
+        DEFAULT.put("de.report.spy.res", "Ersp\u00E4hte Rohstoffe");
+        DEFAULT.put("de.report.haul", "Beute");
+        DEFAULT.put("de.report.buildings.wood", "Holzf\u00E4llerlager");
         DEFAULT.put("de.report.buildings.clay", "Lehmgrube");
         DEFAULT.put("de.report.buildings.iron", "Eisenmine");
         DEFAULT.put("de.report.buildings.storage", "Speicher");
@@ -124,22 +129,21 @@ public class ParserVariableManager {
         DEFAULT.put("de.report.buildings.wall", "Wall");
         DEFAULT.put("de.report.buildings.first.church", "Erste Kirche");
         DEFAULT.put("de.report.buildings.curch", "Kirche");
-        DEFAULT.put("de.report.damage.ram", "Schaden durch Rammböcke:");
-        DEFAULT.put("de.report.damage.wall", "Wall beschädigt von Level");
+        DEFAULT.put("de.report.damage.ram", "Schaden durch Rammb\u00F4cke:");
+        DEFAULT.put("de.report.damage.wall", "Wall besch\u00E4digt von Level");
         DEFAULT.put("de.report.damage.to", "auf Level");
         DEFAULT.put("de.report.damage.kata", "Schaden durch Katapultbeschuss:");
         DEFAULT.put("de.report.damage.level", "Level");
-        DEFAULT.put("de.report.acceptance.1", "Veränderung der Zustimmung");
+        DEFAULT.put("de.report.acceptance.1", "Ver\u00E4nderung der Zustimmung");
         DEFAULT.put("de.report.acceptance.2", "Zustimmung gesunken von");
         DEFAULT.put("de.report.acceptance.3", "auf");
         DEFAULT.put("de.report.acceptance.4", "Zustimmung:");
         DEFAULT.put("de.report.acceptance.5", "Gesunken von");
         DEFAULT.put("de.report.ontheway", "Truppen des Verteidigers, die unterwegs waren");
-        DEFAULT.put("de.report.outside", "Truppen des Verteidigers in anderen Dörfern");
+        DEFAULT.put("de.report.outside", "Truppen des Verteidigers in anderen D\u00F4rfern");
         DEFAULT.put("de.report.hidden", "Durch Besitzer des Berichts verborgen");
-        DEFAULT.put("de.report.full.destruction", "Keiner deiner Kämpfer ist lebend zurückgekehrt");
+        DEFAULT.put("de.report.full.destruction", "Keiner deiner K\u00E4mpfer ist lebend zur\u00fcckgekehrt");
         DEFAULT.put("de.report.win.win", "gewonnen");
-        DEFAULT.put("de.report.win.spy", "ausgekundschaftet");
     }
 
     public String getProperty(String pProperty) {

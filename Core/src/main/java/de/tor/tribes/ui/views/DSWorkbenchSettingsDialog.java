@@ -367,28 +367,9 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
 
     //check server and player settings
     private boolean checkServerPlayerSettings() {
-        String defaultServer = GlobalOptions.getProperty("default.server");
-
-        //check if default server exists
-        if (defaultServer == null) {
-            //try setting current server to default
-            logger.warn("Default server is not set");
-            String selection = (String) jServerList.getSelectedItem();
-            if ((selection != null) && (selection.length() > 1)) {
-                //set current server to default
-                GlobalOptions.setSelectedServer(selection);
-                GlobalOptions.addProperty("default.server", selection);
-                defaultServer = selection;
-            } else {
-                //no server selected
-                return false;
-            }
-        }
-
         boolean result = false;
-        String serverUser = GlobalOptions.getProperty("player." + defaultServer);
-        if (serverUser == null) {
-            logger.warn("Default user for server '" + defaultServer + "' is not set");
+        if (!GlobalOptions.getProperties().exists("default.player") ||
+                !GlobalOptions.getProperties().exists("default.server")) {
             UserProfile selection = null;
             try {
                 selection = (UserProfile) jProfileBox.getSelectedItem();
@@ -399,23 +380,27 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             //check if selection is valid
             if (selection != null) {
                 //set default user for server
-                GlobalOptions.addProperty("player." + defaultServer, Long.toString(selection.getProfileId()));
+                GlobalOptions.addProperty("default.player", Long.toString(selection.getProfileId()));
+                GlobalOptions.setSelectedServer(selection.getServerId());
+                GlobalOptions.addProperty("default.server", selection.getServerId());
                 result = true;
             } else {
                 //no default user selected
                 logger.error("No profile selected");
             }
         } else {
+            String defaultUser = GlobalOptions.getProperty("default.player");
             //check if profile is valid
-            UserProfile[] profiles = ProfileManager.getSingleton().getProfiles(defaultServer);
+            UserProfile[] profiles = ProfileManager.getSingleton()
+                    .getProfiles(GlobalOptions.getProperty("default.server"));
             for (UserProfile profile : profiles) {
                 try {
-                    if (profile.getProfileId() == Long.parseLong(serverUser)) {
+                    if (profile.getProfileId() == Long.parseLong(defaultUser)) {
                         result = true;
                         break;
                     }
                 } catch (NumberFormatException nfe) {
-                    logger.error("Failed to get profile for id '" + serverUser + "'");
+                    logger.error("Failed to get profile for id '" + defaultUser + "'");
                 }
             }
 
@@ -426,7 +411,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                     selection = (UserProfile) jProfileBox.getSelectedItem();
                     if (selection != null) {
                         //set default user for server
-                        GlobalOptions.addProperty("player." + defaultServer, Long.toString(selection.getProfileId()));
+                        GlobalOptions.addProperty("default.player", Long.toString(selection.getProfileId()));
                         result = true;
                     }
                 } catch (Exception e) {
@@ -458,10 +443,9 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jSettingsTabbedPane = new javax.swing.JTabbedPane();
         jPlayerServerSettings = new javax.swing.JPanel();
         jPanel9 = new javax.swing.JPanel();
-        jServerList = new javax.swing.JComboBox();
-        jSelectServerButton = new javax.swing.JButton();
         jDownloadLiveDataButton = new javax.swing.JButton();
         jCheckForUpdatesBox = new javax.swing.JCheckBox();
+        jLabelServer = new javax.swing.JLabel();
         jPanel10 = new javax.swing.JPanel();
         jProfileBox = new javax.swing.JComboBox();
         jNewProfileButton = new javax.swing.JButton();
@@ -695,25 +679,11 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jPanel9.setBorder(javax.swing.BorderFactory.createTitledBorder("Server"));
         jPanel9.setOpaque(false);
 
-        jServerList.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "de12" }));
-        jServerList.setToolTipText("Gewählter Server");
-        jServerList.setMinimumSize(new java.awt.Dimension(44, 25));
-        jServerList.setPreferredSize(new java.awt.Dimension(49, 25));
-
-        jSelectServerButton.setBackground(new java.awt.Color(239, 235, 223));
-        jSelectServerButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/select_server.png"))); // NOI18N
-        jSelectServerButton.setToolTipText("Daten des markierten Servers von der Festplatte laden");
-        jSelectServerButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireSelectServerEvent(evt);
-            }
-        });
-
         jDownloadLiveDataButton.setBackground(new java.awt.Color(239, 235, 223));
         jDownloadLiveDataButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/download_tw.png"))); // NOI18N
         jDownloadLiveDataButton.setToolTipText("Daten des markierten Servers direkt von den DS Servern laden");
-        jDownloadLiveDataButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
+        jDownloadLiveDataButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 fireDownloadLiveDataEvent(evt);
             }
         });
@@ -726,6 +696,9 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             }
         });
 
+        jLabelServer.setText("de");
+        jLabelServer.setToolTipText("Gewählter Server");
+
         javax.swing.GroupLayout jPanel9Layout = new javax.swing.GroupLayout(jPanel9);
         jPanel9.setLayout(jPanel9Layout);
         jPanel9Layout.setHorizontalGroup(
@@ -733,23 +706,21 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             .addGroup(jPanel9Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jServerList, 0, 304, Short.MAX_VALUE)
-                    .addComponent(jCheckForUpdatesBox, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabelServer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel9Layout.createSequentialGroup()
-                        .addComponent(jSelectServerButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jDownloadLiveDataButton)))
+                        .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jDownloadLiveDataButton)
+                            .addComponent(jCheckForUpdatesBox))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel9Layout.setVerticalGroup(
             jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel9Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jServerList, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jLabelServer)
                 .addGap(18, 18, 18)
-                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jDownloadLiveDataButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jSelectServerButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jDownloadLiveDataButton)
                 .addGap(18, 18, 18)
                 .addComponent(jCheckForUpdatesBox)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -760,6 +731,11 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
 
         jProfileBox.setMinimumSize(new java.awt.Dimension(23, 25));
         jProfileBox.setPreferredSize(new java.awt.Dimension(28, 25));
+        jProfileBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fireSelectProfile(evt);
+            }
+        });
 
         jNewProfileButton.setBackground(new java.awt.Color(239, 235, 223));
         jNewProfileButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/id_card_new.png"))); // NOI18N
@@ -795,7 +771,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             .addGroup(jPanel10Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jProfileBox, 0, 248, Short.MAX_VALUE)
+                    .addComponent(jProfileBox, 0, 300, Short.MAX_VALUE)
                     .addGroup(jPanel10Layout.createSequentialGroup()
                         .addComponent(jNewProfileButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -820,8 +796,8 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jPanel11.setBorder(javax.swing.BorderFactory.createTitledBorder("Informationen"));
         jPanel11.setOpaque(false);
 
-        jStatusArea.setColumns(20);
         jStatusArea.setEditable(false);
+        jStatusArea.setColumns(20);
         jStatusArea.setRows(5);
         jScrollPane1.setViewportView(jStatusArea);
 
@@ -831,13 +807,13 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel11Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 602, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 591, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel11Layout.setVerticalGroup(
             jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel11Layout.createSequentialGroup()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 252, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 219, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -2491,50 +2467,6 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jProxyTypeChooser.setEnabled(jProxyConnectOption.isSelected());
     }//GEN-LAST:event_fireChangeConnectTypeEvent
 
-    private void fireSelectServerEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSelectServerEvent
-        if (!jSelectServerButton.isEnabled() || jServerList.getSelectedItem() == null) {
-            return;
-        }
-
-        //save user data for current server
-        GlobalOptions.saveUserData();
-        String selectedServer = (String) jServerList.getSelectedItem();
-        GlobalOptions.addProperty("default.server", selectedServer);
-        GlobalOptions.saveProperties();
-
-        GlobalOptions.setSelectedServer(selectedServer);
-        updating = true;
-        jSelectServerButton.setEnabled(false);
-        jOKButton.setEnabled(false);
-        jCancelButton.setEnabled(false);
-        jDownloadLiveDataButton.setEnabled(false);
-        jNewProfileButton.setEnabled(false);
-        jModifyProfileButton.setEnabled(false);
-        jDeleteProfileButton.setEnabled(false);
-
-        jProfileBox.setModel(new DefaultComboBoxModel(new Object[]{"Lade..."}));
-        jStatusArea.setText("");
-        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-
-        Thread t = new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-                setName("DataLoadThread");
-                try {
-                    logger.debug("Start loading from hard disk");
-                    boolean ret = DataHolder.getSingleton().loadData(false);
-                    logger.debug("Data loaded " + ((ret) ? "successfully" : "with errors"));
-                } catch (Exception e) {
-                    logger.error("Failed loading data", e);
-                }
-            }
-        });
-        logger.debug("Starting update thread");
-        t.setDaemon(true);
-        t.start();
-}//GEN-LAST:event_fireSelectServerEvent
-
     private void fireCloseEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCloseEvent
         if (!jCancelButton.isEnabled()) {
             return;
@@ -2872,13 +2804,8 @@ private void fireRestoreTemplateEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
     AttackPlanHTMLExporter.loadCustomTemplate();
 }//GEN-LAST:event_fireRestoreTemplateEvent
 
-private void fireDownloadLiveDataEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireDownloadLiveDataEvent
-
-    if (!jDownloadLiveDataButton.isEnabled()) {
-        return;
-    }
-
-    if (jServerList.getSelectedItem() == null) {
+private void fireDownloadLiveDataEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireDownloadLiveDataEvent
+    if (jProfileBox.getSelectedItem() == null) {
         return;
     }
     // <editor-fold defaultstate="collapsed" desc=" Offline Mode ? ">
@@ -2892,7 +2819,7 @@ private void fireDownloadLiveDataEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
 
     // </editor-fold>
     // <editor-fold defaultstate="collapsed" desc=" Account valid, data outdated ? ">
-    String selectedServer = (String) jServerList.getSelectedItem();
+    String selectedServer = ((UserProfile) jProfileBox.getSelectedItem()).getServerId();
     // </editor-fold>
 
     //save current user data for current server
@@ -2902,14 +2829,12 @@ private void fireDownloadLiveDataEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
     GlobalOptions.saveProperties();
 
     updating = true;
-    jSelectServerButton.setEnabled(false);
     jOKButton.setEnabled(false);
     jCancelButton.setEnabled(false);
     jDownloadLiveDataButton.setEnabled(false);
     jNewProfileButton.setEnabled(false);
     jModifyProfileButton.setEnabled(false);
     jDeleteProfileButton.setEnabled(false);
-    jProfileBox.setModel(new DefaultComboBoxModel(new Object[]{"Lade..."}));
     jStatusArea.setText("");
     setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
@@ -3024,6 +2949,40 @@ private void fireProfileActionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
         }
     }//GEN-LAST:event_jShowPopupMoralActionPerformed
 
+    private void fireSelectProfile(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireSelectProfile
+        if (jProfileBox.getSelectedItem() == null) {
+            return;
+        }
+        String selectedServer = ((UserProfile) jProfileBox.getSelectedItem()).getServerId();
+        GlobalOptions.addProperty("default.player", Long.toString(((UserProfile) jProfileBox.getSelectedItem()).getProfileId()));
+        
+        if(!GlobalOptions.getProperty("default.server").equals(selectedServer)) {
+            //save user data for current server
+            GlobalOptions.saveUserData();
+            GlobalOptions.addProperty("default.server", selectedServer);
+            GlobalOptions.saveProperties();
+
+            GlobalOptions.setSelectedServer(selectedServer);
+            jOKButton.setEnabled(false);
+            jCancelButton.setEnabled(false);
+            jDownloadLiveDataButton.setEnabled(false);
+            jNewProfileButton.setEnabled(false);
+            jModifyProfileButton.setEnabled(false);
+            jDeleteProfileButton.setEnabled(false);
+
+            jStatusArea.setText("");
+            setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+
+            try {
+                logger.debug("Start loading from hard disk");
+                boolean ret = DataHolder.getSingleton().loadData(false);
+                logger.debug("Data loaded " + ((ret) ? "successfully" : "with errors"));
+            } catch (Exception e) {
+                logger.error("Failed loading data", e);
+            }
+        }
+    }//GEN-LAST:event_fireSelectProfile
+
     // </editor-fold>
     /**
      * Update the server list
@@ -3050,43 +3009,18 @@ private void fireProfileActionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
 
         if (servers.length < 1) {
             logger.error("Failed to get server list and no locally stored server found");
-            jServerList.setModel(new DefaultComboBoxModel(new Object[]{"Keine Server gefunden"}));
-            jProfileBox.setModel(new DefaultComboBoxModel(new Object[]{"Keine Profile gefunden"}));
+            jProfileBox.setModel(new DefaultComboBoxModel(new Object[]{"Keine Server gefunden"}));
+            jLabelServer.setText("kein Server");
             return false;
         }
-
-        Arrays.sort(servers, new Comparator<String>() {
-
-            @Override
-            public int compare(String o1, String o2) {
-                if (o1.length() < o2.length()) {
-                    return -1;
-                } else if (o1.length() > o2.length()) {
-                    return 1;
-                }
-                return o1.compareTo(o2);
-            }
-        });
-
-        DefaultComboBoxModel model = new DefaultComboBoxModel(servers);
-        jServerList.setModel(model);
-
-        if (GlobalOptions.getProperty("default.server") != null) {
-            if (model.getIndexOf(GlobalOptions.getProperty("default.server")) != -1) {
-                jServerList.setSelectedItem(GlobalOptions.getProperty("default.server"));
-                updateProfileList();
-            } else {
-                jServerList.setSelectedIndex(0);
-            }
-        } else {
-            jServerList.setSelectedIndex(0);
-        }
+        updateProfileList();
+        
         return true;
     }
 
     private void updateProfileList() {
         DefaultComboBoxModel model = new DefaultComboBoxModel();
-        UserProfile[] profiles = ProfileManager.getSingleton().getProfiles(GlobalOptions.getProperty("default.server"));
+        UserProfile[] profiles = ProfileManager.getSingleton().getProfiles();
         if (profiles != null && profiles.length > 0) {
             model = new DefaultComboBoxModel(profiles);
         } else {
@@ -3098,11 +3032,12 @@ private void fireProfileActionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
             profileId = GlobalOptions.getSelectedProfile().getProfileId();
         } else {
             try {
-                profileId = GlobalOptions.getProperties().getLong("player." + GlobalOptions.getProperty("default.server"));
+                profileId = GlobalOptions.getProperties().getLong("default.player");
             } catch (Exception ignored) {
             }
         }
         jProfileBox.setModel(model);
+        
         if (profileId != -1) {
 
             for (UserProfile profile : profiles) {
@@ -3112,6 +3047,9 @@ private void fireProfileActionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
                 }
             }
         }
+        jLabelServer.setText(((UserProfile) jProfileBox.getSelectedItem()).getServerId());
+        
+        fireSelectProfile(null);
     }
 
     /**
@@ -3178,7 +3116,7 @@ private void fireProfileActionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
                 Tribe[] ta = tribes.toArray(new Tribe[]{});
                 Arrays.sort(ta, Tribe.CASE_INSENSITIVE_ORDER);
                 DefaultComboBoxModel model = new DefaultComboBoxModel();
-                UserProfile[] profiles = ProfileManager.getSingleton().getProfiles(GlobalOptions.getSelectedServer());
+                UserProfile[] profiles = ProfileManager.getSingleton().getProfiles();
                 UserProfile active = null;
                 if (profiles != null && profiles.length > 0) {
                     model = new DefaultComboBoxModel(profiles);
@@ -3186,7 +3124,7 @@ private void fireProfileActionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
                     jProfileBox.setModel(model);
                     long profileId = -1;
                     try {
-                        profileId = GlobalOptions.getProperties().getLong("player." + GlobalOptions.getSelectedServer());
+                        profileId = GlobalOptions.getProperties().getLong("default.player");
                     } catch (Exception ignored) {
                     }
                     if (profileId != -1) {
@@ -3199,7 +3137,11 @@ private void fireProfileActionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
                         }
                     } else {
                         jProfileBox.setSelectedIndex(0);
-                        GlobalOptions.addProperty("player." + GlobalOptions.getSelectedServer(), Long.toString(profiles[0].getProfileId()));
+                        GlobalOptions.addProperty("default.player", Long.toString(profiles[0].getProfileId()));
+                        
+                        String server = ((UserProfile) jProfileBox.getSelectedItem()).getServerId();
+                        jLabelServer.setText(server);
+                        GlobalOptions.addProperty("default.server", server);
                     }
                     if (active != null) {
                         GlobalOptions.setSelectedProfile(active);
@@ -3210,6 +3152,7 @@ private void fireProfileActionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
                     model = new DefaultComboBoxModel(new Object[]{"Kein Profil vorhanden"});
                     jProfileBox.setModel(model);
                     GlobalOptions.setSelectedProfile(DummyUserProfile.getSingleton());
+                    jLabelServer.setText("kein Server");
                 }
                 //if (DSWorkbenchMainFrame.getSingleton().isInitialized()) {
                 if (GlobalOptions.isStarted()) {
@@ -3223,8 +3166,7 @@ private void fireProfileActionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
         }
 
         updating = false;
-
-        jSelectServerButton.setEnabled(true);
+        
         jOKButton.setEnabled(true);
         if (!isBlocked) {
             setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
@@ -3317,6 +3259,7 @@ private void fireProfileActionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
+    private javax.swing.JLabel jLabelServer;
     private javax.swing.JPanel jMapSettings;
     private javax.swing.JCheckBox jMarkOwnVillagesOnMinimapBox;
     private javax.swing.JSlider jMarkerTransparency;
@@ -3370,8 +3313,6 @@ private void fireProfileActionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
     private javax.swing.JButton jSelectBlockButton;
     private javax.swing.JButton jSelectFooterButton;
     private javax.swing.JButton jSelectHeaderButton;
-    private javax.swing.JButton jSelectServerButton;
-    private javax.swing.JComboBox jServerList;
     private javax.swing.JTabbedPane jSettingsTabbedPane;
     private javax.swing.JCheckBox jShowAttackMovementBox;
     private javax.swing.JCheckBox jShowBarbarianBox;

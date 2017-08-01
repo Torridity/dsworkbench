@@ -172,7 +172,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
             GlobalOptions.setSelectedProfile(profile);
             GlobalOptions.addProperty("default.server", server);
             GlobalOptions.addProperty("selected.profile", Long.toString(profile.getProfileId()));
-            GlobalOptions.addProperty("player." + server, Long.toString(profile.getProfileId()));
+            GlobalOptions.addProperty("default.player", Long.toString(profile.getProfileId()));
             jProfileDialog.setVisible(false);
         }
     }                                       
@@ -235,10 +235,10 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
                     GlobalOptions.addProperty("account.name", (String) result.get("account.name"));
                     GlobalOptions.addProperty("account.password", (String) result.get("account.password"));
                     GlobalOptions.addProperty("default.server", (String) result.get("server"));
-                    GlobalOptions.addProperty("player." + result.get("server"), (String) result.get("tribe"));
+                    GlobalOptions.addProperty("default.player", (String) result.get("tribe"));
                     logger.debug("Creating initial profile");
                     UserProfile p = UserProfile.create(GlobalOptions.getProperty("default.server"),
-                            GlobalOptions.getProperty("player." + GlobalOptions.getProperty("default.server")));
+                            GlobalOptions.getProperty("default.player"));
                     GlobalOptions.setSelectedProfile(p);
                     GlobalOptions.addProperty("selected.profile", Long.toString(p.getProfileId()));
                     logger.debug(" - Disabling first start wizard");

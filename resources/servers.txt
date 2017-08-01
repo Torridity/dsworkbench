@@ -2,5 +2,6 @@
 #and the second element is the base URL of the server. Servers from regions 
 #‚de‘ and ‚ch‘ are obtained automatically and don’t have to be added here.
 #
-#zz1;https://zz1.beta.tribalwars.net
+zz1;https://zz1.tribalwars.works
+zz2;https://zz2.tribalwars.works
 #fr1;https://fr1.guerretribale.fr

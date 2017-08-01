@@ -516,6 +516,7 @@ public class FarmInformation extends ManageableType {
             clayInStorage = pReport.getSpyedResources()[1];
             ironInStorage = pReport.getSpyedResources()[2];
             int remaining = pReport.getSpyedResources()[0] + pReport.getSpyedResources()[1] + pReport.getSpyedResources()[2];
+            if(remaining < 4) remaining = 0; //Fix for a Bug of DS Where there are Resources displayed in Spy but not hauled
             resourcesFoundInLastReport = remaining > DSWorkbenchFarmManager.getSingleton().getMinHaul(usedConfig);
             spyLevel = SPY_LEVEL.RESOURCES;
         }
@@ -592,10 +593,9 @@ public class FarmInformation extends ManageableType {
                 woodInStorage = 0;
                 clayInStorage = 0;
                 ironInStorage = 0;
-                if (pReport.getSpyedResources() == null) {
-                    //there are no additional resources
-                    resourcesFoundInLastReport = false;
-                }
+                
+                //there are no additional resources
+                resourcesFoundInLastReport = false;
             } else if (farmTroopsCapacity == hauledResourcesSum) {
                 //capacity is equal hauled resources (smaller actually cannot be)
                 woodInStorage = getWoodInStorage(pReport.getTimestamp()) - pReport.getHaul()[0];
@@ -604,10 +604,9 @@ public class FarmInformation extends ManageableType {
                 clayInStorage = (clayInStorage > 0) ? clayInStorage : 0;
                 ironInStorage = getIronInStorage(pReport.getTimestamp()) - pReport.getHaul()[2];
                 ironInStorage = (ironInStorage > 0) ? ironInStorage : 0;
-                if (pReport.getSpyedResources() == null) {
-                    //there are additional resources
-                    resourcesFoundInLastReport = true;
-                }
+                
+                //there are additional resources
+                resourcesFoundInLastReport = true;
             } else {
                 //Please what!? Let's ignore this and never talk about it again.
             }

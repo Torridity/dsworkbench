@@ -37,6 +37,7 @@ public class ServerSettings {
     private boolean millisArrival = true;
     private double speed = 1.0;
     private double riseSpeed = 1.0;
+    private int resourceConstant = 30;
 
     private boolean nightBonusActive = true;
     private int nightBonusStartHour = 0;
@@ -158,6 +159,14 @@ public class ServerSettings {
                 setMoralType(Integer.parseInt(JaxenUtils.getNodeValue(d, "//moral")));
             } catch (Exception inner) {
                 logger.warn("Unable to read moral type", inner);
+                this.moral = 0;
+            }
+            
+            logger.debug(" - reading resource Production base");
+            try {
+                setResourceConstant(Integer.parseInt(JaxenUtils.getNodeValue(d, "//game/base_production")));
+            } catch (Exception inner) {
+                logger.warn("Unable to resource Production base", inner);
                 this.moral = 0;
             }
             
@@ -290,5 +299,12 @@ public class ServerSettings {
             throw new IllegalArgumentException("Invalid moral type (" + pMoral + ")");
         }
         this.moral = pMoral;
+    }
+    private void setResourceConstant(int resourceConstant) {
+        this.resourceConstant = resourceConstant;
+    }
+
+    public int getResourceConstant() {
+        return resourceConstant;
     }
 }

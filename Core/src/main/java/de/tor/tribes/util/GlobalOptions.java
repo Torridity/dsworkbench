@@ -579,5 +579,12 @@ public class GlobalOptions {
         public void clearProperty(String pKey) {
             GLOBAL_PROPERTIES.clearProperty(pKey);
         }
+
+        public boolean exists(String key) {
+            Object obj = getObject(key, false);
+            if(obj != null) return true;
+            obj = getObject(key, true);
+            return obj != null;
+        }
     }
 }

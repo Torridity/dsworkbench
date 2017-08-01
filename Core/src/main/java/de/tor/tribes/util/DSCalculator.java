@@ -135,11 +135,13 @@ public class DSCalculator {
     }
 
     public static double calculateResourcesPerHour(int pBuildingLevel) {
-        return 30 * ServerSettings.getSingleton().getSpeed() * Math.pow(RESOURCE_PRODUCTION_CONTANT, (pBuildingLevel - 1));
+        return ServerSettings.getSingleton().getResourceConstant() * ServerSettings.getSingleton().getSpeed()
+                * Math.pow(RESOURCE_PRODUCTION_CONTANT, (pBuildingLevel - 1));
     }
 
     public static int calculateEstimatedResourceBuildingLevel(double pResourcesDelta, double pTimeDelta) {
-        return (int) Math.ceil(Math.log(pResourcesDelta / (pTimeDelta * 30 * ServerSettings.getSingleton().getSpeed())) / Math.log(RESOURCE_PRODUCTION_CONTANT) + 1);
+        return (int) Math.ceil(Math.log(pResourcesDelta / (pTimeDelta * ServerSettings.getSingleton().getResourceConstant() *
+                ServerSettings.getSingleton().getSpeed())) / Math.log(RESOURCE_PRODUCTION_CONTANT) + 1);
     }
 
     public static int calculateMaxResourcesInStorage(int pStorageLevel) {

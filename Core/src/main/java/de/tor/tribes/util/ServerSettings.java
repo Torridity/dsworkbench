@@ -37,10 +37,18 @@ public class ServerSettings {
     private boolean millisArrival = true;
     private double speed = 1.0;
     private double riseSpeed = 1.0;
+    private int resourceConstant = 30;
 
     private boolean nightBonusActive = true;
     private int nightBonusStartHour = 0;
     private int nightBonusEndHour = 8;
+    
+    public static final int NO_MORAL = 0;
+    public static final int POINTBASED_MORAL = 1;
+    public static final int TIMEBASED_MORAL = 2;
+    public static final int TIME_LIMITED_POINTBASED_MORAL = 3;
+    private int moral = 0;
+    
     private static ServerSettings SINGLETON = null;
 
     public static synchronized ServerSettings getSingleton() {
@@ -55,32 +63,43 @@ public class ServerSettings {
             logger.debug("Loading server settings");
             SERVER_ID = pServerID;
             String serverPath = Constants.SERVER_DIR + "/" + SERVER_ID + "/settings.xml";
+            
             logger.debug("Parse server settings from '" + serverPath + "'");
             Document d = JaxenUtils.getDocument(new File(serverPath));
+            
             logger.debug(" - reading map system");
             try {
+                //TODO use real Cordinates
                 setCoordType(1000);
             } catch (Exception inner) {
+                logger.warn("Unable to read map Size", inner);
                 setCoordType(1000);
             }
+            
             logger.debug(" - reading bonus type");
             try {
                 BONUS_NEW = Integer.parseInt(JaxenUtils.getNodeValue(d, "//coord/bonus_new"));
             } catch (Exception inner) {
+                logger.warn("Unable to read bonus type", inner);
                 BONUS_NEW = 0;
             }
+            
             logger.debug(" - reading snob distance");
             try {
                 SNOB_RANGE = Integer.parseInt(JaxenUtils.getNodeValue(d, "//snob/max_dist"));
             } catch (Exception inner) {
+                logger.warn("Unable to read snob range", inner);
                 SNOB_RANGE = 70;
             }
+            
             logger.debug(" - reading church setting");
             try {
                 church = Integer.parseInt(JaxenUtils.getNodeValue(d, "//game/church")) == 1;
             } catch (Exception inner) {
+                logger.warn("Unable to read church setting", inner);
                 church = false;
             }
+            
             logger.debug(" - reading millis setting");
             try {
                 millisArrival = Integer.parseInt(JaxenUtils.getNodeValue(d, "//misc/millis_arrival")) == 1;
@@ -88,6 +107,8 @@ public class ServerSettings {
                 try {//new settings is under "commands"
                     millisArrival = Integer.parseInt(JaxenUtils.getNodeValue(d, "//commands/millis_arrival")) == 1;
                 } catch (Exception inner2) {
+                    logger.warn("Unable to read millis settings (Exception 1/2)", inner);
+                    logger.warn("Unable to read millis settings (Exception 2/2)", inner2);
                     //empty or invalid value...use no millis
                     millisArrival = false;
                 }
@@ -97,6 +118,7 @@ public class ServerSettings {
             try {
                 this.speed = Double.parseDouble(JaxenUtils.getNodeValue(d, "//speed"));
             } catch (Exception inner) {
+                logger.warn("Unable to read server speed", inner);
                 this.speed = 1.0;
             }
 
@@ -104,6 +126,7 @@ public class ServerSettings {
             try {
                 this.riseSpeed = Double.parseDouble(JaxenUtils.getNodeValue(d, "//snob/rise"));
             } catch (Exception inner) {
+                logger.warn("Unable to read rise speed", inner);
                 this.riseSpeed = 1.0;
             }
 
@@ -111,21 +134,42 @@ public class ServerSettings {
             try {
                 this.nightBonusActive = Integer.parseInt(JaxenUtils.getNodeValue(d, "//night/active")) == 1;
             } catch (Exception inner) {
+                logger.warn("Unable to read night bonus", inner);
                 this.nightBonusActive = true;
             }
+            
             logger.debug(" - reading night bonus start hour");
             try {
                 this.nightBonusStartHour = Integer.parseInt(JaxenUtils.getNodeValue(d, "//night/start_hour"));
             } catch (Exception inner) {
+                logger.warn("Unable to read night bonus start hour", inner);
                 this.nightBonusStartHour = 0;
             }
+            
             logger.debug(" - reading night bonus end hour");
             try {
                 this.nightBonusStartHour = Integer.parseInt(JaxenUtils.getNodeValue(d, "//night/end_hour"));
             } catch (Exception inner) {
+                logger.warn("Unable to read night bonus end hour", inner);
                 this.nightBonusEndHour = 8;
             }
-
+            
+            logger.debug(" - reading moral type");
+            try {
+                setMoralType(Integer.parseInt(JaxenUtils.getNodeValue(d, "//moral")));
+            } catch (Exception inner) {
+                logger.warn("Unable to read moral type", inner);
+                this.moral = 0;
+            }
+            
+            logger.debug(" - reading resource Production base");
+            try {
+                setResourceConstant(Integer.parseInt(JaxenUtils.getNodeValue(d, "//game/base_production")));
+            } catch (Exception inner) {
+                logger.warn("Unable to resource Production base", inner);
+                this.moral = 0;
+            }
+            
         } catch (Exception e) {
             logger.error("Failed to load server settings", e);
             return false;
@@ -141,7 +185,8 @@ public class ServerSettings {
     public String getServerID() {
         return SERVER_ID;
     }
-
+    
+    //TODO rewrite this
     public void setCoordType(int pMapSize) {
         if (pMapSize == 1000) {
             COORD = 2;
@@ -244,5 +289,22 @@ public class ServerSettings {
     public int getNightBonusEndHour() {
         return nightBonusEndHour;
     }
+    
+    public int getMoralType() {
+        return moral;
+    }
 
+    public void setMoralType(int pMoral) {
+        if(pMoral < 0 || pMoral > 3) {
+            throw new IllegalArgumentException("Invalid moral type (" + pMoral + ")");
+        }
+        this.moral = pMoral;
+    }
+    private void setResourceConstant(int resourceConstant) {
+        this.resourceConstant = resourceConstant;
+    }
+
+    public int getResourceConstant() {
+        return resourceConstant;
+    }
 }

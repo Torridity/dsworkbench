@@ -573,9 +573,6 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
         }
         //do HTML export
         String dir = GlobalOptions.getProperty("screen.dir");
-        if (dir == null) {
-            dir = ".";
-        }
 
         JFileChooser chooser = null;
         try {
@@ -1022,12 +1019,7 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
     }
 
     public void addVillages(List<Village> pVillages) {
-        boolean showBarbarian = true;
-        try {
-            showBarbarian = Boolean.parseBoolean(GlobalOptions.getProperty("show.barbarian"));
-        } catch (Exception e) {
-            showBarbarian = true;
-        }
+        boolean showBarbarian = GlobalOptions.getProperties().getBoolean("show.barbarian");
         treeData.clear();
         for (Village v : pVillages.toArray(new Village[]{})) {
             if ((v != null && v.getTribe() == Barbarians.getSingleton()) && !showBarbarian) {

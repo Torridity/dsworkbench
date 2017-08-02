@@ -108,12 +108,9 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
         jTabbedPane1.registerKeyboardAction(DSWorkbenchStatsFrame.this, "BBCopy", bbCopy, JComponent.WHEN_IN_FOCUSED_WINDOW);
         jTribeList.registerKeyboardAction(DSWorkbenchStatsFrame.this, "Delete", delete, JComponent.WHEN_IN_FOCUSED_WINDOW);
         
-        try {
-            jAlwaysOnTopBox.setSelected(Boolean.parseBoolean(GlobalOptions.getProperty("stats.frame.alwaysOnTop")));
+        jAlwaysOnTopBox.setSelected(GlobalOptions.getProperties().getBoolean("stats.frame.alwaysOnTop"));
             setAlwaysOnTop(jAlwaysOnTopBox.isSelected());
-        } catch (Exception e) {
-            //setting not available
-        }
+        
         jAllyList.addListSelectionListener(new ListSelectionListener() {
             
             @Override

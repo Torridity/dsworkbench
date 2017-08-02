@@ -62,7 +62,7 @@ public class Attack extends ManageableType implements Serializable, Comparable<A
     private boolean transferredToBrowser = false;
 
     public Attack() {
-        showOnMap = GlobalOptions.getProperties().getBoolean("draw.attacks.by.default", false);
+        showOnMap = GlobalOptions.getProperties().getBoolean("draw.attacks.by.default");
     }
 
     public Attack(Attack pAttack) {
@@ -417,5 +417,21 @@ public class Attack extends ManageableType implements Serializable, Comparable<A
 
         String placeURLVal = placeURL;
         return new String[]{typeVal, attackerVal, sourceVal, unitVal, defenderVal, targetVal, sendVal, arrivetVal, "[url=\"" + placeURL + "\"]Versammlungsplatz[/url]", placeURLVal};
+    }
+    
+    @Override
+    public boolean equals(Object other) {
+        if(! (other instanceof Attack)) return false;
+        
+        Attack otherAtt = (Attack) other;
+        if(!source.equals(otherAtt.getSource())) return false;
+        if(!target.equals(otherAtt.getTarget())) return false;
+        if(!unit.equals(otherAtt.getUnit())) return false;
+        if(!arriveTime.equals(otherAtt.getArriveTime())) return false;
+        if(showOnMap != otherAtt.isShowOnMap()) return false;
+        if(type != otherAtt.getType()) return false;
+        if(transferredToBrowser != otherAtt.isTransferredToBrowser()) return false;
+        
+        return true;
     }
 }

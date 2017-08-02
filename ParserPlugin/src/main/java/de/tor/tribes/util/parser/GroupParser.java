@@ -94,7 +94,7 @@ public class GroupParser implements SilentParserInterface {
             //parse single line for village
             String line = lineTok.nextToken();
             //german and suisse
-            if (line.trim().endsWith(ParserVariableManager.getSingleton().getProperty("groups.edit"))) {
+            if (line.trim().endsWith(getVariable("groups.edit"))) {
                 try {
                     //tokenize line by tab
                     StringTokenizer elemTok = new StringTokenizer(line.trim(), "\t");
@@ -264,6 +264,11 @@ public class GroupParser implements SilentParserInterface {
 //next 4 lines are village
                         /*villageLines = 4;*/
 //  }
+
+    private String getVariable(String pProperty) {
+        return ParserVariableManager.getSingleton().getProperty(pProperty);
+    }
+    
     public static void main(String[] args) throws Exception {
         Transferable t = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
         //String data = "(09) Sunset Beach (459|468) K44  	2	Fertig; Off	» bearbeiten";

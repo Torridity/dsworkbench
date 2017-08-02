@@ -30,7 +30,7 @@ import java.util.List;
 public class AttackListFormatter extends BasicFormatter<Attack> {
 
     private final String[] VARIABLES = new String[]{LIST_START, LIST_END, ELEMENT_COUNT, ELEMENT_ID};
-    private static final String STANDARD_TEMPLATE = "[b]Angriffsplan[/b]\nAnzahl der Angriffe: %ELEMENT_COUNT%\n[table]\n"
+    public static final String STANDARD_TEMPLATE = "[b]Angriffsplan[/b]\nAnzahl der Angriffe: %ELEMENT_COUNT%\n[table]\n"
             + "[**]ID[||]Art[||]Einheit[||]Herkunft[||]Ziel[||]Abschickzeit[||]Versammlungsplatz[/**]\n"
             + "%LIST_START%[*]%ELEMENT_ID%[|]%TYPE%[|]%UNIT%[|]%SOURCE%[|]%TARGET%[|]%SEND%[|]%PLACE%[/*]%LIST_END%\n"
             + "[/table]";

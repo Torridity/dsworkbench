@@ -28,7 +28,7 @@ import org.apache.commons.lang.StringUtils;
  */
 public class OverallReportStatsFormatter extends BasicFormatter<OverallStatResult> {
 
-    private final String STANDARD_TEMPLATE = new OverallStatResult().getStandardTemplate();
+    public static final String STANDARD_TEMPLATE = new OverallStatResult().getStandardTemplate();
     private static final String TEMPLATE_PROPERTY = "overall.report.stats.bbexport.template";
 
     @Override

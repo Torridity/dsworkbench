@@ -910,9 +910,7 @@ private void fireCloseScreenshotEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
 }//GEN-LAST:event_fireCloseScreenshotEvent
 private void fireSaveScreenshotEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSaveScreenshotEvent
     String dir = GlobalOptions.getProperty("screen.dir");
-    if (dir == null) {
-        dir = ".";
-    }
+    
     JFileChooser chooser = null;
     try {
         chooser = new JFileChooser(dir);

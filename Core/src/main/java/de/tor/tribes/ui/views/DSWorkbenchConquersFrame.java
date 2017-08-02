@@ -99,12 +99,10 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
         jConquerPanel.add(centerPanel, BorderLayout.CENTER);
         centerPanel.setChildComponent(jConquersPanel);
         buildMenu();
-        try {
-            jConquersFrameAlwaysOnTop.setSelected(Boolean.parseBoolean(GlobalOptions.getProperty("conquers.frame.alwaysOnTop")));
+        
+        jConquersFrameAlwaysOnTop.setSelected(GlobalOptions.getProperties().getBoolean("conquers.frame.alwaysOnTop"));
             setAlwaysOnTop(jConquersFrameAlwaysOnTop.isSelected());
-        } catch (Exception e) {
-            //setting not available
-        }
+        
         jConquersTable.setModel(new ConquerTableModel());
         jConquersTable.getSelectionModel().addListSelectionListener(DSWorkbenchConquersFrame.this);
         capabilityInfoPanel1.addActionListener(this);

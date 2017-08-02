@@ -502,7 +502,7 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
         int woodPerHour = 0;
         int clayPerHour = 0;
         int ironPerHour = 0;
-
+        
 
         for (ManageableType type : FarmManager.getSingleton().getAllElements()) {
             FarmInformation info = (FarmInformation) type;
@@ -1476,8 +1476,8 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
         jFarmFromReportSelectionDialog.getContentPane().add(jAllowTribesInOwnAlly, gridBagConstraints);
 
         jCancelFindInReportsButton.setText("Abbrechen");
-        jCancelFindInReportsButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
+        jCancelFindInReportsButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 fireFindFarmsInReportsEvent(evt);
             }
         });
@@ -1490,8 +1490,8 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
         jFarmFromReportSelectionDialog.getContentPane().add(jCancelFindInReportsButton, gridBagConstraints);
 
         jFindInReportsButton.setText("Suchen...");
-        jFindInReportsButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
+        jFindInReportsButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 fireFindFarmsInReportsEvent(evt);
             }
         });
@@ -1529,7 +1529,6 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
         getContentPane().add(capabilityInfoPanel1, gridBagConstraints);
 
         jAlwaysOnTop.setText("Immer im Vordergrund");
-        jAlwaysOnTop.setOpaque(false);
         jAlwaysOnTop.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 jAlwaysOnTopfireChurchFrameOnTopEvent(evt);
@@ -1597,8 +1596,7 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
         coordSpinner.setEnabled(evt.getSource() == jByCenter);
     }//GEN-LAST:event_fireSelectionByCenterChangedEvent
 
-    private void fireFindFarmsInReportsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireFindFarmsInReportsEvent
-
+    private void fireFindFarmsInReportsEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireFindFarmsInReportsEvent
         if (evt.getSource() == jFindInReportsButton) {
             int found = 0;
             if (jReportSetBox.getSelectedIndex() <= 0) {//search in all report sets
@@ -1615,7 +1613,6 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
         }
 
         jFarmFromReportSelectionDialog.setVisible(false);
-
     }//GEN-LAST:event_fireFindFarmsInReportsEvent
 
     private FarmTableModel getModel() {

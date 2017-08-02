@@ -311,7 +311,8 @@ public class SOSRequest extends ManageableType implements BBSupport {
             thisInfo.setWallLevel(otherInfo.getWallLevel());
             int addCount = 0;
             for (TimedAttack att : otherInfo.getAttacks()) {
-                if (thisInfo.addAttack(att.getSource(), new Date(att.getlArriveTime()))) {
+                if (thisInfo.addAttack(att.getSource(), new Date(att.getlArriveTime()),
+                        att.getUnit(), att.isPossibleFake(), att.isPossibleSnob())) {
                     addCount++;
                     getDefenseInformation(otherTarget).setAnalyzed(false);
                 }

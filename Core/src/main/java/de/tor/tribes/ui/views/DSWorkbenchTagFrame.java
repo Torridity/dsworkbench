@@ -175,9 +175,7 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame implements Gen
 
     private void initialize() {
         String prop = GlobalOptions.getProperty("tag.frame.table.visibility");
-        if (prop == null) {
-            prop = "true;true;true;false";
-        }
+        
         String[] split = prop.split(";");
         for (int i = 0; i < split.length; i++) {
             if (!Boolean.parseBoolean(split[i])) {
@@ -185,10 +183,7 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame implements Gen
                 col.setVisible(false);
             }
         }
-        prop = GlobalOptions.getProperty("tag.frame.menu.visible");
-        if (prop != null) {
-            centerPanel.setMenuVisible(Boolean.parseBoolean(prop));
-        }
+        centerPanel.setMenuVisible(GlobalOptions.getProperties().getBoolean("tag.frame.menu.visible"));
     }
 
     @Override

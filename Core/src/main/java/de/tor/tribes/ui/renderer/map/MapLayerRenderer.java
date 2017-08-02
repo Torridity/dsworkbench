@@ -121,7 +121,7 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
                 img = renderMarkerRows(pSettings);
             }
             Graphics2D ig2d = (Graphics2D) img.getGraphics();
-            int val = GlobalOptions.getProperties().getInt("map.marker.transparency", 80);
+            int val = GlobalOptions.getProperties().getInt("map.marker.transparency");
 
 
             float transparency = (float) val / 100.0f;
@@ -196,19 +196,9 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
     }
 
     private void drawContinents(RenderSettings pSettings, Graphics2D pG2d) {
-        boolean showSectors = false;
-        try {
-            showSectors = Boolean.parseBoolean(GlobalOptions.getProperty("show.sectors"));
-        } catch (Exception e) {
-            showSectors = false;
-        }
+        boolean showSectors = GlobalOptions.getProperties().getBoolean("show.sectors");
 
-        boolean showContinents = false;
-        try {
-            showContinents = Boolean.parseBoolean(GlobalOptions.getProperty("map.showcontinents"));
-        } catch (Exception e) {
-            showContinents = false;
-        }
+        boolean showContinents = GlobalOptions.getProperties().getBoolean("map.showcontinents");
 
         //draw continents and sectors
         if (mapPos == null) {
@@ -284,12 +274,7 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
         int firstRow = (pSettings.getRowsToRender() > 0) ? 0 : pSettings.getVillagesInY() - Math.abs(pSettings.getRowsToRender());
         Graphics2D g2d = (Graphics2D) newRows.getGraphics();
         ImageUtils.setupGraphics(g2d);
-        boolean showBarbarian = true;
-        try {
-            showBarbarian = Boolean.parseBoolean(GlobalOptions.getProperty("show.barbarian"));
-        } catch (Exception e) {
-            showBarbarian = true;
-        }
+        boolean showBarbarian = GlobalOptions.getProperties().getBoolean("show.barbarian");
 
         boolean markedOnly = false;
 
@@ -358,12 +343,7 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
         int firstCol = (pSettings.getColumnsToRender() > 0) ? 0 : pSettings.getVillagesInX() - Math.abs(pSettings.getColumnsToRender());
         Graphics2D g2d = (Graphics2D) newColumns.getGraphics();
         ImageUtils.setupGraphics(g2d);
-        boolean showBarbarian = true;
-        try {
-            showBarbarian = Boolean.parseBoolean(GlobalOptions.getProperty("show.barbarian"));
-        } catch (Exception e) {
-            showBarbarian = true;
-        }
+        boolean showBarbarian = GlobalOptions.getProperties().getBoolean("show.barbarian");
 
         boolean markedOnly = false;
 
@@ -496,13 +476,8 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
         int tribeId = -666;
         BufferedImage sprite = null;
         Rectangle copyRect = null;
-        boolean showBarbarian = true;
+        boolean showBarbarian = GlobalOptions.getProperties().getBoolean("show.barbarian");
         Village currentUserVillage = DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage();
-        try {
-            showBarbarian = Boolean.parseBoolean(GlobalOptions.getProperty("show.barbarian"));
-        } catch (Exception e) {
-            showBarbarian = true;
-        }
 
         if (v != null && !(v.getTribe().equals(Barbarians.getSingleton()) && !showBarbarian) //&& !(MarkerManager.getSingleton().getMarker(v) == null && !v.getTribe().getName().equals(GlobalOptions.getSelectedProfile().getTribeName()))
                 ) {
@@ -552,19 +527,18 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
         Marker tribeMarker = null;
         Marker allyMarker = null;
         Color DEFAULT = null;
-        try {
-            int mark = Integer.parseInt(GlobalOptions.getProperty("default.mark"));
-            if (mark == 0) {
-                DEFAULT = Constants.DS_DEFAULT_MARKER;
-            } else if (mark == 1) {
+        switch(GlobalOptions.getProperties().getInt("default.mark")) {
+            case 1:
                 DEFAULT = Color.RED;
-            } else if (mark == 2) {
+                break;
+            case 2:
                 DEFAULT = Color.WHITE;
+                break;
+            case 0:
+            default:
+                DEFAULT = Constants.DS_DEFAULT_MARKER;
             }
 
-        } catch (Exception e) {
-            DEFAULT = Constants.DS_DEFAULT_MARKER;
-        }
         Village currentUserVillage = DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage();
         if (currentUserVillage != null && pVillage.getTribe() == currentUserVillage.getTribe()) {
             if (pVillage.equals(currentUserVillage)) {

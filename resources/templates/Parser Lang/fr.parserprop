@@ -1,0 +1,24 @@
+#variables for french servers
+fr.troops.own=le tien
+fr.troops.in.village=dans le village
+fr.troops.outside=extérieur
+fr.troops.on.the.way=en campagne
+fr.troops.commands=Ordres
+fr.troops=Troupes
+fr.troops.place.from.village=De ce village
+fr.troops.place.overall=Total
+fr.troops.place.in.other.villages=Les troupes dans les autres villages
+fr.groups.all=???
+fr.groups.edit=éditer
+fr.attack.arrive.time=???
+fr.sos.defender=Défenseur
+fr.sos.name=Nom:
+fr.sos.destination=Village attaqué
+fr.sos.wall.level=Niveau de la muraille:
+fr.sos.troops.in.village=Troupes résidentes
+fr.sos.source=Origine:
+fr.sos.arrive.time=Heure d'arrivée:
+fr.sos.date.format=dd/MM/yy HH:mm:ss
+fr.sos.date.format.ms=dd/MM/yy HH:mm:ss:SSS
+fr.overview.groups=???
+

@@ -61,12 +61,8 @@ public class DSWorkbenchSearchFrame extends javax.swing.JFrame implements Search
         jCenterInGameButton.setIcon(new ImageIcon("./graphics/icons/center.png"));
         jSendResButton.setIcon(new ImageIcon("./graphics/icons/booty.png"));
         jSendDefButton.setIcon(new ImageIcon("./graphics/icons/def.png"));
-        try {
-            jSearchFrameAlwaysOnTop.setSelected(Boolean.parseBoolean(GlobalOptions.getProperty("search.frame.alwaysOnTop")));
-            setAlwaysOnTop(jSearchFrameAlwaysOnTop.isSelected());
-        } catch (Exception e) {
-            //setting not available
-        }
+        jSearchFrameAlwaysOnTop.setSelected(GlobalOptions.getProperties().getBoolean("search.frame.alwaysOnTop"));
+        setAlwaysOnTop(jSearchFrameAlwaysOnTop.isSelected());
 
         //check desktop support
         if (!Desktop.isDesktopSupported()) {

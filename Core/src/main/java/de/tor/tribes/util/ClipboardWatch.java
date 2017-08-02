@@ -56,7 +56,7 @@ public class ClipboardWatch extends Thread {
     private AudioClip ac = null;
 
     private synchronized void playNotification() {
-        if (!Boolean.parseBoolean(GlobalOptions.getProperty("clipboard.notification"))) {
+        if (!GlobalOptions.getProperties().getBoolean("clipboard.notification")) {
             return;
         }
 
@@ -136,9 +136,12 @@ public class ClipboardWatch extends Thread {
                             SystrayHelper.showInfoMessage("Kartenmarkierungen aus Diplomatie erfolgreich eingelesen");
                             playNotification();
                             validData = true;
+                        } else if (PluginManager.getSingleton().executeMovementParser(data)) {
+                            logger.info("Movements successfully parsed.");
+                            SystrayHelper.showInfoMessage("Befehle erfolgreich eingelesen");
+                            playNotification();
+                            validData = true;
                         }
-                    }
-                    if (validData) {
                         lastHash = currentHash;
                     }
                 } catch (Exception e) {

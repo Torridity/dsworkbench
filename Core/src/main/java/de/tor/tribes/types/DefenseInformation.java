@@ -235,4 +235,8 @@ public class DefenseInformation {
             }
         }
     }
+
+    public void updateAttackInfo() {
+        targetInfo.updateAttackInfo();
+    }
 }

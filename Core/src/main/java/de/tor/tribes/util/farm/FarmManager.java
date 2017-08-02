@@ -145,7 +145,7 @@ public class FarmManager extends GenericManager<FarmInformation> {
     for (ManageableType t : ReportManager.getSingleton().getAllElements(searchInGroups)) {
       FightReport report = (FightReport) t;
       Village target = report.getTargetVillage();
-      if (report.isWon() && !(report.getTargetVillage().getTribe().getId() == yourTribe.getId())) {
+      if (report.isWon() && !(target.getTribe().getId() == yourTribe.getId())) {
         boolean allowed;
         if (report.getTargetVillage().getTribe().getAlly() != null && report.getTargetVillage().getTribe().getAlly().equals(yourTribe.getAlly())) {
           //own ally
@@ -165,7 +165,7 @@ public class FarmManager extends GenericManager<FarmInformation> {
             allowed = true;
           }
         }
-
+        
         if (allowed) {
           if (!handled.contains(target)) {//add farm
             FarmInformation info = addFarm(target);

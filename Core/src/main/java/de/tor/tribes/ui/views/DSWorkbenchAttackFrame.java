@@ -1016,7 +1016,7 @@ class CountdownThread extends Thread {
     }
 
     public void updateSettings() {
-        showCountdown = Boolean.parseBoolean(GlobalOptions.getProperty("show.live.countdown"));
+        showCountdown = GlobalOptions.getProperties().getBoolean("show.live.countdown");
     }
 
     @Override

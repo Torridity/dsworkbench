@@ -385,105 +385,29 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
     }
 
 // </editor-fold>
+
     // <editor-fold defaultstate="collapsed" desc=" Restore other settings ">
-    try {
-      String val = GlobalOptions.getProperty("show.map.popup");
-      if (val == null) {
-        jShowMapPopup.setSelected(true);
-        GlobalOptions.addProperty("show.map.popup", Boolean.toString(true));
-      } else {
-        jShowMapPopup.setSelected(Boolean.parseBoolean(val));
-      }
-    } catch (Exception e) {
-      jShowMapPopup.setSelected(true);
-      GlobalOptions.addProperty("show.map.popup", Boolean.toString(true));
-
-    }
-    try {
-      String val = GlobalOptions.getProperty("show.mouseover.info");
-      if (val == null) {
-        jShowMouseOverInfo.setSelected(false);
-        GlobalOptions.addProperty("show.mouseover.info", Boolean.toString(jShowMouseOverInfo.isSelected()));
-      } else {
-        jShowMouseOverInfo.setSelected(Boolean.parseBoolean(val));
-      }
-    } catch (Exception e) {
-      jShowMouseOverInfo.setSelected(false);
-      GlobalOptions.addProperty("show.mouseover.info", Boolean.toString(jShowMouseOverInfo.isSelected()));
-    }
-
-    try {
-      String val = GlobalOptions.getProperty("include.support");
-      if (val == null) {
-        jIncludeSupport.setSelected(false);
-        GlobalOptions.addProperty("include.support", Boolean.toString(jIncludeSupport.isSelected()));
-      } else {
-        jIncludeSupport.setSelected(Boolean.parseBoolean(val));
-      }
-    } catch (Exception e) {
-      jIncludeSupport.setSelected(true);
-      GlobalOptions.addProperty("include.support", Boolean.toString(jIncludeSupport.isSelected()));
-    }
-
-    try {
-      String val = GlobalOptions.getProperty("highlight.tribes.villages");
-      if (val == null) {
-        jHighlightTribeVillages.setSelected(false);
-        GlobalOptions.addProperty("highlight.tribes.villages", Boolean.toString(jHighlightTribeVillages.isSelected()));
-      } else {
-        jHighlightTribeVillages.setSelected(Boolean.parseBoolean(val));
-      }
-    } catch (Exception e) {
-      jHighlightTribeVillages.setSelected(false);
-      GlobalOptions.addProperty("highlight.tribes.villages", Boolean.toString(jHighlightTribeVillages.isSelected()));
-    }
-    try {
-      String val = GlobalOptions.getProperty("show.ruler");
-      if (val == null) {
-        jShowRuler.setSelected(true);
-        GlobalOptions.addProperty("show.ruler", Boolean.toString(true));
-      } else {
-        jShowRuler.setSelected(Boolean.parseBoolean(val));
-      }
-    } catch (Exception e) {
-      jShowRuler.setSelected(true);
-      GlobalOptions.addProperty("show.ruler", Boolean.toString(true));
-    }
-
-    try {
-      String val = GlobalOptions.getProperty("radar.size");
-      int hour = 1;
-      int min = 0;
-      if (val != null) {
-        int r = Integer.parseInt(val);
-        hour = r / 60;
-        min = r - hour * 60;
-      } else {
-        throw new Exception();
-      }
+    jShowMapPopup.setSelected(GlobalOptions.getProperties().getBoolean("show.map.popup"));
+    jShowMouseOverInfo.setSelected(GlobalOptions.getProperties().getBoolean("show.mouseover.info"));
+    jIncludeSupport.setSelected(GlobalOptions.getProperties().getBoolean("include.support"));
+    jHighlightTribeVillages.setSelected(GlobalOptions.getProperties().getBoolean("highlight.tribes.villages"));
+    jShowRuler.setSelected(GlobalOptions.getProperties().getBoolean("show.ruler"));
+    int r = GlobalOptions.getProperties().getInt("radar.size");
+    int hour = r / 60;
       jHourField.setText(Integer.toString(hour));
-      jMinuteField.setText(Integer.toString(min));
-    } catch (Exception e) {
-      jHourField.setText("1");
-      jMinuteField.setText("0");
-      GlobalOptions.addProperty("radar.size", "60");
-    }
-
+    jMinuteField.setText(Integer.toString(r - hour * 60));
     // </editor-fold>
+
     // <editor-fold defaultstate="collapsed" desc="Skin Setup">
     DefaultComboBoxModel gpModel = new DefaultComboBoxModel(GlobalOptions.getAvailableSkins());
     jGraphicPacks.setModel(gpModel);
     String skin = GlobalOptions.getProperty("default.skin");
-    if (skin != null) {
-      if (gpModel.getIndexOf(skin) != -1) {
-        jGraphicPacks.setSelectedItem(skin);
-      } else {
-        jGraphicPacks.setSelectedItem("default");
-      }
+    if (gpModel.getIndexOf(skin) != -1) {
+      jGraphicPacks.setSelectedItem(skin);
     } else {
       jGraphicPacks.setSelectedItem("default");
     }
-        //</editor-fold>
+    //</editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc=" Init A*Star HelpSystem ">
     if (!Constants.DEBUG) {

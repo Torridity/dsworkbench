@@ -42,7 +42,12 @@ public class FillingLabel extends JLabel {
             res += v * capacity;
         }
         res /= 1000;
-        text = nf.format(res) + " K";
+        
+        if(res > 0) {
+            text = nf.format(res) + " K";
+        } else {
+            text = "keine";
+        }
     }
 
     public void setColors(Color[] colors) {

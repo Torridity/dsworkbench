@@ -136,8 +136,12 @@ public class OBSTReportHandler {
           return false;
         }
       } else {
-        logger.error("No moral found. Using default value.");
-        report.setMoral(0.0);
+        if(ServerSettings.getSingleton().getMoralType() == ServerSettings.NO_MORAL) {
+          report.setMoral(1.0);
+        } else {
+          logger.error("No moral found. Using default value.");
+          report.setMoral(0.0);
+        }
       }
 
       //m = Pattern.compile("Gl.{1,2}ck \\(aus Sicht des Angreifers\\).*\\s+([\\-0-9]*[0-9]+\\.[0-9]+)%\\s").matcher(data);

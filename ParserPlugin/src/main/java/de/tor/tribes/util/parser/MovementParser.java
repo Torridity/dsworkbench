@@ -78,6 +78,7 @@ public class MovementParser implements SilentParserInterface {
                 //determination of movement type
                 if(line.startsWith(getVariable("movement.type.returning.1")) ||
                         line.startsWith(getVariable("movement.type.returning.2")) ||
+                        line.startsWith(getVariable("movement.type.returning.3")) ||
                         line.startsWith(getVariable("movement.type.abortedMovement"))) {
                     movementType = RETURNING_TYPE;
                 } else if (line.startsWith(getVariable("movement.type.attack"))) {

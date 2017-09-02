@@ -17,7 +17,6 @@ package de.tor.tribes.ui.renderer.map;
 
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
-import de.tor.tribes.types.Church;
 import de.tor.tribes.types.drawing.AbstractForm;
 import de.tor.tribes.types.ext.*;
 import de.tor.tribes.ui.ImageManager;
@@ -28,6 +27,7 @@ import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ImageUtils;
 import de.tor.tribes.util.ServerSettings;
+import de.tor.tribes.util.village.KnownVillage;
 import org.apache.log4j.Logger;
 
 import javax.swing.*;
@@ -53,6 +53,7 @@ import java.util.List;
  * assignable
  *
  * @author Charon
+ * @author extremeCrazyCoder
  */
 public class MapRenderer {
 
@@ -66,6 +67,7 @@ public class MapRenderer {
     public static final int LIVE_LAYER = 6;
     public static final int NOTE_LAYER = 7;
     public static final int TROOP_LAYER = 8;
+    public static final int WATCHTOWER_LAYER = 9;
     private boolean bMapRedrawRequired = true;
     private Village[][] mVisibleVillages = null;
     private HashMap<Village, Rectangle> mVillagePositions = null;
@@ -88,14 +90,15 @@ public class MapRenderer {
     private Hashtable<Tribe, Integer> mTribeCount = new Hashtable<>();
     private Hashtable<Village, AnimatedVillageInfoRenderer> mAnimators = new Hashtable<>();
     //rendering layers
-    private MapLayerRenderer mMapLayer = new MapLayerRenderer();
-    private TroopDensityLayerRenderer mTroopDensityLayer = new TroopDensityLayerRenderer();
-    private ChurchLayerRenderer mChurchLayer = new ChurchLayerRenderer();
-    private FormLayerRenderer mFormsLayer = new FormLayerRenderer();
-    private TagMarkerLayerRenderer mTagLayer = new TagMarkerLayerRenderer();
-    private AttackLayerRenderer mAttackLayer = new AttackLayerRenderer();
-    private SupportLayerRenderer mSupportLayer = new SupportLayerRenderer();
-    private NoteLayerRenderer mNoteLayer = new NoteLayerRenderer();
+    private final MapLayerRenderer mMapLayer = new MapLayerRenderer();
+    private final TroopDensityLayerRenderer mTroopDensityLayer = new TroopDensityLayerRenderer();
+    private final ChurchLayerRenderer mChurchLayer = new ChurchLayerRenderer();
+    private final FormLayerRenderer mFormsLayer = new FormLayerRenderer();
+    private final TagMarkerLayerRenderer mTagLayer = new TagMarkerLayerRenderer();
+    private final AttackLayerRenderer mAttackLayer = new AttackLayerRenderer();
+    private final SupportLayerRenderer mSupportLayer = new SupportLayerRenderer();
+    private final NoteLayerRenderer mNoteLayer = new NoteLayerRenderer();
+    private final WatchtowerLayerRenderer mWatchtowerLayer = new WatchtowerLayerRenderer();
     /**
      * RenderSettings used within the last rendering cycle
      */
@@ -261,49 +264,70 @@ public class MapRenderer {
                     }
 
                     //check for all other layers
-                    if (layer == 2) {
-                        try {
-                            mTagLayer.performRendering(mRenderSettings, g2d);
-                        } catch (Exception e) {
-                            logger.warn("Failed to render group layer");
-                        }
-                    } else if (layer == 3) {
-                        //render troop density
-                        try {
-                            mTroopDensityLayer.performRendering(mRenderSettings, g2d);
-                        } catch (Exception e) {
-                            logger.warn("Failed to render troop density layer");
-                        }
-                    } else if (layer == 4) {
-                        try {
-                            mNoteLayer.performRendering(mRenderSettings, g2d);
-                        } catch (Exception e) {
-                            logger.warn("Failed to render note layer", e);
-                        }
-                    } else if (layer == 5) {
-                        try {
-                            mAttackLayer.performRendering(mRenderSettings, g2d);
-                        } catch (Exception e) {
-                            logger.warn("Failed to render attack layer");
-                        }
-                    } else if (layer == 6) {
-                        try {
-                            mSupportLayer.performRendering(mRenderSettings, g2d);
-                        } catch (Exception e) {
-                            logger.warn("Failed to render support layer");
-                        }
-                    } else if (layer == 7) {
-                        try {
-                            mFormsLayer.performRendering(mRenderSettings, g2d);
-                        } catch (Exception e) {
-                            logger.warn("Failed to render forms layer");
-                        }
-                    } else if (layer == 8) {
-                        try {
-                            mChurchLayer.performRendering(mRenderSettings, g2d);
-                        } catch (Exception e) {
-                            logger.warn("Failed to render church layer");
-                        }
+                    switch (layer) {
+                        case 2:
+                            try {
+                                mTagLayer.performRendering(mRenderSettings, g2d);
+                            } catch (Exception e) {
+                                logger.warn("Failed to render group layer", e);
+                            }
+                            break;
+                        case 3:
+                            //render troop density
+                            try {
+                                mTroopDensityLayer.performRendering(mRenderSettings, g2d);
+                            } catch (Exception e) {
+                                logger.warn("Failed to render troop density layer", e);
+                            }
+                            break;
+                        case 4:
+                            try {
+                                mNoteLayer.performRendering(mRenderSettings, g2d);
+                            } catch (Exception e) {
+                                logger.warn("Failed to render note layer", e);
+                            }
+                            break;
+                        case 5:
+                            try {
+                                mAttackLayer.performRendering(mRenderSettings, g2d);
+                            } catch (Exception e) {
+                                logger.warn("Failed to render attack layer", e);
+                            }
+                            break;
+                        case 6:
+                            try {
+                                mSupportLayer.performRendering(mRenderSettings, g2d);
+                            } catch (Exception e) {
+                                logger.warn("Failed to render support layer", e);
+                            }
+                            break;
+                        case 7:
+                            try {
+                                mFormsLayer.performRendering(mRenderSettings, g2d);
+                            } catch (Exception e) {
+                                logger.warn("Failed to render forms layer", e);
+                            }
+                            break;
+                        case 8:
+                            try {
+                                if(ServerSettings.getSingleton().isChurch() &&
+                                        GlobalOptions.getProperties().getBoolean("show.church"))
+                                    mChurchLayer.performRendering(mRenderSettings, g2d);
+                            } catch (Exception e) {
+                                logger.warn("Failed to render church layer", e);
+                            }
+                            break;
+                        case 9:
+                            try {
+                                if(ServerSettings.getSingleton().isWatchtower() &&
+                                        GlobalOptions.getProperties().getBoolean("show.watchtower"))
+                                    mWatchtowerLayer.performRendering(mRenderSettings, g2d);
+                            } catch (Exception e) {
+                                logger.warn("Failed to render church layer", e);
+                            }
+                            break;
+                        default:
+                            break;
                     }
                 }
 
@@ -312,7 +336,7 @@ public class MapRenderer {
                     //new FarmLayerRenderer(mVillagePositions).performRendering(mRenderSettings, g2d);
                     renderLiveLayer(g2d);
                 } catch (Exception e) {
-                    logger.warn("Failed to render live layer");
+                    logger.warn("Failed to render live layer", e);
                 }
                 //render selection
                 de.tor.tribes.types.drawing.Rectangle selection = MapPanel.getSingleton().getSelectionRect();
@@ -599,39 +623,50 @@ public class MapRenderer {
         }
         // </editor-fold>
 
-        // <editor-fold defaultstate="collapsed" desc="Draw live church">
-        Church tmpChurch = new Church();
+        // <editor-fold defaultstate="collapsed" desc="Draw live church / Watchtower">
         if (mouseVillage != null && mVillagePositions != null) {
-            tmpChurch.setVillage(mouseVillage);
-            if (cursor == ImageManager.CURSOR_CHURCH_1) {
-                tmpChurch.setRange(2);
-            } else if (cursor == ImageManager.CURSOR_CHURCH_2) {
-                tmpChurch.setRange(6);
-            } else if (cursor == ImageManager.CURSOR_CHURCH_3) {
-                tmpChurch.setRange(8);
-            } else {
-                tmpChurch = null;
+            KnownVillage tmpVillage = new KnownVillage(mouseVillage);
+            switch (cursor) {
+                case ImageManager.CURSOR_CHURCH_1:
+                    tmpVillage.setChurchLevel(1);
+                    break;
+                case ImageManager.CURSOR_CHURCH_2:
+                    tmpVillage.setChurchLevel(2);
+                    break;
+                case ImageManager.CURSOR_CHURCH_3:
+                    tmpVillage.setChurchLevel(3);
+                    break;
+                default:
+                    tmpVillage.removeChurchInfo();
+                    break;
             }
-            if (tmpChurch != null) {
+            if (tmpVillage.hasChurch()) {
                 Rectangle r = mVillagePositions.get(mouseVillage);
-                if (r != null) {
-                    Composite cb = g2d.getComposite();
-                    Color cob = g2d.getColor();
-                    g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .3f));
-                    GeneralPath p = ChurchLayerRenderer.calculateChurchPath(tmpChurch, mouseVillage, r.width, r.height);
-                    g2d.setColor(Constants.DS_BACK_LIGHT);
-                    g2d.fill(p);
-                    g2d.setComposite(cb);
-                    g2d.setColor(Constants.DS_BACK);
-                    g2d.draw(p);
-                    g2d.setColor(cob);
+                if (r != null && ServerSettings.getSingleton().isChurch()) {
+                    mChurchLayer.renderTempChurch(g2d, tmpVillage, r);
+                }
+            }
+            
+            switch (cursor) {
+                case ImageManager.CURSOR_WATCHTOWER_1:
+                    tmpVillage.setWatchtowerLevel(1);
+                    break;
+                case ImageManager.CURSOR_WATCHTOWER_INPUT:
+                    tmpVillage.setWatchtowerLevel(10);
+                    break;
+                default:
+                    tmpVillage.removeWatchtowerInfo();
+                    break;
+            }
+            if (tmpVillage.hasWatchtower()) {
+                Rectangle r = mVillagePositions.get(mouseVillage);
+                if (r != null && ServerSettings.getSingleton().isWatchtower()) {
+                    mWatchtowerLayer.renderTempWatchtower(g2d, tmpVillage, r);
                 }
             }
         }
-
         // </editor-fold>
-
-
+        
         //draw additional info
         if (!mouseDown && mouseVillage != null && Boolean.parseBoolean(GlobalOptions.getProperty("show.mouseover.info"))) {
             Rectangle rect = mVillagePositions.get(mouseVillage);

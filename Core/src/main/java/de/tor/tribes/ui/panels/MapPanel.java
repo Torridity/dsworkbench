@@ -19,7 +19,6 @@ import de.tor.tribes.control.GenericManagerListener;
 import de.tor.tribes.dssim.ui.DSWorkbenchSimulatorFrame;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
-import de.tor.tribes.types.Church;
 import de.tor.tribes.types.FightReport;
 import de.tor.tribes.types.ext.Ally;
 import de.tor.tribes.types.ext.Barbarians;
@@ -37,7 +36,6 @@ import de.tor.tribes.ui.wiz.tap.TacticsPlanerWizard;
 import de.tor.tribes.util.*;
 import de.tor.tribes.util.attack.AttackManager;
 import de.tor.tribes.util.bb.VillageListFormatter;
-import de.tor.tribes.util.church.ChurchManager;
 import de.tor.tribes.util.interfaces.MapShotListener;
 import de.tor.tribes.util.interfaces.ToolChangeListener;
 import de.tor.tribes.util.mark.MarkerManager;
@@ -47,6 +45,7 @@ import de.tor.tribes.util.stat.StatManager;
 import de.tor.tribes.util.tag.TagManager;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
+import de.tor.tribes.util.village.KnownVillageManager;
 import org.apache.log4j.Logger;
 
 import javax.swing.*;
@@ -513,25 +512,56 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                     }
                     case ImageManager.CURSOR_CHURCH_1: {
                         if (v != null) {
-                            ChurchManager.getSingleton().addChurch(v, Church.RANGE1);
+                            KnownVillageManager.getSingleton().addChurchLevel(v, 1);
                         }
                         break;
                     }
                     case ImageManager.CURSOR_CHURCH_2: {
                         if (v != null) {
-                            ChurchManager.getSingleton().addChurch(v, Church.RANGE2);
+                            KnownVillageManager.getSingleton().addChurchLevel(v, 2);
                         }
                         break;
                     }
                     case ImageManager.CURSOR_CHURCH_3: {
                         if (v != null) {
-                            ChurchManager.getSingleton().addChurch(v, Church.RANGE3);
+                            KnownVillageManager.getSingleton().addChurchLevel(v, 3);
                         }
                         break;
                     }
                     case ImageManager.CURSOR_REMOVE_CHURCH: {
                         if (v != null) {
-                            ChurchManager.getSingleton().removeChurch(v);
+                            KnownVillageManager.getSingleton().removeChurch(v);
+                        }
+                        break;
+                    }
+                    case ImageManager.CURSOR_WATCHTOWER_1: {
+                        if (v != null) {
+                            KnownVillageManager.getSingleton().addWatchtowerLevel(v, 1);
+                        }
+                        break;
+                    }
+                    case ImageManager.CURSOR_WATCHTOWER_INPUT: {
+                        if (v != null) {
+                            int level = -1;
+                            String input = "";
+                            while (level < 0 && input != null) {
+                                input = JOptionPane.showInputDialog(null, "Welcher Level?");
+                                
+                                if(input != null) {
+                                    try {
+                                        level = Integer.parseInt(input);
+                                    } catch (NumberFormatException ignored) {};
+                                }
+                            }
+                            
+                            if(level > 0)
+                                KnownVillageManager.getSingleton().addWatchtowerLevel(v, level);
+                        }
+                        break;
+                    }
+                    case ImageManager.CURSOR_REMOVE_WATCHTOWER: {
+                        if (v != null) {
+                            KnownVillageManager.getSingleton().removeWatchtower(v);
                         }
                         break;
                     }

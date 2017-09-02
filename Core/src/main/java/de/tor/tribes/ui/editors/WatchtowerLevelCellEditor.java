@@ -25,18 +25,19 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
+import org.apache.log4j.Logger;
 
 /**
- *
  * @author Charon
+ * @author extremeCrazyCoder
  */
-public class ChurchLevelCellEditor extends AbstractCellEditor implements TableCellEditor {
+public class WatchtowerLevelCellEditor extends AbstractCellEditor implements TableCellEditor {
 
     private JComboBox mEditor = new JComboBox();
 
-    public ChurchLevelCellEditor() {
+    public WatchtowerLevelCellEditor() {
         DefaultComboBoxModel model = new DefaultComboBoxModel();
-        for(int i = 1; i <= KnownVillage.getMaxBuildingLevel("church"); i++)
+        for(int i = 1; i <= KnownVillage.getMaxBuildingLevel("watchtower"); i++)
             model.addElement(i);
         mEditor.setModel(model);
         mEditor.addItemListener(new ItemListener() {

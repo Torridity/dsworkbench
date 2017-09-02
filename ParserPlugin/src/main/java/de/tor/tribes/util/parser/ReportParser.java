@@ -25,7 +25,7 @@ import de.tor.tribes.ui.windows.NotifierFrame;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ProfileManager;
 import de.tor.tribes.util.ServerSettings;
-import de.tor.tribes.util.church.ChurchManager;
+import de.tor.tribes.util.village.KnownVillageManager;
 import de.tor.tribes.util.SilentParserInterface;
 import de.tor.tribes.util.report.ReportManager;
 import java.awt.Toolkit;
@@ -40,6 +40,7 @@ import org.apache.log4j.Logger;
 
 /**
  * @author Torridity
+ * @author extremeCrazyCoder
  */
 public class ReportParser implements SilentParserInterface {
     //TODO rework this Code
@@ -344,7 +345,7 @@ public class ReportParser implements SilentParserInterface {
             if (searchChurch && line.contains(getVariable("report.buildings.first.church"))) {
                 logger.debug("Try adding first church");
                 try {
-                    ChurchManager.getSingleton().addChurch(result.getTargetVillage(), 6);
+                    KnownVillageManager.getSingleton().addChurchLevel(result.getTargetVillage(), 2);
                     continue;
                 } catch (Exception e) {
                     logger.debug("Failed to add first church");
@@ -357,16 +358,11 @@ public class ReportParser implements SilentParserInterface {
                 int val = parseIntFromReportTable(line, getVariable("report.buildings.curch"));
                 switch (val) {
                     case 1:
-                        ChurchManager.getSingleton().addChurch(result.getTargetVillage(), 4);
-                        logger.debug("Church level 1 added");
-                        continue;
                     case 2:
-                        ChurchManager.getSingleton().addChurch(result.getTargetVillage(), 6);
-                        logger.debug("Church level 2 added");
-                        continue;
                     case 3:
-                        ChurchManager.getSingleton().addChurch(result.getTargetVillage(), 8);
-                        logger.debug("Church level 3 added");
+                        //Save in report instead of Village Manager
+                        KnownVillageManager.getSingleton().addChurchLevel(result.getTargetVillage(), val);
+                        logger.debug("Church level 1 added");
                         continue;
                     default:
                         logger.debug("Failed to add curch");

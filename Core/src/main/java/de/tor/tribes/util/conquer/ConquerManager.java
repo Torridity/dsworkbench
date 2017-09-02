@@ -29,7 +29,7 @@ import de.tor.tribes.ui.panels.MapPanel;
 import de.tor.tribes.ui.renderer.map.MapRenderer;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ServerSettings;
-import de.tor.tribes.util.church.ChurchManager;
+import de.tor.tribes.util.village.KnownVillageManager;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
 import de.tor.tribes.util.xml.JaxenUtils;
@@ -314,7 +314,7 @@ public class ConquerManager extends GenericManager<Conquer> {
 
                         try {
                             //removing church
-                            ChurchManager.getSingleton().removeChurch(v);
+                            KnownVillageManager.getSingleton().removeChurch(v);
                         } catch (Exception ignored) {
                         }
 

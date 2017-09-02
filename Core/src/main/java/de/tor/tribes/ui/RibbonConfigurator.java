@@ -48,7 +48,6 @@ import org.pushingpixels.flamingo.api.common.popup.JCommandPopupMenu;
 import org.pushingpixels.flamingo.api.common.popup.JPopupPanel;
 import org.pushingpixels.flamingo.api.common.popup.PopupPanelCallback;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonBand;
-import org.pushingpixels.flamingo.api.ribbon.JRibbonComponent;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonFrame;
 import org.pushingpixels.flamingo.api.ribbon.RibbonApplicationMenu;
 import org.pushingpixels.flamingo.api.ribbon.RibbonApplicationMenuEntryFooter;
@@ -60,6 +59,7 @@ import org.pushingpixels.flamingo.api.ribbon.resize.IconRibbonBandResizePolicy;
 
 /**
  * @author Torridity
+ * @author extremeCrazyCoder
  */
 public class RibbonConfigurator {
 
@@ -639,23 +639,76 @@ public class RibbonConfigurator {
             }
         });
 
-        JCommandButtonPanel cbp = new JCommandButtonPanel(CommandButtonDisplayState.FIT_TO_ICON);
-        cbp.setLayoutKind(JCommandButtonPanel.LayoutKind.ROW_FILL);
-        cbp.addButtonGroup("Stufe");
-        cbp.addButtonToLastGroup(createChurch1ToolButton);
-        cbp.addButtonToLastGroup(createChurch2ToolButton);
-        cbp.addButtonToLastGroup(createChurch3ToolButton);
-        cbp.addButtonToLastGroup(removeChurchToolButton);
-        final JCommandPopupMenu popupMenu = new JCommandPopupMenu(
-                cbp, 1, 4);
+        JCommandButtonPanel cbpChurch = new JCommandButtonPanel(CommandButtonDisplayState.FIT_TO_ICON);
+        cbpChurch.setLayoutKind(JCommandButtonPanel.LayoutKind.ROW_FILL);
+        cbpChurch.addButtonGroup("Stufe");
+        cbpChurch.addButtonToLastGroup(createChurch1ToolButton);
+        cbpChurch.addButtonToLastGroup(createChurch2ToolButton);
+        cbpChurch.addButtonToLastGroup(createChurch3ToolButton);
+        cbpChurch.addButtonToLastGroup(removeChurchToolButton);
+        final JCommandPopupMenu popupMenuChurch = new JCommandPopupMenu(
+                cbpChurch, 1, 4);
 
         createChurchToolButton.setPopupCallback(new PopupPanelCallback() {
             @Override
             public JPopupPanel getPopupPanel(JCommandButton commandButton) {
-                return popupMenu;
+                return popupMenuChurch;
             }
         });
         createChurchToolButton.setCommandButtonKind(JCommandButton.CommandButtonKind.POPUP_ONLY);
+        // </editor-fold>
+        // <editor-fold defaultstate="collapsed" desc="watchtower button setup">
+        JCommandButton createWatchtowerToolButton = factoryButton(null, "graphics/big/Watchtower1.png", "Wachturm in einem Dorf auf der Hauptkarte erstellen", "Dieses Werkzeug ist nur auf Wachturmwelten aktiv", true);
+        JCommandButton createWatchtower1ToolButton = factoryButton(null, "graphics/big/Watchtower1.png", "Wachturm Stufe 1 erstellen", "Mit gewähltem Werkzeug auf ein Dorf der Hauptkarte klicken, um einen Wachturm Stufe 1 im Dorf zu platzieren", true);
+        createWatchtower1ToolButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (ServerSettings.getSingleton().isWatchtower()) {
+                    MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_WATCHTOWER_1);
+                } else {
+                    DSWorkbenchMainFrame.getSingleton().showInfo("Dieses Werkzeug ist nur auf Wachturmwelten verfügbar");
+                }
+            }
+        });
+        JCommandButton createWatchtowerInToolButton = factoryButton(null, "graphics/big/WatchtowerIn.png", "Wachturm erstellen", "Mit gewähltem Werkzeug auf ein Dorf der Hauptkarte klicken, um einen Wachturm im Dorf zu platzieren. Die Stufe wird über ein Eingabefeld festgelegt", true);
+        createWatchtowerInToolButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (ServerSettings.getSingleton().isWatchtower()) {
+                    MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_WATCHTOWER_INPUT);
+                } else {
+                    DSWorkbenchMainFrame.getSingleton().showInfo("Dieses Werkzeug ist nur auf Wachturmwelten verfügbar");
+                }
+            }
+        });
+        JCommandButton removeWatchtowerToolButton = factoryButton(null, "graphics/big/NoWatchtower.png", "Wachturm löschen", "Mit gewähltem Werkzeug auf ein Dorf der Hauptkarte klicken, um den dortigen Wachturm zu löschen", true);
+        removeWatchtowerToolButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (ServerSettings.getSingleton().isWatchtower()) {
+                    MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_REMOVE_WATCHTOWER);
+                } else {
+                    DSWorkbenchMainFrame.getSingleton().showInfo("Dieses Werkzeug ist nur auf Wachturmwelten verfügbar");
+                }
+            }
+        });
+
+        JCommandButtonPanel wbp = new JCommandButtonPanel(CommandButtonDisplayState.FIT_TO_ICON);
+        wbp.setLayoutKind(JCommandButtonPanel.LayoutKind.ROW_FILL);
+        wbp.addButtonGroup("Stufe");
+        wbp.addButtonToLastGroup(createWatchtower1ToolButton);
+        wbp.addButtonToLastGroup(createWatchtowerInToolButton);
+        wbp.addButtonToLastGroup(removeWatchtowerToolButton);
+        final JCommandPopupMenu watchtoerPopupMenu = new JCommandPopupMenu(
+                wbp, 1, 3);
+
+        createWatchtowerToolButton.setPopupCallback(new PopupPanelCallback() {
+            @Override
+            public JPopupPanel getPopupPanel(JCommandButton commandButton) {
+                return watchtoerPopupMenu;
+            }
+        });
+        createWatchtowerToolButton.setCommandButtonKind(JCommandButton.CommandButtonKind.POPUP_ONLY);
         // </editor-fold>
         
         infoToolBand.addCommandButton(selectToolButton, RibbonElementPriority.TOP);
@@ -665,6 +718,7 @@ public class RibbonConfigurator {
         infoToolBand.addCommandButton(radarToolButton, RibbonElementPriority.MEDIUM);
         infoToolBand.addCommandButton(tagToolButton, RibbonElementPriority.LOW);
         infoToolBand.addCommandButton(createChurchToolButton, RibbonElementPriority.LOW);
+        infoToolBand.addCommandButton(createWatchtowerToolButton, RibbonElementPriority.LOW);
 
         // </editor-fold>
         // <editor-fold defaultstate="collapsed" desc="drawToolsBand setup">
@@ -883,11 +937,28 @@ public class RibbonConfigurator {
                 }
             }
         });
+        JCommandButton watchtowerViewButton = factoryButton("Wachtürme", "graphics/big/Watchtower1.png", "Öffnet die Wachturmübersicht", "Die Wachturmübersicht zeigt alle in DS Workbench eingetragenen Wachtürme an. Diese Ansicht ist nur auf Wachturmwelten verfügbar.", true);
+        watchtowerViewButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (ServerSettings.getSingleton().isWatchtower()) {
+                    SwingUtilities.invokeLater(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            DSWorkbenchWatchtowerFrame.getSingleton().setVisible(true);
+                            DSWorkbenchWatchtowerFrame.getSingleton().requestFocus();
+                        }
+                    });
+                }
+            }
+        });
         //   attackViewBand.startGroup();
         attackViewBand.addCommandButton(attackViewButton, RibbonElementPriority.TOP);
         attackViewBand.addCommandButton(markerViewButton, RibbonElementPriority.MEDIUM);
         attackViewBand.addCommandButton(formsViewButton, RibbonElementPriority.MEDIUM);
-        attackViewBand.addCommandButton(churchViewButton, RibbonElementPriority.LOW);
+        attackViewBand.addCommandButton(churchViewButton, RibbonElementPriority.MEDIUM);
+        attackViewBand.addCommandButton(watchtowerViewButton, RibbonElementPriority.MEDIUM);
         // </editor-fold>
         // <editor-fold defaultstate="collapsed" desc="ingameInfoViewBand setup">
         JCommandButton tagsViewButton = factoryButton("Gruppen", "graphics/icons/tag.png", "Öffnet die Gruppenübersicht", "Die Gruppenübersicht erlaubt es, vorher aus dem Spiel importierte Gruppen zu verwalten und zu neuen Gruppen zu kombinieren. Weitere Informationen findest du in der Hilfe (F1) im Abschnitt 'Import von Spielinformationen'.", true);

@@ -47,7 +47,7 @@ import de.tor.tribes.ui.wiz.tap.TacticsPlanerWizard;
 import de.tor.tribes.util.*;
 import de.tor.tribes.util.interfaces.MapShotListener;
 import de.tor.tribes.util.attack.AttackManager;
-import de.tor.tribes.util.church.ChurchManager;
+import de.tor.tribes.util.village.KnownVillageManager;
 import de.tor.tribes.util.conquer.ConquerManager;
 import de.tor.tribes.util.dist.DistanceManager;
 import de.tor.tribes.util.dsreal.DSRealManager;
@@ -86,6 +86,7 @@ import org.pushingpixels.flamingo.api.ribbon.JRibbonFrame;
  * @TODO add some simple runtime and retime calculator to replace excel
  *
  * @author Charon
+ * @author extremeCrazyCoder
  */
 public class DSWorkbenchMainFrame extends JRibbonFrame implements
         MapPanelListener,
@@ -392,6 +393,8 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
     jIncludeSupport.setSelected(GlobalOptions.getProperties().getBoolean("include.support"));
     jHighlightTribeVillages.setSelected(GlobalOptions.getProperties().getBoolean("highlight.tribes.villages"));
     jShowRuler.setSelected(GlobalOptions.getProperties().getBoolean("show.ruler"));
+    jDisplayChurch.setSelected(GlobalOptions.getProperties().getBoolean("show.church"));
+    jDisplayWatchtower.setSelected(GlobalOptions.getProperties().getBoolean("show.watchtower"));
     int r = GlobalOptions.getProperties().getInt("radar.size");
     int hour = r / 60;
       jHourField.setText(Integer.toString(hour));
@@ -496,6 +499,8 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
       DSWorkbenchMarkerFrame.getSingleton().restoreProperties();
       DSWorkbenchChurchFrame.getSingleton().resetView();
       DSWorkbenchChurchFrame.getSingleton().restoreProperties();
+      DSWorkbenchWatchtowerFrame.getSingleton().resetView();
+      DSWorkbenchWatchtowerFrame.getSingleton().restoreProperties();
       DSWorkbenchAttackFrame.getSingleton().resetView();
       DSWorkbenchAttackFrame.getSingleton().restoreProperties();
       DSWorkbenchAttackFrame.getSingleton().updateCountdownSettings();
@@ -624,6 +629,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
     DSWorkbenchAttackFrame.getSingleton().addFrameListener(this);
     DSWorkbenchMarkerFrame.getSingleton().addFrameListener(this);
     DSWorkbenchChurchFrame.getSingleton().addFrameListener(this);
+    DSWorkbenchWatchtowerFrame.getSingleton().addFrameListener(this);
     DSWorkbenchConquersFrame.getSingleton().addFrameListener(this);
     DSWorkbenchNotepad.getSingleton().addFrameListener(this);
     DSWorkbenchTagFrame.getSingleton().addFrameListener(this);
@@ -843,7 +849,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         jPanel5 = new javax.swing.JPanel();
         jExportTags = new javax.swing.JCheckBox();
         jExportForms = new javax.swing.JCheckBox();
-        jExportChurches = new javax.swing.JCheckBox();
+        jExportVillageInformation = new javax.swing.JCheckBox();
         jAddROIDialog = new javax.swing.JDialog();
         jLabel7 = new javax.swing.JLabel();
         jROIRegion = new javax.swing.JTextField();
@@ -886,6 +892,8 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         jShowMouseOverInfo = new javax.swing.JCheckBox();
         jIncludeSupport = new javax.swing.JCheckBox();
         jLabel3 = new javax.swing.JLabel();
+        jDisplayWatchtower = new javax.swing.JCheckBox();
+        jDisplayChurch = new javax.swing.JCheckBox();
         jROIPanel = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
         jROIBox = new javax.swing.JComboBox();
@@ -1105,7 +1113,8 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
 
         jExportForms.setText("Zeichnungen exportieren");
 
-        jExportChurches.setText("Kirchen exportieren");
+        jExportVillageInformation.setText("Dorfinfos exportieren");
+        jExportVillageInformation.setToolTipText("Enthält Gebäudeinfos (z.B. Kichrche, Wachturm)");
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
@@ -1114,9 +1123,9 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jExportForms, javax.swing.GroupLayout.DEFAULT_SIZE, 172, Short.MAX_VALUE)
-                    .addComponent(jExportTags, javax.swing.GroupLayout.DEFAULT_SIZE, 172, Short.MAX_VALUE)
-                    .addComponent(jExportChurches, javax.swing.GroupLayout.DEFAULT_SIZE, 172, Short.MAX_VALUE))
+                    .addComponent(jExportForms, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jExportTags, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jExportVillageInformation, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel5Layout.setVerticalGroup(
@@ -1127,8 +1136,8 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jExportForms)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jExportChurches)
-                .addContainerGap(18, Short.MAX_VALUE))
+                .addComponent(jExportVillageInformation)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -1486,7 +1495,6 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         jShowMapPopup.setText("Kartenpopup anzeigen");
         jShowMapPopup.setToolTipText("Zeigt Informationen über das Dorf unter dem Mauszeiger an");
         jShowMapPopup.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jShowMapPopup.setOpaque(false);
         jShowMapPopup.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 fireShowMapPopupChangedEvent(evt);
@@ -1520,7 +1528,6 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         jMapPanel.add(jLabel12, gridBagConstraints);
 
         jGraphicPacks.setMaximumSize(new java.awt.Dimension(28, 20));
-        jGraphicPacks.setMinimumSize(new java.awt.Dimension(28, 20));
         jGraphicPacks.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 fireGraphicPackChangedEvent(evt);
@@ -1538,7 +1545,6 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         jHighlightTribeVillages.setText("Spielerdörfer hervorheben");
         jHighlightTribeVillages.setToolTipText("Markiert im Kartenausschnitt alle Dörfer des Spielers, dessen Dorf unter dem Mauszeiger liegt");
         jHighlightTribeVillages.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jHighlightTribeVillages.setOpaque(false);
         jHighlightTribeVillages.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 fireHighlightTribeVillagesChangedEvent(evt);
@@ -1556,7 +1562,6 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         jShowRuler.setText("Lineal anzeigen");
         jShowRuler.setToolTipText("Zeichnet ein Koordinatenlineal am Kartenrand");
         jShowRuler.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jShowRuler.setOpaque(false);
         jShowRuler.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 fireShowRulerChangedEvent(evt);
@@ -1630,7 +1635,6 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         jShowMouseOverInfo.setText("MouseOver Infos anzeigen");
         jShowMouseOverInfo.setToolTipText("Zeigt Informationen über das Dorf unter dem Mauszeiger an");
         jShowMouseOverInfo.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jShowMouseOverInfo.setOpaque(false);
         jShowMouseOverInfo.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 fireShowMouseOverInfoEvent(evt);
@@ -1647,7 +1651,6 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
 
         jIncludeSupport.setText("Unterstützungen einbeziehen");
         jIncludeSupport.setToolTipText(" Unterstützungen bei den MouseOver Infos und bei der Anzeige der Truppendichte mit einbeziehen");
-        jIncludeSupport.setOpaque(false);
         jIncludeSupport.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 fireShowHideSupportsEvent(evt);
@@ -1663,11 +1666,46 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         jMapPanel.add(jIncludeSupport, gridBagConstraints);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 7;
+        gridBagConstraints.gridy = 9;
         gridBagConstraints.gridwidth = 5;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weighty = 1.0;
         jMapPanel.add(jLabel3, gridBagConstraints);
+
+        jDisplayWatchtower.setText("Wachturmradien Zeichnen");
+        jDisplayWatchtower.setToolTipText("Wachturmradien Zeichnen");
+        jDisplayWatchtower.setActionCommand("");
+        jDisplayWatchtower.setAutoscrolls(true);
+        jDisplayWatchtower.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                fireDisplayWatchtower(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 8;
+        gridBagConstraints.gridwidth = 5;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jMapPanel.add(jDisplayWatchtower, gridBagConstraints);
+
+        jDisplayChurch.setText("Kirchenradien Zeichnen");
+        jDisplayChurch.setToolTipText("Kirchenradien Zeichnen");
+        jDisplayChurch.setActionCommand("Kirchenradien zeichnen");
+        jDisplayChurch.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                fireDisplayChurch(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 7;
+        gridBagConstraints.gridwidth = 5;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jMapPanel.add(jDisplayChurch, gridBagConstraints);
 
         jROIPanel.setBackground(new java.awt.Color(239, 235, 223));
         jROIPanel.setMaximumSize(new java.awt.Dimension(293, 70));
@@ -1744,12 +1782,12 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
 
         jCurrentPlayerVillages.setToolTipText("Aktives Dorf als Ausgangspunkt für InGame Aktionen");
         jCurrentPlayerVillages.addPopupMenuListener(new javax.swing.event.PopupMenuListener() {
-            public void popupMenuCanceled(javax.swing.event.PopupMenuEvent evt) {
+            public void popupMenuWillBecomeVisible(javax.swing.event.PopupMenuEvent evt) {
             }
             public void popupMenuWillBecomeInvisible(javax.swing.event.PopupMenuEvent evt) {
                 fireCurrentPlayerVillagePopupEvent(evt);
             }
-            public void popupMenuWillBecomeVisible(javax.swing.event.PopupMenuEvent evt) {
+            public void popupMenuCanceled(javax.swing.event.PopupMenuEvent evt) {
             }
         });
 
@@ -1849,14 +1887,14 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("DS Workbench 0.92b");
         setBackground(new java.awt.Color(225, 213, 190));
-        addWindowListener(new java.awt.event.WindowAdapter() {
-            public void windowClosing(java.awt.event.WindowEvent evt) {
-                fireDSWorkbenchClosingEvent(evt);
-            }
-        });
         addComponentListener(new java.awt.event.ComponentAdapter() {
             public void componentResized(java.awt.event.ComponentEvent evt) {
                 fireFrameResizedEvent(evt);
+            }
+        });
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                fireDSWorkbenchClosingEvent(evt);
             }
         });
 
@@ -1914,7 +1952,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
                 .addComponent(jMinimapPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jSettingsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 405, Short.MAX_VALUE))
+                .addComponent(jSettingsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 406, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
                 .addComponent(jMapPanelHolder, javax.swing.GroupLayout.DEFAULT_SIZE, 689, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -2212,7 +2250,7 @@ private void fireExportEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_f
     needExport |= !troopSetsToExport.isEmpty();
     needExport |= jExportForms.isSelected();
     needExport |= !noteSetsToExport.isEmpty();
-    needExport |= jExportChurches.isSelected();
+    needExport |= jExportVillageInformation.isSelected();
 
     if (!needExport) {
       JOptionPaneHelper.showWarningBox(jExportDialog, "Keine Daten für den Export gewählt", "Export");
@@ -2288,8 +2326,8 @@ private void fireExportEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_f
           exportString += NoteManager.getSingleton().getExportData(noteSetsToExport);
         }
 
-        if (jExportChurches.isSelected()) {
-          exportString += ChurchManager.getSingleton().getExportData(null);
+        if (jExportVillageInformation.isSelected()) {
+          exportString += KnownVillageManager.getSingleton().getExportData(null);
         }
 
         exportString += "</export>";
@@ -2470,6 +2508,14 @@ private void fireChangeClipboardWatchEvent(java.awt.event.MouseEvent evt) {//GEN
       MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.TROOP_LAYER);
     }//GEN-LAST:event_fireShowHideSupportsEvent
 
+    private void fireDisplayChurch(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fireDisplayChurch
+        GlobalOptions.addProperty("show.church", Boolean.toString(jDisplayChurch.isSelected()));
+    }//GEN-LAST:event_fireDisplayChurch
+
+    private void fireDisplayWatchtower(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fireDisplayWatchtower
+        GlobalOptions.addProperty("show.watchtower", Boolean.toString(jDisplayWatchtower.isSelected()));
+    }//GEN-LAST:event_fireDisplayWatchtower
+
   public void doExit() {
     fireDSWorkbenchClosingEvent(null);
   }
@@ -2608,12 +2654,12 @@ private void fireChangeClipboardWatchEvent(java.awt.event.MouseEvent evt) {//GEN
     boolean troopsImported = TroopsManager.getSingleton().importData(pSource, null);
     boolean formsImported = FormManager.getSingleton().importData(pSource, pExtension);
     boolean notesImported = NoteManager.getSingleton().importData(pSource, pExtension);
+    boolean villagesImported = KnownVillageManager.getSingleton().importData(pSource, pExtension);
 
     String message = "Import beendet.\n";
     if (!attackImported) {
       message += "  * Fehler beim Import der Angriffe\n";
     }
-
     if (!markersImported) {
       message += "  * Fehler beim Import der Markierungen\n";
     }
@@ -2623,7 +2669,6 @@ private void fireChangeClipboardWatchEvent(java.awt.event.MouseEvent evt) {//GEN
     if (!tagImported) {
       message += "  * Fehler beim Import der Tags\n";
     }
-
     if (!troopsImported) {
       message += "  * Fehler beim Import der Truppen\n";
     }
@@ -2633,6 +2678,9 @@ private void fireChangeClipboardWatchEvent(java.awt.event.MouseEvent evt) {//GEN
     }
     if (!notesImported) {
       message += "  * Fehler beim Import der Notizen\n";
+    }
+    if (!villagesImported) {
+      message += "  * Fehler beim Import der Dorfinfos\n";
     }
     return message;
   }
@@ -2929,12 +2977,14 @@ private void fireChangeClipboardWatchEvent(java.awt.event.MouseEvent evt) {//GEN
     private javax.swing.JComboBox jCurrentPlayerVillages;
     private javax.swing.JLabel jCurrentToolLabel;
     private javax.swing.JPanel jCustomPanel;
+    private javax.swing.JCheckBox jDisplayChurch;
+    private javax.swing.JCheckBox jDisplayWatchtower;
     private javax.swing.JButton jEnableClipboardWatchButton;
     private javax.swing.JButton jExportButton;
-    private javax.swing.JCheckBox jExportChurches;
     private javax.swing.JDialog jExportDialog;
     private javax.swing.JCheckBox jExportForms;
     private javax.swing.JCheckBox jExportTags;
+    private javax.swing.JCheckBox jExportVillageInformation;
     private javax.swing.JComboBox jGraphicPacks;
     private javax.swing.JCheckBox jHighlightTribeVillages;
     private javax.swing.JTextField jHourField;
@@ -3045,7 +3095,7 @@ class BackupTask extends TimerTask {
       logger.debug(" - Backing up notes");
       exportString += NoteManager.getSingleton().getExportData(Arrays.asList(NoteManager.getSingleton().getGroups()));
       logger.debug(" - Backing up churches");
-      exportString += ChurchManager.getSingleton().getExportData(null);
+      exportString += KnownVillageManager.getSingleton().getExportData(null);
       logger.debug(" - Backing up farms");
       exportString += FarmManager.getSingleton().getExportData(null);
       exportString += "</export>";

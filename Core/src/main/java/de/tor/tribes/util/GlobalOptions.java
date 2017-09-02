@@ -23,7 +23,7 @@ import de.tor.tribes.types.test.DummyUserProfile;
 import de.tor.tribes.ui.views.*;
 import de.tor.tribes.util.attack.AttackManager;
 import de.tor.tribes.util.attack.StandardAttackManager;
-import de.tor.tribes.util.church.ChurchManager;
+import de.tor.tribes.util.village.KnownVillageManager;
 import de.tor.tribes.util.conquer.ConquerManager;
 import de.tor.tribes.util.farm.FarmManager;
 import de.tor.tribes.util.map.FormManager;
@@ -246,6 +246,7 @@ public class GlobalOptions {
         logger.debug("Saving view state");
         DSWorkbenchAttackFrame.getSingleton().storeProperties();
         DSWorkbenchChurchFrame.getSingleton().storeProperties();
+        DSWorkbenchWatchtowerFrame.getSingleton().storeProperties();
         DSWorkbenchDistanceFrame.getSingleton().storeProperties();
         DSWorkbenchDoItYourselfAttackPlaner.getSingleton().storeProperties();
         DSWorkbenchMarkerFrame.getSingleton().storeProperties();
@@ -327,9 +328,9 @@ public class GlobalOptions {
             logger.debug("Loading forms");
             fireDataHolderEvent("Lade Zeichnungen");
             FormManager.getSingleton().loadElements(mSelectedProfile.getProfileDirectory() + "/forms.xml");
-            logger.debug("Loading churches");
-            fireDataHolderEvent("Lade Kirchen");
-            ChurchManager.getSingleton().loadElements(mSelectedProfile.getProfileDirectory() + "/churches.xml");
+            logger.debug("Loading KnownVillages");
+            fireDataHolderEvent("Lade Bekannte Dörfer");
+            KnownVillageManager.getSingleton().loadElements(mSelectedProfile.getProfileDirectory() + "/villages.xml");
             logger.debug("Loading rois");
             fireDataHolderEvent("Lade ROIs");
             ROIManager.getSingleton().loadROIsFromFile(mSelectedProfile.getProfileDirectory() + "/rois.xml");
@@ -379,7 +380,7 @@ public class GlobalOptions {
             logger.debug("Saving forms");
             FormManager.getSingleton().saveElements(mSelectedProfile.getProfileDirectory() + "/forms.xml");
             logger.debug("Saving churches");
-            ChurchManager.getSingleton().saveElements(mSelectedProfile.getProfileDirectory() + "/churches.xml");
+            KnownVillageManager.getSingleton().saveElements(mSelectedProfile.getProfileDirectory() + "/villages.xml");
             logger.debug("Saving rois");
             ROIManager.getSingleton().saveROIsToFile(mSelectedProfile.getProfileDirectory() + "/rois.xml");
             logger.debug("Saving conquers");

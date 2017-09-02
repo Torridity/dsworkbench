@@ -15,18 +15,19 @@
  */
 package de.tor.tribes.ui.renderer.map;
 
-import de.tor.tribes.types.Church;
 import de.tor.tribes.types.ext.Tribe;
-import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.panels.MapPanel;
+import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.algo.ChurchRangeCalculator;
-import de.tor.tribes.util.church.ChurchManager;
+import de.tor.tribes.util.village.KnownVillageManager;
+import de.tor.tribes.util.village.KnownVillage;
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.Stroke;
 import java.awt.geom.Area;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
@@ -52,16 +53,17 @@ public class ChurchLayerRenderer extends AbstractDirectLayerRenderer {
     private void renderRows(RenderSettings pSettings, Graphics2D pG2D) {
         //iterate through entire rows
         HashMap<Tribe, Area> churchAreas = new HashMap<>();
-        List<Village> churchVillages = ChurchManager.getSingleton().getChurchVillages();
+        List<KnownVillage> churchVillages = KnownVillageManager.getSingleton().getChurchVillages();
 
-        for (Village v : churchVillages) {
-            if (v != null && v.isVisibleOnMap()) {
+        for (KnownVillage v : churchVillages) {
+            if (v != null && v.getVillage().isVisibleOnMap()) {
                 processField(v, pSettings.getFieldWidth(), pSettings.getFieldHeight(), churchAreas);
             }
         }
 
         Color cb = pG2D.getColor();
         Composite com = pG2D.getComposite();
+        Stroke st = pG2D.getStroke();
         Set<Entry<Tribe, Area>> entries = churchAreas.entrySet();
 
         for (Entry<Tribe, Area> entry : entries) {
@@ -69,20 +71,35 @@ public class ChurchLayerRenderer extends AbstractDirectLayerRenderer {
             Area a = entry.getValue();
             pG2D.setColor(t.getMarkerColor());
             pG2D.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f));
-            pG2D.setStroke(new BasicStroke(13.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+            pG2D.setStroke(new BasicStroke(13.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND,
+                    0.0f, new float[] {3, 5}, 0.0f));
             pG2D.draw(a);
             pG2D.setComposite(com);
-            pG2D.setStroke(new BasicStroke(3.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+            pG2D.setStroke(new BasicStroke(3.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND,
+                    0.0f, new float[] {3, 5}, 0.0f));
             pG2D.draw(a);
         }
         pG2D.setComposite(com);
         pG2D.setColor(cb);
+        pG2D.setStroke(st);
     }
 
-    private void processField(Village v, int pFieldWidth, int pFieldHeight, HashMap<Tribe, Area> pChurchAreas) {
-        Church c = ChurchManager.getSingleton().getChurch(v);
-        GeneralPath p = calculateChurchPath(c, v, pFieldWidth, pFieldHeight);
-        Tribe t = v.getTribe();
+    void renderTempChurch(Graphics2D g2d, KnownVillage tmpVillage, Rectangle r) {
+        Composite cb = g2d.getComposite();
+        Color cob = g2d.getColor();
+        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .3f));
+        GeneralPath p = ChurchLayerRenderer.calculateChurchPath(tmpVillage, r.width, r.height);
+        g2d.setColor(Constants.DS_BACK_LIGHT);
+        g2d.fill(p);
+        g2d.setComposite(cb);
+        g2d.setColor(Constants.DS_BACK);
+        g2d.draw(p);
+        g2d.setColor(cob);
+    }
+
+    private void processField(KnownVillage v, int pFieldWidth, int pFieldHeight, HashMap<Tribe, Area> pChurchAreas) {
+        GeneralPath p = calculateChurchPath(v, pFieldWidth, pFieldHeight);
+        Tribe t = v.getVillage().getTribe();
         Area a = pChurchAreas.get(t);
         if (a == null) {
             a = new Area();
@@ -91,13 +108,15 @@ public class ChurchLayerRenderer extends AbstractDirectLayerRenderer {
         a.add(new Area(p));
     }
 
-    public static GeneralPath calculateChurchPath(Church c, Village v, int pFieldWidth, int pFieldHeight) {
-        int vx = MapPanel.getSingleton().virtualPosToSceenPos(v.getX(), v.getY()).x;
-        int vy = MapPanel.getSingleton().virtualPosToSceenPos(v.getX(), v.getY()).y;
+    public static GeneralPath calculateChurchPath(KnownVillage v, int pFieldWidth, int pFieldHeight) {
+        int villageX = v.getVillage().getX();
+        int villageY = v.getVillage().getY();
+        int vx = MapPanel.getSingleton().virtualPosToSceenPos(villageX, villageY).x;
+        int vy = MapPanel.getSingleton().virtualPosToSceenPos(villageX, villageY).y;
         Rectangle g = new Rectangle(vx, vy, (int) Math.rint(pFieldWidth), (int) Math.rint(pFieldHeight));
-        List<Point2D.Double> positions = ChurchRangeCalculator.getChurchRange(v.getX(), v.getY(), c.getRange());
+        List<Point2D.Double> positions = ChurchRangeCalculator.getChurchRange(villageX, villageY, v.getChurchRange());
         GeneralPath p = new GeneralPath();
-        p.moveTo(g.getX(), g.getY() - (c.getRange() - 1) * pFieldHeight);
+        p.moveTo(g.getX(), g.getY() - (v.getChurchRange() - 1) * pFieldHeight);
         int quad = 0;
         Point2D.Double lastPos = positions.get(0);
         for (Point2D.Double pos : positions) {
@@ -106,19 +125,19 @@ public class ChurchLayerRenderer extends AbstractDirectLayerRenderer {
                 p.lineTo(p.getCurrentPoint().getX(), p.getCurrentPoint().getY() - g.getHeight());
                 p.lineTo(p.getCurrentPoint().getX() + g.getWidth(), p.getCurrentPoint().getY());
                 quad = 1;
-            } else if (pos.getX() == v.getX() + c.getRange() && pos.getY() == v.getY()) {
+            } else if (pos.getX() == villageX + v.getChurchRange() && pos.getY() == villageY) {
                 //east village
                 p.lineTo(p.getCurrentPoint().getX(), p.getCurrentPoint().getY() + g.getHeight());
                 p.lineTo(p.getCurrentPoint().getX() + g.getWidth(), p.getCurrentPoint().getY());
                 p.lineTo(p.getCurrentPoint().getX(), p.getCurrentPoint().getY() + g.getHeight());
                 quad = 2;
-            } else if (pos.getX() == v.getX() && pos.getY() == v.getY() + c.getRange()) {
+            } else if (pos.getX() == villageX && pos.getY() == villageY + v.getChurchRange()) {
                 //south village
                 p.lineTo(p.getCurrentPoint().getX() - g.getWidth(), p.getCurrentPoint().getY());
                 p.lineTo(p.getCurrentPoint().getX(), p.getCurrentPoint().getY() + g.getHeight());
                 p.lineTo(p.getCurrentPoint().getX() - g.getWidth(), p.getCurrentPoint().getY());
                 quad = 3;
-            } else if (pos.getX() == v.getX() - c.getRange() && pos.getY() == v.getY()) {
+            } else if (pos.getX() == villageX - v.getChurchRange() && pos.getY() == villageY) {
                 //west village
                 p.lineTo(p.getCurrentPoint().getX(), p.getCurrentPoint().getY() - g.getHeight());
                 p.lineTo(p.getCurrentPoint().getX() - g.getWidth(), p.getCurrentPoint().getY());

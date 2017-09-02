@@ -20,7 +20,7 @@ import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.FightReport;
 import de.tor.tribes.types.UnknownUnit;
 import de.tor.tribes.types.ext.Village;
-import de.tor.tribes.util.church.ChurchManager;
+import de.tor.tribes.util.village.KnownVillageManager;
 import de.tor.tribes.util.report.ReportManager;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -405,13 +405,9 @@ public class OBSTReportHandler {
           int level = Integer.parseInt(m.group(1));
           switch (level) {
             case 1:
-              ChurchManager.getSingleton().addChurch(report.getTargetVillage(), 4);
-              break;
             case 2:
-              ChurchManager.getSingleton().addChurch(report.getTargetVillage(), 6);
-              break;
             case 3:
-              ChurchManager.getSingleton().addChurch(report.getTargetVillage(), 8);
+              KnownVillageManager.getSingleton().addChurchLevel(report.getTargetVillage(), level);
               break;
           }
         } catch (Exception e) {
@@ -424,7 +420,7 @@ public class OBSTReportHandler {
       //m = Pattern.compile("Erste Kirche\\s+\\(Stufe\\s+([0-9]+)\\)").matcher(data);
       m = Pattern.compile("Erste Kirche\\s+([0-9]+)").matcher(data);
       if (m.find()) {
-        ChurchManager.getSingleton().addChurch(report.getTargetVillage(), 6);
+        KnownVillageManager.getSingleton().addChurchLevel(report.getTargetVillage(), 2);
       }
 
       m = Pattern.compile("Schaden durch Rammböcke:\\s+Wall beschädigt von Level\\s+([0-9]+)\\s+auf Level\\s+([0-9]+)").matcher(data);

@@ -130,6 +130,8 @@ public class LayerOrderConfigurationFrame extends javax.swing.JFrame implements 
                 + " auf die Kirche aktiviert ist.<br/><br/>"
                 + "<img src='" + warnURL + "'/>&nbsp;Hat man sehr viele Kirchen eingetragen, so wird empfohlen, diese Ebene nur bei Bedarf einzublenden,"
                 + " da das Zusammenfassen vieler Kirchenradien sehr aufw&auml;ndig ist und so die Darstellungszeit der Karte stark beeinflusst wird.</html>");
+        tooltips.put("Wachturmradien", "<html><font font size='-1'><b>Wachturmradien</b><br/>Diese Ebene zeichnet Wachturmradien ein, die in der Wachturm&uuml;bersicht"
+                + " aufgef&uuml;hrt sind. Diese Ebene ist nur auf Welten von Bedeutung, auf der Wachtürme aktiviert sind.<br/><br/>");
     }
 
     /** This method is called from within the constructor to

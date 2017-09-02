@@ -117,6 +117,9 @@ public class GlobalDefaults {
         GLOBAL_DEFAULTS.addProperty("show.popup.ranks", true);
         GLOBAL_DEFAULTS.addProperty("show.sectors", true);
         GLOBAL_DEFAULTS.addProperty("show.ruler", true);
+        GLOBAL_DEFAULTS.addProperty("show.church", true);
+        GLOBAL_DEFAULTS.addProperty("show.watchtower", true);
+        GLOBAL_DEFAULTS.addProperty("show.ruler", true);
         GLOBAL_DEFAULTS.addProperty("sos.mark.all.duplicates.as.fake", "true");
         GLOBAL_DEFAULTS.addProperty("standard.defense.split", "heavy=0/spy=50/sword=500/archer=500/spear=500");
         GLOBAL_DEFAULTS.addProperty("standard.off", "catapult=50/light=3000/ram=300/axe=7000/marcher=500");
@@ -129,6 +132,7 @@ public class GlobalDefaults {
         GLOBAL_DEFAULTS.addProperty("tap.width", 0);
         GLOBAL_DEFAULTS.addProperty("text.attacks.per.file", "10");
         GLOBAL_DEFAULTS.addProperty("village.order", 0);
+        GLOBAL_DEFAULTS.addProperty("watchtower.frame.alwaysOnTop", false);
         GLOBAL_DEFAULTS.addProperty("zip.text.attacks", false);
         
         for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
@@ -144,7 +148,8 @@ public class GlobalDefaults {
                 "Angriffe;" +
                 "Unterstützungen;" +
                 "Zeichnungen;" +
-                "Kirchenradien");
+                "Kirchenradien;" +
+                "Wachturmradien");
       
         //Default templates
         GLOBAL_DEFAULTS.addProperty("attack.template.header", "<Standard>");

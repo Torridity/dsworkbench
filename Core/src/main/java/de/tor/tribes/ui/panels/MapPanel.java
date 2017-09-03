@@ -1395,12 +1395,16 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                 }
             }
             if (!GlobalOptions.isOfflineMode()) {
-                if (!DSWorkbenchSimulatorFrame.getSingleton().isVisible()) {
-                    DSWorkbenchSimulatorFrame.getSingleton().setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
-                    DSWorkbenchSimulatorFrame.getSingleton().showIntegratedVersion(DSWorkbenchSettingsDialog.getSingleton().getWebProxy(), GlobalOptions.getSelectedServer());
+                try {
+                    if (!DSWorkbenchSimulatorFrame.getSingleton().isVisible()) {
+                        DSWorkbenchSimulatorFrame.getSingleton().setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
+                        DSWorkbenchSimulatorFrame.getSingleton().showIntegratedVersion(DSWorkbenchSettingsDialog.getSingleton().getWebProxy(), GlobalOptions.getSelectedServer());
+                    }
+                    DSWorkbenchSimulatorFrame.getSingleton().toFront();
+                    DSWorkbenchSimulatorFrame.getSingleton().insertValuesExternally(values);
+                } catch(Exception e) {
+                    logger.warn("Problem during writing Troops to AStar", e);
                 }
-                DSWorkbenchSimulatorFrame.getSingleton().toFront();
-                DSWorkbenchSimulatorFrame.getSingleton().insertValuesExternally(values);
             } else {
                 JOptionPaneHelper.showInformationBox(this, "A*Star ist im Offline-Modus leider nicht verfügbar.", "Information");
             }

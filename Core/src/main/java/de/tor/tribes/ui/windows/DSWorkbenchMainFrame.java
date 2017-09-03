@@ -550,7 +550,11 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
       DSWorkbenchNotepad.getSingleton().restoreProperties();
 
       if (!GlobalOptions.isOfflineMode() && DSWorkbenchSimulatorFrame.getSingleton().isVisible()) {
-        DSWorkbenchSimulatorFrame.getSingleton().showIntegratedVersion(DSWorkbenchSettingsDialog.getSingleton().getWebProxy(), GlobalOptions.getSelectedServer());
+        try {
+          DSWorkbenchSimulatorFrame.getSingleton().showIntegratedVersion(DSWorkbenchSettingsDialog.getSingleton().getWebProxy(), GlobalOptions.getSelectedServer());
+        } catch(Exception e) {
+            logger.warn("Problem during writing Troops to AStar", e);
+        }
       }
       ConquerManager.getSingleton().revalidate(true);
       //relevant for first start

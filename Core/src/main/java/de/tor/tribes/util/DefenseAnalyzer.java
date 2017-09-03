@@ -35,12 +35,14 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Map.Entry;
 import java.util.Set;
+import org.apache.log4j.Logger;
 
 /**
  *
  * @author Torridity
  */
 public class DefenseAnalyzer extends Thread {
+    private static Logger logger = Logger.getLogger("DefenseAnalyzer");
 
     private Hashtable<de.tor.tribes.io.UnitHolder, Integer> standardOff = null;
     private Hashtable<de.tor.tribes.io.UnitHolder, Integer> standardDefSplit = null;
@@ -123,64 +125,68 @@ public class DefenseAnalyzer extends Thread {
                 DefenseInformation info = request.getDefenseInformation(target);
                 int attCount = targetInfo.getOffs();
                 boolean noAttack = (attCount == 0);
+                
+                try {
+                    if (reAnalyze || !info.isAnalyzed()) {//re-analyze info
+                        Hashtable<UnitHolder, AbstractUnitElement> off = dswbUnitsToSimulatorUnits(standardOff);
+                        Hashtable<UnitHolder, AbstractUnitElement> def = getDefense(targetInfo, info, info.getSupports().length);
 
-                if (reAnalyze || !info.isAnalyzed()) {//re-analyze info
-                    Hashtable<UnitHolder, AbstractUnitElement> off = dswbUnitsToSimulatorUnits(standardOff);
-                    Hashtable<UnitHolder, AbstractUnitElement> def = getDefense(targetInfo, info, info.getSupports().length);
-
-                    int pop = 0;
-                    Enumeration<UnitHolder> units = def.keys();
-                    while (units.hasMoreElements()) {
-                        UnitHolder h = units.nextElement();
-                        AbstractUnitElement elem = def.get(h);
-                        pop += elem.getCount() * DataHolder.getSingleton().getUnitByPlainName(h.getPlainName()).getPop();
-                    }
-
-                    NewSimulator sim = new NewSimulator();
-
-                    SimulatorResult result = sim.calculate(off, def, KnightItem.factoryKnightItem(KnightItem.ID_NO_ITEM), Arrays.asList(KnightItem.factoryKnightItem(KnightItem.ID_NO_ITEM)), false, 0, 100.0, 20, 0, 30, true, true, false, false, false);
-                    int cleanAfter = 0;
-                    for (int i = 1; i < attCount; i++) {
-                        if (result.isWin()) {
-                            cleanAfter = i + 1;
-                            break;
+                        int pop = 0;
+                        Enumeration<UnitHolder> units = def.keys();
+                        while (units.hasMoreElements()) {
+                            UnitHolder h = units.nextElement();
+                            AbstractUnitElement elem = def.get(h);
+                            pop += elem.getCount() * DataHolder.getSingleton().getUnitByPlainName(h.getPlainName()).getPop();
                         }
-                        result = sim.calculate(off, result.getSurvivingDef(), KnightItem.factoryKnightItem(KnightItem.ID_NO_ITEM), Arrays.asList(KnightItem.factoryKnightItem(KnightItem.ID_NO_ITEM)), false, 0, 100.0, result.getWallLevel(), 0, 30, true, true, false, false, false);
-                    }
 
+                        NewSimulator sim = new NewSimulator();
 
-                    double lossPercent = 0;
-                    if (!noAttack) {
-                        if (!result.isWin()) {
-                            double survive = 0;
-                            Enumeration<UnitHolder> keys = result.getSurvivingDef().keys();
-                            while (keys.hasMoreElements()) {
-                                UnitHolder key = keys.nextElement();
-                                int amount = result.getSurvivingDef().get(key).getCount();
-                                survive += (double) amount * key.getPop();
+                        SimulatorResult result = sim.calculate(off, def, KnightItem.factoryKnightItem(KnightItem.ID_NO_ITEM), Arrays.asList(KnightItem.factoryKnightItem(KnightItem.ID_NO_ITEM)), false, 0, 100.0, 20, 0, 30, true, true, false, false, false);
+                        int cleanAfter = 0;
+                        for (int i = 1; i < attCount; i++) {
+                            if (result.isWin()) {
+                                cleanAfter = i + 1;
+                                break;
                             }
-                            lossPercent = 100 - (100.0 * survive / (double) pop);
-                            if (Math.max(75.0, lossPercent) == lossPercent) {
-                                info.setDefenseStatus(DefenseInformation.DEFENSE_STATUS.DANGEROUS);
-                                info.setLossRation(lossPercent);
-                            } else if (Math.max(30.0, lossPercent) == 30.0) {
-                                info.setDefenseStatus(DefenseInformation.DEFENSE_STATUS.SAVE);
-                                info.setLossRation(lossPercent);
+                            result = sim.calculate(off, result.getSurvivingDef(), KnightItem.factoryKnightItem(KnightItem.ID_NO_ITEM), Arrays.asList(KnightItem.factoryKnightItem(KnightItem.ID_NO_ITEM)), false, 0, 100.0, result.getWallLevel(), 0, 30, true, true, false, false, false);
+                        }
+
+
+                        double lossPercent = 0;
+                        if (!noAttack) {
+                            if (!result.isWin()) {
+                                double survive = 0;
+                                Enumeration<UnitHolder> keys = result.getSurvivingDef().keys();
+                                while (keys.hasMoreElements()) {
+                                    UnitHolder key = keys.nextElement();
+                                    int amount = result.getSurvivingDef().get(key).getCount();
+                                    survive += (double) amount * key.getPop();
+                                }
+                                lossPercent = 100 - (100.0 * survive / (double) pop);
+                                if (Math.max(75.0, lossPercent) == lossPercent) {
+                                    info.setDefenseStatus(DefenseInformation.DEFENSE_STATUS.DANGEROUS);
+                                    info.setLossRation(lossPercent);
+                                } else if (Math.max(30.0, lossPercent) == 30.0) {
+                                    info.setDefenseStatus(DefenseInformation.DEFENSE_STATUS.SAVE);
+                                    info.setLossRation(lossPercent);
+                                } else {
+                                    info.setDefenseStatus(DefenseInformation.DEFENSE_STATUS.FINE);
+                                    info.setLossRation(lossPercent);
+                                }
                             } else {
-                                info.setDefenseStatus(DefenseInformation.DEFENSE_STATUS.FINE);
-                                info.setLossRation(lossPercent);
+                                info.setDefenseStatus(DefenseInformation.DEFENSE_STATUS.DANGEROUS);
+                                info.setLossRation(100.0);
+                                info.setCleanAfter(cleanAfter);
                             }
                         } else {
-                            info.setDefenseStatus(DefenseInformation.DEFENSE_STATUS.DANGEROUS);
-                            info.setLossRation(100.0);
-                            info.setCleanAfter(cleanAfter);
+                            info.setDefenseStatus(DefenseInformation.DEFENSE_STATUS.SAVE);
+                            info.setLossRation(0.0);
                         }
-                    } else {
-                        info.setDefenseStatus(DefenseInformation.DEFENSE_STATUS.SAVE);
-                        info.setLossRation(0.0);
+                        calculateNeededSupports(info, targetInfo);
+                        info.setAnalyzed(true);
                     }
-                    calculateNeededSupports(info, targetInfo);
-                    info.setAnalyzed(true);
+                } catch(Exception except) {
+                    logger.warn("Problems during simutlation", except);
                 }
             }
         }
@@ -208,65 +214,69 @@ public class DefenseAnalyzer extends Thread {
     }
 
     private void calculateNeededSupports(DefenseInformation pInfo, TargetInformation pTargetInfo) {
-        NewSimulator sim = new NewSimulator();
-        int attCount = pTargetInfo.getOffs();
-        //no atts for this target...don't know why...
-        if (attCount == 0) {
-            return;
-        }
-
-        int factor = pInfo.getSupports().length;
-        SimulatorResult result = null;
-        while (true) {
-            if (aborted) {
+        try {
+            NewSimulator sim = new NewSimulator();
+            int attCount = pTargetInfo.getOffs();
+            //no atts for this target...don't know why...
+            if (attCount == 0) {
                 return;
             }
-            Hashtable<UnitHolder, AbstractUnitElement> off = dswbUnitsToSimulatorUnits(standardOff);
-            Hashtable<UnitHolder, AbstractUnitElement> def = getDefense(pTargetInfo, pInfo, factor);
-            double troops = 0;
-            Set<Entry<UnitHolder, AbstractUnitElement>> entries = def.entrySet();
-            for (Entry<UnitHolder, AbstractUnitElement> entry : entries) {
-                UnitHolder unit = entry.getKey();
-                troops += unit.getPop() * entry.getValue().getCount();
-            }
 
-            result = sim.calculate(off, def, KnightItem.factoryKnightItem(KnightItem.ID_NO_ITEM), Arrays.asList(KnightItem.factoryKnightItem(KnightItem.ID_NO_ITEM)), false, 0, 100.0, pTargetInfo.getWallLevel(), 0, 30, true, true, false, false, false);
-            for (int i = 1; i < attCount; i++) {
-                if (result.isWin()) {
+            int factor = pInfo.getSupports().length;
+            SimulatorResult result = null;
+            while (true) {
+                if (aborted) {
+                    return;
+                }
+                Hashtable<UnitHolder, AbstractUnitElement> off = dswbUnitsToSimulatorUnits(standardOff);
+                Hashtable<UnitHolder, AbstractUnitElement> def = getDefense(pTargetInfo, pInfo, factor);
+                double troops = 0;
+                Set<Entry<UnitHolder, AbstractUnitElement>> entries = def.entrySet();
+                for (Entry<UnitHolder, AbstractUnitElement> entry : entries) {
+                    UnitHolder unit = entry.getKey();
+                    troops += unit.getPop() * entry.getValue().getCount();
+                }
+
+                result = sim.calculate(off, def, KnightItem.factoryKnightItem(KnightItem.ID_NO_ITEM), Arrays.asList(KnightItem.factoryKnightItem(KnightItem.ID_NO_ITEM)), false, 0, 100.0, pTargetInfo.getWallLevel(), 0, 30, true, true, false, false, false);
+                for (int i = 1; i < attCount; i++) {
+                    if (result.isWin()) {
+                        break;
+                    }
+                    result = sim.calculate(off, result.getSurvivingDef(), KnightItem.factoryKnightItem(KnightItem.ID_NO_ITEM), Arrays.asList(KnightItem.factoryKnightItem(KnightItem.ID_NO_ITEM)), false, 0, 100.0, result.getWallLevel(), 0, 30, true, true, false, false, false);
+                }
+
+                double survive = 0;
+                Enumeration<UnitHolder> keys = result.getSurvivingDef().keys();
+                while (keys.hasMoreElements()) {
+                    UnitHolder key = keys.nextElement();
+                    int amount = result.getSurvivingDef().get(key).getCount();
+                    survive += (double) amount * key.getPop();
+                }
+                double lossesPercent = 100 - (100.0 * survive / troops);
+                if (!result.isWin() && lossesPercent < maxLossRatio) {
+                    pInfo.setNeededSupports(factor);
+                    //  pInfo.setDefenseStatus(DefenseInformation.DEFENSE_STATUS.SAVE);
+                    pInfo.setLossRation(lossesPercent);
+                    break;
+                } else {
+                    factor++;
+                }
+                if (factor > maxRuns) {
+                    if (lossesPercent < 100) {
+                        pInfo.setNeededSupports(factor);
+                        //  pInfo.setDefenseStatus(DefenseInformation.DEFENSE_STATUS.FINE);
+                        pInfo.setLossRation(lossesPercent);
+                    } else {
+                        pInfo.setNeededSupports(factor);
+                        // pInfo.setDefenseStatus(DefenseInformation.DEFENSE_STATUS.DANGEROUS);
+                        pInfo.setLossRation(100.0);
+                    }
+                    //break due to max iterations
                     break;
                 }
-                result = sim.calculate(off, result.getSurvivingDef(), KnightItem.factoryKnightItem(KnightItem.ID_NO_ITEM), Arrays.asList(KnightItem.factoryKnightItem(KnightItem.ID_NO_ITEM)), false, 0, 100.0, result.getWallLevel(), 0, 30, true, true, false, false, false);
             }
-
-            double survive = 0;
-            Enumeration<UnitHolder> keys = result.getSurvivingDef().keys();
-            while (keys.hasMoreElements()) {
-                UnitHolder key = keys.nextElement();
-                int amount = result.getSurvivingDef().get(key).getCount();
-                survive += (double) amount * key.getPop();
-            }
-            double lossesPercent = 100 - (100.0 * survive / troops);
-            if (!result.isWin() && lossesPercent < maxLossRatio) {
-                pInfo.setNeededSupports(factor);
-                //  pInfo.setDefenseStatus(DefenseInformation.DEFENSE_STATUS.SAVE);
-                pInfo.setLossRation(lossesPercent);
-                break;
-            } else {
-                factor++;
-            }
-            if (factor > maxRuns) {
-                if (lossesPercent < 100) {
-                    pInfo.setNeededSupports(factor);
-                    //  pInfo.setDefenseStatus(DefenseInformation.DEFENSE_STATUS.FINE);
-                    pInfo.setLossRation(lossesPercent);
-                } else {
-                    pInfo.setNeededSupports(factor);
-                    // pInfo.setDefenseStatus(DefenseInformation.DEFENSE_STATUS.DANGEROUS);
-                    pInfo.setLossRation(100.0);
-                }
-                //break due to max iterations
-                break;
-            }
+        } catch(Exception e) {
+            logger.warn("Problems during simulation", e);
         }
     }
 }

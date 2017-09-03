@@ -37,6 +37,7 @@ import javax.imageio.ImageIO;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
+import org.apache.log4j.Logger;
 import org.pushingpixels.flamingo.api.common.CommandButtonDisplayState;
 import org.pushingpixels.flamingo.api.common.JCommandButton;
 import org.pushingpixels.flamingo.api.common.JCommandButtonPanel;
@@ -62,6 +63,7 @@ import org.pushingpixels.flamingo.api.ribbon.resize.IconRibbonBandResizePolicy;
  * @author extremeCrazyCoder
  */
 public class RibbonConfigurator {
+    private static Logger logger = Logger.getLogger("RibbonConfigurator");
 
     public static void addAppIcons(JRibbonFrame frame) {
         RibbonApplicationMenu appmen = new RibbonApplicationMenu();
@@ -278,12 +280,16 @@ public class RibbonConfigurator {
 
                     @Override
                     public void run() {
-                        if (!GlobalOptions.isOfflineMode()) {
-                            DSWorkbenchSimulatorFrame.getSingleton().setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
-                            DSWorkbenchSimulatorFrame.getSingleton().showIntegratedVersion(DSWorkbenchSettingsDialog.getSingleton().getWebProxy(), GlobalOptions.getSelectedServer());
-                            DSWorkbenchSimulatorFrame.getSingleton().requestFocus();
-                        } else {
-                            JOptionPaneHelper.showInformationBox(DSWorkbenchMainFrame.getSingleton(), "A*Star ist im Offline-Modus leider nicht verfügbar.", "Information");
+                        try {
+                            if (!GlobalOptions.isOfflineMode()) {
+                                DSWorkbenchSimulatorFrame.getSingleton().setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
+                                DSWorkbenchSimulatorFrame.getSingleton().showIntegratedVersion(DSWorkbenchSettingsDialog.getSingleton().getWebProxy(), GlobalOptions.getSelectedServer());
+                                DSWorkbenchSimulatorFrame.getSingleton().requestFocus();
+                            } else {
+                                JOptionPaneHelper.showInformationBox(DSWorkbenchMainFrame.getSingleton(), "A*Star ist im Offline-Modus leider nicht verfügbar.", "Information");
+                            }
+                        } catch(Exception e) {
+                            logger.warn("Error while showing Simulator", e);
                         }
                     }
                 });

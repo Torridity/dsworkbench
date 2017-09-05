@@ -45,6 +45,7 @@ import de.tor.tribes.ui.views.*;
 import de.tor.tribes.ui.wiz.red.ResourceDistributorWizard;
 import de.tor.tribes.ui.wiz.tap.TacticsPlanerWizard;
 import de.tor.tribes.util.*;
+import de.tor.tribes.util.ServerSettings.ServerSettingsListener;
 import de.tor.tribes.util.interfaces.MapShotListener;
 import de.tor.tribes.util.attack.AttackManager;
 import de.tor.tribes.util.village.KnownVillageManager;
@@ -395,6 +396,15 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
     jShowRuler.setSelected(GlobalOptions.getProperties().getBoolean("show.ruler"));
     jDisplayChurch.setSelected(GlobalOptions.getProperties().getBoolean("show.church"));
     jDisplayWatchtower.setSelected(GlobalOptions.getProperties().getBoolean("show.watchtower"));
+    jDisplayChurch.setEnabled(ServerSettings.getSingleton().isChurch());
+    jDisplayWatchtower.setEnabled(ServerSettings.getSingleton().isWatchtower());
+    ServerSettings.getSingleton().addListener(new ServerSettingsListener() {
+        @Override
+        public void fireServerSettingsChanged() {
+            jDisplayChurch.setEnabled(ServerSettings.getSingleton().isChurch());
+            jDisplayWatchtower.setEnabled(ServerSettings.getSingleton().isWatchtower());
+        }
+    });
     int r = GlobalOptions.getProperties().getInt("radar.size");
     int hour = r / 60;
       jHourField.setText(Integer.toString(hour));

@@ -18,6 +18,8 @@ package de.tor.tribes.util;
 import de.tor.tribes.util.xml.JaxenUtils;
 import java.awt.Dimension;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.log4j.Logger;
 import org.jdom.Document;
 
@@ -38,7 +40,6 @@ public class ServerSettings {
     private boolean watchtower = false;
     private boolean millisArrival = true;
     private double speed = 1.0;
-    private double riseSpeed = 1.0;
     private int resourceConstant = 30;
 
     private boolean nightBonusActive = true;
@@ -56,6 +57,7 @@ public class ServerSettings {
     private int nobleSystem = 0;
     
     private static ServerSettings SINGLETON = null;
+    private List<ServerSettingsListener> listeners = new ArrayList<>();
 
     public static synchronized ServerSettings getSingleton() {
         if (SINGLETON == null) {
@@ -136,14 +138,6 @@ public class ServerSettings {
                 this.speed = 1.0;
             }
 
-            logger.debug(" - reading rise speed");
-            try {
-                this.riseSpeed = Double.parseDouble(JaxenUtils.getNodeValue(d, "//snob/rise"));
-            } catch (Exception inner) {
-                logger.warn("Unable to read rise speed", inner);
-                this.riseSpeed = 1.0;
-            }
-
             logger.debug(" - reading noble system");
             try {
                 this.nobleSystem = Integer.parseInt(JaxenUtils.getNodeValue(d, "//snob/gold"));
@@ -194,9 +188,11 @@ public class ServerSettings {
             
         } catch (Exception e) {
             logger.error("Failed to load server settings", e);
+            fireServerSettingsChanged();
             return false;
         }
         logger.debug("Successfully read settings for server '" + SERVER_ID + "'");
+        fireServerSettingsChanged();
         return true;
     }
 
@@ -284,14 +280,6 @@ public class ServerSettings {
         return speed;
     }
 
-    public void setRiseSpeed(double speed) {
-        this.riseSpeed = speed;
-    }
-
-    public double getRiseSpeed() {
-        return riseSpeed;
-    }
-
     public void setNightBonusActive(boolean nightBonusActive) {
         this.nightBonusActive = nightBonusActive;
     }
@@ -336,5 +324,35 @@ public class ServerSettings {
     
     public int getNobleSystem() {
         return nobleSystem;
+    }
+
+    /**
+     * Add a manager listener
+     *
+     * @param pListener
+     */
+    public void addListener(ServerSettingsListener pListener) {
+        if (!listeners.contains(pListener)) {
+            listeners.add(pListener);
+        }
+    }
+
+    /**
+     * Remove a manager listener
+     *
+     * @param pListener
+     */
+    public void removeListener(ServerSettingsListener pListener) {
+        listeners.remove(pListener);
+    }
+    
+    void fireServerSettingsChanged() {
+        for (ServerSettingsListener listener : listeners.toArray(new ServerSettingsListener[listeners.size()])) {
+            listener.fireServerSettingsChanged();
+        }
+    }
+    
+    public interface ServerSettingsListener {
+        void fireServerSettingsChanged();
     }
 }

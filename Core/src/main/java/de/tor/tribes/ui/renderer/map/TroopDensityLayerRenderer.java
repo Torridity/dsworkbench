@@ -172,7 +172,7 @@ public class TroopDensityLayerRenderer extends AbstractBufferedLayerRenderer {
         int lastVillageCol = 0;
 
         Village currentMouseVillage = MapPanel.getSingleton().getVillageAtMousePos();
-        boolean includeSupport = GlobalOptions.getProperties().getBoolean("include.support", true);
+        boolean includeSupport = GlobalOptions.getProperties().getBoolean("include.support");
 
         for (int x = 0; x < pSettings.getVillagesInX(); x++) {
             //iterate from first row for 'pRows' times

@@ -636,8 +636,11 @@ public class MapRenderer {
                 case ImageManager.CURSOR_CHURCH_3:
                     tmpVillage.setChurchLevel(3);
                     break;
-                default:
-                    tmpVillage.removeChurchInfo();
+                case ImageManager.CURSOR_WATCHTOWER_1:
+                    tmpVillage.setWatchtowerLevel(1);
+                    break;
+                case ImageManager.CURSOR_WATCHTOWER_INPUT:
+                    tmpVillage.setWatchtowerLevel(10);
                     break;
             }
             if (tmpVillage.hasChurch()) {
@@ -647,17 +650,6 @@ public class MapRenderer {
                 }
             }
             
-            switch (cursor) {
-                case ImageManager.CURSOR_WATCHTOWER_1:
-                    tmpVillage.setWatchtowerLevel(1);
-                    break;
-                case ImageManager.CURSOR_WATCHTOWER_INPUT:
-                    tmpVillage.setWatchtowerLevel(10);
-                    break;
-                default:
-                    tmpVillage.removeWatchtowerInfo();
-                    break;
-            }
             if (tmpVillage.hasWatchtower()) {
                 Rectangle r = mVillagePositions.get(mouseVillage);
                 if (r != null && ServerSettings.getSingleton().isWatchtower()) {
@@ -703,7 +695,7 @@ public class MapRenderer {
             }
             g2d.setColor(cBefore);
         }
-        if (GlobalOptions.getProperties().getBoolean("show.ruler", true)) {
+        if (GlobalOptions.getProperties().getBoolean("show.ruler")) {
             //ruler drawing
             HashMap<Color, Rectangle> vertRulerParts = new HashMap<>();
             HashMap<Color, Rectangle> horRulerParts = new HashMap<>();

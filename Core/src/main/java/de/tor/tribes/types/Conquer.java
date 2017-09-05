@@ -19,6 +19,7 @@ import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.ServerSettings;
 import org.jdom.Element;
 
@@ -36,7 +37,7 @@ public class Conquer extends ManageableType {
   public int getCurrentAcceptance() {
       long time = timestamp;
     long diff = System.currentTimeMillis() / 1000 - time;
-    double risePerHour = ServerSettings.getSingleton().getSpeed() *  ServerSettings.getSingleton().getRiseSpeed();
+    double risePerHour = DSCalculator.calculateRiseSpeed();
     return 25 + (int) Math.rint((diff / (60 * 60)) * risePerHour);
   }
 

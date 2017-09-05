@@ -25,9 +25,9 @@ import java.util.List;
  */
 public class DSCalculator {
 
-    private static double RESOURCE_PRODUCTION_CONTANT = 1.163118;
-    private static double STORAGE_CAPACITY_CONTANT = 1.2294934;
-    private static double HIDE_CAPACITY_CONTANT = 1.3335;
+    private static final double RESOURCE_PRODUCTION_CONTANT = 1.163118;
+    private static final double STORAGE_CAPACITY_CONTANT = 1.2294934;
+    private static final double HIDE_CAPACITY_CONTANT = 1.3335;
 
     public static double calculateDistance(Village pSource, Village pTarget) {
         if ((pSource == null) || (pTarget == null)) {
@@ -154,5 +154,9 @@ public class DSCalculator {
 
     public static int calculateMaxHiddenResources(int pHideLevel) {
         return (int) Math.round(150 * Math.pow(HIDE_CAPACITY_CONTANT, pHideLevel - 1));
+    }
+    
+    public static double calculateRiseSpeed() {
+        return ServerSettings.getSingleton().getSpeed();
     }
 }

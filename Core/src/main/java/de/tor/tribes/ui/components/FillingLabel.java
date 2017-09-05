@@ -55,8 +55,8 @@ public class FillingLabel extends JLabel {
     }
 
     @Override
-    public void paint(Graphics g) {
-        super.paint(g);
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
         if (fillings == null || colors == null || fillings.length != colors.length) {
             return;

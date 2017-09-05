@@ -351,7 +351,9 @@ public class GlobalOptions {
             fireDataHolderEvent("Lade Farminformationen");
             FarmManager.getSingleton().loadElements(mSelectedProfile.getProfileDirectory() + "/farms.xml");
             logger.debug("Removing temporary data");
+            fireDataHolderEvent("Entferne temporäre Daten");
             DataHolder.getSingleton().removeTempData();
+            fireDataHolderEvent("Fertig");
         }
     }
 
@@ -498,7 +500,7 @@ public class GlobalOptions {
             return getString(key, false);
         }
         
-        public String getString(String key, boolean def) {
+        private String getString(String key, boolean def) {
             Object obj = getObject(key, def);
             if(obj instanceof String) return (String) obj;
             if(obj == null) {
@@ -517,7 +519,7 @@ public class GlobalOptions {
             return getBoolean(key, false);
         }
         
-        public boolean getBoolean(String key, boolean def) {
+        private boolean getBoolean(String key, boolean def) {
             Object obj = getObject(key, def);
             if(obj instanceof Boolean) return ((Boolean) obj).booleanValue();
             
@@ -535,7 +537,7 @@ public class GlobalOptions {
             return getInt(key, false);
         }
         
-        public int getInt(String key, boolean def) {
+        private int getInt(String key, boolean def) {
             Object obj = getObject(key, def);
             if(obj instanceof Integer) return ((Integer) obj).intValue();
             
@@ -556,7 +558,7 @@ public class GlobalOptions {
             return getLong (key, false);
         }
         
-        public long getLong(String key, boolean def) {
+        private long getLong(String key, boolean def) {
             Object obj = getObject(key, def);
             if(obj instanceof Long) return ((Long) obj).longValue();
             

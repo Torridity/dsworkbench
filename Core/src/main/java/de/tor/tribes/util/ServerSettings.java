@@ -18,12 +18,15 @@ package de.tor.tribes.util;
 import de.tor.tribes.util.xml.JaxenUtils;
 import java.awt.Dimension;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.log4j.Logger;
 import org.jdom.Document;
 
 /**
  *
  * @author Charon
+ * @author extremeCrazyCoder
  */
 public class ServerSettings {
 
@@ -34,9 +37,9 @@ public class ServerSettings {
     private int BONUS_NEW = 0;
     private int SNOB_RANGE = 70;
     private boolean church = false;
+    private boolean watchtower = false;
     private boolean millisArrival = true;
     private double speed = 1.0;
-    private double riseSpeed = 1.0;
     private int resourceConstant = 30;
 
     private boolean nightBonusActive = true;
@@ -49,7 +52,12 @@ public class ServerSettings {
     public static final int TIME_LIMITED_POINTBASED_MORAL = 3;
     private int moral = 0;
     
+    public static final int NOBLESYSTEM_PACKETS = 0;
+    public static final int NOBLESYSTEM_GOLD_COINS = 1;
+    private int nobleSystem = 0;
+    
     private static ServerSettings SINGLETON = null;
+    private List<ServerSettingsListener> listeners = new ArrayList<>();
 
     public static synchronized ServerSettings getSingleton() {
         if (SINGLETON == null) {
@@ -100,6 +108,14 @@ public class ServerSettings {
                 church = false;
             }
             
+            logger.debug(" - reading watchtower setting");
+            try {
+                watchtower = Integer.parseInt(JaxenUtils.getNodeValue(d, "//game/watchtower")) == 1;
+            } catch (Exception inner) {
+                logger.warn("Unable to read watchtower setting", inner);
+                watchtower = false;
+            }
+            
             logger.debug(" - reading millis setting");
             try {
                 millisArrival = Integer.parseInt(JaxenUtils.getNodeValue(d, "//misc/millis_arrival")) == 1;
@@ -122,12 +138,12 @@ public class ServerSettings {
                 this.speed = 1.0;
             }
 
-            logger.debug(" - reading rise speed");
+            logger.debug(" - reading noble system");
             try {
-                this.riseSpeed = Double.parseDouble(JaxenUtils.getNodeValue(d, "//snob/rise"));
+                this.nobleSystem = Integer.parseInt(JaxenUtils.getNodeValue(d, "//snob/gold"));
             } catch (Exception inner) {
-                logger.warn("Unable to read rise speed", inner);
-                this.riseSpeed = 1.0;
+                logger.warn("Unable to read noble system", inner);
+                this.nobleSystem = 1;
             }
 
             logger.debug(" - reading night bonus");
@@ -172,9 +188,11 @@ public class ServerSettings {
             
         } catch (Exception e) {
             logger.error("Failed to load server settings", e);
+            fireServerSettingsChanged();
             return false;
         }
         logger.debug("Successfully read settings for server '" + SERVER_ID + "'");
+        fireServerSettingsChanged();
         return true;
     }
 
@@ -242,6 +260,10 @@ public class ServerSettings {
         return church;
     }
 
+    public boolean isWatchtower() {
+        return watchtower;
+    }
+
     public void setMillisArrival(boolean v) {
         millisArrival = v;
     }
@@ -256,14 +278,6 @@ public class ServerSettings {
 
     public double getSpeed() {
         return speed;
-    }
-
-    public void setRiseSpeed(double speed) {
-        this.riseSpeed = speed;
-    }
-
-    public double getRiseSpeed() {
-        return riseSpeed;
     }
 
     public void setNightBonusActive(boolean nightBonusActive) {
@@ -306,5 +320,39 @@ public class ServerSettings {
 
     public int getResourceConstant() {
         return resourceConstant;
+    }
+    
+    public int getNobleSystem() {
+        return nobleSystem;
+    }
+
+    /**
+     * Add a manager listener
+     *
+     * @param pListener
+     */
+    public void addListener(ServerSettingsListener pListener) {
+        if (!listeners.contains(pListener)) {
+            listeners.add(pListener);
+        }
+    }
+
+    /**
+     * Remove a manager listener
+     *
+     * @param pListener
+     */
+    public void removeListener(ServerSettingsListener pListener) {
+        listeners.remove(pListener);
+    }
+    
+    void fireServerSettingsChanged() {
+        for (ServerSettingsListener listener : listeners.toArray(new ServerSettingsListener[listeners.size()])) {
+            listener.fireServerSettingsChanged();
+        }
+    }
+    
+    public interface ServerSettingsListener {
+        void fireServerSettingsChanged();
     }
 }

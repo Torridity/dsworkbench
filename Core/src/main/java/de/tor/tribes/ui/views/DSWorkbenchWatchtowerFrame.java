@@ -19,8 +19,8 @@ import de.tor.tribes.control.GenericManagerListener;
 import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.types.test.DummyVillage;
-import de.tor.tribes.ui.editors.ChurchLevelCellEditor;
-import de.tor.tribes.ui.models.ChurchTableModel;
+import de.tor.tribes.ui.editors.WatchtowerLevelCellEditor;
+import de.tor.tribes.ui.models.WatchtowerTableModel;
 import de.tor.tribes.ui.panels.GenericTestPanel;
 import de.tor.tribes.ui.renderer.ColorCellRenderer;
 import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
@@ -28,8 +28,8 @@ import de.tor.tribes.ui.windows.AbstractDSWorkbenchFrame;
 import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
 import de.tor.tribes.util.*;
 import de.tor.tribes.util.village.KnownVillageManager;
-import de.tor.tribes.util.mark.MarkerManager;
 import de.tor.tribes.util.village.KnownVillage;
+import de.tor.tribes.util.mark.MarkerManager;
 import org.apache.commons.configuration.Configuration;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
@@ -61,8 +61,9 @@ import java.util.StringTokenizer;
 
 /**
  * @author Charon
+ * @author extremeCrazyCoder
  */
-public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements GenericManagerListener, ListSelectionListener {
+public class DSWorkbenchWatchtowerFrame extends AbstractDSWorkbenchFrame implements GenericManagerListener, ListSelectionListener {
 
     @Override
     public void dataChangedEvent() {
@@ -71,26 +72,26 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
 
     @Override
     public void dataChangedEvent(String pGroup) {
-        ((ChurchTableModel) jChurchTable.getModel()).fireTableDataChanged();
+        ((WatchtowerTableModel) jWatchtowerTable.getModel()).fireTableDataChanged();
     }
-    private final static Logger logger = Logger.getLogger("ChurchView");
-    private static DSWorkbenchChurchFrame SINGLETON = null;
+    private final static Logger logger = Logger.getLogger("WatchtowerView");
+    private static DSWorkbenchWatchtowerFrame SINGLETON = null;
     private GenericTestPanel centerPanel = null;
 
-    public static synchronized DSWorkbenchChurchFrame getSingleton() {
+    public static synchronized DSWorkbenchWatchtowerFrame getSingleton() {
         if (SINGLETON == null) {
-            SINGLETON = new DSWorkbenchChurchFrame();
+            SINGLETON = new DSWorkbenchWatchtowerFrame();
         }
         return SINGLETON;
     }
 
     /**
-     * Creates new form DSWorkbenchChurchFrame
+     * Creates new form DSWorkbenchWatchtowerFrame
      */
-    DSWorkbenchChurchFrame() {
+    DSWorkbenchWatchtowerFrame() {
         initComponents();
         centerPanel = new GenericTestPanel();
-        jChurchPanel.add(centerPanel, BorderLayout.CENTER);
+        jWatchtowerPanel.add(centerPanel, BorderLayout.CENTER);
         centerPanel.setChildComponent(jXPanel1);
         buildMenu();
 
@@ -108,35 +109,36 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
             }
         };
         capabilityInfoPanel1.addActionListener(listener);
-        jChurchTable.registerKeyboardAction(listener, "Delete", delete, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-        jChurchTable.registerKeyboardAction(listener, "BBCopy", bbCopy, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        jWatchtowerTable.registerKeyboardAction(listener, "Delete", delete, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        jWatchtowerTable.registerKeyboardAction(listener, "BBCopy", bbCopy, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
-        jChurchFrameAlwaysOnTop.setSelected(GlobalOptions.getProperties().getBoolean("church.frame.alwaysOnTop"));
-        setAlwaysOnTop(jChurchFrameAlwaysOnTop.isSelected());
+        jWatchtowerFrameAlwaysOnTop.setSelected(GlobalOptions.getProperties().getBoolean("watchtower.frame.alwaysOnTop"));
+        setAlwaysOnTop(jWatchtowerFrameAlwaysOnTop.isSelected());
 
-        jChurchTable.setModel(new ChurchTableModel());
+        jWatchtowerTable.setModel(new WatchtowerTableModel());
         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
         if (!Constants.DEBUG) {
+            //TODO create help page
             GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.church_view", GlobalOptions.getHelpBroker().getHelpSet());
         }
         // </editor-fold>
-        jChurchTable.getSelectionModel().addListSelectionListener(DSWorkbenchChurchFrame.this);
+        jWatchtowerTable.getSelectionModel().addListSelectionListener(DSWorkbenchWatchtowerFrame.this);
         pack();
     }
 
     @Override
     public void toBack() {
-        jChurchFrameAlwaysOnTop.setSelected(false);
-        fireChurchFrameOnTopEvent(null);
+        jWatchtowerFrameAlwaysOnTop.setSelected(false);
+        fireWatchtowerFrameOnTopEvent(null);
         super.toBack();
     }
 
     @Override
     public void storeCustomProperties(Configuration pConfig) {
         pConfig.setProperty(getPropertyPrefix() + ".menu.visible", centerPanel.isMenuVisible());
-        pConfig.setProperty(getPropertyPrefix() + ".alwaysOnTop", jChurchFrameAlwaysOnTop.isSelected());
+        pConfig.setProperty(getPropertyPrefix() + ".alwaysOnTop", jWatchtowerFrameAlwaysOnTop.isSelected());
 
-        PropertyHelper.storeTableProperties(jChurchTable, pConfig, getPropertyPrefix());
+        PropertyHelper.storeTableProperties(jWatchtowerTable, pConfig, getPropertyPrefix());
 
     }
 
@@ -145,18 +147,18 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
         centerPanel.setMenuVisible(pConfig.getBoolean(getPropertyPrefix() + ".menu.visible", true));
 
         try {
-            jChurchFrameAlwaysOnTop.setSelected(pConfig.getBoolean(getPropertyPrefix() + ".alwaysOnTop"));
+            jWatchtowerFrameAlwaysOnTop.setSelected(pConfig.getBoolean(getPropertyPrefix() + ".alwaysOnTop"));
         } catch (Exception ignored) {
         }
 
-        setAlwaysOnTop(jChurchFrameAlwaysOnTop.isSelected());
+        setAlwaysOnTop(jWatchtowerFrameAlwaysOnTop.isSelected());
 
-        PropertyHelper.restoreTableProperties(jChurchTable, pConfig, getPropertyPrefix());
+        PropertyHelper.restoreTableProperties(jWatchtowerTable, pConfig, getPropertyPrefix());
     }
 
     @Override
     public String getPropertyPrefix() {
-        return "church.view";
+        return "watchtower.view";
     }
 
     /**
@@ -173,8 +175,8 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
         infoPanel = new org.jdesktop.swingx.JXCollapsiblePane();
         jXLabel1 = new org.jdesktop.swingx.JXLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jChurchPanel = new org.jdesktop.swingx.JXPanel();
-        jChurchFrameAlwaysOnTop = new javax.swing.JCheckBox();
+        jWatchtowerPanel = new org.jdesktop.swingx.JXPanel();
+        jWatchtowerFrameAlwaysOnTop = new javax.swing.JCheckBox();
         capabilityInfoPanel1 = new de.tor.tribes.ui.components.CapabilityInfoPanel();
 
         jXPanel1.setLayout(new java.awt.BorderLayout());
@@ -193,7 +195,7 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
 
         jXPanel1.add(infoPanel, java.awt.BorderLayout.SOUTH);
 
-        jChurchTable.setModel(new javax.swing.table.DefaultTableModel(
+        jWatchtowerTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -204,15 +206,15 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jScrollPane2.setViewportView(jChurchTable);
+        jScrollPane2.setViewportView(jWatchtowerTable);
 
         jXPanel1.add(jScrollPane2, java.awt.BorderLayout.CENTER);
 
-        setTitle("Kirchen");
+        setTitle("Wachtürme");
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
-        jChurchPanel.setBackground(new java.awt.Color(239, 235, 223));
-        jChurchPanel.setLayout(new java.awt.BorderLayout());
+        jWatchtowerPanel.setBackground(new java.awt.Color(239, 235, 223));
+        jWatchtowerPanel.setLayout(new java.awt.BorderLayout());
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
@@ -221,13 +223,12 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
         gridBagConstraints.ipady = 300;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
-        getContentPane().add(jChurchPanel, gridBagConstraints);
+        getContentPane().add(jWatchtowerPanel, gridBagConstraints);
 
-        jChurchFrameAlwaysOnTop.setText("Immer im Vordergrund");
-        jChurchFrameAlwaysOnTop.setOpaque(false);
-        jChurchFrameAlwaysOnTop.addChangeListener(new javax.swing.event.ChangeListener() {
+        jWatchtowerFrameAlwaysOnTop.setText("Immer im Vordergrund");
+        jWatchtowerFrameAlwaysOnTop.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                fireChurchFrameOnTopEvent(evt);
+                fireWatchtowerFrameOnTopEvent(evt);
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -235,7 +236,7 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
         gridBagConstraints.gridy = 1;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        getContentPane().add(jChurchFrameAlwaysOnTop, gridBagConstraints);
+        getContentPane().add(jWatchtowerFrameAlwaysOnTop, gridBagConstraints);
 
         capabilityInfoPanel1.setCopyable(false);
         capabilityInfoPanel1.setPastable(false);
@@ -247,12 +248,14 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         getContentPane().add(capabilityInfoPanel1, gridBagConstraints);
 
+        getAccessibleContext().setAccessibleName("Wachtürme");
+
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void fireChurchFrameOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fireChurchFrameOnTopEvent
+    private void fireWatchtowerFrameOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fireWatchtowerFrameOnTopEvent
         setAlwaysOnTop(!isAlwaysOnTop());
-    }//GEN-LAST:event_fireChurchFrameOnTopEvent
+    }//GEN-LAST:event_fireWatchtowerFrameOnTopEvent
 
     private void jXLabel1fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jXLabel1fireHideInfoEvent
         infoPanel.setCollapsed(true);
@@ -261,23 +264,23 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
     private void buildMenu() {
         JXTaskPane transferPane = new JXTaskPane();
         transferPane.setTitle("Übertragen");
-        JXButton transferVillageList = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/ui/center_ingame.png")));
-        transferVillageList.setToolTipText("Zentriert das Kirchendorf im Spiel");
+        JXButton transferVillageList = new JXButton(new ImageIcon(DSWorkbenchWatchtowerFrame.class.getResource("/res/ui/center_ingame.png")));
+        transferVillageList.setToolTipText("Zentriert das Wachturmndorf im Spiel");
         transferVillageList.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
-                centerChurchInGame();
+                centerWatchtowerInGame();
             }
         });
         transferPane.getContentPane().add(transferVillageList);
 
         if (!GlobalOptions.isMinimal()) {
-            JXButton button = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/center_24x24.png")));
-            button.setToolTipText("Zentriert das Kirchendorf auf der Hauptkarte");
+            JXButton button = new JXButton(new ImageIcon(DSWorkbenchWatchtowerFrame.class.getResource("/res/center_24x24.png")));
+            button.setToolTipText("Zentriert das Wachturmndorf auf der Hauptkarte");
             button.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseReleased(MouseEvent e) {
-                    centerChurchVillage();
+                    centerWatchtowerVillage();
                 }
             });
 
@@ -286,41 +289,41 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
         centerPanel.setupTaskPane(transferPane);
     }
 
-    private KnownVillage getSelectedCurch() {
-        int row = jChurchTable.getSelectedRow();
+    private KnownVillage getSelectedWatchtower() {
+        int row = jWatchtowerTable.getSelectedRow();
         if (row >= 0) {
             try {
-                return (KnownVillage) jChurchTable.getModel().getValueAt(jChurchTable.convertRowIndexToModel(row), 1);
+                return (KnownVillage) jWatchtowerTable.getModel().getValueAt(jWatchtowerTable.convertRowIndexToModel(row), 1);
             } catch (Exception ignored) {
             }
         }
         return null;
     }
 
-    private void centerChurchVillage() {
-        KnownVillage v = getSelectedCurch();
+    private void centerWatchtowerVillage() {
+        KnownVillage v = getSelectedWatchtower();
         if (v != null) {
             DSWorkbenchMainFrame.getSingleton().centerVillage(v.getVillage());
         } else {
-            showInfo("Keine Kirche gewählt");
+            showInfo("Kein Wachturm gewählt");
         }
     }
 
-    private void centerChurchInGame() {
-        KnownVillage v = getSelectedCurch();
+    private void centerWatchtowerInGame() {
+        KnownVillage v = getSelectedWatchtower();
         if (v != null) {
             BrowserCommandSender.centerVillage(v.getVillage());
         } else {
-            showInfo("Keine Kirche gewählt");
+            showInfo("Kein Wachturm gewählt");
         }
     }
 
     @Override
     public void valueChanged(ListSelectionEvent e) {
         if (e.getValueIsAdjusting()) {
-            int selectionCount = jChurchTable.getSelectedRowCount();
+            int selectionCount = jWatchtowerTable.getSelectedRowCount();
             if (selectionCount != 0) {
-                showInfo(selectionCount + ((selectionCount == 1) ? " Kirche gewählt" : " Kirchen gewählt"));
+                showInfo(selectionCount + ((selectionCount == 1) ? " Wachturm gewählt" : " Wachtürme gewählt"));
             }
         }
     }
@@ -347,32 +350,32 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
     }
 
     private void deleteSelection() {
-        int[] rows = jChurchTable.getSelectedRows();
+        int[] rows = jWatchtowerTable.getSelectedRows();
         if (rows.length == 0) {
             return;
         }
-        String message = ((rows.length == 1) ? "Kirchendorf " : (rows.length + " Kirchendörfer ")) + "wirklich löschen?";
+        String message = ((rows.length == 1) ? "Wachturmndorf " : (rows.length + " Wachturmdörfer ")) + "wirklich löschen?";
         if (JOptionPaneHelper.showQuestionConfirmBox(this, message, "Löschen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
             //get markers to remove
             List<Village> toRemove = new LinkedList<>();
-            jChurchTable.invalidate();
+            jWatchtowerTable.invalidate();
             for (int i = rows.length - 1; i >= 0; i--) {
-                int row = jChurchTable.convertRowIndexToModel(rows[i]);
-                int col = jChurchTable.convertColumnIndexToModel(1);
-                Village v = ((KnownVillage) jChurchTable.getModel()
+                int row = jWatchtowerTable.convertRowIndexToModel(rows[i]);
+                int col = jWatchtowerTable.convertColumnIndexToModel(1);
+                Village v = ((KnownVillage) jWatchtowerTable.getModel()
                         .getValueAt(row, col)).getVillage();
                 toRemove.add(v);
             }
-            jChurchTable.revalidate();
+            jWatchtowerTable.revalidate();
             //remove all selected markers and update the view once
-            KnownVillageManager.getSingleton().removeChurches(toRemove.toArray(new Village[]{}));
-            showSuccess(toRemove.size() + ((toRemove.size() == 1) ? " Kirche gelöscht" : " Kirchen gelöscht"));
+            KnownVillageManager.getSingleton().removeWatchtowers(toRemove.toArray(new Village[]{}));
+            showSuccess(toRemove.size() + ((toRemove.size() == 1) ? " Wachturm gelöscht" : " Wachtürme gelöscht"));
         }
     }
 
     private void bbCopySelection() {
         try {
-            int[] rows = jChurchTable.getSelectedRows();
+            int[] rows = jWatchtowerTable.getSelectedRows();
             if (rows.length == 0) {
                 return;
             }
@@ -381,9 +384,9 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
 
             StringBuilder buffer = new StringBuilder();
             if (extended) {
-                buffer.append("[u][size=12]Kirchendörfer[/size][/u]\n\n");
+                buffer.append("[u][size=12]Watchturmdörfer[/size][/u]\n\n");
             } else {
-                buffer.append("[u]Kirchendörfer[/u]\n\n");
+                buffer.append("[u]Watchturmdörfer[/u]\n\n");
             }
 
             buffer.append("[table]\n");
@@ -391,16 +394,16 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
 
 
             for (int row1 : rows) {
-                int row = jChurchTable.convertRowIndexToModel(row1);
-                int tribeCol = jChurchTable.convertColumnIndexToModel(0);
-                int villageCol = jChurchTable.convertColumnIndexToModel(1);
-                int rangeCol = jChurchTable.convertColumnIndexToModel(2);
+                int row = jWatchtowerTable.convertRowIndexToModel(row1);
+                int tribeCol = jWatchtowerTable.convertColumnIndexToModel(0);
+                int villageCol = jWatchtowerTable.convertColumnIndexToModel(1);
+                int rangeCol = jWatchtowerTable.convertColumnIndexToModel(2);
                 buffer.append("[*]").
-                        append(((Tribe) jChurchTable.getModel().getValueAt(row, tribeCol)).toBBCode()).
+                        append(((Tribe) jWatchtowerTable.getModel().getValueAt(row, tribeCol)).toBBCode()).
                         append("[|]").
-                        append(((Village) jChurchTable.getModel().getValueAt(row, villageCol)).toBBCode()).
+                        append(((Village) jWatchtowerTable.getModel().getValueAt(row, villageCol)).toBBCode()).
                         append("[|]").
-                        append(jChurchTable.getModel().getValueAt(row, rangeCol));
+                        append(jWatchtowerTable.getModel().getValueAt(row, rangeCol));
             }
 
             buffer.append("[/table]");
@@ -421,7 +424,7 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
             StringTokenizer t = new StringTokenizer(b, "[");
             int cnt = t.countTokens();
             if (cnt > 1000) {
-                if (JOptionPaneHelper.showQuestionConfirmBox(this, "Die ausgewählten Kirchen benötigen mehr als 1000 BB-Codes\n"
+                if (JOptionPaneHelper.showQuestionConfirmBox(this, "Die ausgewählten Wachtürme benötigen mehr als 1000 BB-Codes\n"
                         + "und können daher im Spiel (Forum/IGM/Notizen) nicht auf einmal dargestellt werden.\n"
                         + "Trotzdem exportieren?", "Zu viele BB-Codes", "Nein", "Ja") == JOptionPane.NO_OPTION) {
                     return;
@@ -442,16 +445,16 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
     public void resetView() {
         KnownVillageManager.getSingleton().addManagerListener(this);
         MarkerManager.getSingleton().addManagerListener(this);
-        jChurchTable.getTableHeader().setDefaultRenderer(new DefaultTableHeaderRenderer());
+        jWatchtowerTable.getTableHeader().setDefaultRenderer(new DefaultTableHeaderRenderer());
         String[] cols = new String[]{"Stufe", "Farbe"};
         for (String col : cols) {
-            TableColumnExt columns = jChurchTable.getColumnExt(col);
+            TableColumnExt columns = jWatchtowerTable.getColumnExt(col);
             columns.setPreferredWidth(80);
             columns.setMaxWidth(80);
             columns.setWidth(80);
         }
 
-        ((ChurchTableModel) jChurchTable.getModel()).fireTableDataChanged();
+        ((WatchtowerTableModel) jWatchtowerTable.getModel()).fireTableDataChanged();
     }
 
     @Override
@@ -468,33 +471,33 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
             UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
         } catch (Exception ignored) {
         }
-        DSWorkbenchChurchFrame.getSingleton().resetView();
+        DSWorkbenchWatchtowerFrame.getSingleton().resetView();
         for (int i = 0; i < 50; i++) {
-            KnownVillageManager.getSingleton().addChurchLevel(new DummyVillage((short) i, (short) i), 2);
+            KnownVillageManager.getSingleton().addWatchtowerLevel(new DummyVillage((short) i, (short) i), 2);
         }
 
-        DSWorkbenchChurchFrame.getSingleton().setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        DSWorkbenchChurchFrame.getSingleton().setVisible(true);
+        DSWorkbenchWatchtowerFrame.getSingleton().setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        DSWorkbenchWatchtowerFrame.getSingleton().setVisible(true);
 
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private de.tor.tribes.ui.components.CapabilityInfoPanel capabilityInfoPanel1;
     private org.jdesktop.swingx.JXCollapsiblePane infoPanel;
-    private javax.swing.JCheckBox jChurchFrameAlwaysOnTop;
-    private org.jdesktop.swingx.JXPanel jChurchPanel;
-    private static final org.jdesktop.swingx.JXTable jChurchTable = new org.jdesktop.swingx.JXTable();
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JCheckBox jWatchtowerFrameAlwaysOnTop;
+    private org.jdesktop.swingx.JXPanel jWatchtowerPanel;
+    private static final org.jdesktop.swingx.JXTable jWatchtowerTable = new org.jdesktop.swingx.JXTable();
     private org.jdesktop.swingx.JXLabel jXLabel1;
     private org.jdesktop.swingx.JXPanel jXPanel1;
     // End of variables declaration//GEN-END:variables
 
     static {
         HighlightPredicate.ColumnHighlightPredicate colu = new HighlightPredicate.ColumnHighlightPredicate(0, 1, 2);
-        jChurchTable.setHighlighters(new CompoundHighlighter(colu, HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B)));
+        jWatchtowerTable.setHighlighters(new CompoundHighlighter(colu, HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B)));
 
-        jChurchTable.setColumnControlVisible(true);
-        jChurchTable.setDefaultRenderer(Color.class, new ColorCellRenderer());
-        jChurchTable.setDefaultEditor(Integer.class, new ChurchLevelCellEditor());
+        jWatchtowerTable.setColumnControlVisible(true);
+        jWatchtowerTable.setDefaultRenderer(Color.class, new ColorCellRenderer());
+        jWatchtowerTable.setDefaultEditor(Integer.class, new WatchtowerLevelCellEditor());
         BufferedImage back = ImageUtils.createCompatibleBufferedImage(5, 5, BufferedImage.BITMASK);
         Graphics2D g = back.createGraphics();
         GeneralPath p = new GeneralPath();
@@ -505,6 +508,6 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
         g.setColor(Color.GREEN.darker());
         g.fill(p);
         g.dispose();
-        jChurchTable.addHighlighter(new PainterHighlighter(HighlightPredicate.EDITABLE, new ImagePainter(back, HorizontalAlignment.RIGHT, VerticalAlignment.TOP)));
+        jWatchtowerTable.addHighlighter(new PainterHighlighter(HighlightPredicate.EDITABLE, new ImagePainter(back, HorizontalAlignment.RIGHT, VerticalAlignment.TOP)));
     }
 }

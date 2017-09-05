@@ -516,12 +516,16 @@ public class ReportTableTab extends javax.swing.JPanel implements ListSelectionL
         values.put("luck", report.getLuck());
         values.put("moral", report.getMoral());
         if (!GlobalOptions.isOfflineMode()) {
-            if (!DSWorkbenchSimulatorFrame.getSingleton().isVisible()) {
-                DSWorkbenchSimulatorFrame.getSingleton().setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
-                DSWorkbenchSimulatorFrame.getSingleton().showIntegratedVersion(DSWorkbenchSettingsDialog.getSingleton().getWebProxy(),GlobalOptions.getSelectedServer());
+            try {
+                if (!DSWorkbenchSimulatorFrame.getSingleton().isVisible()) {
+                    DSWorkbenchSimulatorFrame.getSingleton().setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
+                    DSWorkbenchSimulatorFrame.getSingleton().showIntegratedVersion(DSWorkbenchSettingsDialog.getSingleton().getWebProxy(),GlobalOptions.getSelectedServer());
+                }
+                Point coord = new Point(report.getTargetVillage().getX(), report.getTargetVillage().getY());
+                DSWorkbenchSimulatorFrame.getSingleton().insertValuesExternally(coord, values, this);
+            } catch(Exception e) {
+                logger.warn("Problem during writing Troops to AStar", e);
             }
-            Point coord = new Point(report.getTargetVillage().getX(), report.getTargetVillage().getY());
-            DSWorkbenchSimulatorFrame.getSingleton().insertValuesExternally(coord, values, this);
         } else {
             JOptionPaneHelper.showInformationBox(this, "A*Star ist im Offline-Modus leider nicht verfügbar.", "Information");
         }

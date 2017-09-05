@@ -30,9 +30,6 @@ public class UnitHolder implements Serializable {
     private static final long serialVersionUID = 10L;
     private String plainName = null;
     private String name = null;
-    private double wood = 0;
-    private double stone = 0;
-    private double iron = 0;
     private double pop = 0;
     private double speed = 0;
     private double attack = 0;
@@ -77,10 +74,7 @@ public class UnitHolder implements Serializable {
             } else {
                 this.name = "Unbekannt (" + pElement.getName() + ")";
             }
-
-            this.wood = Double.parseDouble(pElement.getChild("wood").getText());
-            this.stone = Double.parseDouble(pElement.getChild("stone").getText());
-            this.iron = Double.parseDouble(pElement.getChild("iron").getText());
+            
             this.pop = Double.parseDouble(pElement.getChild("pop").getText());
             this.speed = Double.parseDouble(pElement.getChild("speed").getText());
             this.attack = Double.parseDouble(pElement.getChild("attack").getText());
@@ -108,30 +102,6 @@ public class UnitHolder implements Serializable {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public double getWood() {
-        return wood;
-    }
-
-    public void setWood(double wood) {
-        this.wood = wood;
-    }
-
-    public double getStone() {
-        return stone;
-    }
-
-    public void setStone(double stone) {
-        this.stone = stone;
-    }
-
-    public double getIron() {
-        return iron;
-    }
-
-    public void setIron(double iron) {
-        this.iron = iron;
     }
 
     public double getPop() {

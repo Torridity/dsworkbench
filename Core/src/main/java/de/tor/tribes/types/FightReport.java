@@ -1325,4 +1325,29 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
         hash = 53 * hash + this.hideLevel;
         return hash;
     }
+    
+    /*
+        This method fills buildings that had not been spyed with zero,
+        because buildings with level 0 are not shown by DS
+    */
+    public void fillMissingSpyBuildingInformation() {
+        //Find out if we spyed buildings
+        boolean spyedBuildings = false;
+        
+        spyedBuildings |= storageLevel != -1;
+        spyedBuildings |= woodLevel != -1;
+        spyedBuildings |= clayLevel != -1;
+        spyedBuildings |= ironLevel != -1;
+        spyedBuildings |= hideLevel != -1;
+        spyedBuildings |= wallLevel != -1;
+        
+        if(spyedBuildings) {
+            if(storageLevel == -1) storageLevel = 0;
+            if(woodLevel == -1) woodLevel = 0;
+            if(clayLevel == -1) clayLevel = 0;
+            if(ironLevel == -1) ironLevel = 0;
+            if(hideLevel == -1) hideLevel = 0;
+            if(wallLevel == -1) wallLevel = 0;
+        }
+    }
 }

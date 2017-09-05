@@ -27,9 +27,10 @@ import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.views.DSWorkbenchSettingsDialog;
 import de.tor.tribes.ui.panels.MapPanel;
 import de.tor.tribes.ui.renderer.map.MapRenderer;
+import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ServerSettings;
-import de.tor.tribes.util.church.ChurchManager;
+import de.tor.tribes.util.village.KnownVillageManager;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
 import de.tor.tribes.util.xml.JaxenUtils;
@@ -211,7 +212,7 @@ public class ConquerManager extends GenericManager<Conquer> {
     private void updateAcceptance() {
         invalidate();
         logger.debug("Filtering conquers");
-        double risePerHour = ServerSettings.getSingleton().getSpeed() * ServerSettings.getSingleton().getRiseSpeed();
+        double risePerHour = DSCalculator.calculateRiseSpeed();
         logger.debug(" - using " + risePerHour + " as acceptance increment value");
         List<Conquer> toRemove = new LinkedList<>();
         for (ManageableType t : getAllElements().toArray(new ManageableType[]{})) {
@@ -314,7 +315,7 @@ public class ConquerManager extends GenericManager<Conquer> {
 
                         try {
                             //removing church
-                            ChurchManager.getSingleton().removeChurch(v);
+                            KnownVillageManager.getSingleton().removeChurch(v);
                         } catch (Exception ignored) {
                         }
 

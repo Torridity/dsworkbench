@@ -23,7 +23,7 @@ import de.tor.tribes.types.test.DummyUserProfile;
 import de.tor.tribes.ui.views.*;
 import de.tor.tribes.util.attack.AttackManager;
 import de.tor.tribes.util.attack.StandardAttackManager;
-import de.tor.tribes.util.church.ChurchManager;
+import de.tor.tribes.util.village.KnownVillageManager;
 import de.tor.tribes.util.conquer.ConquerManager;
 import de.tor.tribes.util.farm.FarmManager;
 import de.tor.tribes.util.map.FormManager;
@@ -246,6 +246,7 @@ public class GlobalOptions {
         logger.debug("Saving view state");
         DSWorkbenchAttackFrame.getSingleton().storeProperties();
         DSWorkbenchChurchFrame.getSingleton().storeProperties();
+        DSWorkbenchWatchtowerFrame.getSingleton().storeProperties();
         DSWorkbenchDistanceFrame.getSingleton().storeProperties();
         DSWorkbenchDoItYourselfAttackPlaner.getSingleton().storeProperties();
         DSWorkbenchMarkerFrame.getSingleton().storeProperties();
@@ -327,9 +328,9 @@ public class GlobalOptions {
             logger.debug("Loading forms");
             fireDataHolderEvent("Lade Zeichnungen");
             FormManager.getSingleton().loadElements(mSelectedProfile.getProfileDirectory() + "/forms.xml");
-            logger.debug("Loading churches");
-            fireDataHolderEvent("Lade Kirchen");
-            ChurchManager.getSingleton().loadElements(mSelectedProfile.getProfileDirectory() + "/churches.xml");
+            logger.debug("Loading KnownVillages");
+            fireDataHolderEvent("Lade Bekannte Dörfer");
+            KnownVillageManager.getSingleton().loadElements(mSelectedProfile.getProfileDirectory() + "/villages.xml");
             logger.debug("Loading rois");
             fireDataHolderEvent("Lade ROIs");
             ROIManager.getSingleton().loadROIsFromFile(mSelectedProfile.getProfileDirectory() + "/rois.xml");
@@ -350,7 +351,9 @@ public class GlobalOptions {
             fireDataHolderEvent("Lade Farminformationen");
             FarmManager.getSingleton().loadElements(mSelectedProfile.getProfileDirectory() + "/farms.xml");
             logger.debug("Removing temporary data");
+            fireDataHolderEvent("Entferne temporäre Daten");
             DataHolder.getSingleton().removeTempData();
+            fireDataHolderEvent("Fertig");
         }
     }
 
@@ -379,7 +382,7 @@ public class GlobalOptions {
             logger.debug("Saving forms");
             FormManager.getSingleton().saveElements(mSelectedProfile.getProfileDirectory() + "/forms.xml");
             logger.debug("Saving churches");
-            ChurchManager.getSingleton().saveElements(mSelectedProfile.getProfileDirectory() + "/churches.xml");
+            KnownVillageManager.getSingleton().saveElements(mSelectedProfile.getProfileDirectory() + "/villages.xml");
             logger.debug("Saving rois");
             ROIManager.getSingleton().saveROIsToFile(mSelectedProfile.getProfileDirectory() + "/rois.xml");
             logger.debug("Saving conquers");
@@ -497,7 +500,7 @@ public class GlobalOptions {
             return getString(key, false);
         }
         
-        public String getString(String key, boolean def) {
+        private String getString(String key, boolean def) {
             Object obj = getObject(key, def);
             if(obj instanceof String) return (String) obj;
             if(obj == null) {
@@ -516,7 +519,7 @@ public class GlobalOptions {
             return getBoolean(key, false);
         }
         
-        public boolean getBoolean(String key, boolean def) {
+        private boolean getBoolean(String key, boolean def) {
             Object obj = getObject(key, def);
             if(obj instanceof Boolean) return ((Boolean) obj).booleanValue();
             
@@ -534,7 +537,7 @@ public class GlobalOptions {
             return getInt(key, false);
         }
         
-        public int getInt(String key, boolean def) {
+        private int getInt(String key, boolean def) {
             Object obj = getObject(key, def);
             if(obj instanceof Integer) return ((Integer) obj).intValue();
             
@@ -555,7 +558,7 @@ public class GlobalOptions {
             return getLong (key, false);
         }
         
-        public long getLong(String key, boolean def) {
+        private long getLong(String key, boolean def) {
             Object obj = getObject(key, def);
             if(obj instanceof Long) return ((Long) obj).longValue();
             

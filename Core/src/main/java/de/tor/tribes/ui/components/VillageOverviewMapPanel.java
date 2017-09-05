@@ -140,8 +140,8 @@ public class VillageOverviewMapPanel extends javax.swing.JPanel {
     }
 
     @Override
-    public void paint(Graphics g) {
-        super.paint(g);
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
 
         if (continentsInXAndY < 0 || upperLeftContinent < 0) {
             g.setColor(Constants.DS_DEFAULT_BACKGROUND);

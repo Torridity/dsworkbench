@@ -17,9 +17,10 @@ package de.tor.tribes.ui.wiz;
 
 import java.net.Proxy;
 import java.net.URL;
-import java.net.URLConnection;
+import java.net.HttpURLConnection;
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.log4j.Logger;
 import org.netbeans.spi.wizard.Wizard;
 import org.netbeans.spi.wizard.WizardController;
 import org.netbeans.spi.wizard.WizardPanel;
@@ -30,6 +31,7 @@ import org.netbeans.spi.wizard.WizardPanelNavResult;
  * @author Torridity
  */
 public class NetworkSettings extends javax.swing.JPanel implements WizardPanel {
+    private static Logger logger = Logger.getLogger("NetworkSettings");
 
     private WizardController wizCtrl;
     private Map currentSettings = null;
@@ -337,17 +339,22 @@ private void jRefeshNetworkButtonfireUpdateProxySettingsEvent(java.awt.event.Mou
     private boolean checkConnectivity(Proxy webProxy) {
         boolean result = false;
         try {
-            URLConnection c = new URL("http://www.google.com").openConnection(webProxy);
+            HttpURLConnection c = (HttpURLConnection) new URL("http://www.die-staemme.de").openConnection(webProxy);
             //c.setConnectTimeout(10000);
+            //Hack to get better errors if something does not work
+            c.getResponseCode();
             String header = c.getHeaderField(0);
+            
             if (header != null) {
                 wizCtrl.setProblem(null);
                 result = true;
             } else {
                 wizCtrl.setProblem("Verbindung fehlgeschlagen. Bitte überprüfe deine Einstellungen");
+                logger.error("no header");
             }
-        } catch (Throwable t) {
+        } catch (Exception e) {
             wizCtrl.setProblem("Verbindung fehlgeschlagen. Bitte überprüfe deine Einstellungen");
+            logger.error("exception", e);
         }
         return result;
     }

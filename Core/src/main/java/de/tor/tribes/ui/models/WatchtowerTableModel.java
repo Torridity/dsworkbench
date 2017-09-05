@@ -16,6 +16,7 @@
 package de.tor.tribes.ui.models;
 
 import de.tor.tribes.types.ext.Tribe;
+import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.village.KnownVillageManager;
 import de.tor.tribes.util.village.KnownVillage;
 import java.awt.Color;
@@ -27,9 +28,9 @@ import org.apache.log4j.Logger;
  * @author Torridity
  * @author extremeCrazyCoder
  */
-public class ChurchTableModel extends AbstractTableModel {
+public class WatchtowerTableModel extends AbstractTableModel {
     
-    private static Logger logger = Logger.getLogger("ChurchTableModel");
+    private static Logger logger = Logger.getLogger("WatchtowerTableModel");
 
     private final Class[] types = new Class[]{Tribe.class, KnownVillage.class, Integer.class, Color.class};
     private final String[] colNames = new String[]{"Spieler", "Dorf", "Stufe", "Farbe"};
@@ -57,13 +58,13 @@ public class ChurchTableModel extends AbstractTableModel {
 
     @Override
     public int getRowCount() {
-        return KnownVillageManager.getSingleton().getChurchVillages().size();
+        return KnownVillageManager.getSingleton().getWatchtowerVillages().size();
     }
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         try {
-            KnownVillage v = KnownVillageManager.getSingleton().getChurchVillages().get(rowIndex);
+            KnownVillage v = KnownVillageManager.getSingleton().getWatchtowerVillages().get(rowIndex);
             switch (columnIndex) {
                 case 0: {
                     return v.getVillage().getTribe();
@@ -72,7 +73,7 @@ public class ChurchTableModel extends AbstractTableModel {
                     return v;
                 }
                 case 2: {
-                    return v.getBuildingLevelByName("church");
+                    return v.getBuildingLevelByName("watchtower");
                 }
                 default: {
                     return v.getRangeColor();
@@ -85,10 +86,10 @@ public class ChurchTableModel extends AbstractTableModel {
 
     @Override
     public void setValueAt(Object o, int rowIndex, int columnIndex) {
-        KnownVillage v = KnownVillageManager.getSingleton().getChurchVillages().get(rowIndex);
+        KnownVillage v = KnownVillageManager.getSingleton().getWatchtowerVillages().get(rowIndex);
         switch (columnIndex) {
             case 2:
-                v.setChurchLevel((Integer) o);
+                v.setWatchtowerLevel((Integer) o);
                 break;
             default:
                 logger.error("Invalid Columnindex " + columnIndex);

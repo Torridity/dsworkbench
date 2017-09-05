@@ -177,8 +177,9 @@ public class ScreenshotPanel extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    public void paint(Graphics g) {
-        super.paint(g);
+    @Override
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
         g2d.drawImage(mBuffer.getScaledInstance(mBuffer.getWidth() * iScaling, mBuffer.getHeight() * iScaling, BufferedImage.SCALE_DEFAULT), 0, 0, null);
         g2d.dispose();

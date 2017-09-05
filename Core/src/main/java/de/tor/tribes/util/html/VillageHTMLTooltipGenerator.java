@@ -28,6 +28,7 @@ import de.tor.tribes.ui.panels.MapPanel;
 import de.tor.tribes.util.BBCodeFormatter;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.GlobalOptions;
+import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.conquer.ConquerManager;
 import de.tor.tribes.util.farm.FarmManager;
 import de.tor.tribes.util.mark.MarkerManager;
@@ -52,7 +53,8 @@ public class VillageHTMLTooltipGenerator {
     }
     
     public static String buildToolTip(Village pVillage, boolean pWithUnits) {
-        boolean showMoral = GlobalOptions.getProperties().getBoolean("show.popup.moral");
+        boolean showMoral = GlobalOptions.getProperties().getBoolean("show.popup.moral") &&
+                ServerSettings.getSingleton().getMoralType() != ServerSettings.NO_MORAL;
         boolean showRanks = GlobalOptions.getProperties().getBoolean("show.popup.ranks");
         boolean showConquers = GlobalOptions.getProperties().getBoolean("show.popup.conquers");
         boolean showFarmSpace = GlobalOptions.getProperties().getBoolean("show.popup.farm.space");

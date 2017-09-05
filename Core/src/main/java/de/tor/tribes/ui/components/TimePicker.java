@@ -15,7 +15,7 @@
  */
 package de.tor.tribes.ui.components;
 
-import de.tor.tribes.dssim.Constants;
+import de.tor.tribes.util.Constants;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;

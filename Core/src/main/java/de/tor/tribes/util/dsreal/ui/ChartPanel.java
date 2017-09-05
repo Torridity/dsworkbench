@@ -131,7 +131,9 @@ public class ChartPanel extends javax.swing.JPanel {
         return true;
     }
 
-    public void paint(Graphics g) {
+    @Override
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
         super.paint(g);
         Graphics2D g2d = (Graphics2D) g;
         int h = mBuffers.get(0).getHeight();

@@ -27,16 +27,32 @@ public class StorageStatus implements Comparable<StorageStatus> {
     private double capacity = 0;
 
     public StorageStatus(int pWood, int pClay, int pIron, int pStorageCapacity) {
-        woodStatus = (double) pWood / (double) pStorageCapacity;
-        clayStatus = (double) pClay / (double) pStorageCapacity;
-        ironStatus = (double) pIron / (double) pStorageCapacity;
+        if(pStorageCapacity > 0) {
+            woodStatus = (double) pWood / (double) pStorageCapacity;
+            clayStatus = (double) pClay / (double) pStorageCapacity;
+            ironStatus = (double) pIron / (double) pStorageCapacity;
+        }
+        else {
+            //Hide bigger than Storage -> nothing to get
+            woodStatus = 0;
+            clayStatus = 0;
+            ironStatus = 0;
+        }
         capacity = pStorageCapacity;
     }
 
     public void update(int pWood, int pClay, int pIron, int pStorageCapacity) {
-        woodStatus = (double) pWood / (double) pStorageCapacity;
-        clayStatus = (double) pClay / (double) pStorageCapacity;
-        ironStatus = (double) pIron / (double) pStorageCapacity;
+        if(pStorageCapacity > 0) {
+            woodStatus = (double) pWood / (double) pStorageCapacity;
+            clayStatus = (double) pClay / (double) pStorageCapacity;
+            ironStatus = (double) pIron / (double) pStorageCapacity;
+        }
+        else {
+            //Hide bigger than Storage -> nothing to get
+            woodStatus = 0;
+            clayStatus = 0;
+            ironStatus = 0;
+        }
         capacity = pStorageCapacity;
     }
 

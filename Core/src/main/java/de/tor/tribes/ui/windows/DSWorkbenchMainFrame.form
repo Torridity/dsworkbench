@@ -221,9 +221,9 @@
                   <Group type="102" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jExportForms" alignment="0" pref="172" max="32767" attributes="0"/>
-                          <Component id="jExportTags" alignment="0" pref="172" max="32767" attributes="0"/>
-                          <Component id="jExportChurches" alignment="0" pref="172" max="32767" attributes="0"/>
+                          <Component id="jExportForms" alignment="0" max="32767" attributes="0"/>
+                          <Component id="jExportTags" alignment="0" max="32767" attributes="0"/>
+                          <Component id="jExportVillageInformation" alignment="0" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -237,8 +237,8 @@
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="jExportForms" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Component id="jExportChurches" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="18" max="32767" attributes="0"/>
+                      <Component id="jExportVillageInformation" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -254,9 +254,10 @@
                 <Property name="text" type="java.lang.String" value="Zeichnungen exportieren"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JCheckBox" name="jExportChurches">
+            <Component class="javax.swing.JCheckBox" name="jExportVillageInformation">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Kirchen exportieren"/>
+                <Property name="text" type="java.lang.String" value="Dorfinfos exportieren"/>
+                <Property name="toolTipText" type="java.lang.String" value="Enth&#xe4;lt Geb&#xe4;udeinfos (z.B. Kichrche, Wachturm)"/>
               </Properties>
             </Component>
           </SubComponents>
@@ -883,7 +884,6 @@
             <Property name="text" type="java.lang.String" value="Kartenpopup anzeigen"/>
             <Property name="toolTipText" type="java.lang.String" value="Zeigt Informationen &#xfc;ber das Dorf unter dem Mauszeiger an"/>
             <Property name="horizontalAlignment" type="int" value="2"/>
-            <Property name="opaque" type="boolean" value="false"/>
           </Properties>
           <Events>
             <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="fireShowMapPopupChangedEvent"/>
@@ -937,7 +937,6 @@
             <Property name="text" type="java.lang.String" value="Spielerd&#xf6;rfer hervorheben"/>
             <Property name="toolTipText" type="java.lang.String" value="Markiert im Kartenausschnitt alle D&#xf6;rfer des Spielers, dessen Dorf unter dem Mauszeiger liegt"/>
             <Property name="horizontalAlignment" type="int" value="2"/>
-            <Property name="opaque" type="boolean" value="false"/>
           </Properties>
           <Events>
             <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="fireHighlightTribeVillagesChangedEvent"/>
@@ -953,7 +952,6 @@
             <Property name="text" type="java.lang.String" value="Lineal anzeigen"/>
             <Property name="toolTipText" type="java.lang.String" value="Zeichnet ein Koordinatenlineal am Kartenrand"/>
             <Property name="horizontalAlignment" type="int" value="2"/>
-            <Property name="opaque" type="boolean" value="false"/>
           </Properties>
           <Events>
             <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="fireShowRulerChangedEvent"/>
@@ -1035,7 +1033,6 @@
             <Property name="text" type="java.lang.String" value="MouseOver Infos anzeigen"/>
             <Property name="toolTipText" type="java.lang.String" value="Zeigt Informationen &#xfc;ber das Dorf unter dem Mauszeiger an"/>
             <Property name="horizontalAlignment" type="int" value="2"/>
-            <Property name="opaque" type="boolean" value="false"/>
           </Properties>
           <Events>
             <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="fireShowMouseOverInfoEvent"/>
@@ -1050,7 +1047,6 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="Unterst&#xfc;tzungen einbeziehen"/>
             <Property name="toolTipText" type="java.lang.String" value=" Unterst&#xfc;tzungen bei den MouseOver Infos und bei der Anzeige der Truppendichte mit einbeziehen"/>
-            <Property name="opaque" type="boolean" value="false"/>
           </Properties>
           <Events>
             <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="fireShowHideSupportsEvent"/>
@@ -1064,7 +1060,38 @@
         <Component class="javax.swing.JLabel" name="jLabel3">
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
-              <GridBagConstraints gridX="0" gridY="7" gridWidth="5" gridHeight="1" fill="1" ipadX="0" ipadY="0" insetsTop="0" insetsLeft="0" insetsBottom="0" insetsRight="0" anchor="10" weightX="0.0" weightY="1.0"/>
+              <GridBagConstraints gridX="0" gridY="9" gridWidth="5" gridHeight="1" fill="1" ipadX="0" ipadY="0" insetsTop="0" insetsLeft="0" insetsBottom="0" insetsRight="0" anchor="10" weightX="0.0" weightY="1.0"/>
+            </Constraint>
+          </Constraints>
+        </Component>
+        <Component class="javax.swing.JCheckBox" name="jDisplayWatchtower">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Wachturmradien Zeichnen"/>
+            <Property name="toolTipText" type="java.lang.String" value="Wachturmradien Zeichnen"/>
+            <Property name="actionCommand" type="java.lang.String" value=""/>
+            <Property name="autoscrolls" type="boolean" value="true"/>
+          </Properties>
+          <Events>
+            <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="fireDisplayWatchtower"/>
+          </Events>
+          <Constraints>
+            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
+              <GridBagConstraints gridX="0" gridY="8" gridWidth="5" gridHeight="1" fill="2" ipadX="0" ipadY="0" insetsTop="5" insetsLeft="5" insetsBottom="5" insetsRight="5" anchor="18" weightX="0.0" weightY="0.0"/>
+            </Constraint>
+          </Constraints>
+        </Component>
+        <Component class="javax.swing.JCheckBox" name="jDisplayChurch">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Kirchenradien Zeichnen"/>
+            <Property name="toolTipText" type="java.lang.String" value="Kirchenradien Zeichnen"/>
+            <Property name="actionCommand" type="java.lang.String" value="Kirchenradien zeichnen"/>
+          </Properties>
+          <Events>
+            <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="fireDisplayChurch"/>
+          </Events>
+          <Constraints>
+            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
+              <GridBagConstraints gridX="0" gridY="7" gridWidth="5" gridHeight="1" fill="2" ipadX="0" ipadY="0" insetsTop="5" insetsLeft="5" insetsBottom="5" insetsRight="5" anchor="18" weightX="0.0" weightY="0.0"/>
             </Constraint>
           </Constraints>
         </Component>
@@ -1404,8 +1431,8 @@
     <SyntheticProperty name="formSizePolicy" type="int" value="2"/>
   </SyntheticProperties>
   <Events>
-    <EventHandler event="windowClosing" listener="java.awt.event.WindowListener" parameters="java.awt.event.WindowEvent" handler="fireDSWorkbenchClosingEvent"/>
     <EventHandler event="componentResized" listener="java.awt.event.ComponentListener" parameters="java.awt.event.ComponentEvent" handler="fireFrameResizedEvent"/>
+    <EventHandler event="windowClosing" listener="java.awt.event.WindowListener" parameters="java.awt.event.WindowEvent" handler="fireDSWorkbenchClosingEvent"/>
   </Events>
   <AuxValues>
     <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
@@ -1450,7 +1477,7 @@
               <Group type="102" alignment="1" attributes="0">
                   <Component id="jMinimapPanel" min="-2" pref="300" max="-2" attributes="0"/>
                   <EmptySpace min="-2" max="-2" attributes="0"/>
-                  <Component id="jSettingsScrollPane" pref="405" max="32767" attributes="0"/>
+                  <Component id="jSettingsScrollPane" pref="406" max="32767" attributes="0"/>
               </Group>
               <Group type="102" alignment="1" attributes="0">
                   <Component id="jMapPanelHolder" pref="689" max="32767" attributes="1"/>

@@ -38,7 +38,7 @@ public class Constants {
     public final static Color ALLY_MARKER = new Color(0, 160, 244);
     public final static String SERVER_DIR = "./servers";
     public static Hashtable<String, Integer> LAYERS = null;
-    public final static int LAYER_COUNT = 9;
+    public final static int LAYER_COUNT = 10;
     public final static boolean DEBUG = false;
 
     static {
@@ -52,6 +52,7 @@ public class Constants {
         LAYERS.put("Unterstützungen", 6);
         LAYERS.put("Zeichnungen", 7);
         LAYERS.put("Kirchenradien", 8);
+        LAYERS.put("Wachturmradien", 9);
         if (DEBUG) {
             System.err.println("DEBUG MODE ENABLED!");
         }

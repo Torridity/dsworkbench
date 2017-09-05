@@ -42,7 +42,12 @@ public class FillingLabel extends JLabel {
             res += v * capacity;
         }
         res /= 1000;
-        text = nf.format(res) + " K";
+        
+        if(res > 0) {
+            text = nf.format(res) + " K";
+        } else {
+            text = "keine";
+        }
     }
 
     public void setColors(Color[] colors) {
@@ -50,8 +55,8 @@ public class FillingLabel extends JLabel {
     }
 
     @Override
-    public void paint(Graphics g) {
-        super.paint(g);
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
         if (fillings == null || colors == null || fillings.length != colors.length) {
             return;

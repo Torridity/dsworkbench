@@ -438,8 +438,8 @@ public class MinimapPanel extends javax.swing.JPanel implements GenericManagerLi
     }
 
     @Override
-    public void paint(Graphics g) {
-        super.paint(g);
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
         try {
             Graphics2D g2d = (Graphics2D) g;
             g2d.clearRect(0, 0, getWidth(), getHeight());
@@ -1081,12 +1081,12 @@ class MinimapRepaintThread extends Thread {
         Graphics2D g2d = (Graphics2D) mBuffer.getGraphics();
         g2d.setColor(new Color(35, 125, 0));
         g2d.fillRect(0, 0, mBuffer.getWidth(null), mBuffer.getHeight(null));
-        boolean markPlayer = GlobalOptions.getProperties().getBoolean("mark.villages.on.minimap", true);
+        boolean markPlayer = GlobalOptions.getProperties().getBoolean("mark.villages.on.minimap");
         if (ServerSettings.getSingleton().getMapDimension() == null) {
             //could not draw minimap if dimensions are not loaded yet
             return false;
         }
-        boolean showBarbarian = GlobalOptions.getProperties().getBoolean("show.barbarian", true);
+        boolean showBarbarian = GlobalOptions.getProperties().getBoolean("show.barbarian");
 
         Color DEFAULT = Constants.DS_DEFAULT_MARKER;
         try {
@@ -1171,7 +1171,7 @@ class MinimapRepaintThread extends Thread {
         }
 
         try {
-            if (GlobalOptions.getProperties().getBoolean("map.showcontinents", true)) {
+            if (GlobalOptions.getProperties().getBoolean("map.showcontinents")) {
                 g2d.setColor(Color.BLACK);
                 Composite c = g2d.getComposite();
                 Composite a = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4f);

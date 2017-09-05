@@ -17,9 +17,10 @@ package de.tor.tribes.ui.windows;
 
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.util.attack.AttackManager;
+
+import javax.swing.*;
 import java.util.Arrays;
 import java.util.List;
-import javax.swing.DefaultComboBoxModel;
 
 /**
  *
@@ -145,7 +146,7 @@ public class AttackTransferDialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jNewPlanNamefireNewResultTargetPlanChangedEvent(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_jNewPlanNamefireNewResultTargetPlanChangedEvent
-        boolean enableExisting = !(jNewPlanName.getText() != null && !jNewPlanName.getText().equals(""));
+        boolean enableExisting = !(jNewPlanName.getText() != null && !jNewPlanName.getText().isEmpty());
         jExistingPlanBox.setEnabled(enableExisting);
         jLabel14.setEnabled(enableExisting);
     }//GEN-LAST:event_jNewPlanNamefireNewResultTargetPlanChangedEvent
@@ -211,13 +212,7 @@ public class AttackTransferDialog extends javax.swing.JDialog {
                     break;
                 }
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(AttackTransferDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(AttackTransferDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(AttackTransferDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+        } catch (ClassNotFoundException | javax.swing.UnsupportedLookAndFeelException | IllegalAccessException | InstantiationException ex) {
             java.util.logging.Logger.getLogger(AttackTransferDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>

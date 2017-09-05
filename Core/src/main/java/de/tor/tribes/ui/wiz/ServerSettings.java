@@ -17,25 +17,17 @@ package de.tor.tribes.ui.wiz;
 
 import de.tor.tribes.io.ServerManager;
 import de.tor.tribes.types.ext.Tribe;
-import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.zip.GZIPInputStream;
-import javax.swing.DefaultComboBoxModel;
 import org.netbeans.spi.wizard.Wizard;
 import org.netbeans.spi.wizard.WizardController;
 import org.netbeans.spi.wizard.WizardPanel;
 import org.netbeans.spi.wizard.WizardPanelNavResult;
+
+import javax.swing.*;
+import java.io.*;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.*;
+import java.util.zip.GZIPInputStream;
 
 /**
  *
@@ -207,7 +199,7 @@ private void fireSelectServerEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
   String selection = null;
   try {
     selection = (String) jServerBox.getSelectedItem();
-  } catch (ClassCastException cce) {
+  } catch (ClassCastException ignored) {
   }
   if (selection == null || "-Bitte wählen-".equals(selection)) {
     wizCtrl.setProblem("Bitte einen Server auswählen");
@@ -219,37 +211,34 @@ private void fireSelectServerEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
   try {
     URL file = new URL(downloadURL + "/map/tribe.txt.gz");
     downloadDataFile(file, "tribe.tmp");
-    BufferedReader r = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream("tribe.tmp"))));
 
-    String line = "";
-    try {
-      List<Tribe> tribes = new ArrayList<Tribe>();
-      while ((line = r.readLine()) != null) {
-        line = line.replaceAll(",,", ", ,");
-        Tribe t = Tribe.parseFromPlainData(line);
-        if (t != null) {
-          tribes.add(t);
-        }
-      }
+      String line = "";
+      try (BufferedReader r = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream("tribe.tmp"))))) {
+          List<Tribe> tribes = new ArrayList<>();
+          while ((line = r.readLine()) != null) {
+              line = line.replaceAll(",,", ", ,");
+              Tribe t = Tribe.parseFromPlainData(line);
+              if (t != null) {
+                  tribes.add(t);
+              }
+          }
 
-      if (tribes.isEmpty()) {
-        wizCtrl.setProblem("Keine Spieler gefunden. Versuch es bitte später noch einmal.");
-        return;
+          if (tribes.isEmpty()) {
+              wizCtrl.setProblem("Keine Spieler gefunden. Versuch es bitte später noch einmal.");
+              return;
+          }
+          Collections.sort(tribes, Tribe.CASE_INSENSITIVE_ORDER);
+          DefaultComboBoxModel model = new DefaultComboBoxModel();
+          model.addElement("-Bitte wählen-");
+          for (Tribe t : tribes) {
+              model.addElement(t);
+          }
+          jTribeBox.setModel(model);
+          currentSettings.put("server", selection);
+          wizCtrl.setProblem("Bitte einen Spielernamen wählen");
+      } catch (Throwable t) {
+          wizCtrl.setProblem("Fehler beim Download der Spielerdaten");
       }
-      Collections.sort(tribes, Tribe.CASE_INSENSITIVE_ORDER);
-      DefaultComboBoxModel model = new DefaultComboBoxModel();
-      model.addElement("-Bitte wählen-");
-      for (Tribe t : tribes) {
-        model.addElement(t);
-      }
-      jTribeBox.setModel(model);
-      currentSettings.put("server", selection);
-      wizCtrl.setProblem("Bitte einen Spielernamen wählen");
-    } catch (Throwable t) {
-      wizCtrl.setProblem("Fehler beim Download der Spielerdaten");
-    } finally {
-      r.close();
-    }
 
   } catch (Throwable t) {
     wizCtrl.setProblem("Fehler beim Herunterladen der Serverinformationen.\nBitte versuch es später nochmal.");
@@ -262,7 +251,7 @@ private void fireTribeChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:ev
   Tribe tribe = null;
   try {
     tribe = (Tribe) jTribeBox.getSelectedItem();
-  } catch (ClassCastException cce) {
+  } catch (ClassCastException ignored) {
   }
   if (tribe == null) {
     wizCtrl.setProblem("Bitte einen Spielernamen wählen");
@@ -291,7 +280,7 @@ private void fireTribeChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:ev
       if (sum % 500 == 0) {
         try {
           Thread.sleep(50);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
       }
     }
@@ -300,11 +289,11 @@ private void fireTribeChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:ev
     tempWriter.flush();
     try {
       isr.close();
-    } catch (Exception e) {
+    } catch (Exception ignored) {
     }
     try {
       tempWriter.close();
-    } catch (Exception e) {
+    } catch (Exception ignored) {
     }
   }
     // Variables declaration - do not modify//GEN-BEGIN:variables

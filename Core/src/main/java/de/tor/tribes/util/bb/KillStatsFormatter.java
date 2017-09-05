@@ -28,18 +28,18 @@ import org.apache.commons.lang.StringUtils;
  */
 public class KillStatsFormatter extends BasicFormatter<Stats> {
 
-    private final String TRIBE = "%TRIBE%";
-    private final String KILLS_BEFORE = "%KILLS_START%";
-    private final String KILLS_AFTER = "%KILLS_END%";
-    private final String KILLS_DIFFERENCE = "%KILLS_DIFFERENCE%";
-    private final String PERCENT_DIFFERENCE = "%PERCENT_DIFFERENCE%";
+    private static final String TRIBE = "%TRIBE%";
+    private static final String KILLS_BEFORE = "%KILLS_START%";
+    private static final String KILLS_AFTER = "%KILLS_END%";
+    private static final String KILLS_DIFFERENCE = "%KILLS_DIFFERENCE%";
+    private static final String PERCENT_DIFFERENCE = "%PERCENT_DIFFERENCE%";
     private final String[] STAT_SPECIFIC_VARIABLES = new String[]{TRIBE, KILLS_BEFORE, KILLS_AFTER, KILLS_DIFFERENCE, PERCENT_DIFFERENCE};
     private final String[] VARIABLES = new String[]{LIST_START, LIST_END, ELEMENT_COUNT, ELEMENT_ID};
-    private final String STANDARD_TEMPLATE = "[b]Angriffsstatistik[/b]\nBerücksichtigte Spieler: %ELEMENT_COUNT%\n[table]\n"
+    public static final String STANDARD_TEMPLATE = "[b]Angriffsstatistik[/b]\nBerücksichtigte Spieler: %ELEMENT_COUNT%\n[table]\n"
             + "[**]Platz[||]Spieler[||]Kills (Anfang)[||]Zuwachs[||]Kills (Ende)[/**]\n"
             + "%LIST_START%[*]%ELEMENT_ID%[|]%TRIBE%[|]%KILLS_START%[|]%KILLS_DIFFERENCE%[|]%KILLS_END%[/*]%LIST_END%\n"
             + "[/table]";
-    private final String TEMPLATE_PROPERTY = "kills.stats.bbexport.template";
+    private static final String TEMPLATE_PROPERTY = "kills.stats.bbexport.template";
 
     @Override
     public String formatElements(List<Stats> pElements, boolean pShowAll) {
@@ -114,13 +114,9 @@ public class KillStatsFormatter extends BasicFormatter<Stats> {
 
     @Override
     public String[] getTemplateVariables() {
-        List<String> vars = new LinkedList<String>();
-        for (String var : VARIABLES) {
-            vars.add(var);
-        }
-        for (String var : STAT_SPECIFIC_VARIABLES) {
-            vars.add(var);
-        }
+        List<String> vars = new LinkedList<>();
+        Collections.addAll(vars, VARIABLES);
+        Collections.addAll(vars, STAT_SPECIFIC_VARIABLES);
         return vars.toArray(new String[vars.size()]);
     }
 }

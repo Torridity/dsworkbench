@@ -36,7 +36,7 @@ public class ChartPanel extends javax.swing.JPanel {
     private List<BufferedImage> mBuffers = null;
 
     public ChartPanel(List<String> pFiles) throws Exception {
-        mBuffers = new LinkedList<BufferedImage>();
+        mBuffers = new LinkedList<>();
         for (String file : pFiles) {
             mBuffers.add(ImageIO.read(new File(file)));
         }
@@ -61,7 +61,7 @@ public class ChartPanel extends javax.swing.JPanel {
 
     public static boolean showPointChart(String pLocalFile, Tribe pTribe) {
         try {
-            List<String> file = new LinkedList<String>();
+            List<String> file = new LinkedList<>();
             file.add(pLocalFile);
             ChartPanel p = new ChartPanel(file);
             JFrame f = new JFrame();
@@ -78,7 +78,7 @@ public class ChartPanel extends javax.swing.JPanel {
 
     public static boolean showPointChart(String pLocalFile, Ally pAlly) {
         try {
-            List<String> file = new LinkedList<String>();
+            List<String> file = new LinkedList<>();
             file.add(pLocalFile);
             ChartPanel p = new ChartPanel(file);
             JFrame f = new JFrame();
@@ -95,7 +95,7 @@ public class ChartPanel extends javax.swing.JPanel {
 
     public static boolean showBashChart(String pOffFile, String pDefFile, String pAllFile, Tribe pTribe) {
         try {
-            List<String> file = new LinkedList<String>();
+            List<String> file = new LinkedList<>();
             file.add(pOffFile);
             file.add(pDefFile);
             file.add(pAllFile);
@@ -114,7 +114,7 @@ public class ChartPanel extends javax.swing.JPanel {
 
     public static boolean showBashChart(String pOffFile, String pDefFile, String pAllFile, Ally pAlly) {
         try {
-            List<String> file = new LinkedList<String>();
+            List<String> file = new LinkedList<>();
             file.add(pOffFile);
             file.add(pDefFile);
             file.add(pAllFile);

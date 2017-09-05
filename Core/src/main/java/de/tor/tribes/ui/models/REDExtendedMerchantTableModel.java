@@ -36,7 +36,7 @@ public class REDExtendedMerchantTableModel extends AbstractTableModel {
     Class[] types = new Class[]{
         Village.class, StorageStatus.class, Integer.class, String.class, String.class, VillageMerchantInfo.Direction.class
     };
-    private final List<VillageMerchantInfo> elements = new LinkedList<VillageMerchantInfo>();
+    private final List<VillageMerchantInfo> elements = new LinkedList<>();
 
     public REDExtendedMerchantTableModel() {
         super();

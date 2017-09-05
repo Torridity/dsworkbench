@@ -27,6 +27,7 @@ import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.TroopHelper;
 import de.tor.tribes.util.algo.AbstractAttackAlgorithm;
 import de.tor.tribes.util.algo.BruteForce;
+import de.tor.tribes.util.algo.Iterix;
 import de.tor.tribes.util.algo.types.TimeFrame;
 import java.awt.BorderLayout;
 import java.awt.Point;
@@ -57,7 +58,7 @@ public class SupportRefillCalculationPanel extends WizardPage {
             + "Als früheste Abschickzeit wird die aktuelle Zeit gewählt, mögliche Abschickzeiten liegen zwischen jetzt und der eingestellten Ankunftzeit. "
             + "Drücke auf 'Unterstützungen berechnen' um die Berechnung zu starten.";
     private static SupportRefillCalculationPanel singleton = null;
-    private BruteForce calculator = null;
+    private AbstractAttackAlgorithm calculator = null;
     private SimpleDateFormat dateFormat = null;
     
     public static synchronized SupportRefillCalculationPanel getSingleton() {
@@ -102,7 +103,7 @@ public class SupportRefillCalculationPanel extends WizardPage {
         
         try {
             date = Long.parseLong(profile.getProperty("ref.calculation.arrive"));
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         jArriveTime.setDate(new Date(date));
     }
@@ -134,11 +135,13 @@ public class SupportRefillCalculationPanel extends WizardPage {
         jPanel3 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         jArriveTime = new de.tor.tribes.ui.components.DateTimeField();
+        jBruteForce = new javax.swing.JRadioButton();
+        jSystematicCalculation = new javax.swing.JRadioButton();
 
         jInfoScrollPane.setMinimumSize(new java.awt.Dimension(19, 180));
         jInfoScrollPane.setPreferredSize(new java.awt.Dimension(19, 180));
 
-        jInfoTextPane.setContentType("text/html");
+        jInfoTextPane.setContentType("text/html"); // NOI18N
         jInfoTextPane.setEditable(false);
         jInfoTextPane.setText("<html>Du befindest dich im <b>Angriffsmodus</b>. Hier kannst du die Herkunftsd&ouml;rfer ausw&auml;hlen, die f&uuml;r Angriffe verwendet werden d&uuml;rfen. Hierf&uuml;r hast die folgenden M&ouml;glichkeiten:\n<ul>\n<li>Einf&uuml;gen von Dorfkoordinaten aus der Zwischenablage per STRG+V</li>\n<li>Einf&uuml;gen der Herkunftsd&ouml;rfer aus der Gruppen&uuml;bersicht</li>\n<li>Einf&uuml;gen der Herkunftsd&ouml;rfer aus dem SOS-Analyzer</li>\n<li>Einf&uuml;gen der Herkunftsd&ouml;rfer aus Berichten</li>\n<li>Einf&uuml;gen aus der Auswahlübersicht</li>\n<li>Manuelle Eingabe</li>\n</ul>\n</html>\n");
         jInfoScrollPane.setViewportView(jInfoTextPane);
@@ -257,11 +260,34 @@ public class SupportRefillCalculationPanel extends WizardPage {
 
         jLabel3.setText("Späteste Ankunftzeit");
         gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel3.add(jLabel3, gridBagConstraints);
         gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel3.add(jArriveTime, gridBagConstraints);
+
+        buttonGroup1.add(jBruteForce);
+        jBruteForce.setSelected(true);
+        jBruteForce.setText("Zufällige Berechnung");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel3.add(jBruteForce, gridBagConstraints);
+
+        buttonGroup1.add(jSystematicCalculation);
+        jSystematicCalculation.setText("Systematische Berechnung");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel3.add(jSystematicCalculation, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -294,30 +320,30 @@ public class SupportRefillCalculationPanel extends WizardPage {
     private void fireCalculateAttacksEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCalculateAttacksEvent
         if (calculator == null) {//not used yet
             initializeCalculation();
-        } else {//in use or finished
-            if (calculator.isRunning()) {//in use...abort
-                calculator.abort();
+        } else if (calculator.isRunning()) {//in use...abort
+            calculator.abort();
+            return;
+        } else {//not in use...recalculate
+            if (calculator.hasResults() && JOptionPaneHelper.showQuestionConfirmBox(this, "Vorherige Berechnung verwerfen?", "Berechnung verwerfen", "Nein", "Ja") == JOptionPane.NO_OPTION) {
+                //not recalculate
                 return;
-            } else {//not in use...recalculate
-                if (calculator.hasResults() && JOptionPaneHelper.showQuestionConfirmBox(this, "Vorherige Berechnung verwerfen?", "Berechnung verwerfen", "Nein", "Ja") == JOptionPane.NO_OPTION) {
-                    //not recalculate
-                    return;
-                } else {
-                    //recalculate
-                    initializeCalculation();
-                }
+            } else {
+                //recalculate
+                initializeCalculation();
             }
         }
         
-        jCalculateButton.setText("Abbrechen");
-        calculator.start();
-        setBusy(true);
-        //wait until calculation is running
-        try {
-            Thread.sleep(20);
-        } catch (Exception e) {
+        if(calculator != null && !calculator.hasResults()) {
+            //do only if there were no problems during initiation of calculation
+            jCalculateButton.setText("Abbrechen");
+            calculator.start();
+            setBusy(true);
+            //wait until calculation is running
+            try {
+                Thread.sleep(20);
+            } catch (Exception ignored) {
+            }
         }
-        
     }//GEN-LAST:event_fireCalculateAttacksEvent
     
     protected TimeFrame getTimeFrame() {
@@ -335,11 +361,15 @@ public class SupportRefillCalculationPanel extends WizardPage {
             return;
         }
         TimeFrame f = getTimeFrame();
-        calculator = new BruteForce();
-        Hashtable<UnitHolder, List<Village>> sources = new Hashtable<UnitHolder, List<Village>>();
+        if (jBruteForce.isSelected()) {
+            calculator = new BruteForce();
+        } else if (jSystematicCalculation.isSelected()) {
+            calculator = new Iterix();
+        }
+        Hashtable<UnitHolder, List<Village>> sources = new Hashtable<>();
         UnitHolder slowest = TroopHelper.getSlowestUnit(SupportRefillSettingsPanel.getSingleton().getSplit());
         
-        List<Village> sourceVillages = new LinkedList<Village>();
+        List<Village> sourceVillages = new LinkedList<>();
         for (REFSourceElement element : SupportRefillSourcePanel.getSingleton().getAllElements()) {
             for (int i = 0; i < element.getAvailableSupports(); i++) {
                 sourceVillages.add(element.getVillage());
@@ -347,9 +377,11 @@ public class SupportRefillCalculationPanel extends WizardPage {
         }
         sources.put(slowest, sourceVillages);
         
-        List<Village> targets = new LinkedList<Village>();
-        Hashtable<Village, Integer> maxSupports = new Hashtable<Village, Integer>();
+        List<Village> targets = new LinkedList<>();
+        Hashtable<Village, Integer> maxSupports = new Hashtable<>();
         for (REFTargetElement element : SupportRefillSettingsPanel.getSingleton().getAllElements()) {
+            //ignore Targets that don't need any support, because the algorithm can't handle such targets
+            if(element.getNeededSupports() <= 0) continue;
             targets.add(element.getVillage());
             maxSupports.put(element.getVillage(), element.getNeededSupports());
         }
@@ -377,13 +409,13 @@ public class SupportRefillCalculationPanel extends WizardPage {
     public void updateStatus() {
         int need = 0;
         for (REFTargetElement elem : SupportRefillSettingsPanel.getSingleton().getAllElements()) {
-            need += elem.getNeededSupports();
+            need += Math.max(elem.getNeededSupports(), 0);
         }
         jNeededSupports.setText(Integer.toString(need));
         
         int available = 0;
         for (REFSourceElement elem : SupportRefillSourcePanel.getSingleton().getAllElements()) {
-            need += elem.getAvailableSupports();
+            available += elem.getAvailableSupports();
         }
         jAvailableSupports.setText(Integer.toString(available));
     }
@@ -409,7 +441,7 @@ public class SupportRefillCalculationPanel extends WizardPage {
                     scroll();
                 }
             });
-        } catch (BadLocationException ble) {
+        } catch (BadLocationException ignored) {
         }
     }
     
@@ -429,6 +461,7 @@ public class SupportRefillCalculationPanel extends WizardPage {
     private javax.swing.ButtonGroup buttonGroup1;
     private de.tor.tribes.ui.components.DateTimeField jArriveTime;
     private javax.swing.JLabel jAvailableSupports;
+    private javax.swing.JRadioButton jBruteForce;
     private javax.swing.JButton jCalculateButton;
     private javax.swing.JScrollPane jInfoScrollPane;
     private javax.swing.JTextPane jInfoTextPane;
@@ -442,6 +475,7 @@ public class SupportRefillCalculationPanel extends WizardPage {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JProgressBar jProgressBar1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JRadioButton jSystematicCalculation;
     private javax.swing.JTextPane jTextPane1;
     private org.jdesktop.swingx.JXCollapsiblePane jXCollapsiblePane1;
     // End of variables declaration//GEN-END:variables

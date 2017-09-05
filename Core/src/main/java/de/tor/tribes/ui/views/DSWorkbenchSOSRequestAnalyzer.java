@@ -56,14 +56,8 @@ import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.Map.Entry;
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.ImageIcon;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.KeyStroke;
-import javax.swing.UIManager;
+import javax.swing.*;
+
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.ConsoleAppender;
@@ -77,6 +71,7 @@ import org.jdesktop.swingx.table.TableColumnExt;
 /**
  *
  * @author Torridity
+ * @author extremeCrazyCoder
  */
 public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame implements ActionListener {
 
@@ -184,7 +179,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
 
         try {
             jAlwaysOnTopBox.setSelected(pConfig.getBoolean(getPropertyPrefix() + ".alwaysOnTop"));
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
         setAlwaysOnTop(jAlwaysOnTopBox.isSelected());
@@ -306,7 +301,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
     }
 
     public boolean sendDataToDefensePlaner() {
-        List<DefenseInformation> infos = new LinkedList<DefenseInformation>();
+        List<DefenseInformation> infos = new LinkedList<>();
         if (getModel().getRowCount() == 0) {
             return false;
         } else {
@@ -413,7 +408,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
                 int needed = defense.getNeededSupports();
                 int available = defense.getSupports().length;
                 Hashtable<UnitHolder, Integer> split = DSWorkbenchSettingsDialog.getSingleton().getDefense();
-                Hashtable<UnitHolder, Integer> need = new Hashtable<UnitHolder, Integer>();
+                Hashtable<UnitHolder, Integer> need = new Hashtable<>();
                 Set<Entry<UnitHolder, Integer>> entries = split.entrySet();
                 for (Entry<UnitHolder, Integer> entry : entries) {
                     need.put(entry.getKey(), (needed - available) * entry.getValue());
@@ -516,7 +511,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
     }
 
     private void copySelectionToClipboardAsBBCode() {
-        Hashtable<Tribe, SOSRequest> selectedRequests = new Hashtable<Tribe, SOSRequest>();
+        Hashtable<Tribe, SOSRequest> selectedRequests = new Hashtable<>();
         List<DefenseInformation> selection = getSelectedRows();
         if (selection.isEmpty()) {
             showInfo("Keine SOS Anfragen eingelesen");
@@ -544,7 +539,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
                 buffer.append("[u]SOS Anfragen[/u]\n\n");
             }
 
-            List<SOSRequest> requests = new LinkedList<SOSRequest>();
+            List<SOSRequest> requests = new LinkedList<>();
 
             Enumeration<Tribe> tribeKeys = selectedRequests.keys();
             while (tribeKeys.hasMoreElements()) {
@@ -595,7 +590,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
 
             DefenseToolModel model = TableHelper.getTableModel(jAttacksTable);
             int numRows = selectedRows.length;
-            List<DefenseInformation> toRemove = new LinkedList<DefenseInformation>();
+            List<DefenseInformation> toRemove = new LinkedList<>();
             for (int row : selectedRows) {
                 toRemove.add(model.getRows()[jAttacksTable.convertRowIndexToModel(row)]);
             }
@@ -619,7 +614,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
     }
 
     private List<DefenseInformation> getSelectedRows() {
-        List<DefenseInformation> infos = new LinkedList<DefenseInformation>();
+        List<DefenseInformation> infos = new LinkedList<>();
         if (getModel().getRowCount() == 0) {
             showInfo("Keine SOS Anfragen vorhanden");
         } else {
@@ -826,12 +821,12 @@ private void fireAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRS
             Transferable t = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
             String data = (String) t.getTransferData(DataFlavor.stringFlavor);
 
-            List<SOSRequest> requests = PluginManager.getSingleton().executeSOSParserParser(data);
+            List<SOSRequest> requests = PluginManager.getSingleton().executeSOSParser(data);
             if (requests != null && !requests.isEmpty()) {
                 for (SOSRequest request : requests) {
                     SOSManager.getSingleton().addRequest(request);
-                    findFakes(request);
                 }
+                findFakes();
                 if (!ServerSettings.getSingleton().isMillisArrival()) {
                     showInfo("Der aktuelle Server unterstützt keine Millisekunden.\n"
                             + "Daher werden bereits eingelesene Angriffe nicht herausgefiltert.\n"
@@ -842,11 +837,7 @@ private void fireAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRS
             }
             updateView();
             analyzeData();
-        } catch (HeadlessException he) {
-            showInfo("Fehler beim Lesen aus der Zwischenablage");
-        } catch (UnsupportedFlavorException usfe) {
-            showInfo("Fehler beim Lesen aus der Zwischenablage");
-        } catch (IOException ioe) {
+        } catch (HeadlessException | IOException | UnsupportedFlavorException he) {
             showInfo("Fehler beim Lesen aus der Zwischenablage");
         }
     }
@@ -879,7 +870,9 @@ private void fireAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRS
                 }
             }, DSWorkbenchSettingsDialog.getSingleton().getOffense(),
                     DSWorkbenchSettingsDialog.getSingleton().getDefense(),
-                    GlobalOptions.getProperties().getInt("max.sim.rounds", 500), GlobalOptions.getProperties().getInt("max.loss.ratio", 50), pReAnalyze);
+                    GlobalOptions.getProperties().getInt("max.sim.rounds"),
+                    GlobalOptions.getProperties().getInt("max.loss.ratio"),
+                    pReAnalyze);
             a.start();
         }
     }
@@ -905,29 +898,112 @@ private void fireAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRS
         model.fireTableDataChanged();
     }
 
-    private void findFakes(SOSRequest pRequest) {
-        Enumeration<Village> targets = pRequest.getTargets();
-        while (targets.hasMoreElements()) {
-            Village target = targets.nextElement();
-            TargetInformation targetInfo = pRequest.getTargetInformation(target);
+    private void findFakes() {
+        Boolean fakesOrAGsFound = false;
+        
+        if(GlobalOptions.getProperties().getBoolean("sos.mark.all.duplicates.as.fake")) {
+            List<Village> sourcesOnce = new ArrayList<>();
+            List<Village> sourcesMoreThanOnce = new ArrayList<>();
+            
+            for (ManageableType manTyp: SOSManager.getSingleton().getAllElements()) {
+                SOSRequest pRequest = (SOSRequest) manTyp;
+                Enumeration<Village> targets = pRequest.getTargets();
 
-            //check for multiple attacks from same source to same target
-            Enumeration<Village> sources = targetInfo.getSources();
-            while (sources.hasMoreElements()) {
-                Village source = sources.nextElement();
-                if (targetInfo.getAttackCountFromSource(source) > 1) {
-                    for (TimedAttack att : targetInfo.getAttacksFromSource(source)) {
-                        if (!att.isPossibleFake() && !att.isPossibleSnob()) {//check only once
-                            long sendTime = att.getlArriveTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(source, target, DataHolder.getSingleton().getUnitByPlainName("ram").getSpeed()) * 1000);
-                            if (sendTime < System.currentTimeMillis()) {
+                while (targets.hasMoreElements()) {
+                    Village target = targets.nextElement();
+                    TargetInformation targetInfo = pRequest.getTargetInformation(target);
+
+                    Enumeration<Village> targetSources = targetInfo.getSources();
+                    while (targetSources.hasMoreElements()) {
+                        Village targetSource = targetSources.nextElement();
+                        if(sourcesOnce.contains(targetSource) &&
+                                !sourcesMoreThanOnce.contains(targetSource)) {
+                            sourcesMoreThanOnce.add(targetSource);
+                        }
+                        else {
+                            sourcesOnce.add(targetSource);
+                        }
+                    }
+                }
+            }
+            
+            for (ManageableType manTyp: SOSManager.getSingleton().getAllElements()) {
+                SOSRequest pRequest = (SOSRequest) manTyp;
+                Enumeration<Village> targets = pRequest.getTargets();
+
+                while (targets.hasMoreElements()) {
+                    Village target = targets.nextElement();
+                    TargetInformation targetInfo = pRequest.getTargetInformation(target);
+
+                    Enumeration<TimedAttack> attacks = Collections.enumeration(targetInfo.getAttacks());
+                    while (attacks.hasMoreElements()) {
+                        TimedAttack att = attacks.nextElement();
+
+                        //check for snobs
+                        long sendTime = att.getlArriveTime() - (long) (
+                                DSCalculator.calculateMoveTimeInSeconds(att.getSource(), target,
+                                DataHolder.getSingleton().getUnitByPlainName("ram").getSpeed()) * 1000);
+                        if (sendTime >= System.currentTimeMillis()) {
+                            att.setPossibleSnob(true);
+                            att.setPossibleFake(false);
+                            fakesOrAGsFound = true;
+                        }
+
+                        //check for multiple attacks from same source
+                        if(sourcesMoreThanOnce.contains(att.getSource())) {
+                            if (!att.isPossibleSnob()) {//ignore snobs
                                 att.setPossibleSnob(false);
                                 att.setPossibleFake(true);
-                            } else {
-                                att.setPossibleSnob(true);
-                                att.setPossibleFake(false);
+                                fakesOrAGsFound = true;
                             }
                         }
                     }
+                }
+            }
+        }
+        else {
+            for (ManageableType manTyp: SOSManager.getSingleton().getAllElements()) {
+                SOSRequest pRequest = (SOSRequest) manTyp;
+                
+                Enumeration<Village> targets = pRequest.getTargets();
+                while (targets.hasMoreElements()) {
+                    Village target = targets.nextElement();
+                    TargetInformation targetInfo = pRequest.getTargetInformation(target);
+
+                    //check for multiple attacks from same source to same target
+                    Enumeration<Village> sources = targetInfo.getSources();
+                    while (sources.hasMoreElements()) {
+                        Village source = sources.nextElement();
+                        if (targetInfo.getAttackCountFromSource(source) > 1) {
+                            for (TimedAttack att : targetInfo.getAttacksFromSource(source)) {
+                                if (!att.isPossibleFake() && !att.isPossibleSnob()) {//check only once
+                                    long sendTime = att.getlArriveTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(source, target, DataHolder.getSingleton().getUnitByPlainName("ram").getSpeed()) * 1000);
+                                    if (sendTime < System.currentTimeMillis()) {
+                                        att.setPossibleSnob(false);
+                                        att.setPossibleFake(true);
+                                    } else {
+                                        att.setPossibleSnob(true);
+                                        att.setPossibleFake(false);
+                                    }
+                                    fakesOrAGsFound = true;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        if(fakesOrAGsFound) {
+            //if we have found something inside the Atts we have to rebuild the Defence requests
+            logger.debug("refreshing deff requests");
+            
+            for (ManageableType manTyp: SOSManager.getSingleton().getAllElements()) {
+                SOSRequest pRequest = (SOSRequest) manTyp;
+                
+                Enumeration<Village> targets = pRequest.getTargets();
+                while (targets.hasMoreElements()) {
+                    pRequest.getDefenseInformation(targets.nextElement()).updateAttackInfo();
                 }
             }
         }
@@ -1013,12 +1089,12 @@ private void fireAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRS
         try {
             //  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         // createSampleRequests();
         new SOSGenerator().setVisible(true);
         DSWorkbenchSOSRequestAnalyzer.getSingleton().resetView();
-        DSWorkbenchSOSRequestAnalyzer.getSingleton().setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        DSWorkbenchSOSRequestAnalyzer.getSingleton().setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         DSWorkbenchSOSRequestAnalyzer.getSingleton().setVisible(true);
     }
 
@@ -1055,9 +1131,9 @@ class SupportColorUpdateThread extends Thread {
                 DSWorkbenchSOSRequestAnalyzer.getSingleton().updateTime();
                 try {
                     Thread.sleep(10000);
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                 }
-            } catch (Throwable t) {
+            } catch (Throwable ignored) {
             }
         }
     }
@@ -1089,7 +1165,7 @@ class SupportCountdownThread extends Thread {
                     // yield();
                     sleep(1000);
                 }
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         }
     }

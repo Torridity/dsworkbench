@@ -48,15 +48,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.LinkedList;
 import java.util.List;
-import javax.swing.AbstractAction;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.ImageIcon;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JTable;
-import javax.swing.KeyStroke;
-import javax.swing.UIManager;
+import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumn;
@@ -172,7 +164,7 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
 
         try {
             jAlwaysOnTop.setSelected(pConfig.getBoolean(getPropertyPrefix() + ".alwaysOnTop"));
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
         setAlwaysOnTop(jAlwaysOnTop.isSelected());
@@ -304,9 +296,8 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
         int row = jDistanceTable.getSelectedRow();
         if (row >= 0) {
             try {
-                Village v = (Village) ((DistanceTableModel) jDistanceTable.getModel()).getValueAt(jDistanceTable.convertRowIndexToModel(row), 0);
-                return v;
-            } catch (Exception e) {
+                return (Village) jDistanceTable.getModel().getValueAt(jDistanceTable.convertRowIndexToModel(row), 0);
+            } catch (Exception ignored) {
             }
         }
         return null;
@@ -355,7 +346,7 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
     }
 
     private void deleteSelectedColumns() {
-        List<TableColumn> colsToRemove = new LinkedList<TableColumn>();
+        List<TableColumn> colsToRemove = new LinkedList<>();
         int[] selection = jDistanceTable.getSelectedColumns();
         int[] realCols = new int[selection.length];
         for (int i = 0; i < selection.length; i++) {
@@ -550,7 +541,7 @@ private void fireDistanceFrameAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt
         try {
             //  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
 
@@ -558,7 +549,7 @@ private void fireDistanceFrameAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt
             DistanceManager.getSingleton().addVillage(GlobalOptions.getSelectedProfile().getTribe().getVillageList()[i]);
         }
         DSWorkbenchDistanceFrame.getSingleton().resetView(true);
-        DSWorkbenchDistanceFrame.getSingleton().setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        DSWorkbenchDistanceFrame.getSingleton().setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         DSWorkbenchDistanceFrame.getSingleton().setVisible(true);
 
     }

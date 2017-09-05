@@ -29,8 +29,8 @@ import org.apache.commons.lang.StringUtils;
 public class AllyReportStatsFormatter extends BasicFormatter<AllyStatResult> {
 
     private final String[] VARIABLES = new String[]{LIST_START, LIST_END, ELEMENT_COUNT, ELEMENT_ID};
-    private final String STANDARD_TEMPLATE = new AllyStatResult().getStandardTemplate();
-    private final String TEMPLATE_PROPERTY = "ally.report.stats.bbexport.template";
+    public static final String STANDARD_TEMPLATE = new AllyStatResult().getStandardTemplate();
+    private static final String TEMPLATE_PROPERTY = "ally.report.stats.bbexport.template";
 
     @Override
     public String formatElements(List<AllyStatResult> pElements, boolean pExtended) {
@@ -66,7 +66,7 @@ public class AllyReportStatsFormatter extends BasicFormatter<AllyStatResult> {
 
     @Override
     public String[] getTemplateVariables() {
-        List<String> vars = new LinkedList<String>();
+        List<String> vars = new LinkedList<>();
         vars.addAll(Arrays.asList(VARIABLES));
         vars.addAll(Arrays.asList(new AllyStatResult().getBBVariables()));
         return vars.toArray(new String[vars.size()]);

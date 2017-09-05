@@ -105,7 +105,7 @@ public class TacticsPlanerWizard extends WizardPanelProvider {
                 try {
                     GlobalOptions.addProperty("tap.width", Integer.toString(parent.getWidth()));
                     GlobalOptions.addProperty("tap.height", Integer.toString(parent.getHeight()));
-                } catch (Exception ex) {
+                } catch (Exception ignored) {
                 }
                 super.windowClosing(e);
                 parent = null;
@@ -113,8 +113,8 @@ public class TacticsPlanerWizard extends WizardPanelProvider {
         });
         parent.pack();
 
-        int w = GlobalOptions.getProperties().getInt("tap.width", 0);
-        int h = GlobalOptions.getProperties().getInt("tap.height", 0);
+        int w = GlobalOptions.getProperties().getInt("tap.width");
+        int h = GlobalOptions.getProperties().getInt("tap.height");
 
         if (w != 0 && h != 0) {
             parent.setSize(w, h);
@@ -178,7 +178,7 @@ public class TacticsPlanerWizard extends WizardPanelProvider {
         try {
             // UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
 

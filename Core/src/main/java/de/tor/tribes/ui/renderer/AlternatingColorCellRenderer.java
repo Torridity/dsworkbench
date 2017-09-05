@@ -32,7 +32,7 @@ public class AlternatingColorCellRenderer extends DefaultTableCellRenderer {
         JLabel label = (JLabel) c;      
         try {
             label.setText(value.toString());
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         return label;
     }

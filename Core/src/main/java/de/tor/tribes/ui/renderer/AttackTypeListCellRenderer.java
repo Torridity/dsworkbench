@@ -35,7 +35,7 @@ public class AttackTypeListCellRenderer extends JLabel implements ListCellRender
     public AttackTypeListCellRenderer() {
         super();
         try {
-            icons = new LinkedList<ImageIcon>();
+            icons = new LinkedList<>();
             icons.add(new ImageIcon("./graphics/icons/axe.png"));
             icons.add(new ImageIcon("./graphics/icons/snob.png"));
             icons.add(new ImageIcon("./graphics/icons/def.png"));

@@ -568,7 +568,7 @@ public class RetimerDataPanel extends WizardPage {
         }
         TimedAttackListEntry selection = (TimedAttackListEntry) element;
         ((DefaultComboBoxModel) jAttackBox.getModel()).removeElement(selection);
-        if (((DefaultComboBoxModel) jAttackBox.getModel()).getSize() == 0) {
+        if (jAttackBox.getModel().getSize() == 0) {
             DefaultComboBoxModel model = new DefaultComboBoxModel(new Object[]{"Keine"});
             jAttackBox.setModel(model);
         }
@@ -583,16 +583,14 @@ public class RetimerDataPanel extends WizardPage {
         try {
             String data = (String) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null).getTransferData(DataFlavor.stringFlavor);
             readAttackFromString(data);
-        } catch (HeadlessException he) {
-        } catch (UnsupportedFlavorException usfe) {
-        } catch (IOException ioe) {
+        } catch (HeadlessException | IOException | UnsupportedFlavorException ignored) {
         }
     }
 
     private void readSOSFromClipboard() {
         try {
             String data = (String) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null).getTransferData(DataFlavor.stringFlavor);
-            List<SOSRequest> sos = PluginManager.getSingleton().executeSOSParserParser(data);
+            List<SOSRequest> sos = PluginManager.getSingleton().executeSOSParser(data);
             DefaultComboBoxModel model = null;
             if (sos.isEmpty()) {
                 model = new DefaultComboBoxModel(new Object[]{"Keine"});
@@ -619,9 +617,7 @@ public class RetimerDataPanel extends WizardPage {
                 }
             }
             jAttackBox.setModel(model);
-        } catch (HeadlessException he) {
-        } catch (UnsupportedFlavorException usfe) {
-        } catch (IOException ioe) {
+        } catch (HeadlessException | IOException | UnsupportedFlavorException ignored) {
         }
     }
 
@@ -634,7 +630,7 @@ public class RetimerDataPanel extends WizardPage {
         } else {
             Village source = villages.get(0);
             Village target = villages.get(1);
-            if (pData.indexOf(PluginManager.getSingleton().getVariableValue("sos.arrive.time")) > -1) {
+            if (pData.contains(PluginManager.getSingleton().getVariableValue("sos.arrive.time"))) {
                 //change village order for SOS requests
                 source = villages.get(1);
                 target = villages.get(0);
@@ -645,15 +641,14 @@ public class RetimerDataPanel extends WizardPage {
 
             Date arriveDate;
             try {
-                String text = pData;
                 String arrive;
                 String arriveLine;
-                if (text.indexOf(PluginManager.getSingleton().getVariableValue("attack.arrive.time")) > -1) {
+                if (pData.contains(PluginManager.getSingleton().getVariableValue("attack.arrive.time"))) {
                     String searchString = PluginManager.getSingleton().getVariableValue("attack.arrive.time");
-                    arriveLine = text.substring(text.indexOf(PluginManager.getSingleton().getVariableValue("attack.arrive.time")) + searchString.length());
+                    arriveLine = pData.substring(pData.indexOf(PluginManager.getSingleton().getVariableValue("attack.arrive.time")) + searchString.length());
                 } else {
                     String searchString = PluginManager.getSingleton().getVariableValue("sos.arrive.time");
-                    arriveLine = text.substring(text.indexOf(PluginManager.getSingleton().getVariableValue("sos.arrive.time")) + searchString.length());
+                    arriveLine = pData.substring(pData.indexOf(PluginManager.getSingleton().getVariableValue("sos.arrive.time")) + searchString.length());
                 }
 
                 StringTokenizer tokenizer = new StringTokenizer(arriveLine, "\n");
@@ -681,7 +676,7 @@ public class RetimerDataPanel extends WizardPage {
             //calc possible units
             double dist = DSCalculator.calculateDistance(source, target);
             String[] units = new String[]{"axe", "sword", "spy", "light", "heavy", "ram", "knight", "snob"};
-            List<UnitHolder> possibleUnits = new LinkedList<UnitHolder>();
+            List<UnitHolder> possibleUnits = new LinkedList<>();
             for (String unit : units) {
                 UnitHolder unitHolder = DataHolder.getSingleton().getUnitByPlainName(unit);
                 if (!unitHolder.equals(UnknownUnit.getSingleton())) {
@@ -772,7 +767,7 @@ public class RetimerDataPanel extends WizardPage {
     private void deleteSelection() {
         int[] selection = jAttacksTable.getSelectedRows();
         if (selection.length > 0) {
-            List<Integer> rows = new LinkedList<Integer>();
+            List<Integer> rows = new LinkedList<>();
             for (int i : selection) {
                 rows.add(jAttacksTable.convertRowIndexToModel(i));
             }
@@ -789,7 +784,7 @@ public class RetimerDataPanel extends WizardPage {
 
     public Attack[] getAttacks() {
         RETAttackTableModel model = getModel();
-        List<Attack> rows = new LinkedList<Attack>();
+        List<Attack> rows = new LinkedList<>();
         for (int i = 0; i < model.getRowCount(); i++) {
             rows.add(model.getRow(i));
         }
@@ -797,7 +792,7 @@ public class RetimerDataPanel extends WizardPage {
     }
 
     public Attack[] getAllElements() {
-        List<Attack> result = new LinkedList<Attack>();
+        List<Attack> result = new LinkedList<>();
         RETAttackTableModel model = getModel();
         for (int i = 0; i < model.getRowCount(); i++) {
             result.add(model.getRow(i));

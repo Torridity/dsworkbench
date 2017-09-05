@@ -27,9 +27,8 @@ import java.awt.event.WindowListener;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.UIManager;
+import javax.swing.*;
+
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
 
@@ -108,14 +107,14 @@ public class SettingsPanel extends javax.swing.JPanel {
             }
             String[] spans = spanProp.split(";");
 
-            List<TimeSpan> spanList = new LinkedList<TimeSpan>();
+            List<TimeSpan> spanList = new LinkedList<>();
             for (String span : spans) {
                 try {
                     TimeSpan s = TimeSpan.fromPropertyString(span);
                     if (s != null) {
                         spanList.add(s);
                     }
-                } catch (Exception invalid) {
+                } catch (Exception ignored) {
                 }
             }
 
@@ -148,12 +147,8 @@ public class SettingsPanel extends javax.swing.JPanel {
                 logger.error("Unexpected exception while validating", re);
                 message = "Unerwarteter Fehler bei der Validierung der Einstellungen. Bitte wenden dich an den Support.";
             }
-            if (message.indexOf("Nachtbonus") > -1 || message.indexOf("Vergangenheit") > -1) {
-                if (JOptionPaneHelper.showQuestionConfirmBox(this, message + "\nMöchtest du fortfahren?", "Warnung", "Nein", "Ja") == JOptionPane.YES_OPTION) {
-                    result = true;
-                } else {
-                    result = false;
-                }
+            if (message.contains("Nachtbonus") || message.contains("Vergangenheit")) {
+                result = JOptionPaneHelper.showQuestionConfirmBox(this, message + "\nMöchtest du fortfahren?", "Warnung", "Nein", "Ja") == JOptionPane.YES_OPTION;
             } else {
                 JOptionPaneHelper.showWarningBox(this, message, "Fehler");
                 result = false;
@@ -332,10 +327,10 @@ public class SettingsPanel extends javax.swing.JPanel {
         try {
             //  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         JFrame f = new JFrame();
-        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         final SettingsPanel sp = new SettingsPanel(null);
         f.add(sp);
         f.addWindowListener(new WindowListener() {

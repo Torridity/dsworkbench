@@ -90,10 +90,7 @@ public class StandardAttackElement {
     }
 
     public boolean affectsUnit(UnitHolder pUnit) {
-        if (pUnit == null || unit == null) {
-            return false;
-        }
-        return unit.getPlainName().equals(pUnit.getPlainName());
+        return !(pUnit == null || unit == null) && unit.getPlainName().equals(pUnit.getPlainName());
     }
 
     public UnitHolder getUnit() {
@@ -148,7 +145,9 @@ public class StandardAttackElement {
             if (logger.isDebugEnabled()) {
                 logger.debug("No troop information found for village '" + pVillage + "'");
             }
-            return 0;
+            if(isFixed())
+            	return fixedAmount;
+            return 0; 
         }
 
         Integer availableAmount = own.getTroopsOfUnitInVillage(unit);
@@ -158,18 +157,14 @@ public class StandardAttackElement {
             return 0;
         }
 
-        if (fixedAmount != -1) {
+        if (isFixed()) {
             //fixed amount
             if (availableAmount >= fixedAmount) {
                 //enough troops available
                 return fixedAmount;
             } else {
                 //return max. avail count
-                if (availableAmount > 0) {
-                    return availableAmount;
-                } else {
-                    return fixedAmount;
-                }
+                return availableAmount;
             }
         } else {
             //dyn amount
@@ -181,7 +176,7 @@ public class StandardAttackElement {
                 String v = dynamicAmount.replaceAll(ALL_TROOPS + " - ", "").trim();
                 int substract = Integer.parseInt(v);
                 return Math.max(availableAmount - substract, 0);
-            } else if (dynamicAmount.indexOf("%") > -1) {
+            } else if (dynamicAmount.contains("%")) {
                 String v = dynamicAmount.replaceAll("%", "").trim();
                 double perc = (double) Integer.parseInt(v);
                 perc /= 100;

@@ -66,7 +66,7 @@ public class TagMapMarkerEditorImpl extends javax.swing.JPanel {
                     } else {
                         label.setIcon(no_tag);
                     }
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                 }
                 return c;
             }

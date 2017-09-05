@@ -41,8 +41,7 @@ import java.util.List;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JFrame;
+import javax.swing.*;
 import javax.swing.JSpinner.DateEditor;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
@@ -65,7 +64,7 @@ public class ClockFrame extends javax.swing.JFrame implements ActionListener {
     private TimerThread tThread = null;
     private static ClockFrame SINGLETON = null;
     private ColoredProgressBar cp = null;
-    private final List<TimerPanel> timers = new ArrayList<TimerPanel>();
+    private final List<TimerPanel> timers = new ArrayList<>();
 
     public static synchronized ClockFrame getSingleton() {
         if (SINGLETON == null) {
@@ -84,13 +83,8 @@ public class ClockFrame extends javax.swing.JFrame implements ActionListener {
         tThread = new TimerThread(this);
         tThread.start();
 
-        String val = GlobalOptions.getProperty("clock.alwaysOnTop");
-        if (val == null) {
-            jCheckBox1.setSelected(false);
-        } else {
-            jCheckBox1.setSelected(Boolean.parseBoolean(val));
+        jCheckBox1.setSelected(GlobalOptions.getProperties().getBoolean("clock.alwaysOnTop"));
 
-        }
         setAlwaysOnTop(jCheckBox1.isSelected());
         cp = new ColoredProgressBar(0, 1000);
         jPanel1.add(cp, BorderLayout.CENTER);
@@ -252,7 +246,7 @@ public class ClockFrame extends javax.swing.JFrame implements ActionListener {
         }
         try {
             Thread.sleep(2500);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
         try {
@@ -266,7 +260,7 @@ public class ClockFrame extends javax.swing.JFrame implements ActionListener {
                 ac.stop();
                 ac = null;
             }
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
     }
 
@@ -545,7 +539,7 @@ private void fireTestSoundEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:even
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 ClockFrame cf = new ClockFrame();
-                cf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                cf.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
                 cf.setVisible(true);
             }
         });
@@ -597,13 +591,13 @@ class TimerThread extends Thread {
             } else {
                 try {
                     Thread.sleep(100);
-                } catch (InterruptedException ie) {
+                } catch (InterruptedException ignored) {
                 }
             }
 
             try {
                 Thread.sleep(50);
-            } catch (InterruptedException ie) {
+            } catch (InterruptedException ignored) {
             }
         }
     }

@@ -16,10 +16,11 @@
 package de.tor.tribes.util;
 
 import de.tor.tribes.util.interfaces.UpdateListener;
-import java.io.*;
+import org.apache.log4j.Logger;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.log4j.Logger;
 
 /**
  *
@@ -48,13 +49,13 @@ public class AutoUpdater {
     }
   }
 
-  public static List<String> getUpdatedResources(UpdateListener pListener) throws IOException {
+  public static List<String> getUpdatedResources(UpdateListener pListener) {
     //no updates available
-    return new ArrayList<String>(); 
+    return new ArrayList<>();
   }
   public static void getImages(File pFolder, List<File> files) {
     for (File f : pFolder.listFiles()) {
-      if (f.getPath().indexOf(".svn") == -1 && f.getPath().indexOf("skins") == -1 && f.getPath().indexOf("world") == -1 && f.getPath().indexOf("tex") == -1 && f.getPath().indexOf("splash") == -1) {
+      if (!f.getPath().contains(".svn") && !f.getPath().contains("skins") && !f.getPath().contains("world") && !f.getPath().contains("tex") && !f.getPath().contains("splash")) {
         if (f.isDirectory()) {
           getImages(f, files);
         } else {
@@ -68,7 +69,7 @@ public class AutoUpdater {
 
   public static void getClasses(File pFolder, List<File> files) {
     for (File f : pFolder.listFiles()) {
-      if (f.getPath().indexOf(".svn") == -1 && f.getPath().indexOf("res") == -1) {
+      if (!f.getPath().contains(".svn") && !f.getPath().contains("res")) {
         if (f.isDirectory()) {
           getClasses(f, files);
         } else {

@@ -48,7 +48,7 @@ public class SupportTableModel extends AbstractTableModel {
     private List<SupportType> data = null;
 
     public SupportTableModel(List<Village> pSupportVillages) {
-        data = new LinkedList<SupportType>();
+        data = new LinkedList<>();
         for (Village v : pSupportVillages) {
             SupportVillageTroopsHolder holder = (SupportVillageTroopsHolder) TroopsManager.getSingleton().getTroopsForVillage(v, TroopsManager.TROOP_TYPE.SUPPORT);
             if (holder != null) {
@@ -77,40 +77,53 @@ public class SupportTableModel extends AbstractTableModel {
 
     @Override
     public final void fireTableStructureChanged() {
-        content = new LinkedList<COL_CONTENT>();
+        content = new LinkedList<>();
         content.add(COL_CONTENT.DIRECTION);
         content.add(COL_CONTENT.TRIBE);
         content.add(COL_CONTENT.VILLAGE);
-        columnIcons = new HashMap<String, ImageIcon>();
+        columnIcons = new HashMap<>();
         columnIcons.put("Richtung", null);
         columnIcons.put("Spieler", null);
         columnIcons.put("Dorf", null);
 
         for (UnitHolder pUnit : DataHolder.getSingleton().getUnits()) {
-            if (pUnit.getPlainName().equals("spear")) {
-                content.add(COL_CONTENT.SPEAR);
-            } else if (pUnit.getPlainName().equals("sword")) {
-                content.add(COL_CONTENT.SWORD);
-            } else if (pUnit.getPlainName().equals("axe")) {
-                content.add(COL_CONTENT.AXE);
-            } else if (pUnit.getPlainName().equals("archer")) {
-                content.add(COL_CONTENT.ARCHER);
-            } else if (pUnit.getPlainName().equals("spy")) {
-                content.add(COL_CONTENT.SPY);
-            } else if (pUnit.getPlainName().equals("light")) {
-                content.add(COL_CONTENT.LIGHT);
-            } else if (pUnit.getPlainName().equals("marcher")) {
-                content.add(COL_CONTENT.MARCHER);
-            } else if (pUnit.getPlainName().equals("heavy")) {
-                content.add(COL_CONTENT.HEAVY);
-            } else if (pUnit.getPlainName().equals("ram")) {
-                content.add(COL_CONTENT.RAM);
-            } else if (pUnit.getPlainName().equals("catapult")) {
-                content.add(COL_CONTENT.CATA);
-            } else if (pUnit.getPlainName().equals("snob")) {
-                content.add(COL_CONTENT.SNOB);
-            } else if (pUnit.getPlainName().equals("knight")) {
-                content.add(COL_CONTENT.KNIGHT);
+            switch (pUnit.getPlainName()) {
+                case "spear":
+                    content.add(COL_CONTENT.SPEAR);
+                    break;
+                case "sword":
+                    content.add(COL_CONTENT.SWORD);
+                    break;
+                case "axe":
+                    content.add(COL_CONTENT.AXE);
+                    break;
+                case "archer":
+                    content.add(COL_CONTENT.ARCHER);
+                    break;
+                case "spy":
+                    content.add(COL_CONTENT.SPY);
+                    break;
+                case "light":
+                    content.add(COL_CONTENT.LIGHT);
+                    break;
+                case "marcher":
+                    content.add(COL_CONTENT.MARCHER);
+                    break;
+                case "heavy":
+                    content.add(COL_CONTENT.HEAVY);
+                    break;
+                case "ram":
+                    content.add(COL_CONTENT.RAM);
+                    break;
+                case "catapult":
+                    content.add(COL_CONTENT.CATA);
+                    break;
+                case "snob":
+                    content.add(COL_CONTENT.SNOB);
+                    break;
+                case "knight":
+                    content.add(COL_CONTENT.KNIGHT);
+                    break;
             }
             columnIcons.put(pUnit.getName(), ImageManager.getUnitIcon(pUnit));
         }

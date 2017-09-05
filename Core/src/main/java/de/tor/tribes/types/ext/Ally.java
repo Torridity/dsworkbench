@@ -69,7 +69,7 @@ public class Ally implements Comparable<Ally>, Serializable {
     }
 
     public String toPlainData() {
-        StringBuffer b = new StringBuffer();
+        StringBuilder b = new StringBuilder();
         b.append(getId());
         b.append(",");
         try {
@@ -86,18 +86,18 @@ public class Ally implements Comparable<Ally>, Serializable {
         b.append(",");
         b.append(getMembers());
         b.append(",");
-        b.append(getVillages());
+        b.append(villages);
         b.append(",");
         b.append(getPoints());
         b.append(",");
-        b.append(getAll_points());
+        b.append(all_points);
         b.append(",");
         b.append(getRank());
         return b.toString();
     }
 
     public Ally() {
-        tribes = new LinkedList<Tribe>();
+        tribes = new LinkedList<>();
     }
 
     public int getId() {
@@ -168,7 +168,7 @@ public class Ally implements Comparable<Ally>, Serializable {
 
     public void addTribe(Tribe t) {
         if (tribes == null) {
-            tribes = new LinkedList<Tribe>();
+            tribes = new LinkedList<>();
         }
         if (!tribes.contains(t)) {
             tribes.add(t);
@@ -177,7 +177,7 @@ public class Ally implements Comparable<Ally>, Serializable {
 
     public Tribe[] getTribes() {
         if (tribes == null) {
-            tribes = new LinkedList<Tribe>();
+            tribes = new LinkedList<>();
         }
         return tribes.toArray(new Tribe[tribes.size()]);
     }
@@ -199,7 +199,7 @@ public class Ally implements Comparable<Ally>, Serializable {
         b.append(" <b>Member (Dörfer):</b> ");
         b.append(nf.format(getMembers()));
         b.append(" (");
-        b.append(nf.format(getVillages()));
+        b.append(nf.format(villages));
         b.append(")</html>");
         return b.toString();
     }

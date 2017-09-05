@@ -47,11 +47,7 @@ public class SystrayHelper {
     }
 
     public static boolean isSystrayEnabled() {
-        String systrayEnabled = GlobalOptions.getProperty("systray.enabled");
-        if (systrayEnabled == null) {//developer mode
-            return true;
-        }
-        return Boolean.parseBoolean(GlobalOptions.getProperty("systray.enabled"));
+        return GlobalOptions.getProperties().getBoolean("systray.enabled");
     }
 
     public static void showInfoMessage(String pMessage) {

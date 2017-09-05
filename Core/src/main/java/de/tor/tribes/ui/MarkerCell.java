@@ -37,7 +37,7 @@ public class MarkerCell extends javax.swing.JPanel implements Comparable<MarkerC
         try {
             PLAYER_ICON = new javax.swing.ImageIcon(MarkerCell.class.getResource("/res/face.png"));
             ALLY_ICON = new javax.swing.ImageIcon(MarkerCell.class.getResource("/res/ally.png"));
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
     }
 
@@ -46,11 +46,9 @@ public class MarkerCell extends javax.swing.JPanel implements Comparable<MarkerC
             return null;
         } else {
             if (pMarker.getMarkerType() == Marker.TRIBE_MARKER_TYPE) {
-                MarkerCell c = new MarkerCell(DataHolder.getSingleton().getTribes().get(pMarker.getMarkerID()));
-                return c;
+                return new MarkerCell(DataHolder.getSingleton().getTribes().get(pMarker.getMarkerID()));
             } else if (pMarker.getMarkerType() == Marker.ALLY_MARKER_TYPE) {
-                MarkerCell c = new MarkerCell(DataHolder.getSingleton().getAllies().get(pMarker.getMarkerID()));
-                return c;
+                return new MarkerCell(DataHolder.getSingleton().getAllies().get(pMarker.getMarkerID()));
             }
         }
         return null;
@@ -139,18 +137,17 @@ public class MarkerCell extends javax.swing.JPanel implements Comparable<MarkerC
     @Override
     public int compareTo(MarkerCell o) {
         try {
-            MarkerCell c = o;
             String v1 = "";
-            if (c.getType() == Marker.ALLY_MARKER_TYPE) {
-                v1 = c.getAlly().getName();
+            if (o.getType() == Marker.ALLY_MARKER_TYPE) {
+                v1 = o.getAlly().getName();
             } else {
-                v1 = c.getTribe().getName();
+                v1 = o.getTribe().getName();
             }
             String v2 = "";
-            if (getType() == Marker.ALLY_MARKER_TYPE) {
-                v2 = getAlly().getName();
+            if (type == Marker.ALLY_MARKER_TYPE) {
+                v2 = mAlly.getName();
             } else {
-                v2 = getTribe().getName();
+                v2 = mTribe.getName();
             }
             return String.CASE_INSENSITIVE_ORDER.compare(v1, v2);
         } catch (Exception e) {

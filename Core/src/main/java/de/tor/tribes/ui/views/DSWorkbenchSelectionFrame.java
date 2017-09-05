@@ -65,15 +65,7 @@ import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
-import javax.swing.AbstractAction;
-import javax.swing.ImageIcon;
-import javax.swing.JComponent;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JTree;
-import javax.swing.KeyStroke;
-import javax.swing.UIManager;
+import javax.swing.*;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -139,7 +131,7 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
         centerPanel.setChildComponent(jSelectionTreePanel);
         buildMenu();
         capabilityInfoPanel1.addActionListener(this);
-        treeData = new LinkedList<Village>();
+        treeData = new LinkedList<>();
         jSelectionTree.setCellRenderer(new NodeCellRenderer());
 
         KeyStroke copy = KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK, false);
@@ -187,7 +179,7 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
         centerPanel.setMenuVisible(pConfig.getBoolean(getPropertyPrefix() + ".menu.visible", true));
         try {
             jAlwaysOnTopBox.setSelected(pConfig.getBoolean(getPropertyPrefix() + ".alwaysOnTop"));
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
         setAlwaysOnTop(jAlwaysOnTopBox.isSelected());
@@ -255,11 +247,11 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
         if (treeMode) {
             //tree view
             //add all villages
-            Hashtable<Ally, AllyNode> allyNodes = new Hashtable<Ally, AllyNode>();
-            Hashtable<Tribe, TribeNode> tribeNodes = new Hashtable<Tribe, TribeNode>();
-            Hashtable<Tribe, Hashtable<Tag, TagNode>> tagNodes = new Hashtable<Tribe, Hashtable<Tag, TagNode>>();
+            Hashtable<Ally, AllyNode> allyNodes = new Hashtable<>();
+            Hashtable<Tribe, TribeNode> tribeNodes = new Hashtable<>();
+            Hashtable<Tribe, Hashtable<Tag, TagNode>> tagNodes = new Hashtable<>();
 
-            List<Village> used = new LinkedList<Village>();
+            List<Village> used = new LinkedList<>();
 
             for (Village v : treeData) {
                 Tribe t = v.getTribe();
@@ -291,7 +283,7 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
 
                     Hashtable<Tag, TagNode> nodes = tagNodes.get(t);
                     if (nodes == null) {
-                        nodes = new Hashtable<Tag, TagNode>();
+                        nodes = new Hashtable<>();
                         tagNodes.put(t, nodes);
                     }
                     TagNode tagNode = nodes.get(tag);
@@ -581,9 +573,6 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
         }
         //do HTML export
         String dir = GlobalOptions.getProperty("screen.dir");
-        if (dir == null) {
-            dir = ".";
-        }
 
         JFileChooser chooser = null;
         try {
@@ -599,10 +588,7 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
 
             @Override
             public boolean accept(File f) {
-                if ((f != null) && (f.isDirectory() || f.getName().endsWith(".html"))) {
-                    return true;
-                }
-                return false;
+                return (f != null) && (f.isDirectory() || f.getName().endsWith(".html"));
             }
 
             @Override
@@ -904,7 +890,7 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
 
     public List<Village> getSelectedElements() {
         TreePath[] paths = jSelectionTree.getSelectionModel().getSelectionPaths();
-        List<Village> result = new LinkedList<Village>();
+        List<Village> result = new LinkedList<>();
         if (paths == null) {
             return result;
         }
@@ -964,7 +950,7 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
                 }
             } else if (o != null && o.equals(mRoot)) {
                 //remove all
-                result = new LinkedList<Village>(treeData);
+                result = new LinkedList<>(treeData);
                 //nothing more than everything can be removed
                 return result;
             } else {
@@ -988,9 +974,9 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
         try {
             //  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
-        List<Village> selection = new LinkedList<Village>();
+        List<Village> selection = new LinkedList<>();
         for (int i = 0; i < 100; i++) {
             selection.add(DataHolder.getSingleton().getRandomVillage());
         }
@@ -998,7 +984,7 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
         DSWorkbenchSelectionFrame.getSingleton().resetView();
         DSWorkbenchSelectionFrame.getSingleton().addVillages(selection);
 
-        DSWorkbenchSelectionFrame.getSingleton().setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        DSWorkbenchSelectionFrame.getSingleton().setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         DSWorkbenchSelectionFrame.getSingleton().setVisible(true);
 
     }
@@ -1033,12 +1019,7 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
     }
 
     public void addVillages(List<Village> pVillages) {
-        boolean showBarbarian = true;
-        try {
-            showBarbarian = Boolean.parseBoolean(GlobalOptions.getProperty("show.barbarian"));
-        } catch (Exception e) {
-            showBarbarian = true;
-        }
+        boolean showBarbarian = GlobalOptions.getProperties().getBoolean("show.barbarian");
         treeData.clear();
         for (Village v : pVillages.toArray(new Village[]{})) {
             if ((v != null && v.getTribe() == Barbarians.getSingleton()) && !showBarbarian) {

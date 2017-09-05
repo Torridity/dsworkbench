@@ -40,12 +40,12 @@ public class MinimapZoomFrame extends javax.swing.JFrame {
      */
     public MinimapZoomFrame(BufferedImage pMap) {
         initComponents();
-        setMinimap(pMap);
+        mMap = pMap;
         mDrawThread = new DrawThread(this);
         mDrawThread.start();
         try {
             mBorder = ImageIO.read(new File("graphics/zoom_border.png"));
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
     }
 
@@ -168,7 +168,7 @@ class DrawThread extends Thread {
             }
             try {
                 Thread.sleep(100);
-            } catch (InterruptedException ie) {
+            } catch (InterruptedException ignored) {
             }
         }
     }

@@ -35,7 +35,7 @@ public class TAPSourceTableModel extends AbstractTableModel {
     private Class[] types = new Class[]{
         Tribe.class, Village.class, UnitHolder.class, Boolean.class
     };
-    private final List<TAPAttackSourceElement> elements = new LinkedList<TAPAttackSourceElement>();
+    private final List<TAPAttackSourceElement> elements = new LinkedList<>();
 
     public TAPSourceTableModel() {
         super();

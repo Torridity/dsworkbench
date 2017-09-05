@@ -36,7 +36,7 @@ public class RETResultTableModel extends AbstractTableModel {
     private Class[] types = new Class[]{
         Village.class, Village.class, Date.class, Date.class, UnitHolder.class, Integer.class
     };
-    private final List<Attack> elements = new LinkedList<Attack>();
+    private final List<Attack> elements = new LinkedList<>();
 
     public RETResultTableModel() {
         super();

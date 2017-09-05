@@ -16,10 +16,12 @@
 package de.tor.tribes.util.bb;
 
 import de.tor.tribes.types.Attack;
+import org.apache.commons.lang.StringUtils;
+
 import java.text.NumberFormat;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import org.apache.commons.lang.StringUtils;
 
 /**
  *
@@ -28,11 +30,11 @@ import org.apache.commons.lang.StringUtils;
 public class AttackListFormatter extends BasicFormatter<Attack> {
 
     private final String[] VARIABLES = new String[]{LIST_START, LIST_END, ELEMENT_COUNT, ELEMENT_ID};
-    private final String STANDARD_TEMPLATE = "[b]Angriffsplan[/b]\nAnzahl der Angriffe: %ELEMENT_COUNT%\n[table]\n"
+    public static final String STANDARD_TEMPLATE = "[b]Angriffsplan[/b]\nAnzahl der Angriffe: %ELEMENT_COUNT%\n[table]\n"
             + "[**]ID[||]Art[||]Einheit[||]Herkunft[||]Ziel[||]Abschickzeit[||]Versammlungsplatz[/**]\n"
             + "%LIST_START%[*]%ELEMENT_ID%[|]%TYPE%[|]%UNIT%[|]%SOURCE%[|]%TARGET%[|]%SEND%[|]%PLACE%[/*]%LIST_END%\n"
             + "[/table]";
-    private final String TEMPLATE_PROPERTY = "attack.list.bbexport.template";
+    private static final String TEMPLATE_PROPERTY = "attack.list.bbexport.template";
 
     @Override
     public String getPropertyKey() {
@@ -81,13 +83,9 @@ public class AttackListFormatter extends BasicFormatter<Attack> {
 
     @Override
     public String[] getTemplateVariables() {
-        List<String> vars = new LinkedList<String>();
-        for (String var : VARIABLES) {
-            vars.add(var);
-        }
-        for (String var : new Attack().getBBVariables()) {
-            vars.add(var);
-        }
+        List<String> vars = new LinkedList<>();
+        Collections.addAll(vars, VARIABLES);
+        Collections.addAll(vars, new Attack().getBBVariables());
         return vars.toArray(new String[vars.size()]);
     }
 }

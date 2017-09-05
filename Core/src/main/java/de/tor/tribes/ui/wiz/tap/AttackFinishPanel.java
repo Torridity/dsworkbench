@@ -36,17 +36,15 @@ import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.algo.types.TimeFrame;
 import de.tor.tribes.util.attack.StandardAttackManager;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Point;
-import java.util.*;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.ImageIcon;
-import javax.swing.SwingUtilities;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.netbeans.spi.wizard.Wizard;
 import org.netbeans.spi.wizard.WizardPage;
 import org.netbeans.spi.wizard.WizardPanelNavResult;
+
+import javax.swing.*;
+import java.awt.*;
+import java.util.*;
+import java.util.List;
 
 /**
  *
@@ -120,8 +118,8 @@ public class AttackFinishPanel extends WizardPage {
     public void storeProperties() {
         UserProfile profile = GlobalOptions.getSelectedProfile();
         profile.addProperty("tap.finish.expert", jExpertView.isSelected());
-        profile.addProperty("tap.finish.std.off", (String) jStandardOff.getSelectedItem());
-        profile.addProperty("tap.finish.std.fake", (String) jStandardFake.getSelectedItem());
+        profile.addProperty("tap.finish.std.off", jStandardOff.getSelectedItem());
+        profile.addProperty("tap.finish.std.fake", jStandardFake.getSelectedItem());
     }
 
     public void restoreProperties() {
@@ -590,7 +588,7 @@ public class AttackFinishPanel extends WizardPage {
 
     private void fireRecalculateEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireRecalculateEvent
         float max = (float) jSlider1.getValue();
-        List<Village> targetsToRemove = new LinkedList<Village>();
+        List<Village> targetsToRemove = new LinkedList<>();
         for (int i = 0; i < getModel().getRowCount(); i++) {
             Village target = (Village) getModel().getValueAt(i, 1);
             float perc = (Float) getModel().getValueAt(i, 2);
@@ -637,7 +635,7 @@ public class AttackFinishPanel extends WizardPage {
     }//GEN-LAST:event_fireShowHideSummaryEvent
 
     private void fireTransferAllToAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireTransferAllToAttackPlanEvent
-        List<Attack> attacks = new LinkedList<Attack>();
+        List<Attack> attacks = new LinkedList<>();
         for (int row = 0; row < jxResultsTable.getRowCount(); row++) {
             int modelRow = jxResultsTable.convertRowIndexToModel(row);
             AbstractTroopMovement move = getModel().getRow(modelRow);
@@ -647,7 +645,7 @@ public class AttackFinishPanel extends WizardPage {
     }//GEN-LAST:event_fireTransferAllToAttackPlanEvent
 
     private void fireFullToAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireFullToAttackPlanEvent
-        List<Attack> attacks = new LinkedList<Attack>();
+        List<Attack> attacks = new LinkedList<>();
         for (int row = 0; row < jxResultsTable.getRowCount(); row++) {
             int modelRow = jxResultsTable.convertRowIndexToModel(row);
             AbstractTroopMovement move = getModel().getRow(modelRow);
@@ -661,7 +659,7 @@ public class AttackFinishPanel extends WizardPage {
     private void fireSelectedToAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSelectedToAttackPlanEvent
         if (jScrollPane1.getViewport().getView().equals(jxResultsTable)) {
             int[] selection = jxResultsTable.getSelectedRows();
-            List<Attack> attacks = new LinkedList<Attack>();
+            List<Attack> attacks = new LinkedList<>();
             for (int row : selection) {
                 int modelRow = jxResultsTable.convertRowIndexToModel(row);
                 AbstractTroopMovement move = getModel().getRow(modelRow);
@@ -670,7 +668,7 @@ public class AttackFinishPanel extends WizardPage {
             transferToAttackView(attacks);
         } else if (jScrollPane1.getViewport().getView().equals(jXDetailsTable)) {
             int[] selection = jXDetailsTable.getSelectedRows();
-            List<Attack> attacks = new LinkedList<Attack>();
+            List<Attack> attacks = new LinkedList<>();
             for (int row : selection) {
                 int modelRow = jXDetailsTable.convertRowIndexToModel(row);
                 Attack a = getResultModel().getRow(modelRow);
@@ -711,7 +709,7 @@ public class AttackFinishPanel extends WizardPage {
             stdFake = StandardAttackManager.getSingleton().getElementByIcon(StandardAttack.FAKE_ICON).getName();
         }
 
-        List<Attack> modifiedTransfer = new LinkedList<Attack>();
+        List<Attack> modifiedTransfer = new LinkedList<>();
         for (Attack a : pToTransfer) {
             Attack newAttack = new Attack(a);
 
@@ -737,13 +735,13 @@ public class AttackFinishPanel extends WizardPage {
     public void update() {
         List<AbstractTroopMovement> results = AttackCalculationPanel.getSingleton().getResults();
         TimeFrame timeFrame = TimeSettingsPanel.getSingleton().getTimeFrame();
-        List<Long> used = new LinkedList<Long>();
+        List<Long> used = new LinkedList<>();
         TAPResultTableModel model = new TAPResultTableModel();
         int perfectOffs = 0;
         int maxAttacks = 0;
         int assignedAttacks = 0;
         int attackedTargets = 0;
-        List<Village> usedSources = new LinkedList<Village>();
+        List<Village> usedSources = new LinkedList<>();
         overviewPanel.reset();
 
         for (TAPAttackSourceElement elem : AttackSourceFilterPanel.getSingleton().getFilteredElements()) {

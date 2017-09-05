@@ -16,17 +16,13 @@
 package de.tor.tribes.util;
 
 import de.tor.tribes.util.interfaces.ProfileManagerListener;
-import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.UserProfile;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Properties;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
@@ -49,8 +45,8 @@ public class ProfileManager {
     }
 
     ProfileManager() {
-        mProfiles = new LinkedList<UserProfile>();
-        mListeners = new LinkedList<ProfileManagerListener>();
+        mProfiles = new LinkedList<>();
+        mListeners = new LinkedList<>();
     }
 
     public void addProfileManagerListener(ProfileManagerListener pListener) {
@@ -80,7 +76,7 @@ public class ProfileManager {
     }
 
     public UserProfile[] getProfiles(String pServer) {
-        List<UserProfile> profilesForServer = new LinkedList<UserProfile>();
+        List<UserProfile> profilesForServer = new LinkedList<>();
         for (UserProfile profile : mProfiles.toArray(new UserProfile[]{})) {
             if (profile.getServerId().equals(pServer)) {
                 profilesForServer.add(profile);
@@ -103,7 +99,7 @@ public class ProfileManager {
     }
 
     public void loadProfiles() {
-        mProfiles = new LinkedList<UserProfile>();
+        mProfiles = new LinkedList<>();
         File serversDir = new File("./servers/");
         for (File f : serversDir.listFiles()) {
             if (f.isDirectory()) {
@@ -142,50 +138,9 @@ public class ProfileManager {
                                 if (profileDir.list().length == 0) {
                                     try {
                                         FileUtils.deleteDirectory(profileDir);
-                                    } catch (IOException ioe) {
+                                    } catch (IOException ignored) {
                                     }
                                 }
-                            }
-                        }
-                    }
-                } else {
-                    //handle old structure
-                    logger.debug("Transforming legacy data structure to profile structure");
-                    String server = f.getName();
-                    Properties prop = new Properties();
-                    FileInputStream fin = null;
-                    try {
-                        fin = new FileInputStream("global.properties");
-                        prop.load(fin);
-
-                        String player = prop.getProperty("player." + server);
-
-                        logger.debug(" - found player '" + player + "' for server '" + server + "'");
-                        UserProfile newProfile = UserProfile.createFast(server, player);
-
-                        if (newProfile != null) {
-                            mProfiles.add(newProfile);
-                            //copy user data
-                            File[] xmlFiles = f.listFiles(new FilenameFilter() {
-
-                                @Override
-                                public boolean accept(File dir, String name) {
-                                    return name.endsWith(".xml");
-                                }
-                            });
-                            for (File xmlFile : xmlFiles) {
-                                DataHolder.getSingleton().copyFile(xmlFile, new File(newProfile.getProfileDirectory() + "/" + xmlFile.getName()));
-                            }
-                        } else {
-                            logger.error("Failed to transform profile");
-                        }
-                    } catch (Exception e) {
-                        logger.warn("Failed to transfor legacy profile", e);
-                    } finally {
-                        if (fin != null) {
-                            try {
-                                fin.close();
-                            } catch (IOException ioe) {
                             }
                         }
                     }

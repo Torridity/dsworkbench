@@ -25,7 +25,7 @@ import java.util.Hashtable;
  */
 public class Constants {
 
-    public final static double VERSION = 3.43;
+    public final static double VERSION = 3.45;
     public final static String VERSION_ADDITION = "";
     public final static Color DS_BACK = new Color(225, 213, 190);
     public final static Color DS_BACK_LIGHT = new Color(239, 235, 223);
@@ -42,7 +42,7 @@ public class Constants {
     public final static boolean DEBUG = false;
 
     static {
-        LAYERS = new Hashtable<String, Integer>();
+        LAYERS = new Hashtable<>();
         LAYERS.put("Markierungen", 0);
         LAYERS.put("Dörfer", 1);
         LAYERS.put("Dorfsymbole", 2);

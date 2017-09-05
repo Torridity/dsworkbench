@@ -35,7 +35,7 @@ public class REFSourceTableModel extends AbstractTableModel {
     Class[] types = new Class[]{
         Village.class, Integer.class
     };
-    private final List<REFSourceElement> elements = new LinkedList<REFSourceElement>();
+    private final List<REFSourceElement> elements = new LinkedList<>();
 
     public void clear() {
         elements.clear();

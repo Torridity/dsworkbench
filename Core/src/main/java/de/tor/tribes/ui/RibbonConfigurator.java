@@ -21,22 +21,6 @@ import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
 import de.tor.tribes.ui.windows.ClockFrame;
 import de.tor.tribes.ui.panels.MapPanel;
 import de.tor.tribes.ui.panels.MinimapPanel;
-import de.tor.tribes.ui.views.DSWorkbenchDoItYourselfAttackPlaner;
-import de.tor.tribes.ui.views.DSWorkbenchDistanceFrame;
-import de.tor.tribes.ui.views.DSWorkbenchAttackFrame;
-import de.tor.tribes.ui.views.DSWorkbenchTroopsFrame;
-import de.tor.tribes.ui.views.DSWorkbenchNotepad;
-import de.tor.tribes.ui.views.DSWorkbenchFormFrame;
-import de.tor.tribes.ui.views.DSWorkbenchSOSRequestAnalyzer;
-import de.tor.tribes.ui.views.DSWorkbenchReportFrame;
-import de.tor.tribes.ui.views.DSWorkbenchMarkerFrame;
-import de.tor.tribes.ui.views.DSWorkbenchSelectionFrame;
-import de.tor.tribes.ui.views.DSWorkbenchConquersFrame;
-import de.tor.tribes.ui.views.DSWorkbenchChurchFrame;
-import de.tor.tribes.ui.views.DSWorkbenchSearchFrame;
-import de.tor.tribes.ui.views.DSWorkbenchRankFrame;
-import de.tor.tribes.ui.views.DSWorkbenchStatsFrame;
-import de.tor.tribes.ui.views.DSWorkbenchTagFrame;
 import de.tor.tribes.dssim.ui.DSWorkbenchSimulatorFrame;
 import de.tor.tribes.ui.views.*;
 import de.tor.tribes.ui.wiz.red.ResourceDistributorWizard;
@@ -426,11 +410,11 @@ public class RibbonConfigurator {
 
         infoViewBand.setResizePolicies((List) Arrays.asList(
                 new CoreRibbonResizePolicies.Mirror(infoViewBand.getControlPanel()),
-                new CoreRibbonResizePolicies.Mid2Low(infoViewBand.getControlPanel()),
+                // new CoreRibbonResizePolicies.Mid2Low(infoViewBand.getControlPanel()),
                 new IconRibbonBandResizePolicy(infoViewBand.getControlPanel())));
         attackViewBand.setResizePolicies((List) Arrays.asList(
                 new CoreRibbonResizePolicies.Mirror(attackViewBand.getControlPanel()),
-                new CoreRibbonResizePolicies.Mid2Low(attackViewBand.getControlPanel()),
+                // new CoreRibbonResizePolicies.Mid2Low(attackViewBand.getControlPanel()),
                 new IconRibbonBandResizePolicy(attackViewBand.getControlPanel())));
         ingameInfoViewBand.setResizePolicies((List) Arrays.asList(
                 new CoreRibbonResizePolicies.None(ingameInfoViewBand.getControlPanel()),
@@ -1089,7 +1073,8 @@ public class RibbonConfigurator {
         miscBand.addCommandButton(aboutButton, RibbonElementPriority.TOP);
 
         miscBand.setResizePolicies((List) Arrays.asList(
-                new CoreRibbonResizePolicies.None(miscBand.getControlPanel()) 
+                new CoreRibbonResizePolicies.None(miscBand.getControlPanel()),
+                new IconRibbonBandResizePolicy(miscBand.getControlPanel())
                 ));
         RibbonTask task1 = new RibbonTask("Sonstiges", miscBand);
         frame.getRibbon().addTask(task1);
@@ -1112,12 +1097,12 @@ public class RibbonConfigurator {
             if (new File(pIconPath).exists()) {
                 try {
                     rt.setMainImage(ImageIO.read(new File(pIconPath)));
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                 }
             } else {
                 try {
                     rt.setMainImage(ImageIO.read(RibbonConfigurator.class.getResource(pIconPath)));
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                 }
             }
             button.setActionRichTooltip(rt);

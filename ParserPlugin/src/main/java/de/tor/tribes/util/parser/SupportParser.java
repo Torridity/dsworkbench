@@ -29,7 +29,6 @@ import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -52,12 +51,12 @@ public class SupportParser implements SilentParserInterface {
         StringTokenizer lineTok = new StringTokenizer(pTroopsString, "\n\r");
         Village supportSender = null;
         int supportCount = 0;
-        List<Village> touchedVillages = new LinkedList<Village>();
+        List<Village> touchedVillages = new LinkedList<>();
         TroopsManager.getSingleton().invalidate();
         while (lineTok.hasMoreElements()) {
             //parse single line for village
             String line = lineTok.nextToken();
-            if (line.indexOf(ParserVariableManager.getSingleton().getProperty("troops.in.village")) > 0) {
+            if (line.indexOf(getVariable("troops.in.village")) > 0) {
                 try {
                     supportSender = new VillageParser().parse(line).get(0);
                 } catch (Exception e) {
@@ -118,8 +117,8 @@ public class SupportParser implements SilentParserInterface {
         return result;
     }
 
-    private static Hashtable<UnitHolder, Integer> parseUnits(String pLine) {
-        String line = pLine.replaceAll(ParserVariableManager.getSingleton().getProperty("troops.own"), "").replaceAll(ParserVariableManager.getSingleton().getProperty("troops.commands"), "").replaceAll(ParserVariableManager.getSingleton().getProperty("troops"), "");
+    private Hashtable<UnitHolder, Integer> parseUnits(String pLine) {
+        String line = pLine.replaceAll(getVariable("troops.own"), "").replaceAll(getVariable("troops.commands"), "").replaceAll(getVariable("troops"), "");
         // System.out.println("Line after: " + line);
         StringTokenizer t = new StringTokenizer(line, " \t");
 
@@ -128,7 +127,7 @@ public class SupportParser implements SilentParserInterface {
             //get unit count (decrease due  to militia which cannot support
             uCount -= 1;
         }
-        Hashtable<UnitHolder, Integer> units = new Hashtable<UnitHolder, Integer>();
+        Hashtable<UnitHolder, Integer> units = new Hashtable<>();
         int cnt = 0;
         while (t.hasMoreTokens()) {
             String next = t.nextToken();
@@ -149,6 +148,11 @@ public class SupportParser implements SilentParserInterface {
         }
         return units;
     }
+
+    private String getVariable(String pProperty) {
+        return ParserVariableManager.getSingleton().getProperty(pProperty);
+    }
+    
 
     public static void main(String[] args) {
         /*

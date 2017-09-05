@@ -53,7 +53,7 @@ public class TagMarkerLayerRenderer extends AbstractBufferedLayerRenderer {
         super();
         try {
             mConquerWarning = ImageIO.read(new File("./graphics/icons/warning.png"));
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
     }
 
@@ -97,7 +97,7 @@ public class TagMarkerLayerRenderer extends AbstractBufferedLayerRenderer {
             performCopy(pSettings, g2d);
         }
         ImageUtils.setupGraphics(g2d);
-        renderedSpriteBounds = new HashMap<Tag, Rectangle>();
+        renderedSpriteBounds = new HashMap<>();
 
         //Set new bounds
         BufferedImage img = renderMarkerRows(pSettings);
@@ -110,7 +110,7 @@ public class TagMarkerLayerRenderer extends AbstractBufferedLayerRenderer {
             //everything was rendered, skip col rendering
             setFullRenderRequired(false);
         } else {
-            renderedSpriteBounds = new HashMap<Tag, Rectangle>();
+            renderedSpriteBounds = new HashMap<>();
 
             img = renderMarkerColumns(pSettings);
             trans = AffineTransform.getTranslateInstance(0, 0);
@@ -162,8 +162,7 @@ public class TagMarkerLayerRenderer extends AbstractBufferedLayerRenderer {
                 cnt++;
                 Village v = pSettings.getVisibleVillage(x, y);
                 int row = y - firstRow;
-                int col = x;
-                renderMarkerField(v, row, col, pSettings.getFieldWidth(), pSettings.getFieldHeight(), pSettings.getZoom(), g2d);
+                renderMarkerField(v, row, x, pSettings.getFieldWidth(), pSettings.getFieldHeight(), pSettings.getZoom(), g2d);
             }
         }
         g2d.dispose();
@@ -186,10 +185,9 @@ public class TagMarkerLayerRenderer extends AbstractBufferedLayerRenderer {
                 cnt++;
                 //iterate from first row for 'pRows' times
                 Village v = pSettings.getVisibleVillage(x, y);
-                int row = y;
                 int col = x - firstCol;
 
-                renderMarkerField(v, row, col, pSettings.getFieldWidth(), pSettings.getFieldHeight(), pSettings.getZoom(), g2d);
+                renderMarkerField(v, y, col, pSettings.getFieldWidth(), pSettings.getFieldHeight(), pSettings.getZoom(), g2d);
             }
         }
         g2d.dispose();

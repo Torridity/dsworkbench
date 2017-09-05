@@ -42,18 +42,19 @@ public class FirstStartWizard extends WizardPanelProvider {
 
     @Override
     protected JComponent createPanel(final WizardController wizardController, String str, final Map map) {
-        if (str.equals(ID_WELCOME)) {
-            logger.debug("Returning welcome page");
-            return new WelcomePage();
-        } else if (str.equals(ID_NETWORK)) {
-            logger.debug("Returning network page");
-            return new NetworkSettings(wizardController, map);
-        }else if (str.equals(ID_SERVER)) {
-            logger.debug("Returning server settings page");
-            return new ServerSettings(wizardController, map);
-        } else if (str.equals(ID_FINISH)) {
-            logger.debug("Returning finish page");
-            return new FinishPage();
+        switch (str) {
+            case ID_WELCOME:
+                logger.debug("Returning welcome page");
+                return new WelcomePage();
+            case ID_NETWORK:
+                logger.debug("Returning network page");
+                return new NetworkSettings(wizardController, map);
+            case ID_SERVER:
+                logger.debug("Returning server settings page");
+                return new ServerSettings(wizardController, map);
+            case ID_FINISH:
+                logger.debug("Returning finish page");
+                return new FinishPage();
         }
         logger.debug("Returning 'null' page");
         return null;

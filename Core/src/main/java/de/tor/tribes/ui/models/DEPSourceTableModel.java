@@ -36,7 +36,7 @@ public class DEPSourceTableModel extends AbstractTableModel {
     private Class[] types = new Class[]{
         Tribe.class, Village.class, Integer.class
     };
-    private final List<SupportSourceElement> elements = new LinkedList<SupportSourceElement>();
+    private final List<SupportSourceElement> elements = new LinkedList<>();
 
     public DEPSourceTableModel() {
         super();
@@ -52,10 +52,7 @@ public class DEPSourceTableModel extends AbstractTableModel {
 
             @Override
             public boolean evaluate(Object o) {
-                if (((SupportSourceElement) o).getVillage().equals(pVillage)) {
-                    return true;
-                }
-                return false;
+                return ((SupportSourceElement) o).getVillage().equals(pVillage);
             }
         });
         if (existing == null) {

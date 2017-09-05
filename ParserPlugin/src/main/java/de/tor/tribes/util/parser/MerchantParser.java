@@ -37,7 +37,7 @@ public class MerchantParser implements GenericParserInterface<VillageMerchantInf
 
     public List<VillageMerchantInfo> parse(String pProductionString) {
         StringTokenizer lineTok = new StringTokenizer(pProductionString, "\n\r");
-        List<VillageMerchantInfo> infos = new LinkedList<VillageMerchantInfo>();
+        List<VillageMerchantInfo> infos = new LinkedList<>();
 
         while (lineTok.hasMoreElements()) {
             //parse single line for village
@@ -47,7 +47,7 @@ public class MerchantParser implements GenericParserInterface<VillageMerchantInf
             StringTokenizer t = new StringTokenizer(line, " \t");
             String merchants = null;
             String farm = null;
-            List<Integer> numbers = new LinkedList<Integer>();
+            List<Integer> numbers = new LinkedList<>();
             try {
                 while (t.hasMoreElements()) {
                     String d = t.nextToken().trim();

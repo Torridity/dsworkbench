@@ -402,7 +402,7 @@ public class SupportRefillFinishPanel extends WizardPage {
     }//GEN-LAST:event_fireShowHideSummaryEvent
 
     private void fireTransferAllToAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireTransferAllToAttackPlanEvent
-      List<Attack> attacks = new LinkedList<Attack>();
+      List<Attack> attacks = new LinkedList<>();
       Hashtable<UnitHolder, Integer> split = SupportRefillSettingsPanel.getSingleton().getSplit();
       StandardAttack standardAttackType = null;
       for (ManageableType t : StandardAttackManager.getSingleton().getAllElements()) {
@@ -427,7 +427,7 @@ public class SupportRefillFinishPanel extends WizardPage {
 
     private void fireSelectedToAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSelectedToAttackPlanEvent
       int[] selection = jxResultsTable.getSelectedRows();
-      List<Attack> attacks = new LinkedList<Attack>();
+      List<Attack> attacks = new LinkedList<>();
       Hashtable<UnitHolder, Integer> split = SupportRefillSettingsPanel.getSingleton().getSplit();
       StandardAttack used = null;
       for (ManageableType t : StandardAttackManager.getSingleton().getAllElements()) {
@@ -465,13 +465,13 @@ public class SupportRefillFinishPanel extends WizardPage {
   public void update() {
     List<AbstractTroopMovement> results = SupportRefillCalculationPanel.getSingleton().getResults();
     TimeFrame timeFrame = SupportRefillCalculationPanel.getSingleton().getTimeFrame();
-    List<Long> used = new LinkedList<Long>();
+    List<Long> used = new LinkedList<>();
     REFResultTableModel model = new REFResultTableModel();
     int perfectTargets = 0;
     int supportedTargets = 0;
     int maxSupports = 0;
     int assignedSupports = 0;
-    List<Village> usedSources = new LinkedList<Village>();
+    List<Village> usedSources = new LinkedList<>();
     overviewPanel.reset();
 
     for (TAPAttackSourceElement elem : AttackSourceFilterPanel.getSingleton().getFilteredElements()) {

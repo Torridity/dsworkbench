@@ -37,7 +37,7 @@ public class DefenderAllyFilter implements ReportRuleInterface {
             if (allySplit == null || allySplit.length == 0) {
                 throw new ReportRuleConfigurationException("Kein Stammestag gefunden");
             }
-            allies = new LinkedList<String>();
+            allies = new LinkedList<>();
             for (String split : allySplit) {
                 if (split != null) {
                     Ally a = DataHolder.getSingleton().getAllyByTagName(split.trim());

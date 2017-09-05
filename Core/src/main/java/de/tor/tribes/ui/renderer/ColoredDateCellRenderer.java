@@ -31,7 +31,7 @@ import org.jdesktop.swingx.renderer.DefaultTableRenderer;
 public class ColoredDateCellRenderer extends DefaultTableRenderer {
 
     private SimpleDateFormat specialFormat = new SimpleDateFormat("dd.MM.yy HH:mm:ss.SSS");
-    private final int MINUTE = (1000 * 60);
+    private static final int MINUTE = (1000 * 60);
 
     public ColoredDateCellRenderer() {
         super();

@@ -41,8 +41,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
-import javax.swing.JFrame;
-import javax.swing.JScrollPane;
+import javax.swing.*;
+
 import org.apache.commons.lang.math.IntRange;
 import org.apache.commons.lang.math.LongRange;
 import org.apache.commons.lang.time.DateUtils;
@@ -99,10 +99,10 @@ public class TimeFrameVisualizer extends javax.swing.JPanel {
             g2d.setColor(Color.BLACK);
             g2d.drawLine(0, 2, 2, 0);
             g2d.dispose();
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
-        popupInfo = new HashMap<String, Object>();
+        popupInfo = new HashMap<>();
         addMouseMotionListener(new MouseMotionListener() {
 
             @Override
@@ -439,7 +439,7 @@ public class TimeFrameVisualizer extends javax.swing.JPanel {
         fr.add(sp);
 
         fr.pack();
-        fr.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        fr.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         tfv.refresh(frame);
         fr.setVisible(true);
     }

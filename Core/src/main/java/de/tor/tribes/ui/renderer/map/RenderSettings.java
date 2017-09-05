@@ -41,47 +41,46 @@ public class RenderSettings {
     }
 
     public final void refreshZoom() {
-        double currentZoom = DSWorkbenchMainFrame.getSingleton().getZoomFactor();
-        setZoom(currentZoom);
-        setFieldWidth(GlobalOptions.getSkin().getCurrentFieldWidth(zoom));
-        setFieldHeight(GlobalOptions.getSkin().getCurrentFieldHeight(zoom));
+        this.zoom = DSWorkbenchMainFrame.getSingleton().getZoomFactor();
+        this.fieldWidth = GlobalOptions.getSkin().getCurrentFieldWidth(zoom);
+        this.fieldHeight = GlobalOptions.getSkin().getCurrentFieldHeight(zoom);
     }
 
     public void calculateSettings(Rectangle2D pNewBounds) {
-        if (getMapBounds() != null && pNewBounds != null) {
-            setMovementX(Math.round((double) getFieldWidth() * (getMapBounds().getX() - pNewBounds.getX())));
-            setMovementY(Math.round((double) getFieldHeight() * (getMapBounds().getY() - pNewBounds.getY())));
+        if (mMapBounds != null && pNewBounds != null) {
+            this.movementX = (double) Math.round((double) fieldWidth * (mMapBounds.getX() - pNewBounds.getX()));
+            this.movementY = (double) Math.round((double) fieldHeight * (mMapBounds.getY() - pNewBounds.getY()));
         }
 
-        if (getMovementX() != 0.0) {
-            setDeltaX(getMovementX() / (double) getFieldWidth());
+        if (movementX != 0.0) {
+            this.deltaX = movementX / (double) fieldWidth;
         }
-        if (getMovementY() != 0.0) {
-            setDeltaY(getMovementY() / (double) getFieldHeight());
+        if (movementY != 0.0) {
+            this.deltaY = movementY / (double) fieldHeight;
         }
 
         int facX = 1;
         int facY = 1;
-        if (getDeltaX() < 0) {
+        if (deltaX < 0) {
             facX = -1;
-            setDeltaX(Math.abs(getDeltaX()));
+            this.deltaX = Math.abs(deltaX);
         }
-        if (getDeltaY() < 0) {
+        if (deltaY < 0) {
             facY = -1;
-            setDeltaY(Math.abs(getDeltaY()));
+            this.deltaY = Math.abs(deltaY);
         }
-        int fieldsX = (int) Math.round(getDeltaX()) + 1;
-        int fieldsY = (int) Math.round(getDeltaY()) + 1;
+        int fieldsX = (int) Math.round(deltaX) + 1;
+        int fieldsY = (int) Math.round(deltaY) + 1;
 
-        setColumnsToRender((fieldsX + 1) * facX);
-        setRowsToRender((fieldsY + 1) * facY);
+        this.columnsToRender = (fieldsX + 1) * facX;
+        this.rowsToRender = (fieldsY + 1) * facY;
 
         if (pNewBounds != null) {
-            setDeltaX(0 - ((pNewBounds.getX() - Math.floor(pNewBounds.getX())) * (double) getFieldWidth()));
-            setDeltaY(0 - ((pNewBounds.getY() - Math.floor(pNewBounds.getY())) * (double) getFieldHeight()));
+            this.deltaX = 0 - ((pNewBounds.getX() - Math.floor(pNewBounds.getX())) * (double) fieldWidth);
+            this.deltaY = 0 - ((pNewBounds.getY() - Math.floor(pNewBounds.getY())) * (double) fieldHeight);
         } else {
-            setDeltaX(0);
-            setDeltaY(0);
+            this.deltaX = (double) 0;
+            this.deltaY = (double) 0;
         }
 
         setMapBounds(pNewBounds);

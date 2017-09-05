@@ -57,12 +57,7 @@ import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
-import javax.swing.ImageIcon;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.KeyStroke;
-import javax.swing.UIManager;
+import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import org.apache.commons.configuration.Configuration;
@@ -257,7 +252,7 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame implements Li
         
         try {
             jAlwaysOnTop.setSelected(pConfig.getBoolean(getPropertyPrefix() + ".alwaysOnTop"));
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         
         setAlwaysOnTop(jAlwaysOnTop.isSelected());
@@ -342,7 +337,7 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame implements Li
                 showInfo("Keine Zeichnung gewählt");
                 return;
             }
-            List<Village> villages = new ArrayList<Village>();
+            List<Village> villages = new ArrayList<>();
             for (AbstractForm f : selection) {
                 for (Village v : f.getContainedVillages()) {
                     if (!villages.contains(v)) {
@@ -579,7 +574,7 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame implements Li
 }//GEN-LAST:event_fireHideInfoEvent
     
     private List<AbstractForm> getSelectedForms() {
-        final List<AbstractForm> selectedForms = new LinkedList<AbstractForm>();
+        final List<AbstractForm> selectedForms = new LinkedList<>();
         int[] selectedRows = jFormsTable.getSelectedRows();
         if (selectedRows != null && selectedRows.length < 1) {
             return selectedForms;
@@ -611,7 +606,7 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame implements Li
         try {
             //  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
         DSWorkbenchFormFrame.getSingleton().setSize(800, 600);
@@ -626,7 +621,7 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame implements Li
         FormManager.getSingleton().addForm(new Line());
         
         DSWorkbenchFormFrame.getSingleton().resetView();
-        DSWorkbenchFormFrame.getSingleton().setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        DSWorkbenchFormFrame.getSingleton().setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         DSWorkbenchFormFrame.getSingleton().setVisible(true);
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables

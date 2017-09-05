@@ -37,7 +37,7 @@ public class IconizedList extends JXList {
         try {
             BufferedImage b = ImageIO.read(IconizedList.class.getResource(pResourcePath));
             iconImage = b.getScaledInstance(80, 80, BufferedImage.SCALE_SMOOTH);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
     }
     

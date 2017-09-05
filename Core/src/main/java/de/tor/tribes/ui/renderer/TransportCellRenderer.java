@@ -41,7 +41,7 @@ public class TransportCellRenderer extends DefaultTableRenderer {
         nf.setMaximumFractionDigits(0);
         nf.setMinimumFractionDigits(0);
         try {
-            iconsUrls = new LinkedList<String>();
+            iconsUrls = new LinkedList<>();
             iconsUrls.add(this.getClass().getResource("/res/ui/holz.png").toString());
             iconsUrls.add(this.getClass().getResource("/res/ui/lehm.png").toString());
             iconsUrls.add(this.getClass().getResource("/res/ui/eisen.png").toString());

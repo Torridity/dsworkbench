@@ -52,7 +52,7 @@ public class DSWorkbenchAttackInfoPanel extends javax.swing.JPanel {
     }
 
     public void refresh() {
-        List<Village> allVillages = new LinkedList<Village>();
+        List<Village> allVillages = new LinkedList<>();
         //add sources by unit
         for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
             //add off sources
@@ -123,7 +123,7 @@ public class DSWorkbenchAttackInfoPanel extends javax.swing.JPanel {
         super.paintComponent(g);
         g.setColor(Constants.DS_DEFAULT_MARKER);
         g.fillRect(0, 0, getWidth(), getHeight());
-        List<Village> allVillages = new LinkedList<Village>();
+        List<Village> allVillages = new LinkedList<>();
         //add sources by unit
         for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
             //add off sources

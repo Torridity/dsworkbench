@@ -34,7 +34,7 @@ public class REDFinalTransportsTableModel extends AbstractTableModel {
     Class[] types = new Class[]{
         Village.class, Village.class, Integer.class, Integer.class, Integer.class, Integer.class, Boolean.class
     };
-    private final List<ExtendedTransport> elements = new LinkedList<ExtendedTransport>();
+    private final List<ExtendedTransport> elements = new LinkedList<>();
 
     public void clear() {
         elements.clear();

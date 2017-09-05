@@ -15,6 +15,25 @@
  */
 package de.tor.tribes.ui.wiz.red;
 
+import java.awt.BorderLayout;
+import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Hashtable;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+
+import javax.swing.Icon;
+import javax.swing.JOptionPane;
+
+import org.apache.log4j.Logger;
+import org.netbeans.spi.wizard.Wizard;
+import org.netbeans.spi.wizard.WizardPage;
+import org.netbeans.spi.wizard.WizardPanelNavResult;
+
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.Resource;
 import de.tor.tribes.types.UserProfile;
@@ -28,16 +47,6 @@ import de.tor.tribes.util.algo.MerchantDistributor;
 import de.tor.tribes.util.algo.types.MerchantDestination;
 import de.tor.tribes.util.algo.types.MerchantSource;
 import de.tor.tribes.util.algo.types.Order;
-import java.awt.BorderLayout;
-import java.text.NumberFormat;
-import java.util.*;
-import java.util.Map.Entry;
-import javax.swing.Icon;
-import javax.swing.JOptionPane;
-import org.apache.log4j.Logger;
-import org.netbeans.spi.wizard.Wizard;
-import org.netbeans.spi.wizard.WizardPage;
-import org.netbeans.spi.wizard.WizardPanelNavResult;
 
 /**
  *
@@ -271,6 +280,9 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
         jFillSlider = new javax.swing.JSlider();
         jLabel13 = new javax.swing.JLabel();
         jLimitMerchantAmount = new javax.swing.JCheckBox();
+        jAllowOverflow = new javax.swing.JCheckBox();
+        jFillFactor = new javax.swing.JTextField();
+        jLabel16 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
         jXCollapsiblePane1 = new org.jdesktop.swingx.JXCollapsiblePane();
         jPanel1 = new javax.swing.JPanel();
@@ -307,7 +319,7 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
         jInfoScrollPane.setMinimumSize(new java.awt.Dimension(19, 180));
         jInfoScrollPane.setPreferredSize(new java.awt.Dimension(19, 180));
 
-        jInfoTextPane.setContentType("text/html");
+        jInfoTextPane.setContentType("text/html"); // NOI18N
         jInfoTextPane.setEditable(false);
         jInfoTextPane.setText("<html>Du befindest dich im <b>Angriffsmodus</b>. Hier kannst du die Herkunftsd&ouml;rfer ausw&auml;hlen, die f&uuml;r Angriffe verwendet werden d&uuml;rfen. Hierf&uuml;r hast die folgenden M&ouml;glichkeiten:\n<ul>\n<li>Einf&uuml;gen von Dorfkoordinaten aus der Zwischenablage per STRG+V</li>\n<li>Einf&uuml;gen der Herkunftsd&ouml;rfer aus der Gruppen&uuml;bersicht</li>\n<li>Einf&uuml;gen der Herkunftsd&ouml;rfer aus dem SOS-Analyzer</li>\n<li>Einf&uuml;gen der Herkunftsd&ouml;rfer aus Berichten</li>\n<li>Einf&uuml;gen aus der Auswahlübersicht</li>\n<li>Manuelle Eingabe</li>\n</ul>\n</html>\n");
         jInfoScrollPane.setViewportView(jInfoTextPane);
@@ -323,7 +335,7 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
         jIgnoreTransportsButton.setPreferredSize(new java.awt.Dimension(200, 25));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 5;
+        gridBagConstraints.gridy = 4;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weighty = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 2, 5);
@@ -336,19 +348,19 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
         jMinTransportAmount.setPreferredSize(new java.awt.Dimension(100, 25));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 5;
+        gridBagConstraints.gridy = 4;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 2, 5);
+        gridBagConstraints.insets = new java.awt.Insets(2, 5, 2, 5);
         jExpertSettingsPanel.add(jMinTransportAmount, gridBagConstraints);
 
-        jLabel14.setText("Rohstoffen ignorieren.");
+        jLabel14.setText("fach füllen. Achtung, kann zu Rohstoffverlust führen!");
         jLabel14.setMaximumSize(new java.awt.Dimension(150, 25));
         jLabel14.setMinimumSize(new java.awt.Dimension(150, 25));
         jLabel14.setPreferredSize(new java.awt.Dimension(150, 25));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 5;
+        gridBagConstraints.gridy = 8;
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 1.0;
@@ -361,7 +373,7 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
         jLabel15.setPreferredSize(new java.awt.Dimension(150, 25));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 6;
+        gridBagConstraints.gridy = 5;
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 1.0;
@@ -375,7 +387,7 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
         jMaxTransportDistance.setPreferredSize(new java.awt.Dimension(100, 25));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 6;
+        gridBagConstraints.gridy = 5;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(2, 5, 2, 5);
@@ -388,7 +400,7 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
         jIgnoreTransportsByDistanceButton.setPreferredSize(new java.awt.Dimension(200, 25));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 6;
+        gridBagConstraints.gridy = 5;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weighty = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(2, 5, 2, 5);
@@ -397,7 +409,7 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
         jLabel3.setText("Berechnungsreihenfolge");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 7;
+        gridBagConstraints.gridy = 6;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 2, 5);
         jExpertSettingsPanel.add(jLabel3, gridBagConstraints);
@@ -531,7 +543,7 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 7;
+        gridBagConstraints.gridy = 6;
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 2, 5);
@@ -550,7 +562,7 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
         jFillSlider.setPreferredSize(new java.awt.Dimension(150, 40));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 8;
+        gridBagConstraints.gridy = 7;
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(2, 5, 2, 5);
@@ -562,7 +574,7 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
         jLabel13.setPreferredSize(new java.awt.Dimension(200, 25));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 8;
+        gridBagConstraints.gridy = 7;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.insets = new java.awt.Insets(2, 5, 2, 5);
         jExpertSettingsPanel.add(jLabel13, gridBagConstraints);
@@ -579,9 +591,48 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
         gridBagConstraints.gridy = 0;
         gridBagConstraints.gridwidth = 4;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        jExpertSettingsPanel.add(jLimitMerchantAmount, gridBagConstraints);
+
+        jAllowOverflow.setText("Überfüllung zulassen. Speicher");
+        jAllowOverflow.setToolTipText("<html>Hebt das Limit der Speichergröße auf.<br/>  Ist diese Option aktiviert, so werden Rohstoffsendungen bis zur x-fachen Speichergröße an die<br/> Dörfer zugeteilt (oder bis zum Max. Rohstoffe (Empfänger) Limit), je nachdem was kleiner ist. <br/>  Wird ein Speicher beim Beliefern überfüllt, so verfallen die gesendeten Rohstoffe. Ist diese <br/>  Option aktiviert, sollte daher unbedingt darauf geachtet werden empfangene Rohstoffe schnell<br/>  genug zu verarbeiten.<br/> Ist diese Option deaktiviert, so werden Lieferungen anhand des Speichers begrenzt (bis zum Max.<br/> Speicherfüllstand [%] oben). </html>");
+        jAllowOverflow.setMaximumSize(new java.awt.Dimension(200, 25));
+        jAllowOverflow.setMinimumSize(new java.awt.Dimension(200, 25));
+        jAllowOverflow.setOpaque(false);
+        jAllowOverflow.setPreferredSize(new java.awt.Dimension(200, 25));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 8;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weighty = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 2, 5);
-        jExpertSettingsPanel.add(jLimitMerchantAmount, gridBagConstraints);
+        jExpertSettingsPanel.add(jAllowOverflow, gridBagConstraints);
+
+        jFillFactor.setHorizontalAlignment(javax.swing.JTextField.LEFT);
+        jFillFactor.setText("2");
+        jFillFactor.setMaximumSize(new java.awt.Dimension(100, 25));
+        jFillFactor.setMinimumSize(new java.awt.Dimension(100, 25));
+        jFillFactor.setPreferredSize(new java.awt.Dimension(100, 25));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 8;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(2, 5, 2, 5);
+        jExpertSettingsPanel.add(jFillFactor, gridBagConstraints);
+
+        jLabel16.setText("Rohstoffen ignorieren.");
+        jLabel16.setMaximumSize(new java.awt.Dimension(150, 25));
+        jLabel16.setMinimumSize(new java.awt.Dimension(150, 25));
+        jLabel16.setPreferredSize(new java.awt.Dimension(150, 25));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 2, 5);
+        jExpertSettingsPanel.add(jLabel16, gridBagConstraints);
 
         setLayout(new java.awt.GridBagLayout());
 
@@ -1120,12 +1171,13 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
     }
 
     private int resourceNameToResourceId(String resource) {
-        if (resource.equals("Holz")) {
-            return 0;
-        } else if (resource.equals("Lehm")) {
-            return 1;
-        } else {
-            return 2;
+        switch (resource) {
+            case "Holz":
+                return 0;
+            case "Lehm":
+                return 1;
+            default:
+                return 2;
         }
     }
 
@@ -1180,6 +1232,7 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
     }
 
     private int getFillAmountByResourceId(int pResourceId) {
+    	/*
         switch (pResourceId) {
             case 0:
                 return Math.min(UIHelper.parseIntFromField(jTargetWood, 400000), 400000);
@@ -1187,18 +1240,36 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
                 return Math.min(UIHelper.parseIntFromField(jTargetClay, 400000), 400000);
             default:
                 return Math.min(UIHelper.parseIntFromField(jTargetIron, 400000), 400000);
+            // That min is not a good idea in my mind (Patrick) for two reasons: i) some villages have higher limits (e.g. 600k bonus) ii) one might want to over fill (e.g. to produce Snobs)
+        }*/
+        switch (pResourceId) {
+        case 0:
+            return UIHelper.parseIntFromField(jTargetWood, 400000);
+        case 1:
+            return UIHelper.parseIntFromField(jTargetClay, 400000);
+        default:
+            return UIHelper.parseIntFromField(jTargetIron, 400000);
         }
     }
 
     private int getRemainAmountByResourceId(int pResourceId) {
+    	/*
         switch (pResourceId) {
-            case 0:
-                return Math.min(UIHelper.parseIntFromField(jRemainWood, 400000), 400000);
-            case 1:
-                return Math.min(UIHelper.parseIntFromField(jRemainClay, 400000), 400000);
-            default:
-                return Math.min(UIHelper.parseIntFromField(jRemainIron, 400000), 400000);
-        }
+        case 0:
+            return Math.min(UIHelper.parseIntFromField(jRemainWood, 400000), 400000);
+        case 1:
+            return Math.min(UIHelper.parseIntFromField(jRemainClay, 400000), 400000);
+        default:
+            return Math.min(UIHelper.parseIntFromField(jRemainIron, 400000), 400000);
+    }*/
+	     switch (pResourceId) {
+	        case 0:
+	            return UIHelper.parseIntFromField(jRemainWood, 400000);
+	        case 1:
+	            return UIHelper.parseIntFromField(jRemainClay, 400000);
+	        default:
+	            return UIHelper.parseIntFromField(jRemainIron, 400000);
+	    }
     }
 
     private int getMeanValueByResourceId(int pResourceId, int pWood, int pClay, int pIron, int pAmount) {
@@ -1228,8 +1299,8 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
             }
         }
 
-        ArrayList<Village> incomingOnly = new ArrayList<Village>();
-        ArrayList<Village> outgoingOnly = new ArrayList<Village>();
+        ArrayList<Village> incomingOnly = new ArrayList<>();
+        ArrayList<Village> outgoingOnly = new ArrayList<>();
         int dualDirectionVillages = 0;
         VillageMerchantInfo[] allElements = ResourceDistributorSettingsPanel.getSingleton().getAllElements();
         int woodSum = 0;
@@ -1277,10 +1348,20 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
 
         int maxFilling = jFillSlider.getValue();
 
-        List<VillageMerchantInfo> copy = new LinkedList<VillageMerchantInfo>();
-        for (int i = 0; i < allElements.length; i++) {
-            VillageMerchantInfo info = allElements[i].clone();
-            info.adaptStashCapacity(maxFilling);
+        
+        List<VillageMerchantInfo> copy = new LinkedList<>();
+        for (VillageMerchantInfo allElement : allElements) {
+            VillageMerchantInfo info = allElement.clone();
+            if (jAllowOverflow.isSelected()) {
+                try {
+                    double fillFactor = Double.parseDouble(jFillFactor.getText());
+                    info.adaptStashCapacity((int) (fillFactor * 100), true);
+                } catch (NumberFormatException nfex) {
+                    info.adaptStashCapacity(maxFilling);
+                }
+            } else {
+                info.adaptStashCapacity(maxFilling);
+            }
             copy.add(info);
         }
 
@@ -1331,14 +1412,14 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
         jProgressBar1.setString("Berechne...");
         try {//let thread start
             Thread.sleep(20);
-        } catch (InterruptedException ie) {
+        } catch (InterruptedException ignored) {
         }
     }
 
     protected Hashtable<Village, Hashtable<Village, List<Resource>>> getTransports() {
         logger.debug("Getting transports");
 
-        Hashtable<Village, Hashtable<Village, List<Resource>>> transports = new Hashtable<Village, Hashtable<Village, List<Resource>>>();
+        Hashtable<Village, Hashtable<Village, List<Resource>>> transports = new Hashtable<>();
         if (!calculator.getResults().isEmpty()) {
             int minAmount = 1;
             if (jIgnoreTransportsButton.isSelected()) {
@@ -1378,7 +1459,7 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
                     Hashtable<Village, List<Resource>> transportsForSource = transports.get(sourceVillage);
 
                     if (transportsForSource == null) {
-                        transportsForSource = new Hashtable<Village, List<Resource>>();
+                        transportsForSource = new Hashtable<>();
                         transports.put(sourceVillage, transportsForSource);
                     }
 
@@ -1388,7 +1469,7 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
                         if (DSCalculator.calculateDistance(sourceVillage, targetVillage) <= maxDistance) {
                             List<Resource> transportsFromSourceToDest = transportsForSource.get(targetVillage);
                             if (transportsFromSourceToDest == null) {
-                                transportsFromSourceToDest = new LinkedList<Resource>();
+                                transportsFromSourceToDest = new LinkedList<>();
                                 transportsForSource.put(targetVillage, transportsFromSourceToDest);
                             }
                             Resource res = new Resource(order.getAmount() * 1000, current);
@@ -1404,12 +1485,12 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
 
             Set<Entry<Village, Hashtable<Village, List<Resource>>>> entries = transports.entrySet();
 
-            List<Village> destinationsToRemove = new LinkedList<Village>();
+            List<Village> destinationsToRemove = new LinkedList<>();
             for (Entry<Village, Hashtable<Village, List<Resource>>> entry : entries) {
                 Village transportDestination = entry.getKey();
                 Hashtable<Village, List<Resource>> destinationTransports = entry.getValue();
                 Set<Entry<Village, List<Resource>>> transportEntries = destinationTransports.entrySet();
-                List<Village> toRemove = new LinkedList<Village>();
+                List<Village> toRemove = new LinkedList<>();
                 for (Entry<Village, List<Resource>> transportEntry : transportEntries) {
                     Village sourceKey = transportEntry.getKey();
                     List<Resource> sourceTransports = transportEntry.getValue();
@@ -1447,10 +1528,12 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
+    private javax.swing.JCheckBox jAllowOverflow;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jCalculateButton;
     private javax.swing.JLabel jClay;
     private javax.swing.JPanel jExpertSettingsPanel;
+    private javax.swing.JTextField jFillFactor;
     private javax.swing.JPanel jFillSettingsPanel;
     private javax.swing.JSlider jFillSlider;
     private javax.swing.JCheckBox jIgnoreTransportsButton;
@@ -1464,6 +1547,7 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel15;
+    private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;

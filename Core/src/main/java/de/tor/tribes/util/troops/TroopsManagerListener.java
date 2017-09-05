@@ -21,5 +21,5 @@ package de.tor.tribes.util.troops;
  */
 public interface TroopsManagerListener {
 
-    public void fireTroopsChangedEvent();
+    void fireTroopsChangedEvent();
 }

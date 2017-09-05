@@ -35,8 +35,8 @@ import de.tor.tribes.util.note.NoteManager;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
 import java.util.List;
-import javax.swing.ImageIcon;
-import javax.swing.JOptionPane;
+import javax.swing.*;
+
 import org.apache.log4j.Logger;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ImageUtils;
@@ -52,10 +52,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Rectangle2D;
-import javax.swing.AbstractAction;
-import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import org.apache.commons.configuration.Configuration;
@@ -170,14 +166,8 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
             
             @Override
             public boolean isValid(int tabIndex, String tabText) {
-                if (tabText.trim().length() == 0) {
-                    return false;
-                }
-                
-                if (NoteManager.getSingleton().groupExists(tabText)) {
-                    return false;
-                }
-                return true;
+                return tabText.trim().length() != 0 && !NoteManager.getSingleton().groupExists(tabText);
+
             }
             
             @Override
@@ -243,11 +233,11 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
         centerPanel.setMenuVisible(pConfig.getBoolean(getPropertyPrefix() + ".menu.visible", true));
         try {
             jNoteTabbedPane.setSelectedIndex(pConfig.getInteger(getPropertyPrefix() + ".tab.selection", 0));
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         try {
             jAlwaysOnTopBox.setSelected(pConfig.getBoolean(getPropertyPrefix() + ".alwaysOnTop"));
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         
         setAlwaysOnTop(jAlwaysOnTopBox.isSelected());
@@ -649,7 +639,6 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
         }
         if (unusedId == 1000) {
             JOptionPaneHelper.showErrorBox(DSWorkbenchNotepad.this, "Du hast mehr als 1000 Notizsets. Bitte lösche zuerst ein paar bevor du Neue erstellst.", "Fehler");
-            return;
         }
 }//GEN-LAST:event_fireCreateNoteSetEvent
     
@@ -725,7 +714,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
 
                     // SubstanceLookAndFeel.setSkin(SubstanceLookAndFeel.getAllSkins().get("Twilight").getClassName());
                     //  UIManager.put(SubstanceLookAndFeel.FOCUS_KIND, FocusKind.NONE);
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                 }
                 
                 DSWorkbenchNotepad.getSingleton().setSize(600, 400);
@@ -764,7 +753,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
                     NoteManager.getSingleton().addManagedElement("asd2", n3);
                 }
                 DSWorkbenchNotepad.getSingleton().resetView();
-                DSWorkbenchNotepad.getSingleton().setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                DSWorkbenchNotepad.getSingleton().setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
                 DSWorkbenchNotepad.getSingleton().setVisible(true);
             }
         });

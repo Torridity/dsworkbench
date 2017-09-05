@@ -77,7 +77,7 @@ public class ScreenshotPanel extends javax.swing.JPanel {
             g2d.setComposite(a);
             //draw legend
             List<ManageableType> allElements = MarkerManager.getSingleton().getAllElementsFromAllGroups();
-            List<ManageableType> toRemove = new LinkedList<ManageableType>();
+            List<ManageableType> toRemove = new LinkedList<>();
             for (ManageableType elem : allElements) {
                 Marker m = (Marker) elem;
                 if (!m.isShownOnMap()) {

@@ -46,7 +46,7 @@ public class UnitTableInterface {
 
   public static String createUnitTableLink(Hashtable<UnitHolder, Integer> pIn, Hashtable<UnitHolder, Integer> pOut, boolean pMilitia) {
     StringBuilder b = new StringBuilder();
-    b.append("http://torridity.de/dsworkbench/unitTable.php?in=");
+    b.append("http://torridity.de/tools/unitTable.php?in=");
 
     for (int i = 0; i < units.length; i++) {
       UnitHolder u = DataHolder.getSingleton().getUnitByPlainName(units[i]);
@@ -74,7 +74,7 @@ public class UnitTableInterface {
 
   public static String createUnitTableLink(Hashtable<UnitHolder, Integer> pIn, boolean pMilitia) {
     StringBuilder b = new StringBuilder();
-    b.append("http://torridity.de/dsworkbench/unitTable.php?in=");
+    b.append("http://torridity.de/tools/unitTable.php?in=");
 
     for (int i = 0; i < units.length; i++) {
       UnitHolder u = DataHolder.getSingleton().getUnitByPlainName(units[i]);

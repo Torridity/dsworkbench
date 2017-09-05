@@ -33,7 +33,7 @@ public class REFSettingsTableModel extends AbstractTableModel {
     Class[] types = new Class[]{
         Village.class, Integer.class
     };
-    private final List<REFTargetElement> elements = new LinkedList<REFTargetElement>();
+    private final List<REFTargetElement> elements = new LinkedList<>();
 
     public void clear() {
         elements.clear();

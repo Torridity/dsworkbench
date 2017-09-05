@@ -33,7 +33,7 @@ public class RETSourceFilterTableModel extends AbstractTableModel {
     private Class[] types = new Class[]{
         Village.class, Boolean.class
     };
-    private final List<RETSourceElement> elements = new LinkedList<RETSourceElement>();
+    private final List<RETSourceElement> elements = new LinkedList<>();
 
     public RETSourceFilterTableModel() {
         super();

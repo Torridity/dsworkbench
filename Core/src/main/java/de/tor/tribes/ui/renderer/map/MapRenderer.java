@@ -19,19 +19,18 @@ import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Church;
 import de.tor.tribes.types.drawing.AbstractForm;
-import de.tor.tribes.types.ext.Ally;
-import de.tor.tribes.types.ext.Barbarians;
-import de.tor.tribes.types.ext.NoAlly;
-import de.tor.tribes.types.ext.Tribe;
-import de.tor.tribes.types.ext.Village;
-import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
-import de.tor.tribes.ui.windows.FormConfigFrame;
+import de.tor.tribes.types.ext.*;
 import de.tor.tribes.ui.ImageManager;
 import de.tor.tribes.ui.panels.MapPanel;
+import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
+import de.tor.tribes.ui.windows.FormConfigFrame;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ImageUtils;
 import de.tor.tribes.util.ServerSettings;
+import org.apache.log4j.Logger;
+
+import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.*;
 import java.awt.image.BufferedImage;
@@ -40,10 +39,6 @@ import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
 import java.util.*;
 import java.util.List;
-import javax.swing.JToolTip;
-import javax.swing.Popup;
-import javax.swing.PopupFactory;
-import org.apache.log4j.Logger;
 
 /**
  * Map Renderer which supports "dirty layers" defining which layer has to be
@@ -89,9 +84,9 @@ public class MapRenderer {
     private Popup mInfoPopup = null;
     private Village mPopupVillage = null;
     private BufferedImage mBackBuffer = null;
-    private Hashtable<Ally, Integer> mAllyCount = new Hashtable<Ally, Integer>();
-    private Hashtable<Tribe, Integer> mTribeCount = new Hashtable<Tribe, Integer>();
-    private Hashtable<Village, AnimatedVillageInfoRenderer> mAnimators = new Hashtable<Village, AnimatedVillageInfoRenderer>();
+    private Hashtable<Ally, Integer> mAllyCount = new Hashtable<>();
+    private Hashtable<Tribe, Integer> mTribeCount = new Hashtable<>();
+    private Hashtable<Village, AnimatedVillageInfoRenderer> mAnimators = new Hashtable<>();
     //rendering layers
     private MapLayerRenderer mMapLayer = new MapLayerRenderer();
     private TroopDensityLayerRenderer mTroopDensityLayer = new TroopDensityLayerRenderer();
@@ -108,8 +103,8 @@ public class MapRenderer {
 
     public MapRenderer() {
         mVisibleVillages = new Village[iVillagesX][iVillagesY];
-        mDrawOrder = new LinkedList<Integer>();
-        Vector<String> layerVector = new Vector<String>(Constants.LAYER_COUNT);
+        mDrawOrder = new LinkedList<>();
+        Vector<String> layerVector = new Vector<>(Constants.LAYER_COUNT);
         for (int i = 0; i < Constants.LAYER_COUNT; i++) {
             layerVector.add("");
         }
@@ -131,7 +126,7 @@ public class MapRenderer {
      * @param pDrawOrder
      */
     public void setDrawOrder(List<Integer> pDrawOrder) {
-        mDrawOrder = new LinkedList<Integer>(pDrawOrder);
+        mDrawOrder = new LinkedList<>(pDrawOrder);
     }
 
     /**
@@ -239,7 +234,7 @@ public class MapRenderer {
                 mRenderSettings.calculateSettings(MapPanel.getSingleton().getVirtualBounds());
 
                 boolean markOnTop = false;
-                if (mDrawOrder.indexOf(new Integer(0)) > mDrawOrder.indexOf(new Integer(1))) {
+                if (mDrawOrder.indexOf(0) > mDrawOrder.indexOf(1)) {
                     markOnTop = true;
                 }
                 boolean gotMap = false;
@@ -361,7 +356,7 @@ public class MapRenderer {
     private void calculateVisibleVillages() {
         dCenterX = MapPanel.getSingleton().getCurrentPosition().x;
         dCenterY = MapPanel.getSingleton().getCurrentPosition().y;
-        mVillagePositions = new HashMap<Village, Rectangle>();
+        mVillagePositions = new HashMap<>();
         mAllyCount.clear();
         mTribeCount.clear();
         if (DataHolder.getSingleton().isLoading()) {
@@ -518,7 +513,7 @@ public class MapRenderer {
 
         // <editor-fold defaultstate="collapsed" desc="Mark current players villages">
 
-        if (!mouseDown && GlobalOptions.getProperties().getBoolean("highlight.tribes.villages", false)) {
+        if (!mouseDown && GlobalOptions.getProperties().getBoolean("highlight.tribes.villages")) {
             Tribe mouseTribe = Barbarians.getSingleton();
             if (mouseVillage != null) {
                 mouseTribe = mouseVillage.getTribe();
@@ -554,7 +549,7 @@ public class MapRenderer {
 // </editor-fold>
         // <editor-fold defaultstate="collapsed" desc=" Draw radar information ">
         Village radarVillage = MapPanel.getSingleton().getRadarVillage();
-        List<Village> radarVillages = new LinkedList<Village>();
+        List<Village> radarVillages = new LinkedList<>();
         //add radar village
         if (radarVillage != null) {
             radarVillages.add(radarVillage);
@@ -573,7 +568,7 @@ public class MapRenderer {
                 int cnt = 0;
                 for (UnitHolder u : DataHolder.getSingleton().getUnits()) {
                     de.tor.tribes.types.drawing.Circle c = new de.tor.tribes.types.drawing.Circle();
-                    int r = GlobalOptions.getProperties().getInt("radar.size", 1);
+                    int r = GlobalOptions.getProperties().getInt("radar.size");
                     double diam = 2 * (double) r / u.getSpeed();
                     double xp = v.getX() + 0.5 - diam / 2;
                     double yp = v.getY() + 0.5 - diam / 2;
@@ -588,7 +583,7 @@ public class MapRenderer {
                     c.setStrokeWidth(3f);
                     c.setXPosEnd(xp + diam);
                     c.setYPosEnd(yp + diam);
-                    Color co = Color.decode(GlobalOptions.getProperties().getString(u.getName() + ".color", "#FF0000"));
+                    Color co = Color.decode(GlobalOptions.getProperties().getString(u.getName() + ".color"));
                     c.setDrawColor(co);
                     c.setDrawAlpha(0.8f);
                     c.renderForm(g2d);
@@ -599,7 +594,7 @@ public class MapRenderer {
                 }
                 g2d.setClip(null);
 
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         }
         // </editor-fold>
@@ -675,8 +670,8 @@ public class MapRenderer {
         }
         if (GlobalOptions.getProperties().getBoolean("show.ruler", true)) {
             //ruler drawing
-            HashMap<Color, Rectangle> vertRulerParts = new HashMap<Color, Rectangle>();
-            HashMap<Color, Rectangle> horRulerParts = new HashMap<Color, Rectangle>();
+            HashMap<Color, Rectangle> vertRulerParts = new HashMap<>();
+            HashMap<Color, Rectangle> horRulerParts = new HashMap<>();
             double xVillage = Math.floor(viewStartPoint.x);
             double yVillage = Math.floor(viewStartPoint.y);
             double rulerStart = -1 * dCurrentFieldWidth * (viewStartPoint.x - xVillage);
@@ -933,7 +928,7 @@ class RoundGradientContext implements PaintContext {
                 }
 
                 int base = (j * w + i) * 4;
-                data[base + 0] = (int) (color1.getRed() + ratio * (color2.getRed() - color1.getRed()));
+                data[base]     = (int) (color1.getRed() + ratio * (color2.getRed() - color1.getRed()));
                 data[base + 1] = (int) (color1.getGreen() + ratio * (color2.getGreen() - color1.getGreen()));
                 data[base + 2] = (int) (color1.getBlue() + ratio * (color2.getBlue() - color1.getBlue()));
                 data[base + 3] = (int) (color1.getAlpha() + ratio * (color2.getAlpha() - color1.getAlpha()));

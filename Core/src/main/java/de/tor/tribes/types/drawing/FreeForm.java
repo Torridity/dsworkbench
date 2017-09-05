@@ -63,12 +63,12 @@ public class FreeForm extends AbstractForm {
             setTextColor(new Color(Integer.parseInt(elem.getAttributeValue("r")), Integer.parseInt(elem.getAttributeValue("g")), Integer.parseInt(elem.getAttributeValue("b"))));
             setTextAlpha(Float.parseFloat(elem.getAttributeValue("a")));
             elem = e.getChild("drawColor");
-            setDrawColor(new Color(Integer.parseInt(elem.getAttributeValue("r")), Integer.parseInt(elem.getAttributeValue("g")), Integer.parseInt(elem.getAttributeValue("b"))));
-            setDrawAlpha(Float.parseFloat(elem.getAttributeValue("a")));
+            this.drawColor = new Color(Integer.parseInt(elem.getAttributeValue("r")), Integer.parseInt(elem.getAttributeValue("g")), Integer.parseInt(elem.getAttributeValue("b")));
+            this.drawAlpha = Float.parseFloat(elem.getAttributeValue("a"));
             elem = e.getChild("stroke");
-            setStrokeWidth(Float.parseFloat(elem.getAttributeValue("width")));
+            this.strokeWidth = Float.parseFloat(elem.getAttributeValue("width"));
             elem = e.getChild("filled");
-            setFilled(Boolean.parseBoolean(elem.getTextTrim()));
+            this.filled = Boolean.parseBoolean(elem.getTextTrim());
             elem = e.getChild("textSize");
             setTextSize(Integer.parseInt(elem.getTextTrim()));
             elem = e.getChild("points");
@@ -79,14 +79,14 @@ public class FreeForm extends AbstractForm {
                 addPointWithoutCheck(new Point2D.Double(x, y));
             }
             elem = e.getChild("drawName");
-            setDrawName(Boolean.parseBoolean(elem.getTextTrim()));
-        } catch (Exception ex) {
+            this.drawName = Boolean.parseBoolean(elem.getTextTrim());
+        } catch (Exception ignored) {
         }
     }
 
     public FreeForm() {
         super();
-        points = new LinkedList<Point2D.Double>();
+        points = new LinkedList<>();
     }
 
     @Override
@@ -107,8 +107,8 @@ public class FreeForm extends AbstractForm {
         String widthVal = Integer.toString((int) Math.rint(getBounds().getWidth()));
         String heightVal = Integer.toString((int) Math.rint(getBounds().getHeight()));
         String colorVal = "";
-        if (getDrawColor() != null) {
-            colorVal = "#" + Integer.toHexString(getDrawColor().getRGB() & 0x00ffffff);
+        if (drawColor != null) {
+            colorVal = "#" + Integer.toHexString(drawColor.getRGB() & 0x00ffffff);
         } else {
             colorVal = "#" + Integer.toHexString(Color.BLACK.getRGB() & 0x00ffffff);
         }
@@ -134,8 +134,8 @@ public class FreeForm extends AbstractForm {
         Font fBefore = g2d.getFont();
         //draw
         g2d.setStroke(getStroke());
-        checkShowMode(g2d, getDrawColor());
-        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, getDrawAlpha()));
+        checkShowMode(g2d, drawColor);
+        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, drawAlpha));
 
         Point2D.Double pp = MapPanel.getSingleton().virtualPosToSceenPosDouble(points.get(0).getX(), points.get(0).getY());
         GeneralPath p = new GeneralPath();
@@ -151,13 +151,13 @@ public class FreeForm extends AbstractForm {
             setVisibleOnMap(false);
             return;
         }
-        if (isFilled()) {
+        if (filled) {
             g2d.fill(p);
         } else {
             g2d.draw(p);
         }
 
-        if (isDrawName()) {
+        if (drawName) {
             g2d.setColor(getTextColor());
             g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, getTextAlpha()));
             g2d.setFont(fBefore.deriveFont((float) getTextSize()));
@@ -201,8 +201,8 @@ public class FreeForm extends AbstractForm {
         Font fBefore = g2d.getFont();
         //draw
         g2d.setStroke(getStroke());
-        g2d.setColor(getDrawColor());
-        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, getDrawAlpha()));
+        g2d.setColor(drawColor);
+        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, drawAlpha));
 
         GeneralPath p = new GeneralPath();
         Point2D.Double pp = points.get(0);
@@ -212,13 +212,13 @@ public class FreeForm extends AbstractForm {
             p.lineTo(pp.x, pp.y);
         }
 
-        if (isFilled()) {
+        if (filled) {
             g2d.fill(p);
         } else {
             g2d.draw(p);
         }
 
-        if (isDrawName()) {
+        if (drawName) {
             g2d.setColor(getTextColor());
             g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, getTextAlpha()));
             g2d.setFont(fBefore.deriveFont((float) getTextSize()));
@@ -259,7 +259,7 @@ public class FreeForm extends AbstractForm {
         Point p1 = MapPanel.getSingleton().virtualPosToSceenPos(secondLast.getX(), secondLast.getY());
         Point p2 = MapPanel.getSingleton().virtualPosToSceenPos(pNewPoint.getX(), pNewPoint.getY());
         Point p3 = MapPanel.getSingleton().virtualPosToSceenPos(last.getX(), last.getY());
-        boolean line = lineContainsPoint(p2.x, p2.y, p1.x, p1.y, p3.x, p3.y, (double) getTolerance());
+        boolean line = lineContainsPoint(p2.x, p2.y, p1.x, p1.y, p3.x, p3.y, (double) toler);
         if (line) {
             points.set(points.size() - 1, pNewPoint);
         } else {
@@ -289,11 +289,11 @@ public class FreeForm extends AbstractForm {
     @Override
     protected String getFormXml() {
         StringBuilder b = new StringBuilder();
-        b.append("<drawColor r=\"").append(getDrawColor().getRed()).append("\" g=\"").append(getDrawColor().getGreen()).append("\" b=\"").append(getDrawColor().getBlue()).append("\" a=\"").append(getDrawAlpha()).append( "\"/>\n");
-        b.append("<filled>").append(isFilled()).append("</filled>\n");
-        b.append("<stroke width=\"").append(getStrokeWidth()).append( "\"/>\n");
-        b.append("<drawName>").append(isDrawName()).append( "</drawName>\n");
-        b.append("<tolerance>").append(getTolerance()).append( "</tolerance>\n");
+        b.append("<drawColor r=\"").append(drawColor.getRed()).append("\" g=\"").append(drawColor.getGreen()).append("\" b=\"").append(drawColor.getBlue()).append("\" a=\"").append(drawAlpha).append( "\"/>\n");
+        b.append("<filled>").append(filled).append("</filled>\n");
+        b.append("<stroke width=\"").append(strokeWidth).append( "\"/>\n");
+        b.append("<drawName>").append(drawName).append( "</drawName>\n");
+        b.append("<tolerance>").append(toler).append( "</tolerance>\n");
         b.append( "<points>\n");
         for (Point2D.Double p : points) {
             b.append("<point x=\"").append(p.getX()).append("\" y=\"").append(p.getY()).append("\"/>\n");
@@ -363,7 +363,7 @@ public class FreeForm extends AbstractForm {
      * @return the stroke
      */
     public BasicStroke getStroke() {
-        float w = (float) (getStrokeWidth() / DSWorkbenchMainFrame.getSingleton().getZoomFactor());
+        float w = (float) (strokeWidth / DSWorkbenchMainFrame.getSingleton().getZoomFactor());
         return new BasicStroke(w);
     }
 

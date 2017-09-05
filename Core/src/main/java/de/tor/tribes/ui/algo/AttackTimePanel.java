@@ -25,39 +25,21 @@ import de.tor.tribes.ui.renderer.TimeFrameListCellRenderer;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.algo.types.TimeFrame;
+import org.apache.commons.lang.math.IntRange;
+import org.apache.commons.lang.time.DateUtils;
+
+import javax.swing.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.UnsupportedFlavorException;
-import java.awt.dnd.DnDConstants;
-import java.awt.dnd.DragGestureEvent;
-import java.awt.dnd.DragGestureListener;
-import java.awt.dnd.DragSource;
-import java.awt.dnd.DragSourceDragEvent;
-import java.awt.dnd.DragSourceDropEvent;
-import java.awt.dnd.DragSourceEvent;
-import java.awt.dnd.DragSourceListener;
-import java.awt.dnd.DropTarget;
-import java.awt.dnd.DropTargetDragEvent;
-import java.awt.dnd.DropTargetDropEvent;
-import java.awt.dnd.DropTargetEvent;
-import java.awt.dnd.DropTargetListener;
+import java.awt.dnd.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.text.DecimalFormat;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-import javax.swing.DefaultListModel;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.UIManager;
-import org.apache.commons.lang.math.IntRange;
-import org.apache.commons.lang.time.DateUtils;
+import java.util.*;
 
 /**
  *
@@ -149,11 +131,12 @@ public class AttackTimePanel extends javax.swing.JPanel implements DragGestureLi
     }
 
     private void deleteSelectedTimeSpan() {
-        if (jTimeFrameList.getSelectedValues() == null || jTimeFrameList.getSelectedValues().length == 0) {
+        List selectedValuesList = jTimeFrameList.getSelectedValuesList();
+        if (selectedValuesList == null || selectedValuesList.isEmpty()) {
             return;
         }
-        List<Object> selection = new LinkedList<Object>();
-        for (Object o : jTimeFrameList.getSelectedValues()) {
+        List<Object> selection = new LinkedList<>();
+        for (Object o : jTimeFrameList.getSelectedValuesList()) {
             if (!(o instanceof TimeSpanDivider)) {
                 selection.add(o);
             }
@@ -168,7 +151,7 @@ public class AttackTimePanel extends javax.swing.JPanel implements DragGestureLi
     }
 
     public List<TimeSpan> getTimeSpans() {
-        List<TimeSpan> timeSpans = new LinkedList<TimeSpan>();
+        List<TimeSpan> timeSpans = new LinkedList<>();
 
         //add time frames
         DefaultListModel model = (DefaultListModel) jTimeFrameList.getModel();
@@ -352,7 +335,7 @@ public class AttackTimePanel extends javax.swing.JPanel implements DragGestureLi
             ((DefaultListModel) jTimeFrameList.getModel()).add(jTimeFrameList.getModel().getSize(), s);
         }
 
-        List<TimeSpan> spans = new LinkedList<TimeSpan>();
+        List<TimeSpan> spans = new LinkedList<>();
         for (int i = 0; i < model.getSize(); i++) {
             spans.add((TimeSpan) model.getElementAt(i));
         }
@@ -403,7 +386,7 @@ public class AttackTimePanel extends javax.swing.JPanel implements DragGestureLi
                 ((DefaultListModel) jTimeFrameList.getModel()).add(jTimeFrameList.getModel().getSize(), s);
             }
 
-            List<TimeSpan> spans = new LinkedList<TimeSpan>();
+            List<TimeSpan> spans = new LinkedList<>();
             for (int i = 0; i < model.getSize(); i++) {
                 spans.add((TimeSpan) model.getElementAt(i));
             }
@@ -865,10 +848,8 @@ public class AttackTimePanel extends javax.swing.JPanel implements DragGestureLi
                     throw new UnsupportedFlavorException(DataFlavor.stringFlavor);
                 }
                 addTimeSpan(s);
-            } catch (UnsupportedFlavorException usfe) {
+            } catch (UnsupportedFlavorException | IOException usfe) {
                 //invalid data
-            } catch (IOException ioe) {
-                //failed to get data
             }
         }
     }
@@ -881,10 +862,10 @@ public class AttackTimePanel extends javax.swing.JPanel implements DragGestureLi
         try {
             //  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         JFrame f = new JFrame();
-        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         f.add(new AttackTimePanel(null));
         f.pack();
         f.setVisible(true);

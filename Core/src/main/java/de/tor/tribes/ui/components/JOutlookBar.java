@@ -15,17 +15,20 @@
  */
 package de.tor.tribes.ui.components;
 
-/**
- *
- * @author Torridity
+/*
+
+  @author Torridity
  */
 // Import the GUI classes
-import java.awt.*;
-import java.awt.event.*;
 import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 // Import the Java classes
-import java.util.*;
 
 /**
  * A JOutlookBar provides a component that is similar to a JTabbedPane, but instead of maintaining
@@ -68,7 +71,7 @@ public class JOutlookBar extends JPanel implements ActionListener {
      * Adds the specified component to the JOutlookBar and sets the bar's name
      * 
      * @param  name      The name of the outlook bar
-     * @param  componenet   The component to add to the bar
+     * @param  component   The component to add to the bar
      */
     public void addBar(String name, JComponent component) {
         BarInfo barInfo = new BarInfo(name, component);
@@ -82,7 +85,7 @@ public class JOutlookBar extends JPanel implements ActionListener {
      * 
      * @param  name      The name of the outlook bar
      * @param  icon      An icon to display in the outlook bar
-     * @param  componenet   The component to add to the bar
+     * @param  component   The component to add to the bar
      */
     public void addBar(String name, Icon icon, JComponent component) {
         BarInfo barInfo = new BarInfo(name, icon, component);
@@ -180,8 +183,8 @@ public class JOutlookBar extends JPanel implements ActionListener {
         if (getParent() != null) {
             try {
                 //try to refit size if parent is a scrollpane's viewport (used for fast options in DSWorkbenchMainFrame)
-                ((JViewport) getParent()).validate();
-            } catch (Exception e) {
+                getParent().validate();
+            } catch (Exception ignored) {
             }
         }
     }
@@ -191,8 +194,8 @@ public class JOutlookBar extends JPanel implements ActionListener {
      */
     public void actionPerformed(ActionEvent e) {
         int currentBar = 0;
-        for (Iterator i = this.bars.keySet().iterator(); i.hasNext();) {
-            String barName = (String) i.next();
+        for (Object o : this.bars.keySet()) {
+            String barName = (String) o;
             BarInfo barInfo = (BarInfo) this.bars.get(barName);
             if (barInfo.getButton() == e.getSource()) {
                 // Found the selected button
@@ -231,7 +234,7 @@ public class JOutlookBar extends JPanel implements ActionListener {
         Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
         frame.setLocation(d.width / 2 - 400, d.height / 2 - 300);
         frame.setVisible(true);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     }
 
     /**
@@ -294,7 +297,7 @@ public class JOutlookBar extends JPanel implements ActionListener {
         /**
          * Sets the name of the bar
          * 
-         * @param  The name of the bar
+         * @param  name The name of the bar
          */
         public void setName(String name) {
             this.name = name;

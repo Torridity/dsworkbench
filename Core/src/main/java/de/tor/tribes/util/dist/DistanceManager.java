@@ -36,7 +36,7 @@ public class DistanceManager {
     }
 
     DistanceManager() {
-        villages = new LinkedList<Village>();
+        villages = new LinkedList<>();
     }
 
     public void clear() {
@@ -48,7 +48,7 @@ public class DistanceManager {
     }
 
     public void removeVillages(int[] pIds) {
-        List<Village> tmp = new LinkedList<Village>();
+        List<Village> tmp = new LinkedList<>();
 
         for (int col : pIds) {
             int tCol = col - 1;

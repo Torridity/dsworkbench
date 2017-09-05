@@ -29,10 +29,13 @@ import de.tor.tribes.types.Off;
 import de.tor.tribes.util.ServerSettings;
 import java.util.Arrays;
 import java.util.Collections;
+
+import org.apache.commons.collections.ListUtils;
 import org.apache.log4j.Logger;
 
 /**
  * @author Charon
+ * @author Patrick
  */
 public class BruteForce extends AbstractAttackAlgorithm {
 
@@ -52,7 +55,7 @@ public class BruteForce extends AbstractAttackAlgorithm {
         List<Village> allFakeTargets = Arrays.asList(pFakeTargets.toArray(new Village[pFakeTargets.size()]));
 
         Enumeration<UnitHolder> unitKeys = pSources.keys();
-        Hashtable<Village, Hashtable<UnitHolder, List<Village>>> attacks = new Hashtable<Village, Hashtable<UnitHolder, List<Village>>>();
+        Hashtable<Village, Hashtable<UnitHolder, List<Village>>> attacks = new Hashtable<>();
         logger.debug("Assigning offs");
         logText("Starte zufällige Berechnung");
 
@@ -60,6 +63,7 @@ public class BruteForce extends AbstractAttackAlgorithm {
         int currentStatus = 0;
 
         // <editor-fold defaultstate="collapsed" desc=" Assign Offs">
+        logInfo(" Starte Berechnung für Offs");
         while (unitKeys.hasMoreElements()) {
             UnitHolder unit = unitKeys.nextElement();
             logInfo(" - Starte Berechnung für Einheit '" + unit.getName() + "'");
@@ -80,14 +84,14 @@ public class BruteForce extends AbstractAttackAlgorithm {
                     logInfo(" - Teste " + pTargets.size() + " mögliche Ziele");
                     for (Village v : pTargets.toArray(new Village[pTargets.size()])) {
                         if (isAborted()) {
-                            return new LinkedList<AbstractTroopMovement>();
+                            return new LinkedList<>();
                         }
                         int maxAttacksPerVillage = pMaxAttacksTable.get(v);
                         double time = DSCalculator.calculateMoveTimeInSeconds(source, v, unit.getSpeed());
                         if (unit.getPlainName().equals("snob")) {
                             if (DSCalculator.calculateDistance(source, v) > ServerSettings.getSingleton().getSnobRange()) {
-                                //set move time to "infinite" if distance is too large
-                                time = Double.MAX_VALUE;
+                                //continue with the next destination Village
+                                continue;
                             }
                         }
 
@@ -99,8 +103,8 @@ public class BruteForce extends AbstractAttackAlgorithm {
                             Hashtable<UnitHolder, List<Village>> attacksForVillage = attacks.get(v);
                             if (attacksForVillage == null) {
                                 //create new table of attacks
-                                attacksForVillage = new Hashtable<UnitHolder, List<Village>>();
-                                List<Village> sourceList = new LinkedList<Village>();
+                                attacksForVillage = new Hashtable<>();
+                                List<Village> sourceList = new LinkedList<>();
                                 logInfo("   * Neue Truppenbewegung: " + source + " -> " + v);
                                 sourceList.add(source);
                                 attacksForVillage.put(unit, sourceList);
@@ -126,7 +130,7 @@ public class BruteForce extends AbstractAttackAlgorithm {
                                             attsPerUnit.add(source);
                                         }
                                     } else {
-                                        attsPerUnit = new LinkedList<Village>();
+                                        attsPerUnit = new LinkedList<>();
                                         //only add source if it does not attack current target yet
                                         added = true;
                                         logInfo("   * Neue Truppenbewegung: " + source + " -> " + v);
@@ -136,6 +140,13 @@ public class BruteForce extends AbstractAttackAlgorithm {
                                     if (added) {
                                         //only increment attack count if source was added
                                         vTarget = v;
+                                        
+                                        //check if last missing attack was added. 
+                                        if (currentAttacks + 1 == maxAttacksPerVillage){
+                                            logInfo("   * Entferne vollständiges Ziel " + v);
+                                            pTargets.remove(v);                                        	
+                                        }
+                                        
                                     } else {
                                         vTarget = null;
                                     }
@@ -164,12 +175,16 @@ public class BruteForce extends AbstractAttackAlgorithm {
         // </editor-fold>
 
         if (pFakeOffTargets) {
+        	/*
+        	 *  why would we do this? We should allow one fake for each missing off, so we can simply use pTargets as is?
+        	 *  
             logger.debug("Removing assigned off targets from fake list");
             Enumeration<Village> targets = attacks.keys();
             while (targets.hasMoreElements()) {
                 Village target = targets.nextElement();
                 pTargets.remove(target);
-            }
+            }*/
+        	logger.debug("Keeping remaining Off targets for fake search");
         } else {
             //clear target list
             pTargets.clear();
@@ -180,75 +195,132 @@ public class BruteForce extends AbstractAttackAlgorithm {
             pTargets.add(fakeTarget);
         }
         logger.debug("Assigning fakes");
-
+        logText(" Starte Berechnung für Fakes.");
         // <editor-fold defaultstate="collapsed" desc=" Assign fakes">
         unitKeys = pFakes.keys();
-        Hashtable<Village, Hashtable<Village, UnitHolder>> fakes = new Hashtable<Village, Hashtable<Village, UnitHolder>>();
+        Hashtable<Village, Hashtable<UnitHolder, List<Village>>> fakes = new Hashtable<>();
+
 
         while (unitKeys.hasMoreElements()) {
             UnitHolder unit = unitKeys.nextElement();
+            logInfo(" - Starte Berechnung für Einheit '" + unit.getName() + "'");
             List<Village> sources = pFakes.get(unit);
-            if (sources != null) {
-                for (Village source : sources) {
-                    //time when the attacks should arrive
-                    //max. number of attacks per target village
 
+            if (sources != null) {
+                logInfo(" - Verwende " + sources.size() + " Herkunftsdörfer");
+                for (Village source : sources) {
+
+                    //time when the attacks should arrive
                     Village vTarget = null;
-                    //TimeFrame t = new TimeFrame(pStartTime, pArriveTime, pTimeFrameStartHour, pTimeFrameEndHour);
-                    //search all tribes and villages for targets
+
+                    //distribute targets randomly
                     Collections.shuffle(pTargets);
-                    for (Village v : pTargets) {
+                    currentStatus = allTargets.size() + allFakeTargets.size() - pTargets.size();
+                    updateStatus(currentStatus, maxStatus);
+                    //search all targets
+                    logInfo(" - Teste " + pTargets.size() + " mögliche Ziele");
+                    for (Village v : pTargets.toArray(new Village[pTargets.size()])) {
                         if (isAborted()) {
-                            return new LinkedList<AbstractTroopMovement>();
+                            return new LinkedList<>();
                         }
                         int maxAttacksPerVillage = pMaxAttacksTable.get(v);
-                        if (!attacks.containsKey(v)) {
-                            double time = DSCalculator.calculateMoveTimeInSeconds(source, v, unit.getSpeed());
-                            if (unit.getPlainName().equals("snob")) {
-                                if (DSCalculator.calculateDistance(source, v) > ServerSettings.getSingleton().getSnobRange()) {
-                                    //set move time to "infinite" if distance is too large
-                                    time = Double.MAX_VALUE;
-                                }
-                            }
-                            long runtime = (long) time * 1000;
-                            //check if attack is somehow possible
-                            if (pTimeFrame.isMovementPossible(runtime, v)) {
-                                //only calculate if time is in time frame
-                                //get list of source villages for current target
-                                Hashtable<Village, UnitHolder> attacksForVillage = fakes.get(v);
-                                if (attacksForVillage == null) {
-                                    //no attack found for this village
-                                    //get number of attacks on this tribe
-                                    Integer cnt = maxAttacksPerVillage;
-                                    if (cnt == null) {
-                                        //no attacks on this tribe yet
-                                        cnt = 0;
-                                    }
-                                    //create new table of attacks
-                                    attacksForVillage = new Hashtable<Village, UnitHolder>();
-                                    attacksForVillage.put(source, unit);
-                                    fakes.put(v, attacksForVillage);
-                                    vTarget = v;
-                                } else {
-                                    //there are already attacks on this village
-                                    if (attacksForVillage.keySet().size() < maxAttacksPerVillage) {
-                                        //more attacks on this village are allowed
-                                        //max number of attacks neither for villages nor for player reached
-                                        if (!attacksForVillage.containsKey(source)) {
-                                            attacksForVillage.put(source, unit);
-                                            vTarget = v;
-                                        }
-                                    } else {
-                                        //max number of attacks per village reached, continue search
-                                    }
-                                }
-                            }
-                            if (vTarget != null) {
-                                break;
+                        double time = DSCalculator.calculateMoveTimeInSeconds(source, v, unit.getSpeed());
+                        if (unit.getPlainName().equals("snob")) {
+                            if (DSCalculator.calculateDistance(source, v) > ServerSettings.getSingleton().getSnobRange()) {
+                                //continue with the next destination Village
+                                continue;
                             }
                         }
+
+                        long runtime = (long) time * 1000;
+                        //check if attack is somehow possible
+                        if (pTimeFrame.isMovementPossible(runtime, v)) {
+                            //only calculate if time is in time frame
+                            //get list of source villages for current target
+                            Hashtable<UnitHolder, List<Village>> attacksForVillage = attacks.get(v);
+                            Hashtable<UnitHolder, List<Village>> fakesForVillage = fakes.get(v);
+                            if (attacksForVillage == null){
+                            	//create empty table of attacks (will stay empty, but is used for maxAttacks calculation)
+                                attacksForVillage = new Hashtable<>();
+                                List<Village> sourceList = new LinkedList<>();
+                                attacksForVillage.put(unit, sourceList);
+                            }
+                            if (fakesForVillage == null) {
+                                //create new table of fakes 
+                                fakesForVillage = new Hashtable<>();
+                                List<Village> sourceList = new LinkedList<>();
+                                logInfo("   * Neue Truppenbewegung: " + source + " -> " + v);
+                                sourceList.add(source);
+                                fakesForVillage.put(unit, sourceList);
+                                fakes.put(v, fakesForVillage);
+                                vTarget = v;
+                            } else {
+                                Enumeration<UnitHolder> units = attacksForVillage.keys();
+                                int currentAttacks = 0;
+                                while (units.hasMoreElements()) {
+                                    currentAttacks += attacksForVillage.get(units.nextElement()).size();
+                                }
+                                units = fakesForVillage.keys();
+                                int currentFakes = 0;
+                                while (units.hasMoreElements()) {
+                                    currentAttacks += fakesForVillage.get(units.nextElement()).size();
+                                }
+                                
+                                //there are already attacks or fakes on this village
+                                if (currentAttacks + currentFakes < maxAttacksPerVillage) {
+                                    //more attacks on this village are allowed
+                                    boolean added = false;
+                                    //max number of attacks neither for villages nor for player reached
+                                    List<Village> attsPerUnit = attacksForVillage.get(unit);
+                                    List<Village> fakesPerUnit = fakesForVillage.get(unit);
+                                    if (fakesPerUnit != null) {
+                                        if (!attsPerUnit.contains(source) && (attsPerUnit == null || !attsPerUnit.contains(source))) {                                        	
+                                            //only add source if it does not attack current target yet
+                                            added = true;
+                                            logInfo("   * Neue Truppenbewegung: " + source + " -> " + v);
+                                            fakesPerUnit.add(source);
+                                        }
+                                    } else {
+                                        fakesPerUnit = new LinkedList<>();
+                                        //only add source if it does not attack current target yet
+                                        added = true;
+                                        logInfo("   * Neue Truppenbewegung: " + source + " -> " + v);
+                                        fakesPerUnit.add(source);
+                                        fakesForVillage.put(unit, attsPerUnit);
+                                    }
+                                    if (added) {
+                                        //only increment attack count if source was added
+                                        vTarget = v;
+                                        
+                                        //check if last missing attack was added. 
+                                        if (currentAttacks + currentFakes + 1 == maxAttacksPerVillage){
+                                            logInfo("   * Entferne vollständiges Ziel " + v);
+                                            pTargets.remove(v);                                        	
+                                        }
+                                        
+                                    } else {
+                                        vTarget = null;
+                                    }
+                                } else {
+                                    //max number of attacks per village reached, continue search
+                                    logInfo("   * Entferne vollständiges Ziel " + v);
+                                    pTargets.remove(v);
+                                    vTarget = null;
+                                }
+                            }
+                        }
+
+                        if (vTarget != null) {
+                            break;
+                        }
+                    }
+
+                    if (vTarget == null) {
+                        logInfo(" - Keine Ziele für Herkunftsdorf " + source + " gefunden");
                     }
                 }
+            } else {
+                logInfo(" - Keine Herkunftsdörfer für aktuelle Einheit");
             }
         }
 
@@ -257,11 +329,10 @@ public class BruteForce extends AbstractAttackAlgorithm {
 
         logText(" - Erstelle Ergebnisliste");
         //convert to result list
-        List<AbstractTroopMovement> movements = new LinkedList<AbstractTroopMovement>();
-        int fullMovements = 0;
+        List<AbstractTroopMovement> movements = new LinkedList<>();
         logger.debug(" - adding offs");
-        int off = 0;
 
+        logText(String.format(" %d Offs berechnet", attacks.size()));
         for (Village target : allTargets) {
             Hashtable<UnitHolder, List<Village>> sourcesForTarget = attacks.get(target);
             Off f = new Off(target, pMaxAttacksTable.get(target));
@@ -271,32 +342,36 @@ public class BruteForce extends AbstractAttackAlgorithm {
                     UnitHolder sourceUnit = sourceKeys.nextElement();
                     List<Village> unitVillages = attacks.get(target).get(sourceUnit);
                     for (Village source : unitVillages) {
-                        off++;
                         f.addOff(sourceUnit, source);
                     }
                 }
             }
-            if (f.offComplete()) {
-                fullMovements++;
+            if(sourcesForTarget == null && fakes.get(target) != null) {
+                //ignore Off targets, when there are Fakes assigned and no Offs
+                continue;
             }
             movements.add(f);
         }
 
         logger.debug(" - adding fakes");
+        logText(String.format(" %d Fakes berechnet", fakes.size()));
 
-        for (Village target : allFakeTargets) {
-            Hashtable<Village, UnitHolder> sourcesForTarget = fakes.get(target);
+        for (Village target : (List<Village>)ListUtils.union(allFakeTargets, allTargets)) {
+        	Hashtable<UnitHolder, List<Village>> sourcesForTarget = fakes.get(target);
             Fake f = new Fake(target, pMaxAttacksTable.get(target));
             if (sourcesForTarget != null) {
-                Enumeration<Village> sourceKeys = sourcesForTarget.keys();
+                Enumeration<UnitHolder> sourceKeys = sourcesForTarget.keys();
                 while (sourceKeys.hasMoreElements()) {
-                    Village source = sourceKeys.nextElement();
-                    UnitHolder unit = fakes.get(target).get(source);
-                    f.addOff(unit, source);
+                    UnitHolder sourceUnit = sourceKeys.nextElement();
+                    List<Village> unitVillages = fakes.get(target).get(sourceUnit);
+                    for (Village source : unitVillages) {
+                        f.addOff(sourceUnit, source);
+                    }
                 }
             }
-            if (f.offComplete()) {
-                fullMovements++;
+            if(sourcesForTarget == null && allTargets.contains(target)) {
+                //ignore Off targets, where no Fakes were assigned
+                continue;
             }
             movements.add(f);
         }

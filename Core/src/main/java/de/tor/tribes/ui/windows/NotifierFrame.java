@@ -52,7 +52,7 @@ public class NotifierFrame extends javax.swing.JDialog {
     private boolean disposed = false;
     private boolean maxed = false;
     private int notifyType = NOTIFY_DEFAULT;
-    private final static Stack<NotifierFrame> INSTANCES = new Stack<NotifierFrame>();
+    private final static Stack<NotifierFrame> INSTANCES = new Stack<>();
 
     public static void doNotification(String pMessage, int pType) {
         final String message = pMessage;
@@ -110,7 +110,7 @@ public class NotifierFrame extends javax.swing.JDialog {
                     //type icon is null
                 }
             }
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
         try {
@@ -172,7 +172,7 @@ public class NotifierFrame extends javax.swing.JDialog {
                 public void mouseExited(MouseEvent e) {
                 }
             });
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
         Insets i = Toolkit.getDefaultToolkit().getScreenInsets(getGraphicsConfiguration());
@@ -198,12 +198,7 @@ public class NotifierFrame extends javax.swing.JDialog {
                             jScrollPane1.getViewport().setViewPosition(new Point(0, 0));
                             repaint();
 
-                            int dur = 1;
-                            try {
-                                dur = Integer.parseInt(GlobalOptions.getProperty("notify.duration"));
-                            } catch (Exception e) {
-                            }
-
+                            int dur = GlobalOptions.getProperties().getInt("notify.duration");
                             if (dur > 0) {
                                 //set duration to 'dur' ten-seconds
                                 dur = dur * 10 * 1000;
@@ -215,7 +210,7 @@ public class NotifierFrame extends javax.swing.JDialog {
                             while (true) {
                                 try {
                                     Thread.sleep(500);
-                                } catch (InterruptedException ie) {
+                                } catch (InterruptedException ignored) {
                                 }
                                 //substract 500ms from duration
                                 dur -= 500;
@@ -232,10 +227,10 @@ public class NotifierFrame extends javax.swing.JDialog {
                             //still in create loop
                             try {
                                 Thread.sleep(80);
-                            } catch (InterruptedException ie) {
+                            } catch (InterruptedException ignored) {
                             }
                         }
-                    } catch (Exception e) {
+                    } catch (Exception ignored) {
                     }
                 }
             }

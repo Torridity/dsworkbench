@@ -33,7 +33,7 @@ public class VillageTransferable implements Transferable {
     private List<Village> villages = null;
 
     public VillageTransferable(Village pVillage) {
-        villages = new LinkedList<Village>();
+        villages = new LinkedList<>();
         villages.add(pVillage);
     }
 
@@ -48,7 +48,7 @@ public class VillageTransferable implements Transferable {
     /** Return the data formats or "flavors" we know how to transfer */
     @Override
     public DataFlavor[] getTransferDataFlavors() {
-        return (DataFlavor[]) supportedFlavors.clone();
+        return supportedFlavors.clone();
     }
 
     /** Check whether we support a given flavor */

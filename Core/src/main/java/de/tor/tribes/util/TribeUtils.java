@@ -34,7 +34,7 @@ public class TribeUtils {
     }
 
     public static Tribe[] getTribeByVillage(Village[] pVillages, boolean pUseBarbarians, Comparator<Tribe> pComparator) {
-        List<Tribe> tribes = new LinkedList<Tribe>();
+        List<Tribe> tribes = new LinkedList<>();
         
         for (Village v : pVillages) {
             Tribe t = v.getTribe();

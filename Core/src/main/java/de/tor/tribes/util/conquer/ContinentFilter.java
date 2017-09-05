@@ -42,9 +42,6 @@ public class ContinentFilter implements ConquerFilterInterface {
             return true;
         }
         Village v = pConquer.getVillage();
-        if (v == null) {
-            return false;
-        }
-        return v.getContinent() >= continentBounds.x && v.getContinent() <= continentBounds.y;
+        return v != null && v.getContinent() >= continentBounds.x && v.getContinent() <= continentBounds.y;
     }
 }

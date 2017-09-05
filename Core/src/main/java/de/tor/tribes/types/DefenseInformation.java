@@ -37,10 +37,11 @@ public class DefenseInformation {
     public enum DEFENSE_STATUS {
 
         UNKNOWN, DANGEROUS, FINE, SAVE
-    };
+    }
+
     private Village target = null;
     private TargetInformation targetInfo = null;
-    private List<Defense> defenses = new LinkedList<Defense>();
+    private List<Defense> defenses = new LinkedList<>();
     private DEFENSE_STATUS status = DEFENSE_STATUS.UNKNOWN;
     private double lossRatio = 0.0;
     private int neededSupports = 0;
@@ -54,7 +55,7 @@ public class DefenseInformation {
     }
 
     public boolean addSupport(final Village pSource, UnitHolder pUnit, boolean pPrimary, boolean pMultiUse) {
-        long runtime = DSCalculator.calculateMoveTimeInMillis(pSource, getTarget(), pUnit.getSpeed());
+        long runtime = DSCalculator.calculateMoveTimeInMillis(pSource, target, pUnit.getSpeed());
         boolean allowed = false;
         if (getFirstAttack().getTime() - runtime > System.currentTimeMillis() + DateUtils.MILLIS_PER_MINUTE) {
             //high priority
@@ -100,10 +101,7 @@ public class DefenseInformation {
     }
 
     public boolean isSave() {
-        if (isDefenseAvailable()) {
-            return getNeededSupports() == getSupports().length;
-        }
-        return false;
+        return isDefenseAvailable() && neededSupports == getSupports().length;
     }
 
     public void setAnalyzed(boolean analyzed) {
@@ -124,7 +122,7 @@ public class DefenseInformation {
         neededSupports = 0;
         cleanAfter = 0;
         status = DEFENSE_STATUS.UNKNOWN;
-        setAnalyzed(false);
+        this.analyzed = false;
     }
 
     public void setTargetInformation(TargetInformation pInfo) {
@@ -205,10 +203,10 @@ public class DefenseInformation {
 
     public String toXml() {
         StringBuilder b = new StringBuilder();
-        b.append("<status>").append(getStatus().toString()).append("</status>\n");
-        b.append("<lossRatio>").append(Double.toString(getLossRatio())).append("</lossRatio>\n");
-        b.append("<neededSupports>").append(getNeededSupportsInternal()).append("</neededSupports>\n");
-        b.append("<cleanAfter>").append(getCleanAfter()).append("</cleanAfter>\n");
+        b.append("<status>").append(status.toString()).append("</status>\n");
+        b.append("<lossRatio>").append(Double.toString(lossRatio)).append("</lossRatio>\n");
+        b.append("<neededSupports>").append(neededSupports).append("</neededSupports>\n");
+        b.append("<cleanAfter>").append(cleanAfter).append("</cleanAfter>\n");
         if (!defenses.isEmpty()) {
             b.append("<defenses>\n");
             for (Defense d : defenses) {
@@ -223,10 +221,10 @@ public class DefenseInformation {
     }
 
     public void loadFromXml(Element e) {
-        setDefenseStatus(DEFENSE_STATUS.valueOf(e.getChild("status").getText()));
-        setLossRation(Double.parseDouble(e.getChild("lossRatio").getText()));
-        setNeededSupports(Integer.parseInt(e.getChild("neededSupports").getText()));
-        setCleanAfter(Integer.parseInt(e.getChild("cleanAfter").getText()));
+        status = DEFENSE_STATUS.valueOf(e.getChild("status").getText());
+        lossRatio = Double.parseDouble(e.getChild("lossRatio").getText());
+        neededSupports = Integer.parseInt(e.getChild("neededSupports").getText());
+        cleanAfter = Integer.parseInt(e.getChild("cleanAfter").getText());
         Element defenseElement = e.getChild("defenses");
         if (defenseElement != null) {
             for (Element defense : (List<Element>) JaxenUtils.getNodes(e, "defenses/defense")) {
@@ -236,5 +234,9 @@ public class DefenseInformation {
                 addSupportInternal(v, unit, transferred);
             }
         }
+    }
+
+    public void updateAttackInfo() {
+        targetInfo.updateAttackInfo();
     }
 }

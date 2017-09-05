@@ -19,7 +19,9 @@ import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.ext.Ally;
 import de.tor.tribes.types.Marker;
 import de.tor.tribes.util.Constants;
-import de.tor.tribes.util.GenericParserInterface;
+import de.tor.tribes.util.SilentParserInterface;
+import de.tor.tribes.util.mark.MarkerManager;
+
 import java.awt.Color;
 import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
@@ -27,75 +29,40 @@ import java.awt.datatransfer.Transferable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
+import org.apache.log4j.Logger;
 
 /**
  *
+ * @author Patrick
  * @author Torridity
  */
-public class DiplomacyParser implements GenericParserInterface<Marker> {
-
-    /**de29
-    Verbündete
-    ~DPG~
-    SAWÜ6
-    OMS
-    Nicht-Angriffs-Pakt (NAP)
-    SAW
-    Feinde
-    +AR+
-    DKGD
-    A-T-A
-    -WZ-
-     *BC*
-    Knight
-    ~LoW~
-    N.O.D.
-    ~DN~
-    nod-J
-    nod-OB
-    Clan
-    -WP-
-    [M]
-    STK
-    ANSI
-    PUNCH!
-    MW
-    bzsz
-     */
-    /**en0
-    Verbündete
-    ~B~B~ 	terminate
-    Nicht-Angriffs-Pakt (NAP)
-    K54 	terminate
-    Enemies
+public class DiplomacyParser implements SilentParserInterface {
     
-     */
-    private final boolean DEBUG = false;
-
-    public List<Marker> parse(String pData) {
-
+    private static Logger logger = Logger.getLogger("DiplomacyParser");
+    
+    public boolean parse(String pData) {
         StringTokenizer lineTok = new StringTokenizer(pData, "\n\r");
-        List<Marker> markers = new ArrayList<Marker>();
+        List<Marker> markers = new ArrayList<>();
         boolean allies = false;
         boolean naps = false;
         boolean enemies = false;
         while (lineTok.hasMoreElements()) {
             //parse single line for village
             String line = lineTok.nextToken();
-            debug("Try line " + line);
+            logger.debug("Try line " + line);
 
-            if (line.trim().indexOf("Verbündete") > -1) {
-                debug("Got allies");
+            if (line.trim().contains(getVariable("diplomacy.allies"))) {
+                logger.debug("Got allies");
                 allies = true;
                 naps = false;
                 enemies = false;
-            } else if (line.trim().indexOf("Nicht-Angriffs-Pakt (NAP)") > -1) {
-                debug("Got naps");
+            } else if (line.trim().contains(getVariable("diplomacy.nap"))) {
+                logger.debug("Got naps");
                 naps = true;
                 allies = false;
                 enemies = false;
-            } else if (line.trim().indexOf("Feinde") > -1) {
-                debug("Got enemies");
+            } else if (line.trim().contains(getVariable("diplomacy.enemy"))) {
+                logger.debug("Got enemies");
                 enemies = true;
                 naps = false;
                 allies = false;
@@ -103,26 +70,31 @@ public class DiplomacyParser implements GenericParserInterface<Marker> {
                 if (allies) {
                     Marker m = getMarkerFromLine(line, Constants.ALLY_MARKER);
                     if (m != null) {
-                        debug("Adding ally marker for tag " + m.getView().getAlly());
+                        logger.debug("Adding ally marker for tag " + m.getView().getAlly());
                         markers.add(m);
                     }
                 } else if (naps) {
                     Marker m = getMarkerFromLine(line, Constants.NAP_MARKER);
                     if (m != null) {
-                        debug("Adding nap marker for tag " + m.getView().getAlly());
+                        logger.debug("Adding nap marker for tag " + m.getView().getAlly());
                         markers.add(m);
                     }
                 } else if (enemies) {
                     Marker m = getMarkerFromLine(line, Constants.ENEMY_MARKER);
                     if (m != null) {
-                        debug("Adding enemy marker for tag " + m.getView().getAlly());
+                        logger.debug("Adding enemy marker for tag " + m.getView().getAlly());
                         markers.add(m);
                     }
                 }
             }
         }
 
-        return markers;
+        if(markers.isEmpty())return false;
+        
+		for(Marker mark : markers) MarkerManager.getSingleton().addManagedElement(mark);
+		
+		return true;
+        
     }
 
     private Marker getMarkerFromLine(String pLine, Color pMarkerColor) {
@@ -135,7 +107,7 @@ public class DiplomacyParser implements GenericParserInterface<Marker> {
             } else {
                 tag += " " + allySplit.nextToken();
             }
-            debug("Trying tag '" + tag + "'");
+            logger.debug("Trying tag '" + tag + "'");
             Ally a = DataHolder.getSingleton().getAllyByTagName(tag);
             if (a != null) {
                 Marker m = new Marker();
@@ -147,12 +119,12 @@ public class DiplomacyParser implements GenericParserInterface<Marker> {
         }
         return null;
     }
+    
 
-    private void debug(String pLine) {
-        if (DEBUG) {
-            System.out.println(pLine);
-        }
+    private String getVariable(String pProperty) {
+        return ParserVariableManager.getSingleton().getProperty(pProperty);
     }
+    
 
     public static void main(String[] args) throws Exception {
         Transferable t = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);

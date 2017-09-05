@@ -95,7 +95,7 @@ public class DefenseFilterPanel extends WizardPage {
         UIHelper.setText(jMinSplits, profile.getProperty("dep.filter.min.splits"), "1");
         UIHelper.setText(jDistance, profile.getProperty("dep.filter.min.dist"), "32");
         String value = profile.getProperty("dep.filter.ignore.targets");
-        jIgnoreAttackedTargets.setSelected((value == null) ? true : Boolean.parseBoolean(value));
+        jIgnoreAttackedTargets.setSelected((value == null) || Boolean.parseBoolean(value));
     }
 
     /**
@@ -394,7 +394,7 @@ public class DefenseFilterPanel extends WizardPage {
     }
 
     public List<SupportSourceElement> getSelection() {
-        List<SupportSourceElement> elements = new LinkedList<SupportSourceElement>();
+        List<SupportSourceElement> elements = new LinkedList<>();
         DEPFilterTableModel model = getModel();
         for (int i : jVillageTable.getSelectedRows()) {
             elements.add(model.getRow(jVillageTable.convertRowIndexToModel(i)));
@@ -472,7 +472,7 @@ public class DefenseFilterPanel extends WizardPage {
 
         int minDistance = UIHelper.parseIntFromField(jDistance, 32);
         int minSplits = UIHelper.parseIntFromField(jMinSplits, 1);
-        List<Village> villages = new LinkedList<Village>();
+        List<Village> villages = new LinkedList<>();
         for (SupportSourceElement elem : pAllElements) {
             villages.add(elem.getVillage());
         }
@@ -493,7 +493,7 @@ public class DefenseFilterPanel extends WizardPage {
     }
 
     public List<SupportSourceElement> getAllElements() {
-        List<SupportSourceElement> elements = new LinkedList<SupportSourceElement>();
+        List<SupportSourceElement> elements = new LinkedList<>();
         DEPFilterTableModel model = getModel();
         for (int i = 0; i < model.getRowCount(); i++) {
             elements.add(model.getRow(i));
@@ -502,7 +502,7 @@ public class DefenseFilterPanel extends WizardPage {
     }
 
     public SupportSourceElement[] getFilteredElements() {
-        List<SupportSourceElement> filtered = new LinkedList<SupportSourceElement>();
+        List<SupportSourceElement> filtered = new LinkedList<>();
         DEPFilterTableModel model = getModel();
         for (int i = 0; i < model.getRowCount(); i++) {
             SupportSourceElement elem = model.getRow(i);

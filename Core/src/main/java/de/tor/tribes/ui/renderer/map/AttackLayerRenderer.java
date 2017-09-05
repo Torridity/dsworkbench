@@ -57,9 +57,9 @@ public class AttackLayerRenderer extends AbstractDirectLayerRenderer {
     }
 
     private void renderAttacks(Point2D.Double viewStartPoint, RenderSettings pSettings, Graphics2D pG2D) {
-        HashMap<String, Color> attackColors = new HashMap<String, Color>();
+        HashMap<String, Color> attackColors = new HashMap<>();
         for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
-            Color unitColor = Color.decode(GlobalOptions.getProperties().getString(unit.getName() + ".color", "#ff0000"));
+            Color unitColor = Color.decode(GlobalOptions.getProperty(unit.getName() + ".color"));
             attackColors.put(unit.getName(), unitColor);
         }
 
@@ -88,8 +88,8 @@ public class AttackLayerRenderer extends AbstractDirectLayerRenderer {
                 10.0f);
         Iterator<String> keys = AttackManager.getSingleton().getGroupIterator();
 
-        boolean drawExtendedVectors = GlobalOptions.getProperties().getBoolean("extended.attack.vectors", false);
-        boolean showAttackMovement = GlobalOptions.getProperties().getBoolean("attack.movement", false);
+        boolean drawExtendedVectors = GlobalOptions.getProperties().getBoolean("extended.attack.vectors");
+        boolean showAttackMovement = GlobalOptions.getProperties().getBoolean("attack.movement");
         while (keys.hasNext()) {
             String plan = keys.next();
             List<ManageableType> elements = AttackManager.getSingleton().getAllElements(plan);

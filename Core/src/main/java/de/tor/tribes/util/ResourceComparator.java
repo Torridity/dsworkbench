@@ -61,6 +61,6 @@ public class ResourceComparator implements Comparator<StorageStatus> {
                 break;
         }
                 
-        return Double.valueOf(criteria1).compareTo(Double.valueOf(criteria2));
+        return Double.valueOf(criteria1).compareTo(criteria2);
     }
 }

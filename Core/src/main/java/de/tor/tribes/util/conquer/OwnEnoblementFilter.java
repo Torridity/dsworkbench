@@ -37,9 +37,6 @@ public class OwnEnoblementFilter implements ConquerFilterInterface {
     @Override
     public boolean isValid(Conquer pConquer) {
         boolean own = (pConquer.getWinner() == pConquer.getLoser());
-        if (!own) {
-            return true;
-        }
-        return show;
+        return !own || show;
     }
 }

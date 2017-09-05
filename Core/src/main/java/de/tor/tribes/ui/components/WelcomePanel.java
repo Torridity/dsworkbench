@@ -24,8 +24,8 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.Hashtable;
 import javax.imageio.ImageIO;
-import javax.swing.JFrame;
-import javax.swing.UIManager;
+import javax.swing.*;
+
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
 import org.jdesktop.swingx.JXLabel;
@@ -38,7 +38,7 @@ import org.jdesktop.swingx.painter.MattePainter;
  */
 public class WelcomePanel extends JXPanel {
 
-    private Hashtable<JXLabel, String> welcomeTooltipMap = new Hashtable<JXLabel, String>();
+    private Hashtable<JXLabel, String> welcomeTooltipMap = new Hashtable<>();
     private BufferedImage back = null;
 
     /** Creates new form WelcomePanel */
@@ -52,7 +52,7 @@ public class WelcomePanel extends JXPanel {
         welcomeTooltipMap.put(jContentLabel, "<html> <h2 style='color:#953333'>Willkommen bei DS Workbench</h2> Wenn du diese Seite siehst, dann hast du DS Workbench erfolgreich installiert und die ersten Schritte ebenso erfolgreich gemeistert. Eigentlich steht nun einer unbeschwerten Angriffsplanung und -durchf&uuml;hrung nichts mehr im Wege. Erlaube mir trotzdem kurz auf einige Dinge hinzuweisen, die dir m&ouml;glicherweise beim <b>Umgang mit DS Workbench helfen</b> oder aber dir die M&ouml;glichkeit geben, einen wichtigen Teil zur <b>Weiterentwicklung und stetigen Verbesserung</b> dieses Programms beizutragen. Fahre einfach mit der Maus &uuml;ber eins der vier Symbole in den Ecken, um hilfreiche und interessante Informationen rund um DS Workbench zu erfahren. Klicke auf ein Symbol, um direkt zum entsprechenden Ziel zu gelangen. Die Eintr&auml;ge findest du sp&auml;ter auch im Hauptmen&uuml; unter 'Sonstiges'. <br> <h3 style='color:#953333'> Nun aber viel Spa&szlig; mit DS Workbench.</h3> </html>");
         try {
             back = ImageIO.read(WelcomePanel.class.getResource("/images/c.gif"));
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         if (back != null) {
             setBackgroundPainter(new MattePainter(new TexturePaint(back, new Rectangle2D.Float(0, 0, 200, 20))));
@@ -255,10 +255,10 @@ public class WelcomePanel extends JXPanel {
 
             // SubstanceLookAndFeel.setSkin(SubstanceLookAndFeel.getAllSkins().get("Twilight").getClassName());
             //  UIManager.put(SubstanceLookAndFeel.FOCUS_KIND, FocusKind.NONE);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         JFrame f = new JFrame();
-        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         f.getContentPane().setLayout(new BorderLayout());
         f.getContentPane().add(new WelcomePanel(), BorderLayout.CENTER);
         f.setSize(500, 500);

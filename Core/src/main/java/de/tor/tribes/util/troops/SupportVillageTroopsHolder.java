@@ -42,7 +42,7 @@ public class SupportVillageTroopsHolder extends VillageTroopsHolder {
             for (Element source : supportElements) {
                 int id = source.getAttribute("village").getIntValue();
                 Village village = DataHolder.getSingleton().getVillagesById().get(id);
-                Hashtable<UnitHolder, Integer> supportAmount = new Hashtable<UnitHolder, Integer>();
+                Hashtable<UnitHolder, Integer> supportAmount = new Hashtable<>();
                 for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
                     supportAmount.put(unit, source.getAttribute(unit.getPlainName()).getIntValue());
                 }
@@ -53,7 +53,7 @@ public class SupportVillageTroopsHolder extends VillageTroopsHolder {
             for (Element source : supportElements) {
                 int id = source.getAttribute("village").getIntValue();
                 Village village = DataHolder.getSingleton().getVillagesById().get(id);
-                Hashtable<UnitHolder, Integer> supportAmount = new Hashtable<UnitHolder, Integer>();
+                Hashtable<UnitHolder, Integer> supportAmount = new Hashtable<>();
                 for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
                     supportAmount.put(unit, source.getAttribute(unit.getPlainName()).getIntValue());
                 }
@@ -70,8 +70,8 @@ public class SupportVillageTroopsHolder extends VillageTroopsHolder {
 
     public SupportVillageTroopsHolder(Village pVillage, Date pState) {
         super(pVillage, pState);
-        incomingSupports = new Hashtable<Village, Hashtable<UnitHolder, Integer>>();
-        outgoingSupports = new Hashtable<Village, Hashtable<UnitHolder, Integer>>();
+        incomingSupports = new Hashtable<>();
+        outgoingSupports = new Hashtable<>();
     }
 
     @Override
@@ -141,7 +141,7 @@ public class SupportVillageTroopsHolder extends VillageTroopsHolder {
             }
         }
 
-        int max = GlobalOptions.getProperties().getInt("max.farm.space", 20000);
+        int max = GlobalOptions.getProperties().getInt("max.farm.space");
         //calculate farm space depending on pop bonus
         float res = (float) (farmSpace / (double) max);
 
@@ -249,7 +249,7 @@ public class SupportVillageTroopsHolder extends VillageTroopsHolder {
 
     @Override
     public Hashtable<UnitHolder, Integer> getTroops() {
-        Hashtable<UnitHolder, Integer> troopsInVillage = new Hashtable<UnitHolder, Integer>();
+        Hashtable<UnitHolder, Integer> troopsInVillage = new Hashtable<>();
         for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
             troopsInVillage.put(unit, 0);
         }

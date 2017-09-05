@@ -141,15 +141,14 @@ public class TroopDensityLayerRenderer extends AbstractBufferedLayerRenderer {
         ImageUtils.setupGraphics(g2d);
         //iterate through entire row
         int cnt = 0;
-        boolean includeSupport = GlobalOptions.getProperties().getBoolean("include.support", true);
+        boolean includeSupport = GlobalOptions.getProperties().getBoolean("include.support");
         for (int x = firstCol; x < firstCol + Math.abs(pSettings.getColumnsToRender()); x++) {
             for (int y = 0; y < pSettings.getVillagesInY(); y++) {
                 cnt++;
                 //iterate from first row for 'pRows' times
                 Village v = pSettings.getVisibleVillage(x, y);
-                int row = y;
                 int col = x - firstCol;
-                renderField(v, row, col, pSettings.getFieldWidth(), pSettings.getFieldHeight(), dx, dy, pSettings.getZoom(), includeSupport, g2d);
+                renderField(v, y, col, pSettings.getFieldWidth(), pSettings.getFieldHeight(), dx, dy, pSettings.getZoom(), includeSupport, g2d);
             }
         }
         g2d.dispose();
@@ -181,13 +180,12 @@ public class TroopDensityLayerRenderer extends AbstractBufferedLayerRenderer {
                 cnt++;
                 Village v = pSettings.getVisibleVillage(x, y);
                 int row = y - firstRow;
-                int col = x;
                 if (v != null && currentMouseVillage != null && v.equals(currentMouseVillage)) {
                     lastVillageToDraw = v;
                     lastVillageRow = row;
-                    lastVillageCol = col;
+                    lastVillageCol = x;
                 } else {
-                    renderField(v, row, col, pSettings.getFieldWidth(), pSettings.getFieldHeight(), dx, dy, pSettings.getZoom(), includeSupport, g2d);
+                    renderField(v, row, x, pSettings.getFieldWidth(), pSettings.getFieldHeight(), dx, dy, pSettings.getZoom(), includeSupport, g2d);
                 }
             }
         }
@@ -217,7 +215,7 @@ public class TroopDensityLayerRenderer extends AbstractBufferedLayerRenderer {
         }
 
         if (v != null && v.isVisibleOnMap() && (defIn != 0 || defOwn != 0)) {
-            int maxDef = GlobalOptions.getProperties().getInt("max.density.troops", 65000);
+            int maxDef = GlobalOptions.getProperties().getInt("max.density.troops");
             double percOfMax = defIn / maxDef;
             double percFromOthers = (defIn - defOwn) / defIn;
             double half = (double) maxDef / 2.0;
@@ -291,11 +289,7 @@ class TroopAnimator {
 
     public void update(int row, int col, int pFieldWidth, int pFieldHeight, int pDx, int pDy, Graphics2D g2d) {
         Village villageAtMousePos = MapPanel.getSingleton().getVillageAtMousePos();
-        if (villageAtMousePos != null && villageAtMousePos.equals(v)) {
-            pRise = true;
-        } else {
-            pRise = false;
-        }
+        pRise = villageAtMousePos != null && villageAtMousePos.equals(v);
         if (pRise) {
             if (iDiameter + 10 < 61) {
                 iDiameter += 10;

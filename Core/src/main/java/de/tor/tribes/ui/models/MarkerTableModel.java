@@ -61,10 +61,7 @@ public class MarkerTableModel extends AbstractTableModel {
     
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        if (columnIndex > 0) {
-            return true;
-        }
-        return false;
+        return columnIndex > 0;
     }
     
     @Override

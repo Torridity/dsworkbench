@@ -51,7 +51,7 @@ public abstract class BasicFormatter<C extends BBSupport> implements BBFormatter
 
     public boolean hasHeaderAndFooter() {
         String template = getTemplate();
-        return template.indexOf(LIST_START) >= 0 && template.indexOf(LIST_END) >= 0;
+        return template.contains(LIST_START) && template.contains(LIST_END);
     }
 
     public String getHeader() {

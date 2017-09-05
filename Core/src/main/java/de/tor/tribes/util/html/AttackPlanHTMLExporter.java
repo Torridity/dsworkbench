@@ -108,7 +108,9 @@ public class AttackPlanHTMLExporter {
 
             BufferedReader r = null;
             if (!fHeader.exists()) {
-                r = new BufferedReader(new InputStreamReader(AttackPlanHTMLExporter.class.getResourceAsStream("/de/tor/tribes/tmpl/attack_header.tmpl")));
+                r = new BufferedReader(new InputStreamReader(
+                        new FileInputStream(new File(
+                                GlobalDefaults.getProperty("attack.template.header.internal")))));
             } else {
                 r = new BufferedReader(new InputStreamReader(new FileInputStream(header)));
             }
@@ -120,7 +122,9 @@ public class AttackPlanHTMLExporter {
             r.close();
 
             if (!fBlock.exists()) {
-                r = new BufferedReader(new InputStreamReader(AttackPlanHTMLExporter.class.getResourceAsStream("/de/tor/tribes/tmpl/attack_block.tmpl")));
+                r = new BufferedReader(new InputStreamReader(
+                        new FileInputStream(new File(
+                                GlobalDefaults.getProperty("attack.template.block.internal")))));
             } else {
                 r = new BufferedReader(new InputStreamReader(new FileInputStream(block)));
             }
@@ -131,7 +135,9 @@ public class AttackPlanHTMLExporter {
             r.close();
 
             if (!fFooter.exists()) {
-                r = new BufferedReader(new InputStreamReader(AttackPlanHTMLExporter.class.getResourceAsStream("/de/tor/tribes/tmpl/attack_footer.tmpl")));
+                r = new BufferedReader(new InputStreamReader(
+                        new FileInputStream(new File(
+                                GlobalDefaults.getProperty("attack.template.footer.internal")))));
             } else {
                 r = new BufferedReader(new InputStreamReader(new FileInputStream(footer)));
             }
@@ -181,7 +187,7 @@ public class AttackPlanHTMLExporter {
             return;
         }
         SimpleDateFormat f = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         //append header
         result.append(replaceHeadFootVariables(HEADER, pPlanName, pAttacks));
 

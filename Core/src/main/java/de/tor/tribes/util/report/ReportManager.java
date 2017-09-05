@@ -44,7 +44,7 @@ public class ReportManager extends GenericManager<FightReport> {
   private static Logger logger = Logger.getLogger("ReportManager");
   private static ReportManager SINGLETON = null;
   public final static String FARM_SET = "Farmberichte";
-  private List<RuleEntry> rules = new LinkedList<RuleEntry>();
+  private List<RuleEntry> rules = new LinkedList<>();
   private final FarmReportFilter farmFilter = new FarmReportFilter();
 
   public static synchronized ReportManager getSingleton() {
@@ -158,7 +158,7 @@ public class ReportManager extends GenericManager<FightReport> {
   public int filterNow(String pGroup) {
     invalidate();
     try {
-      Hashtable<FightReport, String> newGroups = new Hashtable<FightReport, String>();
+      Hashtable<FightReport, String> newGroups = new Hashtable<>();
       for (ManageableType t : getAllElements(pGroup)) {
         FightReport report = (FightReport) t;
         for (RuleEntry entry : getRuleEntries()) {
@@ -308,7 +308,7 @@ public class ReportManager extends GenericManager<FightReport> {
       Iterator<String> setKeys = getGroupIterator();
       while (setKeys.hasNext()) {
         String set = setKeys.next();
-        if (!set.equals(FARM_SET) || !Boolean.parseBoolean(GlobalOptions.getProperty("delete.farm.reports.on.exit"))) {
+        if (!set.equals(FARM_SET) || !GlobalOptions.getProperties().getBoolean("delete.farm.reports.on.exit")) {
           b.append("<reportSet name=\"").append(set).append("\">\n");
           b.append("<reports>\n");
           for (ManageableType t : getAllElements(set)) {
@@ -437,7 +437,7 @@ public class ReportManager extends GenericManager<FightReport> {
    * @return
    */
   public List<FightReport> findAllReportsForTarget(Village pVillage) {
-    List<FightReport> all = new LinkedList<FightReport>();
+    List<FightReport> all = new LinkedList<>();
     for (ManageableType element : getAllElementsFromAllGroups()) {
       FightReport report = (FightReport) element;
       if (report.getTargetVillage() != null && report.getTargetVillage().equals(pVillage)) {

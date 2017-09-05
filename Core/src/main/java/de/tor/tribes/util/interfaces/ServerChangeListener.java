@@ -21,5 +21,5 @@ package de.tor.tribes.util.interfaces;
  */
 public interface ServerChangeListener {
 
-    public void fireServerChangedEvent();
+    void fireServerChangedEvent();
 }

@@ -36,7 +36,7 @@ public class SentNotSentCellRenderer extends DefaultTableRenderer {
         try {
             sent = new ImageIcon(SentNotSentCellRenderer.class.getResource("/res/ui/sent_small.gif"));
             notSent = new ImageIcon(SentNotSentCellRenderer.class.getResource("/res/ui/unsent_small.gif"));
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
     }
 

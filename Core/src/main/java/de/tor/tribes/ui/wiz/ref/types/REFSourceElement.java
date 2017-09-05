@@ -30,7 +30,7 @@ public class REFSourceElement {
     private TroopSplit split = null;
 
     public REFSourceElement(Village pVillage) {
-        setVillage(pVillage);
+        this.village = pVillage;
         split = new TroopSplit(pVillage);
     }
 

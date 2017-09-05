@@ -37,22 +37,30 @@ public abstract class DSWorkbenchGesturedFrame extends JFrame {
             return false;
         }
 
-        if (pGesture.equals("DR")) {
-            fireCloseGestureEvent();
-        } else if (pGesture.equals("DL")) {
-            fireToBackgroundGestureEvent();
-        } else if (pGesture.equals("R")) {
-            fireNextPageGestureEvent();
-        } else if (pGesture.equals("L")) {
-            firePreviousPageGestureEvent();
-        } else if (pGesture.equals("UR")) {
-            fireExportAsBBGestureEvent();
-        } else if (pGesture.equals("UL")) {
-            firePlainExportGestureEvent();
-        } else if (pGesture.equals("RDLUR")) {
-            fireRenameGestureEvent();
-        } else {
-            return false;
+        switch (pGesture) {
+            case "DR":
+                fireCloseGestureEvent();
+                break;
+            case "DL":
+                fireToBackgroundGestureEvent();
+                break;
+            case "R":
+                fireNextPageGestureEvent();
+                break;
+            case "L":
+                firePreviousPageGestureEvent();
+                break;
+            case "UR":
+                fireExportAsBBGestureEvent();
+                break;
+            case "UL":
+                firePlainExportGestureEvent();
+                break;
+            case "RDLUR":
+                fireRenameGestureEvent();
+                break;
+            default:
+                return false;
         }
 
         return true;

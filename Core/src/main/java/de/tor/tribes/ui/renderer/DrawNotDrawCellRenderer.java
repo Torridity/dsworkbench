@@ -36,7 +36,7 @@ public class DrawNotDrawCellRenderer extends DefaultTableRenderer {
         try {
             draw = new ImageIcon(SentNotSentCellRenderer.class.getResource("/res/ui/draw_small.gif"));
             notDraw = new ImageIcon(SentNotSentCellRenderer.class.getResource("/res/ui/not_draw_small.gif"));
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
     }
 

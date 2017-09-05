@@ -50,7 +50,8 @@ public class ServerManager {
             serverDir.mkdir();
         }
     }
-
+    
+    //TODO buffer servers to reduce traffic
     public static void loadServerList(Proxy pProxy) throws Exception {
         SERVERS = new LinkedHashMap<>();
         logger.debug("Loading servers for die-staemme.de");
@@ -115,10 +116,11 @@ public class ServerManager {
 
             bytes = isr.read(data);
             sum += bytes;
+            //TODO why this??
             if (sum % 500 == 0) {
                 try {
                     Thread.sleep(50);
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                 }
             }
         }
@@ -130,7 +132,7 @@ public class ServerManager {
      * Get the listof locally stored servers
      */
     public static String[] getLocalServers() {
-        List<String> servers = new LinkedList<String>();
+        List<String> servers = new LinkedList<>();
         for (File serverDir : new File(Constants.SERVER_DIR).listFiles()) {
             if (serverDir.isDirectory()) {
                 servers.add(serverDir.getName());
@@ -138,7 +140,7 @@ public class ServerManager {
         }
         return servers.toArray(new String[0]);
     }
-
+    
     public static String[] getServerIDs() {
         String[] servers = SERVERS.keySet().toArray(new String[]{});
         Arrays.sort(servers, String.CASE_INSENSITIVE_ORDER);

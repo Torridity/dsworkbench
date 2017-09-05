@@ -18,55 +18,15 @@ package de.tor.tribes.ui.panels;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.Note;
 import de.tor.tribes.types.ext.Village;
-import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
 import de.tor.tribes.ui.editors.BBPanelCellEditor;
 import de.tor.tribes.ui.editors.NoteIconCellEditor;
 import de.tor.tribes.ui.models.NoteTableModel;
-import de.tor.tribes.ui.renderer.DateCellRenderer;
-import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
-import de.tor.tribes.ui.renderer.BBCellRenderer;
-import de.tor.tribes.ui.renderer.NoteIconCellRenderer;
-import de.tor.tribes.ui.renderer.VisibilityCellRenderer;
-import de.tor.tribes.util.BrowserCommandSender;
-import de.tor.tribes.util.Constants;
-import de.tor.tribes.util.ImageUtils;
-import de.tor.tribes.util.JOptionPaneHelper;
-import de.tor.tribes.util.PluginManager;
+import de.tor.tribes.ui.renderer.*;
+import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
+import de.tor.tribes.util.*;
 import de.tor.tribes.util.bb.NoteListFormatter;
 import de.tor.tribes.util.bb.VillageListFormatter;
 import de.tor.tribes.util.note.NoteManager;
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.HeadlessException;
-import java.awt.Toolkit;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.StringSelection;
-import java.awt.datatransfer.UnsupportedFlavorException;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.geom.GeneralPath;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.StringTokenizer;
-import java.util.regex.Matcher;
-import javax.swing.AbstractAction;
-import javax.swing.DefaultListModel;
-import javax.swing.JComponent;
-import javax.swing.JList;
-import javax.swing.JOptionPane;
-import javax.swing.KeyStroke;
-import javax.swing.RowFilter;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableModel;
 import org.apache.log4j.Logger;
 import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.decorator.HighlightPredicate;
@@ -79,6 +39,27 @@ import org.jdesktop.swingx.painter.ImagePainter;
 import org.jdesktop.swingx.painter.MattePainter;
 import org.jdesktop.swingx.table.TableColumnExt;
 
+import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableModel;
+import java.awt.*;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.geom.GeneralPath;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.List;
+import java.util.regex.Matcher;
+
 /**
  *
  * @author Torridity
@@ -87,7 +68,7 @@ public class NoteTableTab extends javax.swing.JPanel implements ListSelectionLis
 
     private static Logger logger = Logger.getLogger("NoteTableTab");
 
-    public static enum TRANSFER_TYPE {
+    public enum TRANSFER_TYPE {
 
         CLIPBOARD_PLAIN, CLIPBOARD_BB, CUT_TO_INTERNAL_CLIPBOARD, COPY_TO_INTERNAL_CLIPBOARD, FROM_INTERNAL_CLIPBOARD
     }
@@ -179,7 +160,7 @@ public class NoteTableTab extends javax.swing.JPanel implements ListSelectionLis
                     showInfo(selectionCount + ((selectionCount == 1) ? " Notiz gewählt" : " Notizen gewählt"));
                 }
             } else {
-                selectionCount = jxVillageList.getSelectedValues().length;
+                selectionCount = jxVillageList.getSelectedValuesList().size();
                 if (selectionCount != 0) {
                     showInfo(selectionCount + ((selectionCount == 1) ? " Dorf gewählt" : " Dörfer gewählt"));
                 }
@@ -192,10 +173,10 @@ public class NoteTableTab extends javax.swing.JPanel implements ListSelectionLis
     }
 
     private void updateVillageList() {
-        if (noteModel.getNoteSet().equals(getNoteSet())) {
+        if (noteModel.getNoteSet().equals(sNoteSet)) {
             DefaultListModel model = new DefaultListModel();
             List<Note> notes = getSelectedNotes();
-            List<Village> villages = new LinkedList<Village>();
+            List<Village> villages = new LinkedList<>();
             for (Note n : notes) {
                 for (int id : n.getVillageIds()) {
                     Village v = DataHolder.getSingleton().getVillagesById().get(id);
@@ -276,11 +257,11 @@ public class NoteTableTab extends javax.swing.JPanel implements ListSelectionLis
             jxNoteTable.removeHighlighter(highlighter);
         }
 
-        final List<String> columns = new LinkedList<String>();
+        final List<String> columns = new LinkedList<>();
         columns.add("Notiz");
         if (!pFilterRows) {
             jxNoteTable.setRowFilter(null);
-            final List<Integer> relevantCols = new LinkedList<Integer>();
+            final List<Integer> relevantCols = new LinkedList<>();
             List<TableColumn> cols = jxNoteTable.getColumns(true);
             for (int i = 0; i < jxNoteTable.getColumnCount(); i++) {
                 TableColumnExt col = jxNoteTable.getColumnExt(i);
@@ -298,7 +279,7 @@ public class NoteTableTab extends javax.swing.JPanel implements ListSelectionLis
             jxNoteTable.setRowFilter(new RowFilter<TableModel, Integer>() {
                 @Override
                 public boolean include(Entry<? extends TableModel, ? extends Integer> entry) {
-                    final List<Integer> relevantCols = new LinkedList<Integer>();
+                    final List<Integer> relevantCols = new LinkedList<>();
                     List<TableColumn> cols = jxNoteTable.getColumns(true);
                     for (int i = 0; i < jxNoteTable.getColumnCount(); i++) {
                         TableColumnExt col = jxNoteTable.getColumnExt(i);
@@ -309,11 +290,11 @@ public class NoteTableTab extends javax.swing.JPanel implements ListSelectionLis
 
                     for (Integer col : relevantCols) {
                         if (pCaseSensitive) {
-                            if (entry.getStringValue(col).indexOf(pValue) > -1) {
+                            if (entry.getStringValue(col).contains(pValue)) {
                                 return true;
                             }
                         } else {
-                            if (entry.getStringValue(col).toLowerCase().indexOf(pValue.toLowerCase()) > -1) {
+                            if (entry.getStringValue(col).toLowerCase().contains(pValue.toLowerCase())) {
                                 return true;
                             }
                         }
@@ -495,7 +476,7 @@ public class NoteTableTab extends javax.swing.JPanel implements ListSelectionLis
             for (String line : lines) {
                 Note n = Note.fromInternalRepresentation(line);
                 if (n != null) {
-                    NoteManager.getSingleton().addManagedElement(getNoteSet(), n);
+                    NoteManager.getSingleton().addManagedElement(sNoteSet, n);
                     cnt++;
                 }
             }
@@ -526,11 +507,8 @@ public class NoteTableTab extends javax.swing.JPanel implements ListSelectionLis
                     changed = true;
                 }
             }
-        } catch (UnsupportedFlavorException ufe) {
+        } catch (UnsupportedFlavorException | IOException ufe) {
             logger.error("Failed to copy notes from internal clipboard", ufe);
-            showError("Fehler beim Einfügen der Notizen");
-        } catch (IOException ioe) {
-            logger.error("Failed to copy notes from internal clipboard", ioe);
             showError("Fehler beim Einfügen der Notizen");
         }
         if (changed) {
@@ -541,14 +519,14 @@ public class NoteTableTab extends javax.swing.JPanel implements ListSelectionLis
     }
 
     public void copyVillagesAsBBCodes() {
-        Object[] selection = jxVillageList.getSelectedValues();
-        if (selection == null || selection.length == 0) {
+        List selection = jxVillageList.getSelectedValuesList();
+        if (selection == null || selection.isEmpty()) {
             showInfo("Keine Dörfer gewählt");
             return;
         }
 
         try {
-            List<Village> villages = new LinkedList<Village>();
+            List<Village> villages = new LinkedList<>();
             for (Object o : selection) {
                 villages.add((Village) o);
             }
@@ -603,7 +581,7 @@ public class NoteTableTab extends javax.swing.JPanel implements ListSelectionLis
             }
         }
         jxNoteTable.editingCanceled(new ChangeEvent(this));
-        NoteManager.getSingleton().removeElements(getNoteSet(), selectedNotes);
+        NoteManager.getSingleton().removeElements(sNoteSet, selectedNotes);
         noteModel.fireTableDataChanged();
         showSuccess(selectedNotes.size() + " Notiz(en) gelöscht");
         return true;
@@ -614,9 +592,9 @@ public class NoteTableTab extends javax.swing.JPanel implements ListSelectionLis
     }
 
     public void deleteVillagesFromNotes() {
-        Object[] selection = jxVillageList.getSelectedValues();
+        List selection = jxVillageList.getSelectedValuesList();
 
-        if (selection == null || selection.length == 0) {
+        if (selection == null || selection.isEmpty()) {
             showInfo("Keine Dörfer gewählt");
             return;
         }
@@ -628,7 +606,7 @@ public class NoteTableTab extends javax.swing.JPanel implements ListSelectionLis
             return;
         }
 
-        String message = ((selection.length == 1) ? "Dorf aus " : selection.length + " Dörfer aus ") + ((notes.size() == 1) ? "der gewählten Notiz" : "den gewählten Notizen") + " löschen?";
+        String message = ((selection.size() == 1) ? "Dorf aus " : selection.size() + " Dörfer aus ") + ((notes.size() == 1) ? "der gewählten Notiz" : "den gewählten Notizen") + " löschen?";
         if (JOptionPaneHelper.showQuestionConfirmBox(this, message, "Löschen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
             for (Object o : selection) {
                 Village v = (Village) o;
@@ -637,19 +615,19 @@ public class NoteTableTab extends javax.swing.JPanel implements ListSelectionLis
                 }
             }
 
-            showSuccess(((selection.length == 1) ? "Dorf " : selection.length + " Dörfer ") + "gelöscht");
+            showSuccess(((selection.size() == 1) ? "Dorf " : selection.size() + " Dörfer ") + "gelöscht");
             noteModel.fireTableDataChanged();
         }
     }
 
     private List<Note> getSelectedNotes() {
-        final List<Note> selectedNotes = new LinkedList<Note>();
+        final List<Note> selectedNotes = new LinkedList<>();
         int[] selectedRows = jxNoteTable.getSelectedRows();
         if (selectedRows != null && selectedRows.length < 1) {
             return selectedNotes;
         }
         for (Integer selectedRow : selectedRows) {
-            Note a = (Note) NoteManager.getSingleton().getAllElements(getNoteSet()).get(jxNoteTable.convertRowIndexToModel(selectedRow));
+            Note a = (Note) NoteManager.getSingleton().getAllElements(sNoteSet).get(jxNoteTable.convertRowIndexToModel(selectedRow));
             if (a != null) {
                 selectedNotes.add(a);
             }

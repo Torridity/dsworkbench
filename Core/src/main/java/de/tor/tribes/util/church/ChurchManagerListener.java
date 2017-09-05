@@ -21,5 +21,5 @@ package de.tor.tribes.util.church;
  */
 public interface ChurchManagerListener {
 
-    public void fireChurchesChangedEvent();
+    void fireChurchesChangedEvent();
 }

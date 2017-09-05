@@ -30,7 +30,7 @@ package de.tor.tribes.types;
 
         public Resource(int pAmount, Type pType) {
             setAmount(pAmount);
-            setType(pType);
+            this.type = pType;
         }
 
         /**

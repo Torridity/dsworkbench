@@ -19,22 +19,19 @@ import de.tor.tribes.control.GenericManager;
 import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
-import de.tor.tribes.util.GlobalOptions;
-import java.util.List;
-import org.apache.log4j.Logger;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.ext.Village;
+import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.xml.JaxenUtils;
+import org.apache.log4j.Logger;
+import org.jdom.Document;
+import org.jdom.Element;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.Iterator;
-import org.jdom.Document;
-import org.jdom.Element;
+import java.util.*;
 
 /**
  *
@@ -97,9 +94,7 @@ public class AttackManager extends GenericManager<Attack> {
         initialize();
         File attackFile = new File(pFile);
         if (attackFile.exists()) {
-            if (logger.isDebugEnabled()) {
-                logger.info("Loading troop movements from '" + pFile + "'");
-            }
+            logger.info("Loading troop movements from '" + pFile + "'");
 
             try {
                 Document d = JaxenUtils.getDocument(attackFile);
@@ -241,7 +236,7 @@ public class AttackManager extends GenericManager<Attack> {
     }
 
     public void addAttack(Village pSource, Village pTarget, UnitHolder pUnit, Date pArriveTime, String pPlan) {
-        boolean showOnMap = GlobalOptions.getProperties().getBoolean("draw.attacks.by.default", false);
+        boolean showOnMap = GlobalOptions.getProperties().getBoolean("draw.attacks.by.default");
         addAttack(pSource, pTarget, pUnit, pArriveTime, showOnMap, pPlan, -1, false);
     }
 
@@ -270,14 +265,20 @@ public class AttackManager extends GenericManager<Attack> {
         a.setShowOnMap(pShowOnMap);
         a.setTransferredToBrowser(pTransferredToBrowser);
         if (pType == -1) {
-            if (pUnit.getPlainName().equals("ram")) {
-                a.setType(Attack.CLEAN_TYPE);
-            } else if (pUnit.getPlainName().equals("snob")) {
-                a.setType(Attack.SNOB_TYPE);
-            } else if (pUnit.getPlainName().equals("sword") || pUnit.getPlainName().equals("heavy")) {
-                a.setType(Attack.SUPPORT_TYPE);
-            } else {
-                a.setType(Attack.NO_TYPE);
+            switch (pUnit.getPlainName()) {
+                case "ram":
+                    a.setType(Attack.CLEAN_TYPE);
+                    break;
+                case "snob":
+                    a.setType(Attack.SNOB_TYPE);
+                    break;
+                case "sword":
+                case "heavy":
+                    a.setType(Attack.SUPPORT_TYPE);
+                    break;
+                default:
+                    a.setType(Attack.NO_TYPE);
+                    break;
             }
 
         } else {

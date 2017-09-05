@@ -37,21 +37,21 @@ import java.util.List;
 public class SOSFormater {
 
     public static String format(Village pTarget, TargetInformation pTargetInformation, boolean pDetailed) {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         String serverURL = ServerManager.getServerURL(GlobalOptions.getSelectedServer());
         //main quote
         buffer.append("[quote]");
         //village info size
         // buffer.append("[size=12]");
         //village info (<SOS_IMG> <VILLAGE_BB> (<ATT_IMG> <ATT_COUNT>)
-        buffer.append("[img]" + serverURL + "/graphic/reqdef.png[/img] " + pTarget.toBBCode() + " ([img]" + serverURL + "/graphic/unit/att.png[/img] " + pTargetInformation.getAttacks().size() + ")\n");
+        buffer.append("[img]").append(serverURL).append("/graphic/reqdef.png[/img] ").append(pTarget.toBBCode()).append(" ([img]").append(serverURL).append("/graphic/unit/att.png[/img] ").append(pTargetInformation.getAttacks().size()).append(")\n");
         // buffer.append("[/size]\n");
         //village details quote
         buffer.append("[quote]");
         // buffer.append("[size=12]");
         //add units and wall
-        buffer.append(buildUnitInfo(pTargetInformation) + "\n");
-        buffer.append("[img]" + serverURL + "/graphic/buildings/wall.png[/img] " + buildWallInfo(pTargetInformation));
+        buffer.append(buildUnitInfo(pTargetInformation)).append("\n");
+        buffer.append("[img]").append(serverURL).append("/graphic/buildings/wall.png[/img] ").append(buildWallInfo(pTargetInformation));
         // buffer.append("[/size]");
         buffer.append("[/quote]\n");
         //build first-last-attack
@@ -68,38 +68,37 @@ public class SOSFormater {
         } else {
             dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
         }
-        buffer.append("[img]" + serverURL + "/graphic/map/attack.png[/img] " + dateFormat.format(new Date(attacks.get(0).getlArriveTime())) + "\n");
+        buffer.append("[img]").append(serverURL).append("/graphic/map/attack.png[/img] ").append(dateFormat.format(new Date(attacks.get(0).getlArriveTime()))).append("\n");
 
         // buffer.append("[/size]\n");
         //add details for all attacks
         int fakeCount = 0;
         int snobCount = 0;
-        for (int i = 0; i < attacks.size(); i++) {
+        for (TimedAttack attack1 : attacks) {
             try {
-                TimedAttack attack = attacks.get(i);
-                if (attack.isPossibleFake()) {
+                if (attack1.isPossibleFake()) {
                     fakeCount++;
-                } else if (attack.isPossibleSnob()) {
+                } else if (attack1.isPossibleSnob()) {
                     snobCount++;
                 }
                 if (pDetailed) {
-                    if (attack.isPossibleFake()) {
-                        buffer.append(attack.getSource().toBBCode() + " (" + attack.getSource().getTribe().toBBCode() + ") " + dateFormat.format(new Date(attack.getlArriveTime())) + " [b](Fake)[/b]" + "\n");
-                    } else if (attack.isPossibleSnob()) {
-                        buffer.append(attack.getSource().toBBCode() + " (" + attack.getSource().getTribe().toBBCode() + ") " + dateFormat.format(new Date(attack.getlArriveTime())) + " [b](AG)[/b]" + "\n");
+                    if (attack1.isPossibleFake()) {
+                        buffer.append(attack1.getSource().toBBCode()).append(" (").append(attack1.getSource().getTribe().toBBCode()).append(") ").append(dateFormat.format(new Date(attack1.getlArriveTime()))).append(" [b](Fake)[/b]").append("\n");
+                    } else if (attack1.isPossibleSnob()) {
+                        buffer.append(attack1.getSource().toBBCode()).append(" (").append(attack1.getSource().getTribe().toBBCode()).append(") ").append(dateFormat.format(new Date(attack1.getlArriveTime()))).append(" [b](AG)[/b]").append("\n");
                     } else {
-                        buffer.append(attack.getSource().toBBCode() + " (" + attack.getSource().getTribe().toBBCode() + ") " + dateFormat.format(new Date(attack.getlArriveTime())) + "\n");
+                        buffer.append(attack1.getSource().toBBCode()).append(" (").append(attack1.getSource().getTribe().toBBCode()).append(") ").append(dateFormat.format(new Date(attack1.getlArriveTime()))).append("\n");
                     }
                 }
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
             //buffer.append("[size=12]\n");
         }
-        buffer.append("[img]" + serverURL + "/graphic/map/return.png[/img] " + dateFormat.format(new Date(attacks.get(attacks.size() - 1).getlArriveTime())) + "\n");
+        buffer.append("[img]").append(serverURL).append("/graphic/map/return.png[/img] ").append(dateFormat.format(new Date(attacks.get(attacks.size() - 1).getlArriveTime()))).append("\n");
         if (!pDetailed && fakeCount > 0) {
             buffer.append("\n");
-            buffer.append("[u]Mögliche Fakes:[/u] " + fakeCount + "\n");
-            buffer.append("[u]Mögliche AGs:[/u] " + snobCount + "\n");
+            buffer.append("[u]Mögliche Fakes:[/u] ").append(fakeCount).append("\n");
+            buffer.append("[u]Mögliche AGs:[/u] ").append(snobCount).append("\n");
         }
         // buffer.append("[/size]\n");
         buffer.append("[/quote]\n");
@@ -107,7 +106,7 @@ public class SOSFormater {
     }
 
     private static String buildUnitInfo(TargetInformation pTargetInfo) {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         NumberFormat nf = NumberFormat.getInstance();
         nf.setMinimumFractionDigits(0);
         nf.setMaximumFractionDigits(0);
@@ -125,16 +124,16 @@ public class SOSFormater {
             }
         }
         if (defRow.length() > 1) {
-            buffer.append(defRow.trim() + "\n");
+            buffer.append(defRow.trim()).append("\n");
         }
         if (offRow.length() > 1) {
-            buffer.append(offRow.trim() + "\n");
+            buffer.append(offRow.trim()).append("\n");
         }
         return buffer.toString();
     }
 
     private static String buildWallInfo(TargetInformation pTargetInfo) {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         double perc = pTargetInfo.getWallLevel() / 20.0;
         int filledFields = (int) Math.rint(perc * 15.0);
         buffer.append("[color=#00FF00]");
@@ -150,7 +149,7 @@ public class SOSFormater {
             buffer.append("[/color]");
         }
 
-        buffer.append(" (" + pTargetInfo.getWallLevel() + ")");
+        buffer.append(" (").append(pTargetInfo.getWallLevel()).append(")");
         return buffer.toString();
     }
 }

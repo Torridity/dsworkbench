@@ -130,7 +130,7 @@ public class ResourceDistributorSettingsPanel extends WizardPage {
         groupList = new GroupSelectionList("/res/awards/group.png");
         jGroupScrollPane.setViewportView(groupList);
 
-        List<GroupSelectionList.ListItem> tags = new LinkedList<GroupSelectionList.ListItem>();
+        List<GroupSelectionList.ListItem> tags = new LinkedList<>();
         for (Tag t : TagUtils.getTags(Tag.CASE_INSENSITIVE_ORDER)) {
             tags.add(new GroupSelectionList.ListItem(t));
         }
@@ -641,7 +641,7 @@ public class ResourceDistributorSettingsPanel extends WizardPage {
                     break;
             }
 
-            List<VillageMerchantInfo> toRemove = new LinkedList<VillageMerchantInfo>();
+            List<VillageMerchantInfo> toRemove = new LinkedList<>();
             for (VillageMerchantInfo element : pAllElements) {
                 if (!element.getDirection().equals(newDir)) {
                     if (groupList.isVillageValid(element.getVillage())) {
@@ -682,7 +682,7 @@ public class ResourceDistributorSettingsPanel extends WizardPage {
 
     public List<VillageMerchantInfo> getSelection() {
         int[] selection = jDataTable.getSelectedRows();
-        List<VillageMerchantInfo> result = new LinkedList<VillageMerchantInfo>();
+        List<VillageMerchantInfo> result = new LinkedList<>();
         if (selection.length > 0) {
             for (int i : selection) {
                 result.add(getModel().getRow(jDataTable.convertRowIndexToModel(i)));
@@ -696,7 +696,7 @@ public class ResourceDistributorSettingsPanel extends WizardPage {
     }
 
     private VillageMerchantInfo[] getAllElementsInternal() {
-        List<VillageMerchantInfo> elements = new LinkedList<VillageMerchantInfo>();
+        List<VillageMerchantInfo> elements = new LinkedList<>();
         REDExtendedMerchantTableModel model = getModel();
         for (int i = 0; i < model.getRowCount(); i++) {
             elements.add(model.getRow(i));
@@ -706,7 +706,7 @@ public class ResourceDistributorSettingsPanel extends WizardPage {
     }
 
     public VillageMerchantInfo[] getAllElements() {
-        List<VillageMerchantInfo> elements = new LinkedList<VillageMerchantInfo>();
+        List<VillageMerchantInfo> elements = new LinkedList<>();
         REDExtendedMerchantTableModel model = getModel();
         for (int i = 0; i < model.getRowCount(); i++) {
             elements.add(model.getRow(i).clone());

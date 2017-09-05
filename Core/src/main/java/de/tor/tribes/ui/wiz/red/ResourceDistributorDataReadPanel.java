@@ -425,7 +425,7 @@ public class ResourceDistributorDataReadPanel extends WizardPage {
     private void deleteSelection() {
         int[] selection = jDataTable.getSelectedRows();
         if (selection.length > 0) {
-            List<Integer> rows = new LinkedList<Integer>();
+            List<Integer> rows = new LinkedList<>();
             for (int i : selection) {
                 rows.add(jDataTable.convertRowIndexToModel(i));
             }
@@ -440,7 +440,7 @@ public class ResourceDistributorDataReadPanel extends WizardPage {
     }
 
     public VillageMerchantInfo[] getAllElements() {
-        List<VillageMerchantInfo> elements = new LinkedList<VillageMerchantInfo>();
+        List<VillageMerchantInfo> elements = new LinkedList<>();
         REDSourceTableModel model = getModel();
         for (int i = 0; i < model.getRowCount(); i++) {
             elements.add(model.getRow(i).clone());

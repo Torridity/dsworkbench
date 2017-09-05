@@ -17,6 +17,7 @@ package de.tor.tribes.util.bb;
 
 import de.tor.tribes.types.Tag;
 import java.text.NumberFormat;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import org.apache.commons.lang.StringUtils;
@@ -28,9 +29,9 @@ import org.apache.commons.lang.StringUtils;
 public class TagListFormatter extends BasicFormatter<Tag> {
 
     private final String[] VARIABLES = new String[]{LIST_START, LIST_END, ELEMENT_COUNT, ELEMENT_ID};
-    private final String STANDARD_TEMPLATE = "[b]Gruppenübersicht[/b]\n"
+    public static final String STANDARD_TEMPLATE = "[b]Gruppenübersicht[/b]\n"
             + "%LIST_START%" + new Tag().getStandardTemplate() + "%LIST_END%";
-    private final String TEMPLATE_PROPERTY = "tag.list.bbexport.template";
+    private static final String TEMPLATE_PROPERTY = "tag.list.bbexport.template";
 
     @Override
     public String formatElements(List<Tag> pElements, boolean pExtended) {
@@ -66,13 +67,9 @@ public class TagListFormatter extends BasicFormatter<Tag> {
 
     @Override
     public String[] getTemplateVariables() {
-        List<String> vars = new LinkedList<String>();
-        for (String var : VARIABLES) {
-            vars.add(var);
-        }
-        for (String var : new Tag().getBBVariables()) {
-            vars.add(var);
-        }
+        List<String> vars = new LinkedList<>();
+        Collections.addAll(vars, VARIABLES);
+        Collections.addAll(vars, new Tag().getBBVariables());
         return vars.toArray(new String[vars.size()]);
     }
 }

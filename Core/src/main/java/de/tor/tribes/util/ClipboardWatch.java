@@ -56,7 +56,7 @@ public class ClipboardWatch extends Thread {
     private AudioClip ac = null;
 
     private synchronized void playNotification() {
-        if (!Boolean.parseBoolean(GlobalOptions.getProperty("clipboard.notification"))) {
+        if (!GlobalOptions.getProperties().getBoolean("clipboard.notification")) {
             return;
         }
 
@@ -131,9 +131,17 @@ public class ClipboardWatch extends Thread {
                             SystrayHelper.showInfoMessage("Truppen aus Versammlungsplatz erfolgreich eingelesen");
                             playNotification();
                             validData = true;
+                        } else if (PluginManager.getSingleton().executeDiplomacyParser(data)) {
+                            logger.info("Diplomacy info successfully parsed.");
+                            SystrayHelper.showInfoMessage("Kartenmarkierungen aus Diplomatie erfolgreich eingelesen");
+                            playNotification();
+                            validData = true;
+                        } else if (PluginManager.getSingleton().executeMovementParser(data)) {
+                            logger.info("Movements successfully parsed.");
+                            SystrayHelper.showInfoMessage("Befehle erfolgreich eingelesen");
+                            playNotification();
+                            validData = true;
                         }
-                    }
-                    if (validData) {
                         lastHash = currentHash;
                     }
                 } catch (Exception e) {
@@ -144,12 +152,12 @@ public class ClipboardWatch extends Thread {
                 //clipboard watch is disabled, sleep 9 + 1 seconds
                 try {
                     Thread.sleep(9000);
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                 }
             }
             try {
                 Thread.sleep(1000);
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         }
     }

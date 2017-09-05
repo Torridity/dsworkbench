@@ -35,9 +35,7 @@ public class AttackToBBCodeFormater {
         String sendtime = null;
         String arrivetime = null;
         String template = GlobalOptions.getProperty("attack.bbexport.template");
-        if (template == null) {
-            template = STANDARD_TEMPLATE;
-        }
+        
         //bot protection
         template = template.replaceAll("red", getRandomRed());
         template = template.replaceAll("green", getRandomGreen());
@@ -127,9 +125,6 @@ public class AttackToBBCodeFormater {
         String sendtime = null;
         String arrivetime = null;
         String template = GlobalOptions.getProperty("attack.bbexport.template");
-        if (template == null) {
-            template = "%TYPE% von %ATTACKER% aus %SOURCE% mit %UNIT% auf %DEFENDER% in %TARGET% startet am [color=red]%SEND%[/color] und kommt am [color=green]%ARRIVE%[/color] an";
-        }
 
         Date aTime = new Date(pSendTime.getTime() + (long) (DSCalculator.calculateMoveTimeInSeconds(pSource, pTarget, pUnit.getSpeed()) * 1000));
 

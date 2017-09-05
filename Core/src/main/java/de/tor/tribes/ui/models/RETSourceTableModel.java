@@ -33,7 +33,7 @@ public class RETSourceTableModel extends AbstractTableModel {
     private Class[] types = new Class[]{
         Village.class
     };
-    private final List<RETSourceElement> elements = new LinkedList<RETSourceElement>();
+    private final List<RETSourceElement> elements = new LinkedList<>();
 
     public RETSourceTableModel() {
         super();

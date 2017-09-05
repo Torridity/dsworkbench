@@ -70,7 +70,7 @@ public class TroopFilterElement {
         if (holder == null) {
             return false;
         }
-        int amount = holder.getTroopsOfUnitInVillage(getUnit());
+        int amount = holder.getTroopsOfUnitInVillage(unit);
         return (amount >= minAmount && amount <= maxAmount);
     }
     

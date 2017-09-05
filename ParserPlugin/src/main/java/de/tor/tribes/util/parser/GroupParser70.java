@@ -21,7 +21,9 @@ import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.SilentParserInterface;
-import java.awt.Toolkit;
+import org.apache.log4j.Logger;
+
+import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.util.Hashtable;
@@ -30,7 +32,6 @@ import java.util.List;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.apache.log4j.Logger;
 
 /**
  *
@@ -38,7 +39,7 @@ import org.apache.log4j.Logger;
  */
 public class GroupParser70 implements SilentParserInterface {
 
-    private static Logger logger = Logger.getLogger("GroupParser");
+    private static Logger logger = Logger.getLogger("GroupParser70");
     /*
     (09) Sunset Beach (459|468) K44  	2	Fertig; Off	» bearbeiten
     )=-g-town-=( (469|476) K44  	2	Fertig; Off	» bearbeiten
@@ -52,12 +53,12 @@ public class GroupParser70 implements SilentParserInterface {
     public boolean parse( String pGroupsString ) {
 	StringTokenizer lineTok = new StringTokenizer(pGroupsString, "\n\r");
 
-	Hashtable<String, List<Village>> groups = new Hashtable<String, List<Village>>();
+	Hashtable<String, List<Village>> groups = new Hashtable<>();
 	while ( lineTok.hasMoreElements() ) {
 	    //parse single line for village
 	    String line = lineTok.nextToken();
 	    //german and suisse
-	    if ( line.trim().endsWith(ParserVariableManager.getSingleton().getProperty("groups.edit")) ) {
+	    if ( line.trim().endsWith(getVariable("groups.edit")) ) {
 		try {
 		    //tokenize line by tab
 		    StringTokenizer elemTok = new StringTokenizer(line.trim(), "\t");
@@ -91,7 +92,7 @@ public class GroupParser70 implements SilentParserInterface {
 			    String[] split = coord.trim().split("[(\\|)]");
 			    v = DataHolder.getSingleton().getVillages()[Integer.parseInt(split[0])][Integer.parseInt(split[1])];
 			}
-		    } catch ( Exception e ) {
+		    } catch ( Exception ignored) {
 		    }
 		    if ( v != null ) {
 			//valid line found
@@ -110,7 +111,7 @@ public class GroupParser70 implements SilentParserInterface {
 				    String group = groupsTokenizer.nextToken().trim();
 				    List<Village> groupVillages = groups.get(group);
 				    if ( groupVillages == null ) {
-					groupVillages = new LinkedList<Village>();
+					groupVillages = new LinkedList<>();
 					groups.put(group, groupVillages);
 				    }
 				    groupVillages.add(v);
@@ -140,7 +141,7 @@ public class GroupParser70 implements SilentParserInterface {
 	String groupRegEx = "[(.*);\\s]*(.*)\\s(»[\\s]*bearbeiten)";
 	Pattern regExPattern = Pattern.compile(villageRegEx + "(.*)" + groupCountRegEx + "\\s" + groupRegEx);
 	StringTokenizer lines = new StringTokenizer(pGroups, "\n");
-	Hashtable<String, List<Village>> groupMap = new Hashtable<String, List<Village>>();
+	Hashtable<String, List<Village>> groupMap = new Hashtable<>();
 	while ( lines.hasMoreTokens() ) {
 	    String newLine = lines.nextToken().trim();
 	    Matcher matcher = regExPattern.matcher(newLine);
@@ -166,7 +167,7 @@ public class GroupParser70 implements SilentParserInterface {
 		    for ( String group : singleGroups ) {
 			List<Village> villagesInGroup = groupMap.get(group);
 			if ( villagesInGroup == null ) {
-			    villagesInGroup = new LinkedList<Village>();
+			    villagesInGroup = new LinkedList<>();
 			    groupMap.put(group, villagesInGroup);
 			}
 			villagesInGroup.add(groupedVillage);
@@ -229,8 +230,13 @@ public class GroupParser70 implements SilentParserInterface {
 //next 4 lines are village
                         /*villageLines = 4;*/
 //  }
+
+    private String getVariable(String pProperty) {
+        return ParserVariableManager.getSingleton().getProperty(pProperty);
+    }
+    
     public static void main( String[] args ) throws Exception {
-	Transferable t = (Transferable) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
+	Transferable t = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
 	//String data = "(09) Sunset Beach (459|468) K44  	2	Fertig; Off	» bearbeiten";
 	String data = (String) t.getTransferData(DataFlavor.stringFlavor);
 

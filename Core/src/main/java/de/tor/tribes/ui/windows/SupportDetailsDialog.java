@@ -152,7 +152,7 @@ public class SupportDetailsDialog extends javax.swing.JDialog {
         }
         Village v = null;
         try {
-            v = (Village) ((SupportTableModel) jxSupportsTable.getModel()).getValueAt(jxSupportsTable.convertRowIndexToModel(row), 2);
+            v = (Village) jxSupportsTable.getModel().getValueAt(jxSupportsTable.convertRowIndexToModel(row), 2);
         } catch (Exception e) {
             logger.error("Failed to center village in game", e);
             return;
@@ -167,7 +167,7 @@ public class SupportDetailsDialog extends javax.swing.JDialog {
         }
         Village v = null;
         try {
-            v = (Village) ((SupportTableModel) jxSupportsTable.getModel()).getValueAt(jxSupportsTable.convertRowIndexToModel(row), 2);
+            v = (Village) jxSupportsTable.getModel().getValueAt(jxSupportsTable.convertRowIndexToModel(row), 2);
         } catch (Exception e) {
             logger.error("Failed to center village on map", e);
             return;

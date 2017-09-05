@@ -70,7 +70,7 @@ var attacks = new Array({
 		var body = document.createElement("tbody");
 		tab.appendChild(body);
 		tab.setAttribute('class', 'vis');
-		var header = document.createElement("tr")
+		var header = document.createElement("tr");
 		var cols = new Array({
 			'name':'Typ',
 			'width':30
@@ -183,7 +183,7 @@ var attacks = new Array({
 			}
 		}
 		return false;
-	}
+	};
 
  	function modifyOverviewTable(attack){
  		var doneElems = new Array();
@@ -246,7 +246,7 @@ var attacks = new Array({
 	if(element.firstChild.nodeValue == null) return -1;
 	var part = element.firstChild.nodeValue.split(":");
  
-	// Führende Nullen entfernen
+	// Fï¿½hrende Nullen entfernen
 	for(var j=1; j<3; j++) {
 		if(part[j].charAt(0) == "0")
 			part[j] = part[j].substring(1, part[j].length);

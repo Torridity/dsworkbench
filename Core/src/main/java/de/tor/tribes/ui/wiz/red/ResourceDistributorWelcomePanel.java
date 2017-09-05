@@ -29,20 +29,20 @@ import org.netbeans.spi.wizard.WizardPanelNavResult;
  */
 public class ResourceDistributorWelcomePanel extends WizardPage {
     
-    private final String EQUAL_DISTIBUTION_HELP = "<html><b>Willkommen beim DS Workbench Rohstoffverteiler.</b><br/><br/>"
+    private static final String EQUAL_DISTIBUTION_HELP = "<html><b>Willkommen beim DS Workbench Rohstoffverteiler.</b><br/><br/>"
             + "Du hast die Gleichverteilung von Rohstoffen gew&auml;hlt. Dabei wird versucht, die vorhandenen Rohstoffe zwischen den D&ouml;rfern "
             + "so zu verteilen, dass in allen D&ouml;rfer am Ende gleichviel Rohstoffe vorhanden sind, sofern dies die Ausbaustufen der Speicher zulassen. "
             + "Bei der Gleichverteilung wird weder die Ausbaustufe der D&ouml;rfer noch der F&uuml;llstand des Bauernhofes ber&uuml;cksichtigt. "
             + "Diese Berechnung bietet sich daher f&uuml;r gro&szlig;e Accounts an, wo ein Gro&szlig;teil der D&ouml;rfern voll ausgebaut ist, "
             + "oder f&uuml;r kleine Accounts, wo alle D&ouml;rfer einen &auml;hnlichen Bedarf an Rohstoffen haben.</html>";
-    private final String FILL_DISTIBUTION_HELP = "<html><b>Willkommen beim DS Workbench Rohstoffverteiler.</b><br/><br/>"
+    private static final String FILL_DISTIBUTION_HELP = "<html><b>Willkommen beim DS Workbench Rohstoffverteiler.</b><br/><br/>"
             + "Du hast die Belieferung bestimmter D&ouml;rfer gew&auml;hlt. Dabei k&ouml;nnen die vorhandenen D&ouml;rfern in Lieferanten "
             + " und Empf&auml;nger unterteilt werden, um Rohstoffe gezielt zu verteilen. So k&ouml;nnen etwa Dorfgruppen mit voll ausgebauten "
             + "D&ouml;rfern als Liefernanten dienen, w&auml;hrend D&ouml;rfer im Aufbau nur Rohstoffe empfangen. "
             + "Diese Berechnung eignet sich vorrangig f&uuml;r gro&szlig;e Accounts, wo viele Lieferanten vergleichsweise wenige Empf&auml;nger "
             + "beliefern k&ouml;nnen. Bei kleinen Accounts, in denen nur wenige Liefernanten vorhanden sind, ist der Rohstoffbedarf oft gr&ouml;&szlig;er "
             + "als die vorhandenen Rohstoffe. Daher sollte hier eher die Gleichverteilung bevorzugt werden.</html>";
-    private final String LOAD_HELP = "<html><b>Willkommen beim DS Workbench Rohstoffverteiler.</b><br/><br/>"
+    private static final String LOAD_HELP = "<html><b>Willkommen beim DS Workbench Rohstoffverteiler.</b><br/><br/>"
             + "Du hast das Laden vorher berechneter Transporte gew&auml;hlt. Sobald eine Berechnung erfolgreich durchgef&uuml;hrt wurde, "
             + "werden alle notwendigen Transporte beim Beenden von DS Workbench gespeichert. So hast du die M&ouml;glichkeit Transporte nach und nach "
             + "abzuschicken, falls du es zeitlich nicht schaffst, alle errechneten Transporte auf einmal auf den Weg zu bringen.</html>";
@@ -192,7 +192,7 @@ public class ResourceDistributorWelcomePanel extends WizardPage {
             type = LOAD_DISTRIBUTION;
         }
         ResourceDistributorDataReadPanel.getSingleton().setup(type);
-        map.put(TYPE, new Integer(type));
+        map.put(TYPE, type);
         return WizardPanelNavResult.PROCEED;
     }
     

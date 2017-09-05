@@ -108,7 +108,7 @@ public class CoordinateSpinner extends JSpinner {
                             }
                             ftf.select(number, number + digit.length());
                         }
-                    } catch (StringIndexOutOfBoundsException aioobe) {
+                    } catch (StringIndexOutOfBoundsException ignored) {
                     }
                 }
             });

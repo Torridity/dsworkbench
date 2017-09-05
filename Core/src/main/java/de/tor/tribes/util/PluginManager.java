@@ -15,7 +15,6 @@
  */
 package de.tor.tribes.util;
 
-import de.tor.tribes.types.Marker;
 import de.tor.tribes.types.SOSRequest;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.types.VillageMerchantInfo;
@@ -81,7 +80,7 @@ public class PluginManager {
     } catch (Exception e) {
       logger.error("Failed to execute village parser", e);
     }
-    return new LinkedList<Village>();
+    return new LinkedList<>();
   }
 
   /**
@@ -97,17 +96,18 @@ public class PluginManager {
     } catch (Exception e) {
       logger.error("Failed to execute merchant parser", e);
     }
-    return new LinkedList<VillageMerchantInfo>();
+    return new LinkedList<>();
   }
 
-  public List<Marker> executeDiplomacyParser(String pData) {
+  public boolean executeDiplomacyParser(String pData) {
+    logger.info("Executing diplomacy parser");
     try {
       Object parser = loadParser("de.tor.tribes.util.parser.DiplomacyParser");
-      return ((GenericParserInterface<Marker>) parser).parse(pData);
+      return ((SilentParserInterface) parser).parse(pData);
     } catch (Exception e) {
       logger.error("Failed to execute diplomacy parser", e);
     }
-    return new LinkedList<Marker>();
+    return false;
   }
 
   public boolean executeSupportParser(String pData) {
@@ -118,7 +118,6 @@ public class PluginManager {
     } catch (Exception e) {
       logger.error("Failed to execute support parser", e);
     }
-    logger.info("Support parser returned no result");
     return false;
   }
 
@@ -130,11 +129,11 @@ public class PluginManager {
     } catch (Exception e) {
       logger.error("Failed to execute group parser", e);
     }
-    logger.info("Group parser returned no result");
     return false;
   }
 
   public boolean executeNonPAPlaceParser(String pData) {
+    logger.info("Executing place parser");
     try {
       Object parser = loadParser("de.tor.tribes.util.parser.NonPAPlaceParser");
       return ((SilentParserInterface) parser).parse(pData);
@@ -152,18 +151,17 @@ public class PluginManager {
     } catch (Exception e) {
       logger.error("Failed to execute report parser", e);
     }
-    logger.info("Report parser returned no result");
     return false;
   }
 
-  public List<SOSRequest> executeSOSParserParser(String pData) {
+  public List<SOSRequest> executeSOSParser(String pData) {
     try {
       Object parser = loadParser("de.tor.tribes.util.parser.SOSParser");
       return ((GenericParserInterface<SOSRequest>) parser).parse(pData);
     } catch (Exception e) {
       logger.error("Failed to execute sos request parser", e);
     }
-    return new LinkedList<SOSRequest>();
+    return new LinkedList<>();
   }
 
   public boolean executeTroopsParser(String pData) {
@@ -186,7 +184,16 @@ public class PluginManager {
     } catch (Exception e) {
       logger.error("Failed to execute troops parser", e);
     }
-    logger.info("Troops troops parser");
+    return false;
+  }
+  
+  public boolean executeMovementParser(String pData) {
+    try {
+      Object parser = loadParser("de.tor.tribes.util.parser.MovementParser");
+      return ((SilentParserInterface) parser).parse(pData);
+    } catch (Exception e) {
+      logger.error("Failed to execute Movemen parser", e);
+    }
     return false;
   }
 

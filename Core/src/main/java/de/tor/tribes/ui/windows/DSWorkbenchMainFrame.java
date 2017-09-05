@@ -17,23 +17,6 @@ package de.tor.tribes.ui.windows;
 
 import de.tor.tribes.ui.panels.MapPanel;
 import de.tor.tribes.ui.panels.MinimapPanel;
-import de.tor.tribes.ui.views.DSWorkbenchDoItYourselfAttackPlaner;
-import de.tor.tribes.ui.views.DSWorkbenchSettingsDialog;
-import de.tor.tribes.ui.views.DSWorkbenchDistanceFrame;
-import de.tor.tribes.ui.views.DSWorkbenchAttackFrame;
-import de.tor.tribes.ui.views.DSWorkbenchTroopsFrame;
-import de.tor.tribes.ui.views.DSWorkbenchNotepad;
-import de.tor.tribes.ui.views.DSWorkbenchFormFrame;
-import de.tor.tribes.ui.views.DSWorkbenchSOSRequestAnalyzer;
-import de.tor.tribes.ui.views.DSWorkbenchMarkerFrame;
-import de.tor.tribes.ui.views.DSWorkbenchReportFrame;
-import de.tor.tribes.ui.views.DSWorkbenchConquersFrame;
-import de.tor.tribes.ui.views.DSWorkbenchChurchFrame;
-import de.tor.tribes.ui.views.DSWorkbenchSelectionFrame;
-import de.tor.tribes.ui.views.DSWorkbenchRankFrame;
-import de.tor.tribes.ui.views.DSWorkbenchSearchFrame;
-import de.tor.tribes.ui.views.DSWorkbenchStatsFrame;
-import de.tor.tribes.ui.views.DSWorkbenchTagFrame;
 import com.smardec.mousegestures.MouseGestures;
 import de.tor.tribes.dssim.ui.DSWorkbenchSimulatorFrame;
 import de.tor.tribes.io.DataHolder;
@@ -44,11 +27,7 @@ import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.*;
 import de.tor.tribes.ui.components.JOutlookBar;
 import de.tor.tribes.ui.components.WelcomePanel;
-import de.tor.tribes.util.BrowserCommandSender;
-import de.tor.tribes.util.ClipboardWatch;
-import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.interfaces.DSWorkbenchFrameListener;
-import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.interfaces.ToolChangeListener;
 import de.tor.tribes.util.tag.TagManager;
 import java.awt.AWTEvent;
@@ -59,9 +38,7 @@ import java.awt.event.KeyEvent;
 import java.text.NumberFormat;
 import java.util.LinkedList;
 import java.util.List;
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
+
 import org.apache.log4j.Logger;
 import de.tor.tribes.ui.renderer.map.MapRenderer;
 import de.tor.tribes.ui.views.*;
@@ -82,7 +59,7 @@ import de.tor.tribes.util.report.ReportManager;
 import de.tor.tribes.util.roi.ROIManager;
 import de.tor.tribes.util.stat.StatManager;
 import java.io.File;
-import javax.swing.JFileChooser;
+
 import de.tor.tribes.util.troops.TroopsManager;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -168,10 +145,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
 
       @Override
       public boolean accept(File f) {
-        if ((f != null) && (f.isDirectory() || f.getName().endsWith(".png"))) {
-          return true;
-        }
-        return false;
+          return (f != null) && (f.isDirectory() || f.getName().endsWith(".png"));
       }
 
       @Override
@@ -184,10 +158,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
 
       @Override
       public boolean accept(File f) {
-        if ((f != null) && (f.isDirectory() || f.getName().endsWith(".jpeg"))) {
-          return true;
-        }
-        return false;
+          return (f != null) && (f.isDirectory() || f.getName().endsWith(".jpeg"));
       }
 
       @Override
@@ -217,7 +188,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
 
       @Override
       public void eventDispatched(AWTEvent event) {
-        if (((KeyEvent) event).getID() == KeyEvent.KEY_PRESSED) {
+        if (event.getID() == KeyEvent.KEY_PRESSED) {
           KeyEvent e = (KeyEvent) event;
           if (DSWorkbenchMainFrame.getSingleton().isActive()) {
             //move shortcuts
@@ -359,7 +330,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
             jMapPanelHolder.requestFocusInWindow();
             MapPanel.getSingleton().setShiftDown(true);
           }
-        } else if (((KeyEvent) event).getID() == KeyEvent.KEY_RELEASED) {
+        } else if (event.getID() == KeyEvent.KEY_RELEASED) {
           KeyEvent e = (KeyEvent) event;
           if (e.getKeyCode() == KeyEvent.VK_SPACE) {
             MapPanel.getSingleton().setSpaceDown(false);
@@ -414,105 +385,29 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
     }
 
 // </editor-fold>
+
     // <editor-fold defaultstate="collapsed" desc=" Restore other settings ">
-    try {
-      String val = GlobalOptions.getProperty("show.map.popup");
-      if (val == null) {
-        jShowMapPopup.setSelected(true);
-        GlobalOptions.addProperty("show.map.popup", Boolean.toString(true));
-      } else {
-        jShowMapPopup.setSelected(Boolean.parseBoolean(val));
-      }
-    } catch (Exception e) {
-      jShowMapPopup.setSelected(true);
-      GlobalOptions.addProperty("show.map.popup", Boolean.toString(true));
-
-    }
-    try {
-      String val = GlobalOptions.getProperty("show.mouseover.info");
-      if (val == null) {
-        jShowMouseOverInfo.setSelected(false);
-        GlobalOptions.addProperty("show.mouseover.info", Boolean.toString(jShowMouseOverInfo.isSelected()));
-      } else {
-        jShowMouseOverInfo.setSelected(Boolean.parseBoolean(val));
-      }
-    } catch (Exception e) {
-      jShowMouseOverInfo.setSelected(false);
-      GlobalOptions.addProperty("show.mouseover.info", Boolean.toString(jShowMouseOverInfo.isSelected()));
-    }
-
-    try {
-      String val = GlobalOptions.getProperty("include.support");
-      if (val == null) {
-        jIncludeSupport.setSelected(false);
-        GlobalOptions.addProperty("include.support", Boolean.toString(jIncludeSupport.isSelected()));
-      } else {
-        jIncludeSupport.setSelected(Boolean.parseBoolean(val));
-      }
-    } catch (Exception e) {
-      jIncludeSupport.setSelected(true);
-      GlobalOptions.addProperty("include.support", Boolean.toString(jIncludeSupport.isSelected()));
-    }
-
-    try {
-      String val = GlobalOptions.getProperty("highlight.tribes.villages");
-      if (val == null) {
-        jHighlightTribeVillages.setSelected(false);
-        GlobalOptions.addProperty("highlight.tribes.villages", Boolean.toString(jHighlightTribeVillages.isSelected()));
-      } else {
-        jHighlightTribeVillages.setSelected(Boolean.parseBoolean(val));
-      }
-    } catch (Exception e) {
-      jHighlightTribeVillages.setSelected(false);
-      GlobalOptions.addProperty("highlight.tribes.villages", Boolean.toString(jHighlightTribeVillages.isSelected()));
-    }
-    try {
-      String val = GlobalOptions.getProperty("show.ruler");
-      if (val == null) {
-        jShowRuler.setSelected(true);
-        GlobalOptions.addProperty("show.ruler", Boolean.toString(true));
-      } else {
-        jShowRuler.setSelected(Boolean.parseBoolean(val));
-      }
-    } catch (Exception e) {
-      jShowRuler.setSelected(true);
-      GlobalOptions.addProperty("show.ruler", Boolean.toString(true));
-    }
-
-    try {
-      String val = GlobalOptions.getProperty("radar.size");
-      int hour = 1;
-      int min = 0;
-      if (val != null) {
-        int r = Integer.parseInt(val);
-        hour = r / 60;
-        min = r - hour * 60;
-      } else {
-        throw new Exception();
-      }
+    jShowMapPopup.setSelected(GlobalOptions.getProperties().getBoolean("show.map.popup"));
+    jShowMouseOverInfo.setSelected(GlobalOptions.getProperties().getBoolean("show.mouseover.info"));
+    jIncludeSupport.setSelected(GlobalOptions.getProperties().getBoolean("include.support"));
+    jHighlightTribeVillages.setSelected(GlobalOptions.getProperties().getBoolean("highlight.tribes.villages"));
+    jShowRuler.setSelected(GlobalOptions.getProperties().getBoolean("show.ruler"));
+    int r = GlobalOptions.getProperties().getInt("radar.size");
+    int hour = r / 60;
       jHourField.setText(Integer.toString(hour));
-      jMinuteField.setText(Integer.toString(min));
-    } catch (Exception e) {
-      jHourField.setText("1");
-      jMinuteField.setText("0");
-      GlobalOptions.addProperty("radar.size", "60");
-    }
-
+    jMinuteField.setText(Integer.toString(r - hour * 60));
     // </editor-fold>
+
     // <editor-fold defaultstate="collapsed" desc="Skin Setup">
     DefaultComboBoxModel gpModel = new DefaultComboBoxModel(GlobalOptions.getAvailableSkins());
     jGraphicPacks.setModel(gpModel);
     String skin = GlobalOptions.getProperty("default.skin");
-    if (skin != null) {
-      if (gpModel.getIndexOf(skin) != -1) {
-        jGraphicPacks.setSelectedItem(skin);
-      } else {
-        jGraphicPacks.setSelectedItem("default");
-      }
+    if (gpModel.getIndexOf(skin) != -1) {
+      jGraphicPacks.setSelectedItem(skin);
     } else {
       jGraphicPacks.setSelectedItem("default");
     }
-        //</editor-fold>
+    //</editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc=" Init A*Star HelpSystem ">
     if (!Constants.DEBUG) {
@@ -557,7 +452,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         }
 
         setSize(width, height);
-      } catch (Exception e) {
+      } catch (Exception ignored) {
       }
     }
   }
@@ -895,7 +790,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
       if (vis != null && Boolean.parseBoolean(vis)) {
         getRibbon().setMinimized(true);
       }
-    } catch (Exception e) {
+    } catch (Exception ignored) {
     }
   }
 
@@ -2170,8 +2065,8 @@ private void fireZoomEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fir
     MapPanel.getSingleton().updateMapPosition(xPos, yPos, true);
   }
 
-  /**
-   * Show the toolbar
+  /*
+    Show the toolbar
    */
   /**
    * Center village Ingame
@@ -2260,7 +2155,7 @@ private void fireExportEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_f
     //do export
     logger.debug("Building export data");
 
-    List<String> plansToExport = new LinkedList<String>();
+    List<String> plansToExport = new LinkedList<>();
     for (int i = 0; i < jAttackExportTable.getRowCount(); i++) {
       String plan = (String) jAttackExportTable.getValueAt(i, 0);
       Boolean export = (Boolean) jAttackExportTable.getValueAt(i, 1);
@@ -2271,7 +2166,7 @@ private void fireExportEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_f
 
     }
 
-    List<String> setsToExport = new LinkedList<String>();
+    List<String> setsToExport = new LinkedList<>();
     for (int i = 0; i < jMarkerSetExportTable.getRowCount(); i++) {
       String set = (String) jMarkerSetExportTable.getValueAt(i, 0);
       Boolean export = (Boolean) jMarkerSetExportTable.getValueAt(i, 1);
@@ -2281,7 +2176,7 @@ private void fireExportEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_f
       }
 
     }
-    List<String> reportsToExport = new LinkedList<String>();
+    List<String> reportsToExport = new LinkedList<>();
     for (int i = 0; i < jReportSetExportTable.getRowCount(); i++) {
       String set = (String) jReportSetExportTable.getValueAt(i, 0);
       Boolean export = (Boolean) jReportSetExportTable.getValueAt(i, 1);
@@ -2291,7 +2186,7 @@ private void fireExportEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_f
       }
     }
 
-    List<String> troopSetsToExport = new LinkedList<String>();
+    List<String> troopSetsToExport = new LinkedList<>();
     for (int i = 0; i < jTroopSetExportTable.getRowCount(); i++) {
       String set = (String) jTroopSetExportTable.getValueAt(i, 0);
       Boolean export = (Boolean) jTroopSetExportTable.getValueAt(i, 1);
@@ -2300,7 +2195,7 @@ private void fireExportEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_f
         troopSetsToExport.add(set);
       }
     }
-    List<String> noteSetsToExport = new LinkedList<String>();
+    List<String> noteSetsToExport = new LinkedList<>();
     for (int i = 0; i < jNoteSetExportTable.getRowCount(); i++) {
       String set = (String) jNoteSetExportTable.getValueAt(i, 0);
       Boolean export = (Boolean) jNoteSetExportTable.getValueAt(i, 1);
@@ -2342,11 +2237,8 @@ private void fireExportEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_f
 
       @Override
       public boolean accept(File f) {
-        if ((f != null) && (f.isDirectory() || f.getName().endsWith(".xml"))) {
-          return true;
-        }
+          return (f != null) && (f.isDirectory() || f.getName().endsWith(".xml"));
 
-        return false;
       }
 
       @Override
@@ -2438,7 +2330,7 @@ private void fireChangeROIEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:even
       logger.debug("Removing ROI '" + item + "'");
       ROIManager.getSingleton().removeROI(item);
       jROIBox.removeItem(item);
-    } catch (Exception e) {
+    } catch (Exception ignored) {
     }
   }
 }//GEN-LAST:event_fireChangeROIEvent
@@ -2485,7 +2377,7 @@ private void fireROISelectedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:eve
       jCenterX.setText(pos[0]);
       jCenterY.setText(pos[1]);
       fireRefreshMapEvent(null);
-    } catch (Exception e) {
+    } catch (Exception ignored) {
     }
   }
 }//GEN-LAST:event_fireROISelectedEvent
@@ -2520,7 +2412,7 @@ private void fireGraphicPackChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FI
       logger.error("Failed to load default skin", ie);
     }
   }
-  if (isInitialized()) {
+    if (initialized) {
     MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.ALL_LAYERS);
   }
 }//GEN-LAST:event_fireGraphicPackChangedEvent
@@ -2666,11 +2558,8 @@ private void fireChangeClipboardWatchEvent(java.awt.event.MouseEvent evt) {//GEN
 
       @Override
       public boolean accept(File f) {
-        if ((f != null) && (f.isDirectory() || f.getName().endsWith(".xml"))) {
-          return true;
-        }
+          return (f != null) && (f.isDirectory() || f.getName().endsWith(".xml"));
 
-        return false;
       }
 
       @Override
@@ -2811,7 +2700,7 @@ private void fireChangeClipboardWatchEvent(java.awt.event.MouseEvent evt) {//GEN
       jCenterX.setText(pos[0]);
       jCenterY.setText(pos[1]);
       fireRefreshMapEvent(null);
-    } catch (Exception e) {
+    } catch (Exception ignored) {
     }
   }
 
@@ -2964,29 +2853,47 @@ private void fireChangeClipboardWatchEvent(java.awt.event.MouseEvent evt) {//GEN
     String[] groups = pParserResult.keySet().toArray(new String[]{});
     //NotifierFrame.doNotification("DS Workbench hat " + groups.length + ((groups.length == 1) ? " Dorfgruppe " : " Dorfgruppen ") + "in der Zwischenablage gefunden.", NotifierFrame.NOTIFY_INFO);
     showSuccess("DS Workbench hat " + groups.length + ((groups.length == 1) ? " Dorfgruppe " : " Dorfgruppen ") + "in der Zwischenablage gefunden.");
-    //remove all tags
-    for (String group : groups) {
-      List<Village> villagesForGroup = pParserResult.get(group);
-      if (villagesForGroup != null) {
-        for (Village v : villagesForGroup) {
-          TagManager.getSingleton().removeTags(v);
-        }
-      }
-    }
-
-    for (String group : groups) {
-      //add new groups
-      TagManager.getSingleton().addTagFast(group);
-      //get (added) group
-      Tag t = TagManager.getSingleton().getTagByName(group);
-      //add villages to group
-      List<Village> villagesForGroup = pParserResult.get(group);
-      if (villagesForGroup != null) {
-        //set new tags
-        for (Village v : villagesForGroup) {
-          t.tagVillage(v.getId());
-        }
-      }
+    if(groups.length!=1){ // Data from group import (all groups for given villages)
+	    //remove all tags
+	    for (String group : groups) {
+	      List<Village> villagesForGroup = pParserResult.get(group);
+	      if (villagesForGroup != null) {
+	        for (Village v : villagesForGroup) {
+	          TagManager.getSingleton().removeTags(v);
+	        }
+	      }
+	    }
+	
+	    for (String group : groups) {
+	      //add new groups
+	      TagManager.getSingleton().addTagFast(group);
+	      //get (added) group
+	      Tag t = TagManager.getSingleton().getTagByName(group);
+	      //add villages to group
+	      List<Village> villagesForGroup = pParserResult.get(group);
+	      if (villagesForGroup != null) {
+	        //set new tags
+	        for (Village v : villagesForGroup) {
+	          t.tagVillage(v.getId());
+	        }
+	      }
+	    }
+    } else { // data from troops import (all villages for given group) 
+    	for (String group : groups) {
+	      //add new groups
+	      TagManager.getSingleton().addTagFast(group);
+	      //get (added) group
+	      Tag t = TagManager.getSingleton().getTagByName(group);
+	      t.clearTaggedVillages();
+	      //add villages to group
+	      List<Village> villagesForGroup = pParserResult.get(group);
+	      if (villagesForGroup != null) {
+	        //set new tags
+	        for (Village v : villagesForGroup) {
+	          t.tagVillage(v.getId());
+	        }
+	      }
+	    }    	
     }
     TagManager.getSingleton().revalidate(true);
   }

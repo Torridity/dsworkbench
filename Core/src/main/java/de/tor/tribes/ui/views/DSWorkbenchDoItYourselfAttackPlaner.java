@@ -58,14 +58,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
-import javax.swing.AbstractAction;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
+import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -98,7 +91,7 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
         }
     }
 
-    public static enum TRANSFER_TYPE {
+    public enum TRANSFER_TYPE {
 
         CUT_TO_INTERNAL_CLIPBOARD, COPY_TO_INTERNAL_CLIPBOARD, FROM_INTERNAL_CLIPBOARD, BB_TO_CLIPBOARD
     }
@@ -189,7 +182,7 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
     public void restoreCustomProperties(Configuration pConfig) {
         try {
             jAlwaysOnTopBox.setSelected(pConfig.getBoolean(getPropertyPrefix() + ".alwaysOnTop"));
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
         setAlwaysOnTop(jAlwaysOnTopBox.isSelected());
@@ -841,11 +834,8 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
                 }
             }
             showSuccess(cnt + ((cnt == 1) ? " Angriff eingefügt" : " Angriffe eingefügt"));
-        } catch (UnsupportedFlavorException ufe) {
+        } catch (UnsupportedFlavorException | IOException ufe) {
             logger.error("Failed to copy attacks from internal clipboard", ufe);
-            showError("Fehler beim Einfügen der Angriffe");
-        } catch (IOException ioe) {
-            logger.error("Failed to copy attacks from internal clipboard", ioe);
             showError("Fehler beim Einfügen der Angriffe");
         }
         ((DoItYourselfAttackTableModel) jAttackTable.getModel()).fireTableDataChanged();
@@ -902,7 +892,7 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
     }
 
     private List<Attack> getSelectedAttacks() {
-        final List<Attack> selectedAttacks = new LinkedList<Attack>();
+        final List<Attack> selectedAttacks = new LinkedList<>();
         int[] selectedRows = jAttackTable.getSelectedRows();
         if (selectedRows != null && selectedRows.length < 1) {
             return selectedAttacks;
@@ -930,7 +920,7 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
         try {
             //  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         DSWorkbenchDoItYourselfAttackPlaner.getSingleton().resetView();
         //  DSWorkbenchAttackFrame.getSingleton().setSize(800, 600);
@@ -941,7 +931,7 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
         }
 
         AttackManager.getSingleton().revalidate(AttackManager.MANUAL_ATTACK_PLAN, true);
-        DSWorkbenchDoItYourselfAttackPlaner.getSingleton().setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        DSWorkbenchDoItYourselfAttackPlaner.getSingleton().setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         DSWorkbenchDoItYourselfAttackPlaner.getSingleton().setVisible(true);
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -994,7 +984,7 @@ class DoItYourselfCountdownThread extends Thread {
                 } else {
                     sleep(1000);
                 }
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         }
     }

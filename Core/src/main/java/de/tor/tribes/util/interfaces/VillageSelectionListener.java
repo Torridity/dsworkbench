@@ -23,5 +23,5 @@ import java.awt.Point;
  */
 public interface VillageSelectionListener {
 
-    public void fireSelectionFinishedEvent(Point vStart, Point vEnd);
+    void fireSelectionFinishedEvent(Point vStart, Point vEnd);
 }

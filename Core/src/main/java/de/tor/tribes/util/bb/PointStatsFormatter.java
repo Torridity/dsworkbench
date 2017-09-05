@@ -28,19 +28,19 @@ import org.apache.commons.lang.StringUtils;
  */
 public class PointStatsFormatter extends BasicFormatter<Stats> {
 
-    private final String TRIBE = "%TRIBE%";
-    private final String POINTS_BEFORE = "%POINTS_START%";
-    private final String POINTS_AFTER = "%POINTS_END%";
-    private final String POINTS_DIFFERENCE = "%POINTS_DIFFERENCE%";
-    private final String PERCENT_DIFFERENCE = "%PERCENT_DIFFERENCE%";
-    private final String KILLS_PER_POINT = "%KILLS_PER_POINT%";
+    private static final String TRIBE = "%TRIBE%";
+    private static final String POINTS_BEFORE = "%POINTS_START%";
+    private static final String POINTS_AFTER = "%POINTS_END%";
+    private static final String POINTS_DIFFERENCE = "%POINTS_DIFFERENCE%";
+    private static final String PERCENT_DIFFERENCE = "%PERCENT_DIFFERENCE%";
+    private static final String KILLS_PER_POINT = "%KILLS_PER_POINT%";
     private final String[] STAT_SPECIFIC_VARIABLES = new String[]{TRIBE, POINTS_BEFORE, POINTS_AFTER, POINTS_DIFFERENCE, PERCENT_DIFFERENCE, KILLS_PER_POINT};
     private final String[] VARIABLES = new String[]{LIST_START, LIST_END, ELEMENT_COUNT, ELEMENT_ID};
-    private final String STANDARD_TEMPLATE = "[b]Punktestatistik[/b]\nBerücksichtigte Spieler: %ELEMENT_COUNT%\n[table]\n"
+    public static final String STANDARD_TEMPLATE = "[b]Punktestatistik[/b]\nBerücksichtigte Spieler: %ELEMENT_COUNT%\n[table]\n"
             + "[**]Platz[||]Spieler[||]Punkte (Anfang)[||]Wachstum[||]Punkte (Ende)[||]Kills/Punkt[/**]\n"
             + "%LIST_START%[*]%ELEMENT_ID%[|]%TRIBE%[|]%POINTS_START%[|]%PERCENT_DIFFERENCE%[|]%POINTS_END%[|]%KILLS_PER_POINT%[/*]%LIST_END%\n"
             + "[/table]";
-    private final String TEMPLATE_PROPERTY = "point.stats.bbexport.template";
+    private static final String TEMPLATE_PROPERTY = "point.stats.bbexport.template";
 
     /*
     01. [player]-Atheris-[/player]
@@ -119,10 +119,8 @@ public class PointStatsFormatter extends BasicFormatter<Stats> {
 
     @Override
     public String[] getTemplateVariables() {
-        List<String> vars = new LinkedList<String>();
-        for (String var : VARIABLES) {
-            vars.add(var);
-        }
+        List<String> vars = new LinkedList<>();
+        Collections.addAll(vars, VARIABLES);
         vars.add(TRIBE);
         vars.add(POINTS_BEFORE);
         vars.add(POINTS_AFTER);

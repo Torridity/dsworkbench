@@ -50,6 +50,7 @@ import java.util.regex.Matcher;
  * for translation
  * </ul>
  */
+@SuppressWarnings("JavadocReference")
 public final class EscapeChars {
 
     /**
@@ -416,6 +417,6 @@ public final class EscapeChars {
             //no prefix
         }
         String number = padding + aIdx.toString();
-        aBuilder.append("&#" + number + ";");
+        aBuilder.append("&#").append(number).append(";");
     }
 }

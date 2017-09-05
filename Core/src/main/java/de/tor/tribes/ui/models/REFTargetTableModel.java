@@ -34,7 +34,7 @@ public class REFTargetTableModel extends AbstractTableModel {
     Class[] types = new Class[]{
         Village.class
     };
-    private final List<Village> elements = new LinkedList<Village>();
+    private final List<Village> elements = new LinkedList<>();
 
     public void clear() {
         elements.clear();
@@ -46,7 +46,7 @@ public class REFTargetTableModel extends AbstractTableModel {
 
             @Override
             public boolean evaluate(Object o) {
-                return ((Village) o).equals(pVillage);
+                return o.equals(pVillage);
             }
         });
 

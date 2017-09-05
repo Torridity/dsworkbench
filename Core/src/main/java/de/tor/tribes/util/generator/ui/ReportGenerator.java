@@ -27,11 +27,12 @@ import de.tor.tribes.util.TroopHelper;
 import de.tor.tribes.util.UIHelper;
 import de.tor.tribes.util.farm.FarmManager;
 import de.tor.tribes.util.report.ReportManager;
+import org.apache.log4j.Logger;
+
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
-import org.apache.log4j.Logger;
 
 /**
  *
@@ -516,7 +517,7 @@ public class ReportGenerator extends javax.swing.JFrame {
     }
 
     private Hashtable<UnitHolder, Integer> getAttackingTroops(Village pVillage) {
-        Hashtable<String, Integer> units = new Hashtable<String, Integer>();
+        Hashtable<String, Integer> units = new Hashtable<>();
         if (jFarming.isSelected()) {
             FarmInformation info = FarmManager.getSingleton().getFarmInformation(pVillage);
             if (info == null || info.getFarmTroop() == null) {
@@ -552,7 +553,7 @@ public class ReportGenerator extends javax.swing.JFrame {
     }
 
     public Hashtable<UnitHolder, Integer> getReducedTroopAmount(Hashtable<UnitHolder, Integer> pUnits, double pPercent) {
-        Hashtable<UnitHolder, Integer> units = new Hashtable<UnitHolder, Integer>();
+        Hashtable<UnitHolder, Integer> units = new Hashtable<>();
         Set<Entry<UnitHolder, Integer>> entries = pUnits.entrySet();
         for (Entry<UnitHolder, Integer> entry : entries) {
             int val = entry.getValue();
@@ -567,7 +568,7 @@ public class ReportGenerator extends javax.swing.JFrame {
     }
 
     private Hashtable<UnitHolder, Integer> getDefendingTroops() {
-        Hashtable<String, Integer> units = new Hashtable<String, Integer>();
+        Hashtable<String, Integer> units = new Hashtable<>();
         if (jSomeDef.isSelected()) {
             units.put("spear", getRandomValueInRange(1000, 2000));
             units.put("sword", getRandomValueInRange(1000, 2000));
@@ -592,7 +593,7 @@ public class ReportGenerator extends javax.swing.JFrame {
     }
 
     private int getRandomValueInRange(int min, int max) {
-        return Math.max(min, (int) Math.random() * max);
+        return Math.max(min, (int) (Math.random() * max));
     }
 
     private boolean hasHaul() {
@@ -600,18 +601,17 @@ public class ReportGenerator extends javax.swing.JFrame {
     }
 
     private int[] getSpyInfo() {
-        int[] result = new int[]{
-            UIHelper.parseIntFromField(jWoodLevel),
-            UIHelper.parseIntFromField(jClayLevel),
-            UIHelper.parseIntFromField(jIronLevel),
-            UIHelper.parseIntFromField(jStorageLevel),
-            UIHelper.parseIntFromField(jHideLevel)};
 
         /*
          * if (ArrayUtils.contains(result, 0)) {//all buildings or nothing
          * return null; }
          */
-        return result;
+        return new int[]{
+            UIHelper.parseIntFromField(jWoodLevel),
+            UIHelper.parseIntFromField(jClayLevel),
+            UIHelper.parseIntFromField(jIronLevel),
+            UIHelper.parseIntFromField(jStorageLevel),
+            UIHelper.parseIntFromField(jHideLevel)};
     }
 
     /**
@@ -634,13 +634,7 @@ public class ReportGenerator extends javax.swing.JFrame {
                     break;
                 }
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(ReportGenerator.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(ReportGenerator.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(ReportGenerator.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+        } catch (ClassNotFoundException | javax.swing.UnsupportedLookAndFeelException | IllegalAccessException | InstantiationException ex) {
             java.util.logging.Logger.getLogger(ReportGenerator.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>

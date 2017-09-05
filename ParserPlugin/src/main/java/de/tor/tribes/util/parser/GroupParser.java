@@ -17,15 +17,13 @@ package de.tor.tribes.util.parser;
 
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.php.json.JSONObject;
-import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
 import de.tor.tribes.util.SilentParserInterface;
-import de.tor.tribes.util.tag.TagManager;
+
 import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
-import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -53,18 +51,18 @@ public class GroupParser implements SilentParserInterface {
      */
 
     private boolean parseVillageRenamerData(String pData) {
-        Hashtable<String, List<Village>> mappings = new Hashtable<String, List<Village>>();
+        Hashtable<String, List<Village>> mappings = new Hashtable<>();
         try {
             JSONObject sectorObject = new JSONObject(pData);
             JSONObject data = (JSONObject) sectorObject.get("id");
-            Iterator keys = data.keys();
+            Iterator<String> keys = data.keys();
             while (keys.hasNext()) {
-                String villageId = (String) keys.next();
+                String villageId = keys.next();
                 String groupName = (String) data.get(villageId);
 
                 List<Village> groups = mappings.get(groupName);
                 if (groups == null) {
-                    groups = new LinkedList<Village>();
+                    groups = new LinkedList<>();
                     mappings.put(groupName, groups);
                 }
                 Village v = DataHolder.getSingleton().getVillagesById().get(Integer.parseInt(villageId));
@@ -83,7 +81,7 @@ public class GroupParser implements SilentParserInterface {
     }
 
     public boolean parse(String pGroupsString) {
-
+    	
         if (parseVillageRenamerData(pGroupsString)) {
             return true;
         }
@@ -91,12 +89,12 @@ public class GroupParser implements SilentParserInterface {
 
         StringTokenizer lineTok = new StringTokenizer(pGroupsString, "\n\r");
 
-        Hashtable<String, List<Village>> groups = new Hashtable<String, List<Village>>();
+        Hashtable<String, List<Village>> groups = new Hashtable<>();
         while (lineTok.hasMoreElements()) {
             //parse single line for village
             String line = lineTok.nextToken();
             //german and suisse
-            if (line.trim().endsWith(ParserVariableManager.getSingleton().getProperty("groups.edit"))) {
+            if (line.trim().endsWith(getVariable("groups.edit"))) {
                 try {
                     //tokenize line by tab
                     StringTokenizer elemTok = new StringTokenizer(line.trim(), "\t");
@@ -148,7 +146,7 @@ public class GroupParser implements SilentParserInterface {
                                     String group = groupsTokenizer.nextToken().trim();
                                     List<Village> groupVillages = groups.get(group);
                                     if (groupVillages == null) {
-                                        groupVillages = new LinkedList<Village>();
+                                        groupVillages = new LinkedList<>();
                                         groups.put(group, groupVillages);
                                     }
                                     groupVillages.add(v);
@@ -177,7 +175,7 @@ public class GroupParser implements SilentParserInterface {
         String groupRegEx = "[(.*);\\s]*(.*)\\s(»[\\s]*bearbeiten)";
         Pattern regExPattern = Pattern.compile(villageRegEx + "(.*)" + groupCountRegEx + "\\s" + groupRegEx);
         StringTokenizer lines = new StringTokenizer(pGroups, "\n");
-        Hashtable<String, List<Village>> groupMap = new Hashtable<String, List<Village>>();
+        Hashtable<String, List<Village>> groupMap = new Hashtable<>();
         while (lines.hasMoreTokens()) {
             String newLine = lines.nextToken().trim();
             Matcher matcher = regExPattern.matcher(newLine);
@@ -203,7 +201,7 @@ public class GroupParser implements SilentParserInterface {
                     for (String group : singleGroups) {
                         List<Village> villagesInGroup = groupMap.get(group);
                         if (villagesInGroup == null) {
-                            villagesInGroup = new LinkedList<Village>();
+                            villagesInGroup = new LinkedList<>();
                             groupMap.put(group, villagesInGroup);
                         }
                         villagesInGroup.add(groupedVillage);
@@ -266,8 +264,13 @@ public class GroupParser implements SilentParserInterface {
 //next 4 lines are village
                         /*villageLines = 4;*/
 //  }
+
+    private String getVariable(String pProperty) {
+        return ParserVariableManager.getSingleton().getProperty(pProperty);
+    }
+    
     public static void main(String[] args) throws Exception {
-        Transferable t = (Transferable) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
+        Transferable t = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
         //String data = "(09) Sunset Beach (459|468) K44  	2	Fertig; Off	» bearbeiten";
         String data = (String) t.getTransferData(DataFlavor.stringFlavor);
 

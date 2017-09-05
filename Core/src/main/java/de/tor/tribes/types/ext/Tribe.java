@@ -48,7 +48,7 @@ public class Tribe implements Comparable<Tribe>, Serializable {
     private int rankDef = 0;
 
     public Tribe() {
-        villageList = new LinkedList<Village>();
+        villageList = new LinkedList<>();
     }
     //$id, $name, $ally, $villages, $points, $rank
 
@@ -153,13 +153,13 @@ public class Tribe implements Comparable<Tribe>, Serializable {
     public void setAlly(Ally ally) {
         this.ally = ally;
         if (ally != null) {
-            setAllyID(ally.getId());
+            this.allyID = ally.getId();
         }
     }
 
     public void addVillage(Village v, boolean pChecked) {
         if (villageList == null) {
-            villageList = new LinkedList<Village>();
+            villageList = new LinkedList<>();
         }
         if (!pChecked || !villageList.contains(v)) {
             villageList.add(v);
@@ -172,7 +172,7 @@ public class Tribe implements Comparable<Tribe>, Serializable {
 
     public boolean removeVillage(Village pVillage) {
         if (villageList == null) {
-            villageList = new LinkedList<Village>();
+            villageList = new LinkedList<>();
         }
 
         return villageList.remove(pVillage);
@@ -180,7 +180,7 @@ public class Tribe implements Comparable<Tribe>, Serializable {
 
     public boolean ownsVillage(Village pVillage) {
         if (villageList == null) {
-            villageList = new LinkedList<Village>();
+            villageList = new LinkedList<>();
         }
 
         return villageList.contains(pVillage);
@@ -188,7 +188,7 @@ public class Tribe implements Comparable<Tribe>, Serializable {
 
     public Village[] getVillageList() {
         if (villageList == null) {
-            villageList = new LinkedList<Village>();
+            villageList = new LinkedList<>();
         }
         return villageList.toArray(new Village[villageList.size()]);
     }
@@ -206,14 +206,14 @@ public class Tribe implements Comparable<Tribe>, Serializable {
         b.append(" <b>Dörfer:</b> ");
         b.append(nf.format(getVillages()));
         b.append(" <b>Kills Off (Rang):</b> ");
-        b.append(nf.format(getKillsAtt()));
+        b.append(nf.format(killsAtt));
         b.append(" (");
-        b.append(nf.format(getRankAtt()));
+        b.append(nf.format(rankAtt));
         b.append(") ");
         b.append(" <b>Kills Deff (Rang):</b> ");
-        b.append(nf.format(getKillsDef()));
+        b.append(nf.format(killsDef));
         b.append(" (");
-        b.append(nf.format(getRankDef()));
+        b.append(nf.format(rankDef));
         b.append(") ");
         b.append("</html>");
         return b.toString();
@@ -231,8 +231,8 @@ public class Tribe implements Comparable<Tribe>, Serializable {
         String res = "<html><table style='border: solid 1px black; cellspacing:0px;cellpadding: 0px;background-color:#EFEBDF;'>";
         res += "<tr><td><b>Name:</b> </td><td>" + getName() + "</td></tr>";
         res += "<tr><td>&nbsp;&nbsp;&nbsp;Punkte:</td><td>" + nf.format(getPoints()) + " (" + nf.format(getRank()) + ")</td></tr>";
-        res += "<tr><td>&nbsp;&nbsp;&nbsp;Besiegte Gegner (Off):</td><td>" + nf.format(getKillsAtt()) + " (" + nf.format(getRankAtt()) + ")</td></tr>";
-        res += "<tr><td>&nbsp;&nbsp;&nbsp;Besiegte Gegner (Deff):</td><td>" + nf.format(getKillsDef()) + " (" + nf.format(getRankDef()) + ")</td></tr>";
+        res += "<tr><td>&nbsp;&nbsp;&nbsp;Besiegte Gegner (Off):</td><td>" + nf.format(killsAtt) + " (" + nf.format(rankAtt) + ")</td></tr>";
+        res += "<tr><td>&nbsp;&nbsp;&nbsp;Besiegte Gegner (Deff):</td><td>" + nf.format(killsDef) + " (" + nf.format(rankDef) + ")</td></tr>";
         if (getAlly() != null) {
             res += "<tr><td><b>Stamm:</b> </td><td>" + getAlly().toString() + "</td></tr>";
             res += "<tr><td>&nbsp;&nbsp;&nbsp;Mitglieder: </td><td>" + nf.format(getAlly().getMembers()) + "</td></tr>";
@@ -300,18 +300,16 @@ public class Tribe implements Comparable<Tribe>, Serializable {
             return Color.YELLOW;
         }
         Color DEFAULT = null;
-        try {
-            int mark = Integer.parseInt(GlobalOptions.getProperty("default.mark"));
-            if (mark == 0) {
-                DEFAULT = Constants.DS_DEFAULT_MARKER;
-            } else if (mark == 1) {
+        switch(GlobalOptions.getProperties().getInt("default.mark")) {
+            case 1:
                 DEFAULT = Color.RED;
-            } else if (mark == 2) {
+                break;
+            case 2:
                 DEFAULT = Color.WHITE;
-            }
-
-        } catch (Exception e) {
-            DEFAULT = Constants.DS_DEFAULT_MARKER;
+                break;
+            case 0:
+            default:
+                DEFAULT = Constants.DS_DEFAULT_MARKER;
         }
         return DEFAULT;
     }

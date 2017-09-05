@@ -20,7 +20,5 @@ package de.tor.tribes.util;
  * @author Torridity
  */
 public interface SilentParserInterface {
-
-   
-    public boolean parse(String pData);
+    boolean parse(String pData);
 }

@@ -21,5 +21,5 @@ package de.tor.tribes.ui;
  */
 public interface MinimapListener {
 
-    public void fireUpdateLocationByMinimap(int pX, int pY);
+    void fireUpdateLocationByMinimap(int pX, int pY);
 }

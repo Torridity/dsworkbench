@@ -52,10 +52,10 @@ public class VillageHTMLTooltipGenerator {
     }
     
     public static String buildToolTip(Village pVillage, boolean pWithUnits) {
-        boolean showMoral = Boolean.parseBoolean(GlobalOptions.getProperty("show.popup.moral"));
-        boolean showRanks = Boolean.parseBoolean(GlobalOptions.getProperty("show.popup.ranks"));
-        boolean showConquers = Boolean.parseBoolean(GlobalOptions.getProperty("show.popup.conquers"));
-        boolean showFarmSpace = Boolean.parseBoolean(GlobalOptions.getProperty("show.popup.farm.space"));
+        boolean showMoral = GlobalOptions.getProperties().getBoolean("show.popup.moral");
+        boolean showRanks = GlobalOptions.getProperties().getBoolean("show.popup.ranks");
+        boolean showConquers = GlobalOptions.getProperties().getBoolean("show.popup.conquers");
+        boolean showFarmSpace = GlobalOptions.getProperties().getBoolean("show.popup.farm.space");
         StringBuilder b = new StringBuilder();
         b.append("<html><head>").append(BBCodeFormatter.getStyles()).append("</head><table width=\"400\" style=\"border: solid 1px black; cellspacing:0px;cellpadding: 0px;background-color:#EFEBDF;color:black;\">\n");
         b.append(buildVillageRow(pVillage));
@@ -138,7 +138,7 @@ public class VillageHTMLTooltipGenerator {
         Conquer c = ConquerManager.getSingleton().getConquer(pVillage);
         if (c != null) {
             SimpleDateFormat f = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
-            b.append(buildInfoRow("Erobert am:", f.format(c.getTimestamp() * 1000l), false));
+            b.append(buildInfoRow("Erobert am:", f.format(c.getTimestamp() * 1000L), false));
             b.append(buildInfoRow("Zustimmung:", c.getCurrentAcceptance(), false));
         }
         
@@ -220,7 +220,7 @@ public class VillageHTMLTooltipGenerator {
     
     static String buildSubInfoRow(String pField, Object pValue) {
         StringBuilder b = new StringBuilder();
-        return b.append("<tr>\n").append("<td width=\"150\" style=\"font-size:8px;\">&nbsp;&nbsp;&nbsp;").append(pField).append("</td>\n").append("<td colspan='2' width=\"300\" >" + pValue + "</td>\n").
+        return b.append("<tr>\n").append("<td width=\"150\" style=\"font-size:8px;\">&nbsp;&nbsp;&nbsp;").append(pField).append("</td>\n").append("<td colspan='2' width=\"300\" >").append(pValue).append("</td>\n").
                 append("</tr>\n").toString();
     }
     

@@ -26,7 +26,11 @@ import de.tor.tribes.util.SilentParserInterface;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.util.Hashtable;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.StringTokenizer;
+
+import org.apache.commons.lang.StringUtils;
 
 /**
  * @author Charon
@@ -45,11 +49,17 @@ public class TroopsParser implements SilentParserInterface {
         //boolean haveVillage = false;
         Village v = null;
         // List<Integer> troops = new LinkedList<Integer>();
-        Hashtable<UnitHolder, Integer> ownTroops = new Hashtable<UnitHolder, Integer>();
-        Hashtable<UnitHolder, Integer> troopsInVillage = new Hashtable<UnitHolder, Integer>();
-        Hashtable<UnitHolder, Integer> troopsOutside = new Hashtable<UnitHolder, Integer>();
-        Hashtable<UnitHolder, Integer> troopsOnTheWay = new Hashtable<UnitHolder, Integer>();
+        Hashtable<UnitHolder, Integer> ownTroops = new Hashtable<>();
+        Hashtable<UnitHolder, Integer> troopsInVillage = new Hashtable<>();
+        Hashtable<UnitHolder, Integer> troopsOutside = new Hashtable<>();
+        Hashtable<UnitHolder, Integer> troopsOnTheWay = new Hashtable<>();
         TroopsManager.getSingleton().invalidate();
+        // used to update group on the fly, if not "all" selected
+        String groupName = null;
+        // groups could be multiple lines, detection is easiest for first line (starts with "Gruppen:")
+        boolean groupLines = false;
+        // store visited villages, so we can add em to selected group
+        List<Village> villages = new LinkedList<>();
         while (lineTok.hasMoreElements()) {
             //parse single line for village
             String line = lineTok.nextToken();
@@ -59,33 +69,33 @@ public class TroopsParser implements SilentParserInterface {
             if (v != null) {
                 //parse 4 village lines!
                 line = line.trim();
-                if (line.trim().startsWith(ParserVariableManager.getSingleton().getProperty("troops.own"))) {
+                if (line.trim().startsWith(getVariable("troops.own"))) {
                     int cnt = 0;
-                    for (int i : parseUnits(line.replaceAll(ParserVariableManager.getSingleton().getProperty("troops.own"), "").trim())) {
+                    for (int i : parseUnits(line.replaceAll(getVariable("troops.own"), "").trim())) {
                         //own units in village
                         //troops.add(i);
                         ownTroops.put(DataHolder.getSingleton().getUnits().get(cnt), i);
                         cnt++;
                     }
-                } else if (line.trim().startsWith(ParserVariableManager.getSingleton().getProperty("troops.in.village"))) {
+                } else if (line.trim().startsWith(getVariable("troops.in.village"))) {
                     int cnt = 0;
-                    for (int i : parseUnits(line.replaceAll(ParserVariableManager.getSingleton().getProperty("troops.in.village"), "").trim())) {
+                    for (int i : parseUnits(line.replaceAll(getVariable("troops.in.village"), "").trim())) {
                         //all units in village       
                         troopsInVillage.put(DataHolder.getSingleton().getUnits().get(cnt), i);
                         cnt++;
                     }
-                } else if (line.trim().startsWith(ParserVariableManager.getSingleton().getProperty("troops.outside"))) {
+                } else if (line.trim().startsWith(getVariable("troops.outside"))) {
                     int cnt = 0;
-                    for (int i : parseUnits(line.replaceAll(ParserVariableManager.getSingleton().getProperty("troops.outside"), "").trim())) {
+                    for (int i : parseUnits(line.replaceAll(getVariable("troops.outside"), "").trim())) {
                         //own units in other village  
                         troopsOutside.put(DataHolder.getSingleton().getUnits().get(cnt), i);
                         cnt++;
                     }
-                } else if (line.trim().startsWith(ParserVariableManager.getSingleton().getProperty("troops.on.the.way"))) {
+                } else if (line.trim().startsWith(getVariable("troops.on.the.way"))) {
                     // int[] underway = parseUnits(line.replaceAll("unterwegs", "").trim());
                     int cnt = 0;
                     //own units on the way
-                    for (int i : parseUnits(line.replaceAll(ParserVariableManager.getSingleton().getProperty("troops.on.the.way"), "").trim())) {
+                    for (int i : parseUnits(line.replaceAll(getVariable("troops.on.the.way"), "").trim())) {
                         //troops.set(i, troops.get(i) + underway[i]);
                         troopsOnTheWay.put(DataHolder.getSingleton().getUnits().get(cnt), i);
                         cnt++;
@@ -98,10 +108,31 @@ public class TroopsParser implements SilentParserInterface {
                     if (current != null) {
                         v = current;
                         villageLines = 4;
+                        // we are not searching for further group names
+                        groupLines = false;
+                        // add village to list of villages in selected group
+                    	if(groupName != null)villages.add(v);                    	
+                    } else {
+                        // Check if current line is first group line. In case it is, store selected group
+                        if(line.trim().startsWith(getVariable("overview.groups")))
+                        	groupLines = true;                    
+                        // Check if current line contains active group. In case it does, store group name and stop searching
+                        if(groupLines && line.matches(".*>.*?<.*")){
+                        	groupLines = false;
+                        	groupName = StringUtils.substringBetween(line, ">", "<"); // = line.replaceAll(".*>|<.*",""); if we stop using Apache Commons        	
+                        }                    	
                     }
                 } catch (Exception e) {
                     v = null;
                     villageLines = 0;
+                    // Check if current line is first group line. In case it is, store selected group
+                    if(line.trim().startsWith(getVariable("overview.groups")))
+                    	groupLines = true;                    
+                    // Check if current line contains active group. In case it does, store group name and stop searching
+                    if(groupLines && line.matches(".*>.*?<.*")){
+                    	groupLines = false;
+                    	groupName = StringUtils.substringBetween(line, ">", "<"); // = line.replaceAll(".*>|<.*",""); if we stop using Apache Commons        	
+                    }
                 }
             }
             //add troops information
@@ -150,11 +181,19 @@ public class TroopsParser implements SilentParserInterface {
                 NotifierFrame.doNotification("DS Workbench hat Truppeninformationen zu " + foundTroops + ((foundTroops == 1) ? " Dorf " : " Dörfern ") + " in die Truppenübersicht eingetragen.", NotifierFrame.NOTIFY_INFO);
             }
         }
+        
+        //update selected group, if any
+        if(groupName != null && !groupName.equals(getVariable("groups.all"))){
+        	Hashtable<String, List<Village>> groupTable = new Hashtable<>();
+        	groupTable.put(groupName, villages);
+        	DSWorkbenchMainFrame.getSingleton().fireGroupParserEvent(groupTable);
+        }
+        
         TroopsManager.getSingleton().revalidate(retValue);
         return retValue;
     }
 
-    private static Village extractVillage(String pLine) {
+    private Village extractVillage(String pLine) {
         //tokenize line by tab and space
         StringTokenizer elemTok = new StringTokenizer(pLine, " \t");
         //try to find village line
@@ -183,15 +222,15 @@ public class TroopsParser implements SilentParserInterface {
                         String[] split = coord.trim().split("[(\\|)]");
                         return DataHolder.getSingleton().getVillages()[Integer.parseInt(split[0])][Integer.parseInt(split[1])];
                     }
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                 }
             }
         }
         return null;
     }
 
-    private static int[] parseUnits(String pLine) {
-        String line = pLine.replaceAll(ParserVariableManager.getSingleton().getProperty("troops.own"), "").replaceAll(ParserVariableManager.getSingleton().getProperty("troops.commands"), "").replaceAll(ParserVariableManager.getSingleton().getProperty("troops"), "");
+    private int[] parseUnits(String pLine) {
+        String line = pLine.replaceAll(getVariable("troops.own"), "").replaceAll(getVariable("troops.commands"), "").replaceAll(getVariable("troops"), "");
         StringTokenizer t = new StringTokenizer(line, " \t");
         int uCount = DataHolder.getSingleton().getUnits().size();
         int[] units = new int[uCount];
@@ -209,6 +248,11 @@ public class TroopsParser implements SilentParserInterface {
         }
         return units;
     }
+
+    private String getVariable(String pProperty) {
+        return ParserVariableManager.getSingleton().getProperty(pProperty);
+    }
+    
 
     public static void main(String[] args) {
 

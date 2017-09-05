@@ -15,42 +15,27 @@
  */
 package de.tor.tribes.io;
 
-import de.tor.tribes.types.ext.Ally;
-import de.tor.tribes.types.ext.Barbarians;
-import de.tor.tribes.types.test.DummyUnit;
-import de.tor.tribes.types.ext.InvalidTribe;
-import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.UnknownUnit;
 import de.tor.tribes.types.ext.*;
+import de.tor.tribes.types.test.DummyUnit;
 import de.tor.tribes.ui.views.DSWorkbenchSettingsDialog;
 import de.tor.tribes.util.Constants;
+import de.tor.tribes.util.GlobalDefaults;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.xml.JaxenUtils;
-import java.awt.Point;
-import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.StringTokenizer;
-import java.util.zip.GZIPInputStream;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.jdom.Document;
 import org.jdom.Element;
+
+import java.awt.*;
+import java.io.*;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.*;
+import java.util.List;
+import java.util.zip.GZIPInputStream;
 
 /**
  * @author Charon
@@ -58,8 +43,8 @@ import org.jdom.Element;
 public class DataHolder {
 
   private static Logger logger = Logger.getLogger("DataManager");
-  private final int ID_OFF = 0;
-  private final int ID_DEF = 1;
+  private static final int ID_OFF = 0;
+  private static final int ID_DEF = 1;
   private Village[][] mVillages = null;
   private Hashtable<Integer, Village> mVillagesTable = null;
   private Hashtable<Integer, Ally> mAllies = null;
@@ -84,7 +69,7 @@ public class DataHolder {
   }
 
   DataHolder() {
-    mListeners = new LinkedList<DataHolderListener>();
+    mListeners = new LinkedList<>();
     initialize();
   }
 
@@ -100,14 +85,14 @@ public class DataHolder {
     removeTempData();
 
     mVillages = new Village[1000][1000];
-    mVillagesTable = new Hashtable<Integer, Village>();
-    mAllies = new Hashtable<Integer, Ally>();
-    mTribes = new Hashtable<Integer, Tribe>();
-    mTribesByName = new Hashtable<String, Tribe>();
-    mAlliesByName = new Hashtable<String, Ally>();
-    mAlliesByTagName = new Hashtable<String, Ally>();
-    mUnitsByName = new Hashtable<String, UnitHolder>();
-    mUnits = new LinkedList<UnitHolder>();
+    mVillagesTable = new Hashtable<>();
+    mAllies = new Hashtable<>();
+    mTribes = new Hashtable<>();
+    mTribesByName = new Hashtable<>();
+    mAlliesByName = new Hashtable<>();
+    mAlliesByTagName = new Hashtable<>();
+    mUnitsByName = new Hashtable<>();
+    mUnits = new LinkedList<>();
     DATA_VALID = false;
   }
 
@@ -379,6 +364,9 @@ public class DataHolder {
       fireDataLoadedEvents(false);
       return false;
     }
+    
+    //reinitialise defaults because of changed units
+    GlobalDefaults.reinit();
     return true;
   }
 
@@ -599,7 +587,7 @@ public class DataHolder {
       String dataDir = Constants.SERVER_DIR + "/" + pServer;
       BufferedReader r = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(dataDir + "/tribe.txt.gz"))));
       if (pTribes == null) {
-        pTribes = new Hashtable<Integer, Tribe>();
+        pTribes = new Hashtable<>();
       }
       String line;
 
@@ -627,7 +615,7 @@ public class DataHolder {
       String dataDir = Constants.SERVER_DIR + "/" + GlobalOptions.getSelectedServer();
       BufferedReader r = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(dataDir + "/ally.txt.gz"))));
       if (pAllies == null) {
-        pAllies = new Hashtable<Integer, Ally>();
+        pAllies = new Hashtable<>();
       }
       String line;
 
@@ -996,9 +984,9 @@ public class DataHolder {
    * Merge all data into the village data structure to ease searching
    */
   private void mergeData() {
-    for (int i = 0; i < mVillages.length; i++) {
+    for (Village[] mVillage : mVillages) {
       for (int j = 0; j < mVillages[0].length; j++) {
-        Village current = mVillages[i][j];
+        Village current = mVillage[j];
         if (current != null) {
           //set tribe of village
           Tribe t = mTribes.get(current.getTribeID());
@@ -1024,7 +1012,7 @@ public class DataHolder {
 
     logger.debug("Removing empty allies");
     Enumeration<Integer> allyKeys = mAllies.keys();
-    List<Ally> toRemove = new LinkedList<Ally>();
+    List<Ally> toRemove = new LinkedList<>();
     while (allyKeys.hasMoreElements()) {
       Ally a = mAllies.get(allyKeys.nextElement());
       if (a.getTribes() == null || a.getTribes().length == 0) {
@@ -1073,7 +1061,7 @@ public class DataHolder {
       if (sum % 500 == 0) {
         try {
           Thread.sleep(50);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
       }
     }
@@ -1082,11 +1070,11 @@ public class DataHolder {
     tempWriter.flush();
     try {
       isr.close();
-    } catch (Exception e) {
+    } catch (Exception ignored) {
     }
     try {
       tempWriter.close();
-    } catch (Exception e) {
+    } catch (Exception ignored) {
     }
   }
 
@@ -1158,11 +1146,11 @@ public class DataHolder {
    * @TODO Blocking added again due to obvious deadlock....keep an eye on it!
    */
   public synchronized Village[][] getVillages() {
-    if (isLoading()) {
+      if (loading) {
       //block getting villages while loading to avoid nullpointer exceptions
       try {
         Thread.sleep(50);
-      } catch (InterruptedException ie) {
+      } catch (InterruptedException ignored) {
       }
     }
     return mVillages;
@@ -1270,13 +1258,13 @@ public class DataHolder {
   }
 
   public List<Village> getVillagesInRegion(Point pStart, Point pEnd) {
-    List<Village> marked = new ArrayList<Village>();
+    List<Village> marked = new ArrayList<>();
     try {
       int xStart = (pStart.x < pEnd.x) ? pStart.x : pEnd.x;
       int xEnd = (pEnd.x > pStart.x) ? pEnd.x : pStart.x;
       int yStart = (pStart.y < pEnd.y) ? pStart.y : pEnd.y;
       int yEnd = (pEnd.y > pStart.y) ? pEnd.y : pStart.y;
-      boolean showBarbarian = GlobalOptions.getProperties().getBoolean("show.barbarian", true);
+      boolean showBarbarian = GlobalOptions.getProperties().getBoolean("show.barbarian");
       for (int x = xStart; x <= xEnd; x++) {
         for (int y = yStart; y <= yEnd; y++) {
           Village v = getVillages()[x][y];
@@ -1300,11 +1288,11 @@ public class DataHolder {
    * Get villages as a hashtable ordered by IDs
    */
   public synchronized Hashtable<Integer, Village> getVillagesById() {
-    if (isLoading()) {
+      if (loading) {
       //block getting villages while loading to avoid nullpointer exceptions
       try {
         Thread.sleep(50);
-      } catch (InterruptedException ie) {
+      } catch (InterruptedException ignored) {
       }
     }
     return mVillagesTable;

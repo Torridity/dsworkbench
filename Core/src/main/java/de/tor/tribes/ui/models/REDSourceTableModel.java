@@ -36,7 +36,7 @@ public class REDSourceTableModel extends AbstractTableModel {
     Class[] types = new Class[]{
         Village.class, StorageStatus.class, Integer.class, String.class, String.class
     };
-    private final List<VillageMerchantInfo> elements = new LinkedList<VillageMerchantInfo>();
+    private final List<VillageMerchantInfo> elements = new LinkedList<>();
     
     public void addRow(final Village pVillage, int pStash, int pWood, int pClay, int pIron, int pAvailableMerchants, int pMerchants, int pAvailableFarm, int pOverallFarm, VillageMerchantInfo.Direction pDirection) {
         Object result = CollectionUtils.find(elements, new Predicate() {

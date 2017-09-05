@@ -51,7 +51,7 @@ public class JarHasher {
             JarEntry entry = jarin2.getNextJarEntry();
             while (entry != null) {
                 if (!entry.isDirectory()) {
-                    props.put(entry.getName(), new Long(entry.getCrc()).toString());
+                    props.put(entry.getName(), Long.toString(entry.getCrc()));
                 }
                 entry = jarin2.getNextJarEntry();
             }

@@ -68,42 +68,56 @@ public class TroopsTableModel extends AbstractTableModel {
 
     @Override
     public final void fireTableStructureChanged() {
-        content = new ArrayList<COL_CONTENT>();
+        content = new ArrayList<>();
         content.add(COL_CONTENT.TRIBE);
         content.add(COL_CONTENT.VILLAGE);
         content.add(COL_CONTENT.LAST_CHANGE);
-        columnIcons = new HashMap<String, ImageIcon>();
+        columnIcons = new HashMap<>();
         columnIcons.put("Spieler", null);
         columnIcons.put("Dorf", null);
         columnIcons.put("Stand", null);
 
         for (UnitHolder pUnit : DataHolder.getSingleton().getUnits()) {
-            if (pUnit.getPlainName().equals("spear")) {
-                content.add(COL_CONTENT.SPEAR);
-            } else if (pUnit.getPlainName().equals("sword")) {
-                content.add(COL_CONTENT.SWORD);
-            } else if (pUnit.getPlainName().equals("axe")) {
-                content.add(COL_CONTENT.AXE);
-            } else if (pUnit.getPlainName().equals("archer")) {
-                content.add(COL_CONTENT.ARCHER);
-            } else if (pUnit.getPlainName().equals("spy")) {
-                content.add(COL_CONTENT.SPY);
-            } else if (pUnit.getPlainName().equals("light")) {
-                content.add(COL_CONTENT.LIGHT);
-            } else if (pUnit.getPlainName().equals("marcher")) {
-                content.add(COL_CONTENT.MARCHER);
-            } else if (pUnit.getPlainName().equals("heavy")) {
-                content.add(COL_CONTENT.HEAVY);
-            } else if (pUnit.getPlainName().equals("ram")) {
-                content.add(COL_CONTENT.RAM);
-            } else if (pUnit.getPlainName().equals("catapult")) {
-                content.add(COL_CONTENT.CATA);
-            } else if (pUnit.getPlainName().equals("snob")) {
-                content.add(COL_CONTENT.SNOB);
-            } else if (pUnit.getPlainName().equals("knight")) {
-                content.add(COL_CONTENT.KNIGHT);
-            } else if (pUnit.getPlainName().equals("militia")) {
-                content.add(COL_CONTENT.MILITIA);
+            switch (pUnit.getPlainName()) {
+                case "spear":
+                    content.add(COL_CONTENT.SPEAR);
+                    break;
+                case "sword":
+                    content.add(COL_CONTENT.SWORD);
+                    break;
+                case "axe":
+                    content.add(COL_CONTENT.AXE);
+                    break;
+                case "archer":
+                    content.add(COL_CONTENT.ARCHER);
+                    break;
+                case "spy":
+                    content.add(COL_CONTENT.SPY);
+                    break;
+                case "light":
+                    content.add(COL_CONTENT.LIGHT);
+                    break;
+                case "marcher":
+                    content.add(COL_CONTENT.MARCHER);
+                    break;
+                case "heavy":
+                    content.add(COL_CONTENT.HEAVY);
+                    break;
+                case "ram":
+                    content.add(COL_CONTENT.RAM);
+                    break;
+                case "catapult":
+                    content.add(COL_CONTENT.CATA);
+                    break;
+                case "snob":
+                    content.add(COL_CONTENT.SNOB);
+                    break;
+                case "knight":
+                    content.add(COL_CONTENT.KNIGHT);
+                    break;
+                case "militia":
+                    content.add(COL_CONTENT.MILITIA);
+                    break;
             }
             columnIcons.put(pUnit.getName(), ImageManager.getUnitIcon(pUnit));
         }
@@ -354,43 +368,43 @@ public class TroopsTableModel extends AbstractTableModel {
         }
         switch (colContent) {
             case SPEAR:
-                h.getTroops().put(DataHolder.getSingleton().getUnitByPlainName("spear"), val.intValue());
+                h.getTroops().put(DataHolder.getSingleton().getUnitByPlainName("spear"), val);
                 break;
             case SWORD:
-                h.getTroops().put(DataHolder.getSingleton().getUnitByPlainName("sword"), val.intValue());
+                h.getTroops().put(DataHolder.getSingleton().getUnitByPlainName("sword"), val);
                 break;
             case AXE:
-                h.getTroops().put(DataHolder.getSingleton().getUnitByPlainName("axe"), val.intValue());
+                h.getTroops().put(DataHolder.getSingleton().getUnitByPlainName("axe"), val);
                 break;
             case ARCHER:
-                h.getTroops().put(DataHolder.getSingleton().getUnitByPlainName("archer"), val.intValue());
+                h.getTroops().put(DataHolder.getSingleton().getUnitByPlainName("archer"), val);
                 break;
             case SPY:
-                h.getTroops().put(DataHolder.getSingleton().getUnitByPlainName("spy"), val.intValue());
+                h.getTroops().put(DataHolder.getSingleton().getUnitByPlainName("spy"), val);
                 break;
             case LIGHT:
-                h.getTroops().put(DataHolder.getSingleton().getUnitByPlainName("light"), val.intValue());
+                h.getTroops().put(DataHolder.getSingleton().getUnitByPlainName("light"), val);
                 break;
             case MARCHER:
-                h.getTroops().put(DataHolder.getSingleton().getUnitByPlainName("marcher"), val.intValue());
+                h.getTroops().put(DataHolder.getSingleton().getUnitByPlainName("marcher"), val);
                 break;
             case HEAVY:
-                h.getTroops().put(DataHolder.getSingleton().getUnitByPlainName("heavy"), val.intValue());
+                h.getTroops().put(DataHolder.getSingleton().getUnitByPlainName("heavy"), val);
                 break;
             case RAM:
-                h.getTroops().put(DataHolder.getSingleton().getUnitByPlainName("ram"), val.intValue());
+                h.getTroops().put(DataHolder.getSingleton().getUnitByPlainName("ram"), val);
                 break;
             case CATA:
-                h.getTroops().put(DataHolder.getSingleton().getUnitByPlainName("catapult"), val.intValue());
+                h.getTroops().put(DataHolder.getSingleton().getUnitByPlainName("catapult"), val);
                 break;
             case KNIGHT:
-                h.getTroops().put(DataHolder.getSingleton().getUnitByPlainName("knight"), val.intValue());
+                h.getTroops().put(DataHolder.getSingleton().getUnitByPlainName("knight"), val);
                 break;
             case MILITIA:
-                h.getTroops().put(DataHolder.getSingleton().getUnitByPlainName("militia"), val.intValue());
+                h.getTroops().put(DataHolder.getSingleton().getUnitByPlainName("militia"), val);
                 break;
             case SNOB:
-                h.getTroops().put(DataHolder.getSingleton().getUnitByPlainName("snob"), val.intValue());
+                h.getTroops().put(DataHolder.getSingleton().getUnitByPlainName("snob"), val);
                 break;
         }
         //update troops layer

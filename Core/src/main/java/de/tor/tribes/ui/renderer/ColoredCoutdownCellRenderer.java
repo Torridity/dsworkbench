@@ -28,7 +28,7 @@ import org.jdesktop.swingx.renderer.DefaultTableRenderer;
  */
 public class ColoredCoutdownCellRenderer extends DefaultTableRenderer {
 
-    private final int MINUTE = (1000 * 60);
+    private static final int MINUTE = (1000 * 60);
 
     public ColoredCoutdownCellRenderer() {
         super();

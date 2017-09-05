@@ -34,7 +34,8 @@ import java.awt.image.BufferedImage;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import javax.swing.JFrame;
+import javax.swing.*;
+
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
 
@@ -45,7 +46,7 @@ import org.apache.log4j.Logger;
 public class VillageOverviewMapPanel extends javax.swing.JPanel {
 
     private Color[][] colors = new Color[1000][1000];
-    private Hashtable<Shape, Color> additionalShapes = new Hashtable<Shape, Color>();
+    private Hashtable<Shape, Color> additionalShapes = new Hashtable<>();
     private int upperLeftContinent = -1;
     private int continentsInXAndY = -1;
     private int minCol = -1;
@@ -223,7 +224,7 @@ public class VillageOverviewMapPanel extends javax.swing.JPanel {
     public static void main(String[] args) {
         JFrame f = new JFrame();
         f.setSize(300, 300);
-        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         VillageOverviewMapPanel p = new VillageOverviewMapPanel();
         Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
         GlobalOptions.setSelectedServer("de43");

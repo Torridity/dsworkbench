@@ -219,7 +219,7 @@ public class AttackTableModel extends AbstractTableModel {
                     break;
                 }
             }
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         AttackManager.getSingleton().revalidate(sPlan, true);
     }

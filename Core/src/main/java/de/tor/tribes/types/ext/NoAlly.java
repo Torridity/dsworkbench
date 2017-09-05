@@ -36,7 +36,7 @@ public class NoAlly extends Ally {
     }
     
     public NoAlly() {
-        tribes = new LinkedList<Tribe>();
+        tribes = new LinkedList<>();
     }
     
     public void reset() {

@@ -108,15 +108,15 @@ public class ResourceDistributorWizard extends WizardPanelProvider {
                 try {
                     GlobalOptions.addProperty("red.width", Integer.toString(parent.getWidth()));
                     GlobalOptions.addProperty("red.height", Integer.toString(parent.getHeight()));
-                } catch (Exception ex) {
+                } catch (Exception ignored) {
                 }
                 super.windowClosing(e);
                 parent = null;
             }
         });
         parent.pack();
-        int w = GlobalOptions.getProperties().getInt("red.width", 0);
-        int h = GlobalOptions.getProperties().getInt("red.height", 0);
+        int w = GlobalOptions.getProperties().getInt("red.width");
+        int h = GlobalOptions.getProperties().getInt("red.height");
         if (w != 0 && h != 0) {
             parent.setSize(w, h);
         }
@@ -133,7 +133,7 @@ public class ResourceDistributorWizard extends WizardPanelProvider {
         try {
             // UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
 
         Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));

@@ -42,13 +42,13 @@ public class AttackToTextWriter {
 
     public static boolean writeAttacks(Attack[] pAttacks, File pPath, int pAttacksPerFile, boolean pExtendedInfo, boolean pZipResults) {
 
-        Hashtable<Tribe, List<Attack>> attacks = new Hashtable<Tribe, List<Attack>>();
+        Hashtable<Tribe, List<Attack>> attacks = new Hashtable<>();
 
         for (Attack a : pAttacks) {
             Tribe t = a.getSource().getTribe();
             List<Attack> attsForTribe = attacks.get(t);
             if (attsForTribe == null) {
-                attsForTribe = new LinkedList<Attack>();
+                attsForTribe = new LinkedList<>();
                 attacks.put(t, attsForTribe);
             }
             attsForTribe.add(a);
@@ -58,10 +58,10 @@ public class AttackToTextWriter {
         for (Entry<Tribe, List<Attack>> entry : entries) {
             Tribe t = entry.getKey();
             List<Attack> tribeAttacks = entry.getValue();
-            List<String> blocks = new LinkedList<String>();
+            List<String> blocks = new LinkedList<>();
 
             while (!tribeAttacks.isEmpty()) {
-                List<Attack> attsForBlock = new LinkedList<Attack>();
+                List<Attack> attsForBlock = new LinkedList<>();
                 for (int i = 0; i < pAttacksPerFile; i++) {
                     if (!tribeAttacks.isEmpty()) {
                         attsForBlock.add(tribeAttacks.remove(0));

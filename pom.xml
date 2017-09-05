@@ -1,20 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>de.tor.dswb</groupId>
     <artifactId>dsworkbench</artifactId>
     <name>DSWorkbench</name>
     <packaging>pom</packaging>
-    <version>3.43</version>
+    <version>3.45</version>
 
     <description>
-        Parent project for DS Workbench. The project contains two modules: core and plugins which are put together during the assembly process.
+        Parent project for DS Workbench. The project contains two modules: core and plugins which are put together
+        during the assembly process.
         Furthermore, all dependencies are managed by this parent project.
     </description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <release.version>3.43</release.version>
+        <release.version>3.45</release.version>
     </properties>
 
     <repositories>
@@ -54,11 +56,11 @@
             <artifactId>commons-io</artifactId>
             <version>2.0.1</version>
         </dependency>
-        <dependency>
-            <groupId>commons-configuration</groupId>
-            <artifactId>commons-configuration</artifactId>
-            <version>1.9</version>
-        </dependency>
+	<dependency>
+	    <groupId>commons-configuration</groupId>
+	    <artifactId>commons-configuration</artifactId>
+	    <version>1.10</version>
+	</dependency>
         <dependency>
             <groupId>commons-collections</groupId>
             <artifactId>commons-collections</artifactId>
@@ -260,7 +262,7 @@
                     This is important due to configuration files which may
                     occur more than once. -->
                     <endorsedDir>lib</endorsedDir>
-                    <preAssembleDir></preAssembleDir>
+                    <!--suppress MavenModelInspection -->
                     <!-- This solved my problem configuring the logback. -->
                     <extraJvmArguments>-Dlog4j.configuration=@BASEDIR@/log4j.xml -Xmx512m</extraJvmArguments>
                     <platforms>

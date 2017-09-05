@@ -46,8 +46,8 @@ public class Note extends ManageableType implements BBSupport {
     private int mapMarker = 0;
 
     public Note() {
-        villageIds = new LinkedList<Integer>();
-        setTimestamp(System.currentTimeMillis());
+        villageIds = new LinkedList<>();
+        timestamp = System.currentTimeMillis();
         sNoteText = "";
     }
 
@@ -84,18 +84,14 @@ public class Note extends ManageableType implements BBSupport {
                             if (v != null) {
                                 m.addVillage(v);
                             }
-                        } catch (NumberFormatException nfe1) {
+                        } catch (NumberFormatException ignored) {
                         }
                     }
                 }
             } else {
                 //no villages
             }
-        } catch (NumberFormatException nfe) {
-            m = null;
-        } catch (IllegalArgumentException iae) {
-            m = null;
-        } catch (UnsupportedEncodingException usee) {
+        } catch (UnsupportedEncodingException | IllegalArgumentException nfe) {
             m = null;
         }
         return m;
@@ -105,7 +101,7 @@ public class Note extends ManageableType implements BBSupport {
     @SuppressWarnings("unchecked")
     public void loadFromXml(Element e) {
 
-        setTimestamp(Long.parseLong(e.getChild("timestamp").getText()));
+        timestamp = Long.parseLong(e.getChild("timestamp").getText());
         setMapMarker(Integer.parseInt(e.getChild("mapMarker").getText()));
         setNoteSymbol(Integer.parseInt(e.getChild("noteSymbol").getText()));
         try {
@@ -114,7 +110,7 @@ public class Note extends ManageableType implements BBSupport {
             setNoteText("FEHLER");
         }
         for (Element elem : (List<Element>) JaxenUtils.getNodes(e, "villages/village")) {
-            getVillageIds().add(Integer.parseInt(elem.getValue()));
+            villageIds.add(Integer.parseInt(elem.getValue()));
         }
 
     }
@@ -124,12 +120,12 @@ public class Note extends ManageableType implements BBSupport {
         StringBuilder result = new StringBuilder();
         try {
             result.append("<note>\n");
-            result.append("<timestamp>").append(getTimestamp()).append("</timestamp>\n");
-            result.append("<mapMarker>").append(getMapMarker()).append("</mapMarker>\n");
-            result.append("<noteSymbol>").append(getNoteSymbol()).append("</noteSymbol>\n");
+            result.append("<timestamp>").append(timestamp).append("</timestamp>\n");
+            result.append("<mapMarker>").append(mapMarker).append("</mapMarker>\n");
+            result.append("<noteSymbol>").append(noteSymbol).append("</noteSymbol>\n");
             result.append("<text>").append(URLEncoder.encode(getNoteText(), "UTF-8")).append("</text>\n");
             result.append("<villages>\n");
-            for (Integer id : getVillageIds()) {
+            for (Integer id : villageIds) {
                 result.append("<village>").append(id).append("</village>\n");
             }
             result.append("</villages>\n");
@@ -143,7 +139,7 @@ public class Note extends ManageableType implements BBSupport {
     public String toBBCode() {
         StringBuilder buffer = new StringBuilder();
         buffer.append("[quote][b]Notiz vom:[/b] ");
-        buffer.append(new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss").format(new Date(getTimestamp())));
+        buffer.append(new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss").format(new Date(timestamp)));
         buffer.append("\n\n");
         buffer.append("[b]Zugeordnete Dörfer:[/b]\n\n");
         boolean isNext = false;
@@ -156,8 +152,8 @@ public class Note extends ManageableType implements BBSupport {
             isNext = true;
         }
         buffer.append("\n\n");
-        if (getNoteSymbol() != -1) {
-            buffer.append("[b]Notizsymbol:[/b] [img]").append(ImageManager.getNoteImageURLOnServer(getNoteSymbol())).append("[/img]\n\n");
+        if (noteSymbol != -1) {
+            buffer.append("[b]Notizsymbol:[/b] [img]").append(ImageManager.getNoteImageURLOnServer(noteSymbol)).append("[/img]\n\n");
         }
         buffer.append("[b]Notiztext:[/b]\n\n");
         buffer.append(getNoteText());
@@ -182,11 +178,11 @@ public class Note extends ManageableType implements BBSupport {
         if (sNoteText != null) {
             if (!sNoteText.equals(pText)) {
                 sNoteText = pText;
-                setTimestamp(System.currentTimeMillis());
+                timestamp = System.currentTimeMillis();
             }
         } else {
             sNoteText = pText;
-            setTimestamp(System.currentTimeMillis());
+            timestamp = System.currentTimeMillis();
         }
     }
 
@@ -210,13 +206,13 @@ public class Note extends ManageableType implements BBSupport {
             return false;
         }
         villageIds.add(v.getId());
-        setTimestamp(System.currentTimeMillis());
+        timestamp = System.currentTimeMillis();
         return true;
     }
 
     public void removeVillage(Village v) {
         villageIds.remove((Integer) v.getId());
-        setTimestamp(System.currentTimeMillis());
+        timestamp = System.currentTimeMillis();
     }
 
     /**
@@ -238,7 +234,7 @@ public class Note extends ManageableType implements BBSupport {
      */
     public void setMapMarker(int mapMarker) {
         this.mapMarker = mapMarker;
-        setTimestamp(System.currentTimeMillis());
+        timestamp = System.currentTimeMillis();
     }
 
     /**
@@ -253,7 +249,7 @@ public class Note extends ManageableType implements BBSupport {
      */
     public void setNoteSymbol(int noteSymbol) {
         this.noteSymbol = noteSymbol;
-        setTimestamp(System.currentTimeMillis());
+        timestamp = System.currentTimeMillis();
     }
 
     @Override
@@ -283,10 +279,10 @@ public class Note extends ManageableType implements BBSupport {
 
     @Override
     public String[] getReplacements(boolean pExtended) {
-        String lastChangeVal = new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss").format(new Date(getTimestamp()));
+        String lastChangeVal = new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss").format(new Date(timestamp));
         String villageVal = "";
 
-        List<Village> villages = new LinkedList<Village>();
+        List<Village> villages = new LinkedList<>();
         for (Integer id : villageIds) {
             Village v = DataHolder.getSingleton().getVillagesById().get(id);
             if (v != null) {
@@ -297,8 +293,8 @@ public class Note extends ManageableType implements BBSupport {
         villageVal = new VillageListFormatter().formatElements(villages, pExtended);
 
         String noteSymbolVal = "";
-        if (getNoteSymbol() != -1) {
-            noteSymbolVal = "[img]" + ImageManager.getNoteImageURLOnServer(getNoteSymbol()) + "[/img]";
+        if (noteSymbol != -1) {
+            noteSymbolVal = "[img]" + ImageManager.getNoteImageURLOnServer(noteSymbol) + "[/img]";
         } else {
             noteSymbolVal = "-kein Symbol-";
         }

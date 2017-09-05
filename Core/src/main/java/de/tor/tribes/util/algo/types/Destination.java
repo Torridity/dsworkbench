@@ -23,11 +23,11 @@ package de.tor.tribes.util.algo.types;
  * about the Orders, since Orders are managed by the Sources (see stp.Source).
  *
  * @author Robert Nitsch <dev@robertnitsch.de>
- * @see stp.Source
+ * @see Source
  */
 public interface Destination {
 
-    public String toString();
+    String toString();
 
     /**
      * Returns the amount of wares which are still needed.
@@ -37,14 +37,14 @@ public interface Destination {
      *
      * @return
      */
-    public int remainingNeeds();
+    int remainingNeeds();
 
     /**
      * Increases the amount of ordered wares.
      *
      * @param amount the amount to add
      */
-    public void addOrdered(int amount);
+    void addOrdered(int amount);
 
     /**
      * Returns the original (!) need of wares. Independent from the amount of
@@ -52,6 +52,6 @@ public interface Destination {
      *
      * @return
      */
-    public int getNeeded();
+    int getNeeded();
 }
 

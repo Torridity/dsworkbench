@@ -58,7 +58,7 @@ public class FarmManager extends GenericManager<FarmInformation> {
 
   FarmManager() {
     super(false);
-    infoMap = new Hashtable<Village, FarmInformation>();
+    infoMap = new Hashtable<>();
   }
 
   public FarmInformation addFarm(Village pVillage) {
@@ -98,7 +98,7 @@ public class FarmManager extends GenericManager<FarmInformation> {
     try {
       String data = (String) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null).getTransferData(DataFlavor.stringFlavor);
       List<Village> villages = PluginManager.getSingleton().executeVillageParser(data);
-      List<Village> handled = new LinkedList<Village>();
+      List<Village> handled = new LinkedList<>();
 
       for (Village farm : villages) {
         if (farm != null && !handled.contains(farm) && farm.getTribe().equals(Barbarians.getSingleton())) {
@@ -115,14 +115,10 @@ public class FarmManager extends GenericManager<FarmInformation> {
           }
         }
       }
-    } catch (HeadlessException he) {
+    } catch (HeadlessException | IOException | UnsupportedFlavorException he) {
       logger.error("Failed to find farms in clipboard", he);
-    } catch (UnsupportedFlavorException ufe) {
-      logger.error("Failed to find farms in clipboard", ufe);
-    } catch (IOException ioe) {
-      logger.error("Failed to find farms in clipboard", ioe);
     }
-    return addCount;
+      return addCount;
   }
 
   public int findFarmsInReports(boolean pAllowAloneTribes, boolean pAllowTribesInAllies, boolean pAllowTribesInOwnAlly) {
@@ -131,11 +127,11 @@ public class FarmManager extends GenericManager<FarmInformation> {
 
   public int findFarmsInReports(String pReportSet, boolean pAllowAloneTribes, boolean pAllowTribesInAllies, boolean pAllowTribesInOwnAlly) {
     int addCount = 0;
-    List<Village> handled = new LinkedList<Village>();
+    List<Village> handled = new LinkedList<>();
     Tribe yourTribe = GlobalOptions.getSelectedProfile().getTribe();
     invalidate();
     //get all groups but the farm group itself
-    List<String> searchInGroups = new LinkedList<String>();
+    List<String> searchInGroups = new LinkedList<>();
     if (pReportSet == null) {
       for (String group : ReportManager.getSingleton().getGroups()) {
         if (!group.equals(ReportManager.FARM_SET)) {
@@ -149,7 +145,7 @@ public class FarmManager extends GenericManager<FarmInformation> {
     for (ManageableType t : ReportManager.getSingleton().getAllElements(searchInGroups)) {
       FightReport report = (FightReport) t;
       Village target = report.getTargetVillage();
-      if (report.isWon() && !(report.getTargetVillage().getTribe().getId() == yourTribe.getId())) {
+      if (report.isWon() && !(target.getTribe().getId() == yourTribe.getId())) {
         boolean allowed;
         if (report.getTargetVillage().getTribe().getAlly() != null && report.getTargetVillage().getTribe().getAlly().equals(yourTribe.getAlly())) {
           //own ally
@@ -169,7 +165,7 @@ public class FarmManager extends GenericManager<FarmInformation> {
             allowed = true;
           }
         }
-
+        
         if (allowed) {
           if (!handled.contains(target)) {//add farm
             FarmInformation info = addFarm(target);

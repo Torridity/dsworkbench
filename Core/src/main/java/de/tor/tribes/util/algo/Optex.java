@@ -20,7 +20,6 @@ import de.tor.tribes.util.algo.types.Destination;
 import de.tor.tribes.util.algo.types.Order;
 import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.Iterator;
 
 /*
  * Its constructor takes sources, destinations and costs (an array of Hashtables).
@@ -109,9 +108,7 @@ public class Optex<S extends Source, D extends Destination> {
                     for (S s2 : this.sources) {
                         if (s2.getOrdered() > 0) {
                             //    System.out.println("HAVE ORDER");
-                            Iterator<Order> i = s2.getOrders().iterator();
-                            while (i.hasNext()) {
-                                Order o = i.next();
+                            for (Order o : s2.getOrders()) {
                                 int val = o.getAmount();
                                 if (val > 0) {
                                     Destination o_d = o.getDestination();
@@ -151,9 +148,9 @@ public class Optex<S extends Source, D extends Destination> {
          * Make copies of the sources and destinations lists.
          * The algorithm will work with those copies.
          */
-        ArrayList<Source> _sources = new ArrayList<Source>(this.sources.size());
+        ArrayList<Source> _sources = new ArrayList<>(this.sources.size());
         _sources.addAll(this.sources);
-        ArrayList<Destination> _destinations = new ArrayList<Destination>(this.destinations.size());
+        ArrayList<Destination> _destinations = new ArrayList<>(this.destinations.size());
         _destinations.addAll(this.destinations);
 
         while (!_sources.isEmpty() && !_destinations.isEmpty()) {
@@ -169,17 +166,15 @@ public class Optex<S extends Source, D extends Destination> {
             Source biggest_s = _sources.get(0);
             Destination biggest_s_d = _destinations.get(0);
 
-            Iterator<Source> it = _sources.iterator();
-            while (it.hasNext()) {
-                Source _source = it.next();
+            for (Source _source : _sources) {
                 if (_source.waresAvailable() == 0) {
                     continue;
                 }
 
                 /* calculate shortest and second shortest costs */
                 double _costs = 999999.0;
-                Double lowest_cost = (Double) 99999.0;
-                Double lowest_cost2 = (Double) 999999.0;
+                Double lowest_cost = 99999.0;
+                Double lowest_cost2 = 999999.0;
                 Destination lowest_cost_d = _destinations.get(0);
                 for (Destination _dest : _destinations) {
                     _costs = this._getCosts(_source, _dest);

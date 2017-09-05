@@ -37,17 +37,17 @@ public class VillageTroopsHolder extends ManageableType implements BBSupport {
     private final static String STANDARD_TEMPLATE = "[table]\n"
             + "[**]%SPEAR_ICON%[||]%SWORD_ICON%[||]%AXE_ICON%[||]%ARCHER_ICON%[||]%SPY_ICON%[||]%LIGHT_ICON%[||]%MARCHER_ICON%[||]%HEAVY_ICON%[||]%RAM_ICON%[||]%CATA_ICON%[||]%SNOB_ICON%[/**]\n";
     private Village village = null;
-    private Hashtable<UnitHolder, Integer> troops = new Hashtable<UnitHolder, Integer>();
+    private Hashtable<UnitHolder, Integer> troops = new Hashtable<>();
     private Date state = null;
 
     @Override
     public void loadFromXml(Element e) {
-        setVillage(DataHolder.getSingleton().getVillagesById().get(Integer.parseInt(e.getChild("id").getText())));
-        setState(new Date(Long.parseLong(e.getChild("state").getText())));
+        this.village = DataHolder.getSingleton().getVillagesById().get(Integer.parseInt(e.getChild("id").getText()));
+        this.state = new Date(Long.parseLong(e.getChild("state").getText()));
 
         Element troopsElement = (Element) JaxenUtils.getNodes(e, "troops").get(0);
 
-        Hashtable<UnitHolder, Integer> hTroops = new Hashtable<UnitHolder, Integer>();
+        Hashtable<UnitHolder, Integer> hTroops = new Hashtable<>();
 
         for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
             try {
@@ -64,20 +64,20 @@ public class VillageTroopsHolder extends ManageableType implements BBSupport {
     }
 
     public VillageTroopsHolder(Village pVillage, Date pState) {
-        troops = new Hashtable<UnitHolder, Integer>();
+        troops = new Hashtable<>();
         for (UnitHolder u : DataHolder.getSingleton().getUnits()) {
             troops.put(u, 0);
         }
-        setVillage(pVillage);
-        setState(pState);
+        this.village = pVillage;
+        this.state = pState;
     }
 
     @Override
     public String toXml() {
         StringBuilder builder = new StringBuilder();
         builder.append("<troopInfo>\n");
-        builder.append("<id>").append(getVillage().getId()).append("</id>\n");
-        builder.append("<state>").append(getState().getTime()).append("</state>\n");
+        builder.append("<id>").append(village.getId()).append("</id>\n");
+        builder.append("<state>").append(state.getTime()).append("</state>\n");
         builder.append("<troops ");
 
         List<UnitHolder> units = DataHolder.getSingleton().getUnits();
@@ -129,7 +129,7 @@ public class VillageTroopsHolder extends ManageableType implements BBSupport {
             farmSpace += troops.get(unit) * unit.getPop();
         }
 
-        int max = GlobalOptions.getProperties().getInt("max.farm.space", 20000);
+        int max = GlobalOptions.getProperties().getInt("max.farm.space");
 
         //calculate farm space depending on pop bonus
         float res = (float) (farmSpace / (double) max);
@@ -223,7 +223,7 @@ public class VillageTroopsHolder extends ManageableType implements BBSupport {
     @Override
     public String toString() {
         String result = "";
-        result += "Village: " + getVillage() + "\n";
+        result += "Village: " + village + "\n";
         Enumeration<UnitHolder> keys = troops.keys();
         result += "Truppen\n";
         while (keys.hasMoreElements()) {
@@ -260,10 +260,10 @@ public class VillageTroopsHolder extends ManageableType implements BBSupport {
 
     @Override
     public String[] getReplacements(boolean pExtended) {
-        Village v = getVillage();
+        Village v = village;
         String villageVal = "-";
         if (v != null) {
-            villageVal = getVillage().toBBCode();
+            villageVal = village.toBBCode();
         }
         String spearIcon = "[unit]spear[/unit]";
         String spearVal = getValueForUnit("spear");

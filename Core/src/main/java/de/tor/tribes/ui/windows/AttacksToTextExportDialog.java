@@ -187,15 +187,12 @@ public class AttacksToTextExportDialog extends javax.swing.JDialog {
     public boolean setupAndShow(List<Attack> pAttacks) {
         attacks = pAttacks.toArray(new Attack[pAttacks.size()]);
         String dir = GlobalOptions.getProperty("screen.dir");
-        if (dir == null) {
-            dir = ".";
-        }
 
         jTargetFolder.setText(new File(dir).getPath());
         String val = GlobalOptions.getProperty("text.attacks.per.file");
-        jAttacksPerFile.setText((val != null) ? val : "10");
-        jUseExtendedBBCode.setSelected(Boolean.parseBoolean(GlobalOptions.getProperty("extended.text.attacks")));
-        jZipResult.setSelected(Boolean.parseBoolean(GlobalOptions.getProperty("zip.text.attacks")));
+        jAttacksPerFile.setText(val);
+        jUseExtendedBBCode.setSelected(GlobalOptions.getProperties().getBoolean("extended.text.attacks"));
+        jZipResult.setSelected(GlobalOptions.getProperties().getBoolean("zip.text.attacks"));
 
         pack();
         setVisible(true);
@@ -205,9 +202,6 @@ public class AttacksToTextExportDialog extends javax.swing.JDialog {
     private void fireShowTargetSelectionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireShowTargetSelectionEvent
 
         String dir = GlobalOptions.getProperty("screen.dir");
-        if (dir == null) {
-            dir = ".";
-        }
         JFileChooser chooser = null;
         try {
             chooser = new JFileChooser(dir);
@@ -280,13 +274,7 @@ public class AttacksToTextExportDialog extends javax.swing.JDialog {
                     break;
                 }
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(AttacksToTextExportDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(AttacksToTextExportDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(AttacksToTextExportDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+        } catch (ClassNotFoundException | javax.swing.UnsupportedLookAndFeelException | IllegalAccessException | InstantiationException ex) {
             java.util.logging.Logger.getLogger(AttacksToTextExportDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>

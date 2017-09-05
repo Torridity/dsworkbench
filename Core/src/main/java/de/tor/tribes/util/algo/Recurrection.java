@@ -43,8 +43,8 @@ public class Recurrection extends AbstractAttackAlgorithm {
 
         List<Village> snobSources = pSources.get(DataHolder.getSingleton().getUnitByPlainName("snob"));
 
-        ArrayList<OffVillage> sources = new ArrayList<OffVillage>();
-        ArrayList<TargetVillage> targets = new ArrayList<TargetVillage>();
+        ArrayList<OffVillage> sources = new ArrayList<>();
+        ArrayList<TargetVillage> targets = new ArrayList<>();
         List<Village> ramSources = pSources.get(DataHolder.getSingleton().getUnitByPlainName("ram"));
 
         for (Village ramSource : ramSources) {
@@ -56,27 +56,27 @@ public class Recurrection extends AbstractAttackAlgorithm {
         }
         Hashtable<Destination, Double> costs[] = new Hashtable[sources.size()];
         for (int i = 0; i < sources.size(); i++) {
-            costs[i] = new Hashtable<Destination, Double>();
-            for (int j = 0; j < targets.size(); j++) {
-                double dist = sources.get(i).distanceTo(targets.get(j));
+            costs[i] = new Hashtable<>();
+            for (TargetVillage target : targets) {
+                double dist = sources.get(i).distanceTo(target);
                 if (pTimeFrame.isMovementPossible(Math.round(dist * 30.0), null)) {
-                    costs[i].put(targets.get(j), sources.get(i).distanceTo(targets.get(j)));
+                    costs[i].put(target, sources.get(i).distanceTo(target));
                 } else {
-                    costs[i].put(targets.get(j), 99999.0);
+                    costs[i].put(target, 99999.0);
                 }
             }
         }
 
 
-        Optex<OffVillage, TargetVillage> optex = new Optex<OffVillage, TargetVillage>(sources, targets, costs);
+        Optex<OffVillage, TargetVillage> optex = new Optex<>(sources, targets, costs);
         try {
             optex.run();
         } catch (Exception e) {
             e.printStackTrace();
-            return new LinkedList<AbstractTroopMovement>();
+            return new LinkedList<>();
         }
 
-        List<AbstractTroopMovement> moves = new LinkedList<AbstractTroopMovement>();
+        List<AbstractTroopMovement> moves = new LinkedList<>();
         for (OffVillage v : sources) {
             for (Order o : v.getOrders()) {
                 if (o.getAmount() > 0) {

@@ -36,7 +36,7 @@ public class DefenseToolModel extends DefaultTableModel {
 
     public DefenseToolModel() {
         super();
-        entries = new ArrayList<DefenseInformation>();
+        entries = new ArrayList<>();
     }
 
     public void clear(boolean pNotify) {

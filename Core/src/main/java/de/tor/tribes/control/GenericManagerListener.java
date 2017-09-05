@@ -21,7 +21,7 @@ package de.tor.tribes.control;
  */
 public interface GenericManagerListener {
 
-    public void dataChangedEvent();
+    void dataChangedEvent();
 
-    public void dataChangedEvent(String pGroup);
+    void dataChangedEvent(String pGroup);
 }

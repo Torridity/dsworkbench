@@ -87,14 +87,14 @@ public class VillageMerchantInfo implements Cloneable {
 
     public VillageMerchantInfo(Village pVillage, int pStashCapacity, int pWoodStock, int pClayStock, int pIronStock, int pAvailMerchants, int pMaxMerchants, int pAvailFarm, int pOverallFarm) {
         setVillage(pVillage);
-        setWoodStock(pWoodStock);
-        setClayStock(pClayStock);
-        setStashCapacity(pStashCapacity);
-        setIronStock(pIronStock);
-        setAvailableMerchants(pAvailMerchants);
-        setOverallMerchants(pMaxMerchants);
-        setAvailableFarm(pAvailFarm);
-        setOverallFarm(pOverallFarm);
+        this.woodStock = pWoodStock;
+        this.clayStock = pClayStock;
+        this.stashCapacity = pStashCapacity;
+        this.ironStock = pIronStock;
+        this.availableMerchants = pAvailMerchants;
+        this.overallMerchants = pMaxMerchants;
+        this.availableFarm = pAvailFarm;
+        this.overallFarm = pOverallFarm;
     }
 
     /**
@@ -118,8 +118,13 @@ public class VillageMerchantInfo implements Cloneable {
         return stashCapacity;
     }
 
-    public void adaptStashCapacity(int pPercent) {
-        setStashCapacity((int) Math.rint(getStashCapacity() * ((pPercent > 100) ? 100 : pPercent) / 100.0));
+    public void adaptStashCapacity(int pPercent){
+    	adaptStashCapacity(pPercent, false);
+    }
+    
+    public void adaptStashCapacity(int pPercent, boolean allowOverflow) {
+    	// allowing overflow might be useful, if (e.g. by some AccountManager) resources are used faster than received
+        this.stashCapacity = (int) Math.rint(stashCapacity * ((pPercent > 100 && !allowOverflow) ? 100 : pPercent) / 100.0);
     }
 
     /**
@@ -202,14 +207,14 @@ public class VillageMerchantInfo implements Cloneable {
     @Override
     public VillageMerchantInfo clone() {
         VillageMerchantInfo info = new VillageMerchantInfo(village, stashCapacity, woodStock, clayStock, ironStock, availableMerchants, overallMerchants, availableFarm, overallFarm);
-        info.setDirection(getDirection());
+        info.setDirection(direction);
         return info;
     }
 
     @Override
     public String toString() {
-        String res = getVillage() + " ";
-        res += getVillage() + ": " + getWoodStock() + ", " + getClayStock() + ", " + getIronStock() + " (" + getStashCapacity() + ") " + getAvailableMerchants() + "/" + getOverallMerchants();
+        String res = village + " ";
+        res += village + ": " + woodStock + ", " + clayStock + ", " + ironStock + " (" + stashCapacity + ") " + availableMerchants + "/" + overallMerchants;
         return res;
     }
 }

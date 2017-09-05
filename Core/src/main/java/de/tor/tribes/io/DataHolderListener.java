@@ -21,6 +21,6 @@ package de.tor.tribes.io;
  */
 public interface DataHolderListener {
 
-    public void fireDataHolderEvent(String pFile);    
-    public void fireDataLoadedEvent(boolean pSuccess);    
+    void fireDataHolderEvent(String pFile);
+    void fireDataLoadedEvent(boolean pSuccess);
 }

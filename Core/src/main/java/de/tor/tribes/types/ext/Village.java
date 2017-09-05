@@ -58,8 +58,8 @@ public class Village implements Comparable<Village>, Serializable, BBSupport {
     @Override
     //@TODO ATTENTION: Workaround...check if this causes errors
     public boolean equals(Object obj) {
-        if (obj instanceof Village && obj != null) {
-            return getId() == ((Village) obj).getId();
+        if (obj != null && obj instanceof Village) {
+            return id == ((Village) obj).getId();
         }
         return super.equals(obj);
     }
@@ -67,8 +67,8 @@ public class Village implements Comparable<Village>, Serializable, BBSupport {
     @Override
     public String[] getReplacements(boolean pExtended) {
         String nameVal = getName();
-        String xVal = Short.toString(getX());
-        String yVal = Short.toString(getY());
+        String xVal = Short.toString(x);
+        String yVal = Short.toString(y);
         int cont = getContinent();
         String contVal = "K" + Integer.toString(cont);
         String fullNameVal = getFullName();
@@ -92,7 +92,7 @@ public class Village implements Comparable<Village>, Serializable, BBSupport {
     }
     public static final Comparator<Village> CASE_INSENSITIVE_ORDER = new CaseInsensitiveComparator();
     public static final Comparator<Village> ALLY_TRIBE_VILLAGE_COMPARATOR = new AllyTribeVillageComparator();
-    public static final Comparator<String> ALPHA_NUM_COMPARATOR = new IntuitiveStringComparator<String>();
+    public static final Comparator<String> ALPHA_NUM_COMPARATOR = new IntuitiveStringComparator<>();
     public final static int ORDER_ALPHABETICALLY = 0;
     public final static int ORDER_BY_COORDINATES = 1;
     private static int orderType = ORDER_ALPHABETICALLY;
@@ -136,7 +136,7 @@ public class Village implements Comparable<Village>, Serializable, BBSupport {
             entry.setId(Integer.parseInt(tokenizer.nextToken()));
             String n = URLDecoder.decode(tokenizer.nextToken(), "UTF-8");
             //replace HTML characters 
-            if (n.indexOf("&") > -1) {
+            if (n.contains("&")) {
                 n = n.replaceAll("&gt;", ">").replaceAll("&lt;", "<").replaceAll("&quot;",
                         "\"").replaceAll("&amp;", "&").replaceAll("&tilde;", "~");
             }
@@ -167,7 +167,7 @@ public class Village implements Comparable<Village>, Serializable, BBSupport {
 
     public String toPlainData() {
         StringBuilder b = new StringBuilder();
-        b.append(getId());
+        b.append(id);
         b.append(",");
         try {
             b.append(URLEncoder.encode(getName(), "UTF-8"));
@@ -175,11 +175,11 @@ public class Village implements Comparable<Village>, Serializable, BBSupport {
             b.append(getName());
         }
         b.append(",");
-        b.append(getX());
+        b.append(x);
         b.append(",");
-        b.append(getY());
+        b.append(y);
         b.append(",");
-        b.append(getTribeID());
+        b.append(tribeID);
         b.append(",");
         b.append(getPoints());
         b.append(",");
@@ -214,10 +214,10 @@ public class Village implements Comparable<Village>, Serializable, BBSupport {
     public String getCoordAsString() {
         if (coordAsString == null) {
             if (ServerSettings.getSingleton().getCoordType() != 2) {
-                int[] hier = DSCalculator.xyToHierarchical((int) getX(), (int) getY());
+                int[] hier = DSCalculator.xyToHierarchical((int) x, (int) y);
                 coordAsString = "(" + hier[0] + ":" + hier[1] + ":" + hier[2] + ")";
             } else {
-                coordAsString = "(" + getX() + "|" + getY() + ")";
+                coordAsString = "(" + x + "|" + y + ")";
             }
         }
         return coordAsString;
@@ -278,9 +278,9 @@ public class Village implements Comparable<Village>, Serializable, BBSupport {
     public int getContinent() {
         if (continent == -1) {
             if (ServerSettings.getSingleton().getCoordType() != 2) {
-                continent = DSCalculator.xyToHierarchical(getX(), getY())[0];
+                continent = DSCalculator.xyToHierarchical(x, y)[0];
             } else {
-                continent = DSCalculator.getContinent(getX(), getY());
+                continent = DSCalculator.getContinent(x, y);
             }
         }
         return continent;
@@ -333,7 +333,7 @@ public class Village implements Comparable<Village>, Serializable, BBSupport {
         int w = GlobalOptions.getSkin().getBasicFieldHeight();
         int h = GlobalOptions.getSkin().getBasicFieldHeight();
         double z = DSWorkbenchMainFrame.getSingleton().getZoomFactor();
-        return new Rectangle2D.Double(getX(), getY(), (double) w / z, (double) h / z);
+        return new Rectangle2D.Double(x, y, (double) w / z, (double) h / z);
     }
 
     @Override
@@ -351,10 +351,10 @@ public class Village implements Comparable<Village>, Serializable, BBSupport {
 
     public String toBBCode() {
         if (ServerSettings.getSingleton().getCoordType() != 2) {
-            int[] hier = DSCalculator.xyToHierarchical(getX(), getY());
+            int[] hier = DSCalculator.xyToHierarchical(x, y);
             return "[coord]" + hier[0] + ":" + hier[1] + ":" + hier[2] + "[/coord]";
         }
-        return "[coord]" + getX() + "|" + getY() + "[/coord]";
+        return "[coord]" + x + "|" + y + "[/coord]";
     }
 
     @Override
@@ -369,16 +369,15 @@ public class Village implements Comparable<Village>, Serializable, BBSupport {
             //   return ALPHA_NUM_COMPARATOR.compare(toString(), o.toString());
         } else {
             try {
-                Village v = o;
 
-                if (getX() < v.getX()) {
+                if (x < o.getX()) {
                     return -1;
-                } else if (getX() > v.getX()) {
+                } else if (x > o.getX()) {
                     return 1;
                 } else {
-                    if (getY() < v.getY()) {
+                    if (y < o.getY()) {
                         return -1;
-                    } else if (getY() > v.getY()) {
+                    } else if (y > o.getY()) {
                         return 1;
                     } else {
                         return 0;

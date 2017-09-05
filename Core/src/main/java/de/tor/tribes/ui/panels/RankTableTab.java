@@ -25,23 +25,6 @@ import de.tor.tribes.util.BrowserCommandSender;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.dsreal.DSRealManager;
-import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.Enumeration;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.regex.Matcher;
-import javax.swing.AbstractAction;
-import javax.swing.RowFilter;
-import javax.swing.RowSorter;
-import javax.swing.RowSorter.SortKey;
-import javax.swing.SortOrder;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableModel;
 import org.apache.log4j.Logger;
 import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.decorator.HighlightPredicate;
@@ -50,6 +33,21 @@ import org.jdesktop.swingx.decorator.PainterHighlighter;
 import org.jdesktop.swingx.decorator.PatternPredicate;
 import org.jdesktop.swingx.painter.MattePainter;
 import org.jdesktop.swingx.table.TableColumnExt;
+
+import javax.swing.*;
+import javax.swing.RowSorter.SortKey;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableModel;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Enumeration;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.regex.Matcher;
 
 /**
  *
@@ -232,10 +230,8 @@ public class RankTableTab extends javax.swing.JPanel implements ListSelectionLis
         }
     }
 
-    /** Creates new form AttackTablePanel
-     * @param pParent
-     * @param pAttackPlan
-     * @param pActionListener
+    /**
+     * Creates new form AttackTablePanel
      */
     public RankTableTab(RANK_TYPE pType, final ActionListener pActionListener) {
         eType = pType;
@@ -263,7 +259,7 @@ public class RankTableTab extends javax.swing.JPanel implements ListSelectionLis
         jxRankTable.setHighlighters(HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B));
         jxRankTable.setColumnControlVisible(true);
         jxRankTable.setModel(theModel);
-        List<SortKey> keys = new LinkedList<SortKey>();
+        List<SortKey> keys = new LinkedList<>();
         keys.add(new RowSorter.SortKey(0, SortOrder.ASCENDING));
         jxRankTable.getRowSorter().setSortKeys(keys);
         jxRankTable.setDefaultRenderer(Integer.class, new NumberFormatCellRenderer());
@@ -406,7 +402,7 @@ public class RankTableTab extends javax.swing.JPanel implements ListSelectionLis
         }
         if (!pFilterRows) {
             jxRankTable.setRowFilter(null);
-            final List<Integer> relevantCols = new LinkedList<Integer>();
+            final List<Integer> relevantCols = new LinkedList<>();
             List<TableColumn> cols = jxRankTable.getColumns(true);
             for (int i = 0; i < jxRankTable.getColumnCount(); i++) {
                 TableColumnExt col = jxRankTable.getColumnExt(i);
@@ -425,7 +421,7 @@ public class RankTableTab extends javax.swing.JPanel implements ListSelectionLis
 
                 @Override
                 public boolean include(Entry<? extends TableModel, ? extends Integer> entry) {
-                    final List<Integer> relevantCols = new LinkedList<Integer>();
+                    final List<Integer> relevantCols = new LinkedList<>();
                     List<TableColumn> cols = jxRankTable.getColumns(true);
                     for (int i = 0; i < jxRankTable.getColumnCount(); i++) {
                         TableColumnExt col = jxRankTable.getColumnExt(i);
@@ -436,11 +432,11 @@ public class RankTableTab extends javax.swing.JPanel implements ListSelectionLis
 
                     for (Integer col : relevantCols) {
                         if (pCaseSensitive) {
-                            if (entry.getStringValue(col).indexOf(pValue) > -1) {
+                            if (entry.getStringValue(col).contains(pValue)) {
                                 return true;
                             }
                         } else {
-                            if (entry.getStringValue(col).toLowerCase().indexOf(pValue.toLowerCase()) > -1) {
+                            if (entry.getStringValue(col).toLowerCase().contains(pValue.toLowerCase())) {
                                 return true;
                             }
                         }

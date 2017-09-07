@@ -828,6 +828,12 @@ public class MapRenderer {
             g2d.fill3DRect(0, 0, (int) Math.rint(dCurrentFieldWidth), (int) Math.rint(dCurrentFieldHeight), true);
             g2d.setColor(c);
         }
+
+        //Possible workaround for missing support of setting cursors, e.g. under MacOS
+        //Todo: Update cursor image (remove arrows and just keep the icon), check placement of icon relative to cursor position
+        //Point mp = MapPanel.getSingleton().getMousePosition();
+        //g2d.drawImage(ImageManager.getCursorImage(MapPanel.getSingleton().getCurrentCursor()).getImage(), mp.x+16, mp.y+16, null);
+        
         if (!MapPanel.getSingleton().isMouseDown()
                 && Boolean.parseBoolean(GlobalOptions.getProperty("show.map.popup"))
                 && !DSWorkbenchMainFrame.getSingleton().isGlasspaneVisible()) {

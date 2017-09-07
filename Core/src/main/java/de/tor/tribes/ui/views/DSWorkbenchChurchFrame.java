@@ -43,7 +43,6 @@ import org.jdesktop.swingx.painter.AbstractLayoutPainter.HorizontalAlignment;
 import org.jdesktop.swingx.painter.AbstractLayoutPainter.VerticalAlignment;
 import org.jdesktop.swingx.painter.ImagePainter;
 import org.jdesktop.swingx.painter.MattePainter;
-import org.jdesktop.swingx.table.TableColumnExt;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -443,13 +442,7 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
         KnownVillageManager.getSingleton().addManagerListener(this);
         MarkerManager.getSingleton().addManagerListener(this);
         jChurchTable.getTableHeader().setDefaultRenderer(new DefaultTableHeaderRenderer());
-        String[] cols = new String[]{"Stufe", "Farbe"};
-        for (String col : cols) {
-            TableColumnExt columns = jChurchTable.getColumnExt(col);
-            columns.setPreferredWidth(80);
-            columns.setMaxWidth(80);
-            columns.setWidth(80);
-        }
+        UIHelper.initTableColums(jChurchTable, "Stufe", "Farbe");
 
         ((ChurchTableModel) jChurchTable.getModel()).fireTableDataChanged();
     }

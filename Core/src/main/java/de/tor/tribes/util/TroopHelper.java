@@ -23,11 +23,11 @@ import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.views.DSWorkbenchFarmManager;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
+import org.apache.log4j.Logger;
+
+import javax.swing.*;
 import java.util.*;
 import java.util.Map.Entry;
-import javax.swing.DefaultListModel;
-import javax.swing.JList;
-import org.apache.log4j.Logger;
 
 /**
  *
@@ -183,31 +183,45 @@ public class TroopHelper {
     public static Hashtable<Village, VillageTroopsHolder> getOwnTroopsForAllVillagesByCapacity(FarmInformation pInfo) {
         Hashtable<Village, VillageTroopsHolder> result = new Hashtable<>();
         int currentResources = pInfo.getResourcesInStorage(System.currentTimeMillis());
-        for (Village v : GlobalOptions.getSelectedProfile().getTribe().getVillageList()) {
+
+        return getOwnTroopsForAllVillagesFilteredBy(currentResources, Integer.MAX_VALUE);
+    }
+
+    private static Hashtable<Village,VillageTroopsHolder> getOwnTroopsForAllVillagesFilteredBy(int minResourceThreshold, int maxResourceThreshold) {
+        return getOwnTroopsForVillagesFilteredBy(GlobalOptions.getSelectedProfile().getTribe().getVillageList(), minResourceThreshold, maxResourceThreshold);
+    }
+
+    public static Hashtable<Village, VillageTroopsHolder> getOwnTroopsForVillagesFilteredBy(Village[] villages, int minResourceThreshold, int maxResourceThreshold) {
+        Hashtable<Village, VillageTroopsHolder> result = new Hashtable<>();
+
+        for (Village v : villages) {
             VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(v, TroopsManager.TROOP_TYPE.OWN);
             if (holder != null) {
-                if (getCapacity(holder.getTroops()) >= currentResources) {
+                if (getCapacity(holder.getTroops()) >= minResourceThreshold && getCapacity(holder.getTroops()) <= maxResourceThreshold) {
                     //village is valid
                     result.put(holder.getVillage(), holder);
                 }
             }
         }
+
         return result;
     }
 
     public static Hashtable<Village, VillageTroopsHolder> getOwnTroopsForAllVillagesByMinHaul(int pMinHaul) {
-        Hashtable<Village, VillageTroopsHolder> result = new Hashtable<>();
+        return getOwnTroopsForAllVillagesFilteredBy(pMinHaul, Integer.MAX_VALUE);
+    }
 
-        for (Village v : GlobalOptions.getSelectedProfile().getTribe().getVillageList()) {
-            VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(v, TroopsManager.TROOP_TYPE.OWN);
-            if (holder != null) {
-                if (getCapacity(holder.getTroops()) >= pMinHaul) {
-                    //village is valid
-                    result.put(holder.getVillage(), holder);
-                }
-            }
+    public static List<Village> fillSourcesWithAttacksForUnit(Village source, Hashtable<UnitHolder, List<Village>> villagesForUnitHolder, List<Village> existingSources, UnitHolder unitHolder) {
+        List<Village> sourcesForUnit = existingSources != null ? existingSources : villagesForUnitHolder.get(unitHolder);
+        if (sourcesForUnit == null) {
+            sourcesForUnit = new LinkedList<>();
+            sourcesForUnit.add(source);
+            villagesForUnitHolder.put(unitHolder, sourcesForUnit);
+        } else {
+            sourcesForUnit.add(source);
         }
-        return result;
+
+        return sourcesForUnit;
     }
 
     public static void sendTroops(Village pVillage, Hashtable<UnitHolder, Integer> pTroops) {

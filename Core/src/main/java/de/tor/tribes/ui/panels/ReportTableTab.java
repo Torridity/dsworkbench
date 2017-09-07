@@ -23,27 +23,35 @@ import de.tor.tribes.types.FightReport;
 import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.models.ReportManagerTableModel;
-import de.tor.tribes.ui.renderer.DateCellRenderer;
-import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
-import de.tor.tribes.ui.renderer.FightReportCellRenderer;
-import de.tor.tribes.ui.renderer.NoteIconCellRenderer;
-import de.tor.tribes.ui.renderer.ReportWallCataCellRenderer;
-import de.tor.tribes.ui.renderer.TribeCellRenderer;
-import de.tor.tribes.ui.renderer.UnitCellRenderer;
-import de.tor.tribes.ui.renderer.VillageCellRenderer;
+import de.tor.tribes.ui.renderer.*;
 import de.tor.tribes.ui.views.DSWorkbenchReportFrame;
 import de.tor.tribes.ui.views.DSWorkbenchSettingsDialog;
 import de.tor.tribes.ui.windows.ReportShowDialog;
 import de.tor.tribes.ui.wiz.tap.AttackTargetPanel;
 import de.tor.tribes.ui.wiz.tap.TacticsPlanerWizard;
-import de.tor.tribes.util.Constants;
-import de.tor.tribes.util.GlobalOptions;
-import de.tor.tribes.util.ImageUtils;
-import de.tor.tribes.util.JOptionPaneHelper;
+import de.tor.tribes.util.*;
 import de.tor.tribes.util.bb.ReportListFormatter;
 import de.tor.tribes.util.report.ReportManager;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
+import org.apache.log4j.Logger;
+import org.jdesktop.swingx.JXTable;
+import org.jdesktop.swingx.decorator.HighlightPredicate;
+import org.jdesktop.swingx.decorator.HighlighterFactory;
+import org.jdesktop.swingx.decorator.PainterHighlighter;
+import org.jdesktop.swingx.decorator.PatternPredicate;
+import org.jdesktop.swingx.painter.AbstractLayoutPainter.HorizontalAlignment;
+import org.jdesktop.swingx.painter.AbstractLayoutPainter.VerticalAlignment;
+import org.jdesktop.swingx.painter.ImagePainter;
+import org.jdesktop.swingx.painter.MattePainter;
+import org.jdesktop.swingx.table.TableColumnExt;
+
+import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableModel;
 import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
@@ -57,27 +65,6 @@ import java.io.IOException;
 import java.util.*;
 import java.util.List;
 import java.util.regex.Matcher;
-import javax.swing.AbstractAction;
-import javax.swing.JComponent;
-import javax.swing.JOptionPane;
-import javax.swing.KeyStroke;
-import javax.swing.RowFilter;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableModel;
-import org.apache.log4j.Logger;
-import org.jdesktop.swingx.JXTable;
-import org.jdesktop.swingx.decorator.HighlightPredicate;
-import org.jdesktop.swingx.decorator.HighlighterFactory;
-import org.jdesktop.swingx.decorator.PainterHighlighter;
-import org.jdesktop.swingx.decorator.PatternPredicate;
-import org.jdesktop.swingx.painter.AbstractLayoutPainter.HorizontalAlignment;
-import org.jdesktop.swingx.painter.AbstractLayoutPainter.VerticalAlignment;
-import org.jdesktop.swingx.painter.ImagePainter;
-import org.jdesktop.swingx.painter.MattePainter;
-import org.jdesktop.swingx.table.TableColumnExt;
 
 /**
  *
@@ -287,13 +274,7 @@ public class ReportTableTab extends javax.swing.JPanel implements ListSelectionL
 
     public void updateSet() {
         reportModel.setReportSet(sReportSet);
-        String[] cols = new String[]{"Status", "Typ", "Sonstiges"};
-        for (String col : cols) {
-            TableColumnExt columns = jxReportTable.getColumnExt(col);
-            columns.setPreferredWidth(80);
-            columns.setMaxWidth(80);
-            columns.setWidth(80);
-        }
+        UIHelper.initTableColums(jxReportTable, "Status", "Typ", "Sonstiges");
         jScrollPane1.setViewportView(jxReportTable);
         jxReportTable.getTableHeader().setDefaultRenderer(new DefaultTableHeaderRenderer());
     }

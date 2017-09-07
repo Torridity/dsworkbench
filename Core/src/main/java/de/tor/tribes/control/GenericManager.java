@@ -290,7 +290,7 @@ public abstract class GenericManager<C extends ManageableType> {
      * @param pElement
      */
     public void addManagedElement(String pGroup, C pElement) {
-        boolean changed = false;
+        boolean changed;
         boolean structureChanged = false;
         if (pElement == null) {
             return;

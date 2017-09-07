@@ -32,26 +32,26 @@ import org.jdom.Element;
  * @author Charon
  */
 public class KnownVillageManager extends GenericManager<KnownVillage> {
-    
+
     private static Logger logger = Logger.getLogger("ChurchManager");
     private static KnownVillageManager SINGLETON = null;
-    
+
     private List<KnownVillage> churchVillages;
     private List<KnownVillage> watchtowerVillages;
-    
+
     public static synchronized KnownVillageManager getSingleton() {
         if (SINGLETON == null) {
             SINGLETON = new KnownVillageManager();
         }
         return SINGLETON;
     }
-    
+
     KnownVillageManager() {
         super(false);
         churchVillages = new ArrayList<>();
         watchtowerVillages = new ArrayList<>();
     }
-    
+
     @Override
     public void loadElements(String pFile) {
         if (pFile == null) {
@@ -70,10 +70,14 @@ public class KnownVillageManager extends GenericManager<KnownVillage> {
                 for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//villages/village")) {
                     try {
                         KnownVillage v = new KnownVillage(e);
-                        if(getKnownVillage(v.getVillage()) == null) {
+                        if (getKnownVillage(v.getVillage()) == null) {
                             addManagedElement(v);
-                            if(v.hasChurch()) churchVillages.add(v);
-                            if(v.hasWatchtower()) watchtowerVillages.add(v);
+                            if (v.hasChurch()) {
+                                churchVillages.add(v);
+                            }
+                            if (v.hasWatchtower()) {
+                                watchtowerVillages.add(v);
+                            }
                         } else {
                             //somehow this village appears twice in saved data
                             //this should never happen
@@ -95,7 +99,7 @@ public class KnownVillageManager extends GenericManager<KnownVillage> {
         }
         revalidate();
     }
-    
+
     @Override
     public boolean importData(File pFile, String pExtension) {
         if (pFile == null) {
@@ -110,10 +114,14 @@ public class KnownVillageManager extends GenericManager<KnownVillage> {
             for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//villages/village")) {
                 try {
                     KnownVillage v = new KnownVillage(e);
-                    if(getKnownVillage(v.getVillage()) == null) {
+                    if (getKnownVillage(v.getVillage()) == null) {
                         addManagedElement(v);
-                        if(v.hasChurch()) churchVillages.add(v);
-                        if(v.hasWatchtower()) watchtowerVillages.add(v);
+                        if (v.hasChurch()) {
+                            churchVillages.add(v);
+                        }
+                        if (v.hasWatchtower()) {
+                            watchtowerVillages.add(v);
+                        }
                     } else {
                         //Village ist already Known
                         KnownVillage merge = getKnownVillage(v.getVillage());
@@ -133,14 +141,14 @@ public class KnownVillageManager extends GenericManager<KnownVillage> {
         revalidate(true);
         return result;
     }
-    
+
     @Override
     public String getExportData(List<String> pGroupsToExport) {
         logger.debug("Generating KnownVillages export data");
-        
+
         String result = "<villages>\n";
         ManageableType[] elements = getAllElements().toArray(new ManageableType[getAllElements().size()]);
-        
+
         for (ManageableType t : elements) {
             KnownVillage v = (KnownVillage) t;
             result += v.toXml() + "\n";
@@ -156,20 +164,20 @@ public class KnownVillageManager extends GenericManager<KnownVillage> {
     public void loadChurchesFromDatabase(String pUrl) {
         logger.info("Not implemented yet");
     }
-    
+
     @Override
     public void saveElements(String pFile) {
         if (pFile == null) {
             logger.error("File argument is 'null'");
             return;
         }
-        
+
         if (logger.isDebugEnabled()) {
             logger.debug("Writing KnownVillages to '" + pFile + "'");
         }
         try {
             StringBuilder b = new StringBuilder();
-            
+
             b.append("<villages>\n");
             for (ManageableType t : getAllElements()) {
                 KnownVillage c = (KnownVillage) t;
@@ -192,34 +200,42 @@ public class KnownVillageManager extends GenericManager<KnownVillage> {
             }
         }
     }
-    
+
     public List<KnownVillage> getChurchVillages() {
         return churchVillages;
     }
-    
+
     public void addChurchLevel(Village pVillage, int pLevel) {
         if (pVillage != null) {
             KnownVillage v = getKnownVillage(pVillage);
             if (v == null) {
                 v = new KnownVillage(pVillage);
+                v.setChurchLevel(pLevel);
+                if (!churchVillages.contains(v)) {
+                    churchVillages.add(v);
+                }
                 addManagedElement(v);
+            } else {
+                v.setChurchLevel(pLevel);
+                if (!churchVillages.contains(v)) {
+                    churchVillages.add(v);
+                }
+                fireDataChangedEvents();
             }
-            v.setChurchLevel(pLevel);
-            
-            if(!churchVillages.contains(v)) churchVillages.add(v);
+
         }
     }
-    
+
     public void removeChurch(Village pVillage) {
         if (pVillage != null) {
             KnownVillage toRemove = getKnownVillage(pVillage);
-            if(toRemove != null) {
+            if (toRemove != null) {
                 toRemove.removeChurchInfo();
                 churchVillages.remove(toRemove);
             }
         }
     }
-    
+
     public void removeChurches(Village[] pVillages) {
         if (pVillages != null) {
             invalidate();
@@ -239,18 +255,25 @@ public class KnownVillageManager extends GenericManager<KnownVillage> {
             KnownVillage v = getKnownVillage(pVillage);
             if (v == null) {
                 v = new KnownVillage(pVillage);
+                v.setWatchtowerLevel(pLevel);
+                if (!watchtowerVillages.contains(v)) {
+                    watchtowerVillages.add(v);
+                }
                 addManagedElement(v);
+            } else {
+                v.setWatchtowerLevel(pLevel);
+                if (!watchtowerVillages.contains(v)) {
+                    watchtowerVillages.add(v);
+                }
+                fireDataChangedEvents();
             }
-            v.setWatchtowerLevel(pLevel);
-            
-            if(!watchtowerVillages.contains(v)) watchtowerVillages.add(v);
         }
     }
 
     public void removeWatchtower(Village pVillage) {
         if (pVillage != null) {
             KnownVillage toRemove = getKnownVillage(pVillage);
-            if(toRemove != null) {
+            if (toRemove != null) {
                 toRemove.removeWatchtowerInfo();
                 watchtowerVillages.remove(toRemove);
             }
@@ -269,8 +292,8 @@ public class KnownVillageManager extends GenericManager<KnownVillage> {
 
     private KnownVillage getKnownVillage(Village pVillage) {
         List<ManageableType> elements = getAllElements();
-        for(ManageableType elm: elements) {
-            if(((KnownVillage) elm).getVillage().equals(pVillage)) {
+        for (ManageableType elm : elements) {
+            if (((KnownVillage) elm).getVillage().equals(pVillage)) {
                 return (KnownVillage) elm;
             }
         }

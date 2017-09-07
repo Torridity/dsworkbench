@@ -16,7 +16,6 @@
 package de.tor.tribes.ui.models;
 
 import de.tor.tribes.types.ext.Tribe;
-import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.village.KnownVillageManager;
 import de.tor.tribes.util.village.KnownVillage;
 import java.awt.Color;
@@ -29,7 +28,7 @@ import org.apache.log4j.Logger;
  * @author extremeCrazyCoder
  */
 public class WatchtowerTableModel extends AbstractTableModel {
-    
+
     private static Logger logger = Logger.getLogger("WatchtowerTableModel");
 
     private final Class[] types = new Class[]{Tribe.class, KnownVillage.class, Integer.class, Color.class};

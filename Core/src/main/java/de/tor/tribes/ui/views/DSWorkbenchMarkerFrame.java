@@ -288,11 +288,9 @@ public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements 
         String[] plans = MarkerManager.getSingleton().getGroups();
 
         //insert default tab to first place
-        int cnt = 0;
         for (String plan : plans) {
             MarkerTableTab tab = new MarkerTableTab(plan, this);
             jMarkerTabPane.addTab(plan, tab);
-            cnt++;
         }
 
         jMarkerTabPane.setTabClosableAt(0, false);

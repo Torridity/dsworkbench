@@ -310,18 +310,20 @@ public class MapRenderer {
                             break;
                         case 8:
                             try {
-                                if(ServerSettings.getSingleton().isChurch() &&
-                                        GlobalOptions.getProperties().getBoolean("show.church"))
+                                if (ServerSettings.getSingleton().isChurch()
+                                        && GlobalOptions.getProperties().getBoolean("show.church")) {
                                     mChurchLayer.performRendering(mRenderSettings, g2d);
+                                }
                             } catch (Exception e) {
                                 logger.warn("Failed to render church layer", e);
                             }
                             break;
                         case 9:
                             try {
-                                if(ServerSettings.getSingleton().isWatchtower() &&
-                                        GlobalOptions.getProperties().getBoolean("show.watchtower"))
+                                if (ServerSettings.getSingleton().isWatchtower()
+                                        && GlobalOptions.getProperties().getBoolean("show.watchtower")) {
                                     mWatchtowerLayer.performRendering(mRenderSettings, g2d);
+                                }
                             } catch (Exception e) {
                                 logger.warn("Failed to render church layer", e);
                             }
@@ -536,7 +538,6 @@ public class MapRenderer {
         boolean mouseDown = MapPanel.getSingleton().isMouseDown();
 
         // <editor-fold defaultstate="collapsed" desc="Mark current players villages">
-
         if (!mouseDown && GlobalOptions.getProperties().getBoolean("highlight.tribes.villages")) {
             Tribe mouseTribe = Barbarians.getSingleton();
             if (mouseVillage != null) {
@@ -649,7 +650,7 @@ public class MapRenderer {
                     mChurchLayer.renderTempChurch(g2d, tmpVillage, r);
                 }
             }
-            
+
             if (tmpVillage.hasWatchtower()) {
                 Rectangle r = mVillagePositions.get(mouseVillage);
                 if (r != null && ServerSettings.getSingleton().isWatchtower()) {
@@ -658,7 +659,7 @@ public class MapRenderer {
             }
         }
         // </editor-fold>
-        
+
         //draw additional info
         if (!mouseDown && mouseVillage != null && Boolean.parseBoolean(GlobalOptions.getProperty("show.mouseover.info"))) {
             Rectangle rect = mVillagePositions.get(mouseVillage);
@@ -827,12 +828,11 @@ public class MapRenderer {
             g2d.fill3DRect(0, 0, (int) Math.rint(dCurrentFieldWidth), (int) Math.rint(dCurrentFieldHeight), true);
             g2d.setColor(c);
         }
-
         if (!MapPanel.getSingleton().isMouseDown()
                 && Boolean.parseBoolean(GlobalOptions.getProperty("show.map.popup"))
                 && !DSWorkbenchMainFrame.getSingleton().isGlasspaneVisible()) {
             try {
-                if (DSWorkbenchMainFrame.getSingleton().isActive() && MapPanel.getSingleton().getMousePosition() != null) {
+                if (DSWorkbenchMainFrame.getSingleton().isActive() && MapPanel.getSingleton().getMousePosition() != null && !MapPanel.getSingleton().isActionMenuShowing()) {
                     if (mouseVillage == null) {
                         if (mInfoPopup != null) {
                             mInfoPopup.hide();
@@ -955,7 +955,7 @@ class RoundGradientContext implements PaintContext {
                 }
 
                 int base = (j * w + i) * 4;
-                data[base]     = (int) (color1.getRed() + ratio * (color2.getRed() - color1.getRed()));
+                data[base] = (int) (color1.getRed() + ratio * (color2.getRed() - color1.getRed()));
                 data[base + 1] = (int) (color1.getGreen() + ratio * (color2.getGreen() - color1.getGreen()));
                 data[base + 2] = (int) (color1.getBlue() + ratio * (color2.getBlue() - color1.getBlue()));
                 data[base + 3] = (int) (color1.getAlpha() + ratio * (color2.getAlpha() - color1.getAlpha()));

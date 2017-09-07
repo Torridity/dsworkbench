@@ -392,7 +392,6 @@ public class DSWorkbenchWatchtowerFrame extends AbstractDSWorkbenchFrame impleme
             buffer.append("[table]\n");
             buffer.append("[**]Spieler[||]Dorf[||]Radius[/**]\n");
 
-
             for (int row1 : rows) {
                 int row = jWatchtowerTable.convertRowIndexToModel(row1);
                 int tribeCol = jWatchtowerTable.convertColumnIndexToModel(0);

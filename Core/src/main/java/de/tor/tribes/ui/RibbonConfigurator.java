@@ -67,7 +67,7 @@ public class RibbonConfigurator {
 
     public static void addAppIcons(JRibbonFrame frame) {
         RibbonApplicationMenu appmen = new RibbonApplicationMenu();
-        
+
         // <editor-fold defaultstate="collapsed" desc="Main Menue">
         frame.setApplicationIcon(getResizableIconFromFile("graphics/big/axe.png"));
 
@@ -125,7 +125,6 @@ public class RibbonConfigurator {
         });
 
         appmen.addMenuEntry(bbEditorEntry);
-
 
         RibbonApplicationMenuEntryPrimary standardAttackFrame = new RibbonApplicationMenuEntryPrimary(getResizableIconFromResource("/res/ui/troop_info_add.png"), "Standardangriffe", new ActionListener() {
             @Override
@@ -221,13 +220,13 @@ public class RibbonConfigurator {
         // <editor-fold defaultstate="collapsed" desc="Help button">
         frame.getRibbon().configureHelp(getResizableIconFromFile("graphics/big/help2.png"),
                 new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        if (!Constants.DEBUG) {
-                            GlobalOptions.getHelpBroker().setDisplayed(true);
-                        }
-                    }
-                });
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (!Constants.DEBUG) {
+                    GlobalOptions.getHelpBroker().setDisplayed(true);
+                }
+            }
+        });
         // </editor-fold>
     }
 
@@ -288,7 +287,7 @@ public class RibbonConfigurator {
                             } else {
                                 JOptionPaneHelper.showInformationBox(DSWorkbenchMainFrame.getSingleton(), "A*Star ist im Offline-Modus leider nicht verfügbar.", "Information");
                             }
-                        } catch(Exception e) {
+                        } catch (Exception e) {
                             logger.warn("Error while showing Simulator", e);
                         }
                     }
@@ -597,7 +596,7 @@ public class RibbonConfigurator {
                 MapPanel.getSingleton().setCurrentCursor(ImageManager.CURSOR_TAG);
             }
         });
-        
+
         // <editor-fold defaultstate="collapsed" desc="church button setup">
         JCommandButton createChurchToolButton = factoryButton(null, "graphics/big/Church1.png", "Kirche in einem Dorf auf der Hauptkarte erstellen", "Dieses Werkzeug ist nur auf Kirchenwelten aktiv", true);
         JCommandButton createChurch1ToolButton = factoryButton(null, "graphics/big/Church1.png", "Kirche Stufe 1 erstellen", "Mit gewähltem Werkzeug auf ein Dorf der Hauptkarte klicken, um eine Kirche Stufe 1 im Dorf zu platzieren", true);
@@ -716,7 +715,7 @@ public class RibbonConfigurator {
         });
         createWatchtowerToolButton.setCommandButtonKind(JCommandButton.CommandButtonKind.POPUP_ONLY);
         // </editor-fold>
-        
+
         infoToolBand.addCommandButton(selectToolButton, RibbonElementPriority.TOP);
         infoToolBand.addCommandButton(markToolButton, RibbonElementPriority.TOP);
         infoToolBand.addCommandButton(noteToolButton, RibbonElementPriority.TOP);
@@ -854,24 +853,24 @@ public class RibbonConfigurator {
 
         baseToolsBand.setResizePolicies((List) Arrays.asList(
                 new CoreRibbonResizePolicies.None(baseToolsBand.getControlPanel())));
-        
+
         attackToolsBand.setResizePolicies(CoreRibbonResizePolicies.getCorePoliciesRestrictive(attackToolsBand));
-        
+
         drawToolsBand.setResizePolicies((List) Arrays.asList(
                 new CoreRibbonResizePolicies.Mirror(drawToolsBand.getControlPanel()),
                 new IconRibbonBandResizePolicy(drawToolsBand.getControlPanel())));
-        
+
         minimapToolsBand.setResizePolicies((List) Arrays.asList(
                 new CoreRibbonResizePolicies.Mirror(minimapToolsBand.getControlPanel()),
                 new IconRibbonBandResizePolicy(minimapToolsBand.getControlPanel())));
-        
+
         defendToolsBand.setResizePolicies((List) Arrays.asList(
                 new CoreRibbonResizePolicies.None(defendToolsBand.getControlPanel())));
-        
+
         infoToolBand.setResizePolicies((List) Arrays.asList(
                 new CoreRibbonResizePolicies.Mirror(infoToolBand.getControlPanel()),
                 new IconRibbonBandResizePolicy(infoToolBand.getControlPanel())));
-        
+
         RibbonTask task1 = new RibbonTask("Kartenwerkzeuge", baseToolsBand, attackToolsBand, defendToolsBand, infoToolBand, drawToolsBand, minimapToolsBand);
         frame.getRibbon().addTask(task1);
     }
@@ -940,6 +939,8 @@ public class RibbonConfigurator {
                             DSWorkbenchChurchFrame.getSingleton().requestFocus();
                         }
                     });
+                } else {
+                    JOptionPaneHelper.showInformationBox(DSWorkbenchMainFrame.getSingleton(), "Kirchen sind auf dieser Welt nicht aktiv.", "Information");
                 }
             }
         });
@@ -956,6 +957,8 @@ public class RibbonConfigurator {
                             DSWorkbenchWatchtowerFrame.getSingleton().requestFocus();
                         }
                     });
+                } else {
+                    JOptionPaneHelper.showInformationBox(DSWorkbenchMainFrame.getSingleton(), "Wachtürme sind auf dieser Welt nicht aktiv.", "Information");
                 }
             }
         });
@@ -1138,7 +1141,7 @@ public class RibbonConfigurator {
         miscBand.setResizePolicies((List) Arrays.asList(
                 new CoreRibbonResizePolicies.None(miscBand.getControlPanel()),
                 new IconRibbonBandResizePolicy(miscBand.getControlPanel())
-                ));
+        ));
         RibbonTask task1 = new RibbonTask("Sonstiges", miscBand);
         frame.getRibbon().addTask(task1);
     }

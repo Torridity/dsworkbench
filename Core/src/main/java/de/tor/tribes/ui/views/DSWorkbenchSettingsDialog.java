@@ -110,7 +110,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
 
         //System.setProperty("proxyPort", GlobalOptions.getProperty("proxyPort"));
         jProxyPassword.setText(GlobalOptions.getProperty("proxyPassword"));
-        
+
         if (jProxyConnectOption.isSelected()) {
             SocketAddress addr = new InetSocketAddress(jProxyHost.getText(), Integer.parseInt(jProxyPort.getText()));
             switch (jProxyTypeChooser.getSelectedIndex()) {
@@ -162,9 +162,9 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jMarkerTransparency.setValue(GlobalOptions.getProperties().getInt("map.marker.transparency"));
         jShowAttackMovementBox.setSelected(GlobalOptions.getProperties().getBoolean("attack.movement"));
         jDrawAttacksByDefaultBox.setSelected(GlobalOptions.getProperties().getBoolean("draw.attacks.by.default"));
-        
+
         jShowLiveCountdown.setSelected(GlobalOptions.getProperties().getBoolean("show.live.countdown"));
-        
+
         jExtendedAttackLineDrawing.setSelected(GlobalOptions.getProperties().getBoolean("extended.attack.vectors"));
         jHeaderPath.setText(GlobalOptions.getProperty("attack.template.header"));
         jBlockPath.setText(GlobalOptions.getProperty("attack.template.block"));
@@ -273,23 +273,23 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                     "Einheit", "Farbe"
                 }) {
 
-                    Class[] types = new Class[]{
-                        String.class, Color.class
-                    };
-                    boolean[] canEdit = new boolean[]{
-                        false, true
-                    };
+            Class[] types = new Class[]{
+                String.class, Color.class
+            };
+            boolean[] canEdit = new boolean[]{
+                false, true
+            };
 
-                    @Override
-                    public Class getColumnClass(int columnIndex) {
-                        return types[columnIndex];
-                    }
+            @Override
+            public Class getColumnClass(int columnIndex) {
+                return types[columnIndex];
+            }
 
-                    @Override
-                    public boolean isCellEditable(int rowIndex, int columnIndex) {
-                        return canEdit[columnIndex];
-                    }
-                };
+            @Override
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit[columnIndex];
+            }
+        };
         jAttackColorTable.setDefaultRenderer(Color.class, new ColorCellRenderer());
         jAttackColorTable.setDefaultEditor(Color.class, new ColorChooserCellEditor(new ActionListener() {
 
@@ -368,8 +368,8 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
     //check server and player settings
     private boolean checkServerPlayerSettings() {
         boolean result = false;
-        if (!GlobalOptions.getProperties().exists("default.player") ||
-                !GlobalOptions.getProperties().exists("default.server")) {
+        if (!GlobalOptions.getProperties().exists("default.player")
+                || !GlobalOptions.getProperties().exists("default.server")) {
             UserProfile selection = null;
             try {
                 selection = (UserProfile) jProfileBox.getSelectedItem();
@@ -2932,14 +2932,15 @@ private void fireProfileActionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
 
     private void jShowPopupMoralActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jShowPopupMoralActionPerformed
         //TODO remove this when moral is working correctly
-        if(jShowPopupMoral.isSelected() &&
-                (ServerSettings.getSingleton().getMoralType() == ServerSettings.TIMEBASED_MORAL ||
-                ServerSettings.getSingleton().getMoralType() == ServerSettings.TIME_LIMITED_POINTBASED_MORAL)) {
+        if (jShowPopupMoral.isSelected()
+                && (ServerSettings.getSingleton().getMoralType() == ServerSettings.TIMEBASED_MORAL
+                || ServerSettings.getSingleton().getMoralType() == ServerSettings.TIME_LIMITED_POINTBASED_MORAL)) {
             String warning = "Achtung: Auf Welten mit ";
-            if(ServerSettings.getSingleton().getMoralType() == ServerSettings.TIMEBASED_MORAL)
+            if (ServerSettings.getSingleton().getMoralType() == ServerSettings.TIMEBASED_MORAL) {
                 warning += "Zeitbasierter";
-            else if(ServerSettings.getSingleton().getMoralType() == ServerSettings.TIME_LIMITED_POINTBASED_MORAL)
+            } else if (ServerSettings.getSingleton().getMoralType() == ServerSettings.TIME_LIMITED_POINTBASED_MORAL) {
                 warning += "zeitlich begrenzter punktebasierter Moral";
+            }
             warning += " wird die Moral mit der falschen Formel berechnet\n"
                     + "Trotzdem die Moralanzeige einschalten?";
             if (JOptionPaneHelper.showWarningConfirmBox(this, warning, "Warnung", "Nein",
@@ -2955,8 +2956,8 @@ private void fireProfileActionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
         }
         String selectedServer = ((UserProfile) jProfileBox.getSelectedItem()).getServerId();
         GlobalOptions.addProperty("default.player", Long.toString(((UserProfile) jProfileBox.getSelectedItem()).getProfileId()));
-        
-        if(!GlobalOptions.getProperty("default.server").equals(selectedServer)) {
+
+        if (!GlobalOptions.getProperty("default.server").equals(selectedServer)) {
             //save user data for current server
             GlobalOptions.saveUserData();
             GlobalOptions.addProperty("default.server", selectedServer);
@@ -2976,6 +2977,7 @@ private void fireProfileActionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
             try {
                 logger.debug("Start loading from hard disk");
                 boolean ret = DataHolder.getSingleton().loadData(false);
+                jLabelServer.setText(selectedServer);
                 logger.debug("Data loaded " + ((ret) ? "successfully" : "with errors"));
             } catch (Exception e) {
                 logger.error("Failed loading data", e);
@@ -3014,12 +3016,12 @@ private void fireProfileActionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
             return false;
         }
         updateProfileList();
-        
+
         return true;
     }
 
     private void updateProfileList() {
-        DefaultComboBoxModel model = new DefaultComboBoxModel();
+        DefaultComboBoxModel model;
         UserProfile[] profiles = ProfileManager.getSingleton().getProfiles();
         if (profiles != null && profiles.length > 0) {
             model = new DefaultComboBoxModel(profiles);
@@ -3037,7 +3039,7 @@ private void fireProfileActionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
             }
         }
         jProfileBox.setModel(model);
-        
+
         if (profileId != -1) {
 
             for (UserProfile profile : profiles) {
@@ -3048,7 +3050,7 @@ private void fireProfileActionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
             }
         }
         jLabelServer.setText(((UserProfile) jProfileBox.getSelectedItem()).getServerId());
-        
+
         fireSelectProfile(null);
     }
 
@@ -3115,7 +3117,7 @@ private void fireProfileActionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
                 Collection<Tribe> tribes = DataHolder.getSingleton().getTribes().values();
                 Tribe[] ta = tribes.toArray(new Tribe[]{});
                 Arrays.sort(ta, Tribe.CASE_INSENSITIVE_ORDER);
-                DefaultComboBoxModel model = new DefaultComboBoxModel();
+                DefaultComboBoxModel model;
                 UserProfile[] profiles = ProfileManager.getSingleton().getProfiles();
                 UserProfile active = null;
                 if (profiles != null && profiles.length > 0) {
@@ -3138,7 +3140,7 @@ private void fireProfileActionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
                     } else {
                         jProfileBox.setSelectedIndex(0);
                         GlobalOptions.addProperty("default.player", Long.toString(profiles[0].getProfileId()));
-                        
+
                         String server = ((UserProfile) jProfileBox.getSelectedItem()).getServerId();
                         jLabelServer.setText(server);
                         GlobalOptions.addProperty("default.server", server);
@@ -3166,7 +3168,7 @@ private void fireProfileActionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
         }
 
         updating = false;
-        
+
         jOKButton.setEnabled(true);
         if (!isBlocked) {
             setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);

@@ -318,6 +318,10 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
         return selectionRect;
     }
 
+    public boolean isActionMenuShowing(){
+        return jVillageActionsMenu.isShowing();
+    }
+    
     private void initListeners() {
         dragSource = DragSource.getDefaultDragSource();
         dragSource.createDefaultDragGestureRecognizer(this, // What component
@@ -393,8 +397,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                         //center village on click with default cursor
                         if (v != null) {
                             Tribe t = GlobalOptions.getSelectedProfile().getTribe();
-                            if ((v != null)
-                                    && (t != null)
+                            if ((t != null)
                                     && (v.getTribe() != Barbarians.getSingleton())
                                     && (t != Barbarians.getSingleton())
                                     && (t.getId() == v.getTribe().getId())) {

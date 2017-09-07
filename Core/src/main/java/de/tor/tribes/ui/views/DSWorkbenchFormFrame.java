@@ -20,46 +20,18 @@ import de.tor.tribes.types.drawing.AbstractForm;
 import de.tor.tribes.types.drawing.Circle;
 import de.tor.tribes.types.drawing.Line;
 import de.tor.tribes.types.ext.Village;
+import de.tor.tribes.ui.ImageManager;
+import de.tor.tribes.ui.models.FormTableModel;
+import de.tor.tribes.ui.panels.GenericTestPanel;
+import de.tor.tribes.ui.panels.MapPanel;
+import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
+import de.tor.tribes.ui.renderer.VisibilityCellRenderer;
 import de.tor.tribes.ui.windows.AbstractDSWorkbenchFrame;
 import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
 import de.tor.tribes.ui.windows.FormConfigFrame;
-import de.tor.tribes.ui.panels.GenericTestPanel;
-import de.tor.tribes.ui.ImageManager;
-import de.tor.tribes.ui.panels.MapPanel;
-import de.tor.tribes.ui.models.FormTableModel;
-import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
-import de.tor.tribes.ui.renderer.VisibilityCellRenderer;
-import de.tor.tribes.util.BrowserCommandSender;
-import de.tor.tribes.util.Constants;
-import de.tor.tribes.util.GlobalOptions;
-import de.tor.tribes.util.ImageUtils;
-import de.tor.tribes.util.JOptionPaneHelper;
-import de.tor.tribes.util.PropertyHelper;
+import de.tor.tribes.util.*;
 import de.tor.tribes.util.bb.FormListFormatter;
 import de.tor.tribes.util.map.FormManager;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.Toolkit;
-import java.awt.datatransfer.StringSelection;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.geom.GeneralPath;
-import java.awt.image.BufferedImage;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.StringTokenizer;
-import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import org.apache.commons.configuration.Configuration;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
@@ -72,7 +44,18 @@ import org.jdesktop.swingx.painter.AbstractLayoutPainter.HorizontalAlignment;
 import org.jdesktop.swingx.painter.AbstractLayoutPainter.VerticalAlignment;
 import org.jdesktop.swingx.painter.ImagePainter;
 import org.jdesktop.swingx.painter.MattePainter;
-import org.jdesktop.swingx.table.TableColumnExt;
+
+import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import java.awt.*;
+import java.awt.datatransfer.StringSelection;
+import java.awt.event.*;
+import java.awt.geom.GeneralPath;
+import java.awt.image.BufferedImage;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.List;
 
 /**
  * @author Charon
@@ -167,14 +150,8 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame implements Li
         //update view
         FormManager.getSingleton().addManagerListener(DSWorkbenchFormFrame.this);
         jFormsTable.getTableHeader().setDefaultRenderer(new DefaultTableHeaderRenderer());
-        String[] cols = new String[]{"X", "Y", "Höhe", "Breite", "Sichtbar"};
-        for (String col : cols) {
-            TableColumnExt columns = jFormsTable.getColumnExt(col);
-            columns.setPreferredWidth(80);
-            columns.setMaxWidth(80);
-            columns.setWidth(80);
-        }
-        
+        UIHelper.initTableColums(jFormsTable, "X", "Y", "Höhe", "Breite", "Sichtbar");
+
         ((FormTableModel) jFormsTable.getModel()).fireTableDataChanged();
     }
     

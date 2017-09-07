@@ -240,13 +240,7 @@ public class NoteTableTab extends javax.swing.JPanel implements ListSelectionLis
 
     public void updateSet() {
         noteModel.setNoteSet(sNoteSet);
-        String[] cols = new String[]{"Icon", "Kartensymbol"};
-        for (String col : cols) {
-            TableColumnExt columns = jxNoteTable.getColumnExt(col);
-            columns.setPreferredWidth(80);
-            columns.setMaxWidth(80);
-            columns.setWidth(80);
-        }
+        UIHelper.initTableColums(jxNoteTable, "Icon", "Kartensymbol");
         jScrollPane1.setViewportView(jxNoteTable);
         jScrollPane2.setViewportView(jxVillageList);
         jxNoteTable.getTableHeader().setDefaultRenderer(new DefaultTableHeaderRenderer());

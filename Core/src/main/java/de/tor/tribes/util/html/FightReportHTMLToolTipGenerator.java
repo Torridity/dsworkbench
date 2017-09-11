@@ -19,6 +19,7 @@ import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.FightReport;
 import de.tor.tribes.types.ext.Village;
+import de.tor.tribes.util.Constants;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -103,7 +104,7 @@ public class FightReportHTMLToolTipGenerator {
         res = res.replaceAll(DEFENDER, StringEscapeUtils.escapeHtml(pReport.getDefender().getName()));
         res = res.replaceAll(TARGET, StringEscapeUtils.escapeHtml(pReport.getTargetVillage().getFullName()));
         res = res.replaceAll(RAM_DAMAGE, ((pReport.wasWallDamaged()) ? "Wall besch&auml;digt von Level <b>" + pReport.getWallBefore() + "</b> auf Level <b>" + pReport.getWallAfter() + "</b>" : ""));
-        res = res.replaceAll(CATA_DAMAGE, ((pReport.wasBuildingDamaged()) ? pReport.getAimedBuilding() + " besch&auml;digt von Level <b>" + pReport.getBuildingBefore() + "</b> auf Level <b>" + pReport.getBuildingAfter() + "</b>" : ""));
+        res = res.replaceAll(CATA_DAMAGE, ((pReport.wasBuildingDamaged()) ? Constants.buildingNames[pReport.getAimedBuildingId()]+ " besch&auml;digt von Level <b>" + pReport.getBuildingBefore() + "</b> auf Level <b>" + pReport.getBuildingAfter() + "</b>" : ""));
         res = res.replaceAll(SNOB_INFLUENCE, ((pReport.wasSnobAttack()) ? "Zustimmung gesunken von <b>" + pReport.getAcceptanceBefore() + "</b> auf <b>" + pReport.getAcceptanceAfter() + "</b>" : ""));
 
         return res;

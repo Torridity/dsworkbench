@@ -103,44 +103,36 @@ public class ClipboardWatch extends Thread {
                     Transferable t = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
                     String data = (String) t.getTransferData(DataFlavor.stringFlavor);
                     String currentHash = SecurityAdapter.hashStringMD5(data);
-                    boolean validData = false;
+
                     if ((data.length() > 10) && (lastHash == null || !currentHash.equals(lastHash))) {
                         if (PluginManager.getSingleton().executeReportParser(data)) {
                             //report parsed, clean clipboard
                             logger.info("Report successfully parsed.");
                             playNotification();
-                            validData = true;
                         } else if (PluginManager.getSingleton().executeTroopsParser(data)) {
                             logger.info("Troops successfully parsed.");
                             SystrayHelper.showInfoMessage("Truppen erfolgreich eingelesen");
                             playNotification();
-                            //at least one village was found, so clean the clipboard
-                            validData = true;
                         } else if (PluginManager.getSingleton().executeGroupParser(data)) {
                             logger.info("Groups successfully parsed.");
                             SystrayHelper.showInfoMessage("Gruppen erfolgreich eingelesen");
                             playNotification();
-                            validData = true;
                         } else if (PluginManager.getSingleton().executeSupportParser(data)) {
                             logger.info("Support successfully parsed.");
                             SystrayHelper.showInfoMessage("Unterstützungen erfolgreich eingelesen");
                             playNotification();
-                            validData = true;
                         } else if (PluginManager.getSingleton().executeNonPAPlaceParser(data)) {
                             logger.info("Place info successfully parsed.");
                             SystrayHelper.showInfoMessage("Truppen aus Versammlungsplatz erfolgreich eingelesen");
                             playNotification();
-                            validData = true;
                         } else if (PluginManager.getSingleton().executeDiplomacyParser(data)) {
                             logger.info("Diplomacy info successfully parsed.");
                             SystrayHelper.showInfoMessage("Kartenmarkierungen aus Diplomatie erfolgreich eingelesen");
                             playNotification();
-                            validData = true;
                         } else if (PluginManager.getSingleton().executeMovementParser(data)) {
                             logger.info("Movements successfully parsed.");
                             SystrayHelper.showInfoMessage("Befehle erfolgreich eingelesen");
                             playNotification();
-                            validData = true;
                         }
                         lastHash = currentHash;
                     }

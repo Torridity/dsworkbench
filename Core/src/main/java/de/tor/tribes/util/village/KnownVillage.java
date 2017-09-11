@@ -18,7 +18,9 @@ package de.tor.tribes.util.village;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.types.FightReport;
 import de.tor.tribes.util.ServerSettings;
+import de.tor.tribes.util.Constants;
 import java.awt.Color;
 import java.util.Arrays;
 import org.apache.log4j.Logger;
@@ -36,9 +38,7 @@ public class KnownVillage extends ManageableType {
     private static Logger logger = Logger.getLogger("KnownVillage");
     
     private int[] buildings;
-    public static final String[] buildingNames = {"main", "barracks", "stable", "workshop",
-        "church", "watchtower", "academy", "smithy", "rally", "statue", "market", "timber",
-        "clay", "iron", "farm", "storage", "hide", "wall"};
+
     /**
      * -1 Building not Available
      * -2 Special Building depends on World Settings
@@ -54,14 +54,14 @@ public class KnownVillage extends ManageableType {
     public static final double[] WATCHTOWER_RANGE = {0, 1.1, 1.3, 1.5, 1.7, 2.0, 2.3, 2.6, 3.0, 3.4, 3.9, 4.4, 5.1, 5.8, 6.7, 7.6, 8.7, 10.0, 11.5, 13.1, 15.0};
     
     public KnownVillage(Village pVillage) {
-        buildings = new int[buildingNames.length];
+        buildings = new int[Constants.buildingNames.length];
         Arrays.fill(buildings, -1);
         this.village = pVillage;
         updateTime();
     }
     
     public KnownVillage(Element e) {
-        buildings = new int[buildingNames.length];
+        buildings = new int[Constants.buildingNames.length];
         Arrays.fill(buildings, -1);
         loadFromXml(e);
     }
@@ -74,10 +74,10 @@ public class KnownVillage extends ManageableType {
             xml.append("<id>").append(village.getId()).append("</id>");
             xml.append("<update>").append(lastUpdate).append("</update>");
             
-            for(int i = 0; i < buildingNames.length; i++) {
-                xml.append("<").append(buildingNames[i]).append(">")
+            for(int i = 0; i < Constants.buildingNames.length; i++) {
+                xml.append("<").append(Constants.buildingNames[i]).append(">")
                         .append(buildings[i])
-                        .append("</").append(buildingNames[i]).append(">");
+                        .append("</").append(Constants.buildingNames[i]).append(">");
             }
             
             xml.append("</village>");
@@ -108,8 +108,8 @@ public class KnownVillage extends ManageableType {
         this.village = DataHolder.getSingleton().getVillagesById().get(Integer.parseInt(pElement.getChild("id").getText()));
         this.lastUpdate = Long.parseLong(pElement.getChild("update").getText());
         
-        for(int i = 0; i < buildingNames.length; i++) {
-            this.buildings[i] = Integer.parseInt(pElement.getChild(buildingNames[i]).getText());
+        for(int i = 0; i < Constants.buildingNames.length; i++) {
+            this.buildings[i] = Integer.parseInt(pElement.getChild(Constants.buildingNames[i]).getText());
         }
     }
 
@@ -120,16 +120,16 @@ public class KnownVillage extends ManageableType {
     public void updateInformation(KnownVillage other) {
         if(lastUpdate > other.getLastUpdate()) {
             //This is newer.... Just get Information that has not been discovered here
-            for(int i = 0; i < buildingNames.length; i++) {
+            for(int i = 0; i < Constants.buildingNames.length; i++) {
                 if(buildings[i] == -1) {
-                    buildings[i] = other.getBuildingLevelByName(buildingNames[i]);
+                    buildings[i] = other.getBuildingLevelByName(Constants.buildingNames[i]);
                 }
             }
         }
         else {
             //Other is newer ... Copy everything that is valid
-            for(int i = 0; i < buildingNames.length; i++) {
-                int level = other.getBuildingLevelByName(buildingNames[i]);
+            for(int i = 0; i < Constants.buildingNames.length; i++) {
+                int level = other.getBuildingLevelByName(Constants.buildingNames[i]);
                 if(level != -1) {
                     buildings[i] = level;
                 }
@@ -223,27 +223,37 @@ public class KnownVillage extends ManageableType {
      * @return: The Level
      */
     public int getBuildingLevelByName(String pBuilding) {
-        for(int i = 0; i < buildingNames.length; i++) {
-            if(buildingNames[i].equals(pBuilding))
-                return buildings[i];
-        }
-        logger.info("Building " + pBuilding + " not found");
+        int id = getBuildingIdByName(pBuilding);
+        if(id == -2) {
+            logger.info("Building " + pBuilding + " not found");
         return -2;
+        }
+
+        return buildings[id];
     }
 
     private void setBuildingLevelByName(String pBuilding, int pLevel) {
+        int id = getBuildingIdByName(pBuilding);
+        if(id == -2) {
+            logger.info("Building " + pBuilding + " not found");
+            return;
+        }
+        
         if(pLevel > getMaxBuildingLevel(pBuilding)) {
             logger.error("Building cannot be constructed that far " + pBuilding + ": " + pLevel);
             return;
         }
-        
-        for(int i = 0; i < buildingNames.length; i++) {
-            if(buildingNames[i].equals(pBuilding)) {
-                buildings[i] = pLevel;
-                return;
-            }
+
+        buildings[id] = pLevel;
+    }
+    
+    private void setBuildingLevelById(int pBuildingId, int pLevel) {
+        if(pLevel > getMaxBuildingLevel(Constants.buildingNames[pBuildingId])) {
+            logger.error("Building cannot be constructed that far " + pBuildingId + ": " + pLevel);
+            return;
         }
-        logger.error("Building " + pBuilding + " not found");
+
+        buildings[pBuildingId] = pLevel;
     }
 
     @Override
@@ -259,30 +269,61 @@ public class KnownVillage extends ManageableType {
      * returns -2 if the building was not found
      */
     public static int getMaxBuildingLevel(String pBuilding) {
-        for(int i = 0; i < buildingNames.length; i++) {
-            if(buildingNames[i].equals(pBuilding)) {
-                if(buildingMaxLevel[i] != -2) {
-                    return buildingMaxLevel[i];
-                }
-                //Buildings that depend on world settings
-                switch(pBuilding) {
-                    case "church":
-                        if(ServerSettings.getSingleton().isChurch())
-                            return 3;
-                        return -1;
-                    case "watchtower":
-                        if(ServerSettings.getSingleton().isWatchtower())
-                            return 20;
-                        return -1;
-                    case "academy":
-                        if(ServerSettings.getSingleton().getNobleSystem() ==
-                                ServerSettings.NOBLESYSTEM_PACKETS)
-                            return 3;
-                        return 1;
+        int id = getBuildingIdByName(pBuilding);
+        if(id == -2) {
+            logger.info("Building " + pBuilding + " not found");
+            return -2;
+        }
+        if(buildingMaxLevel[id] != -2) {
+            return buildingMaxLevel[id];
+        }
+        //Buildings that depend on world settings
+        switch(pBuilding) {
+            case "church":
+                if(ServerSettings.getSingleton().isChurch())
+                    return 3;
+                return -1;
+            case "watchtower":
+                if(ServerSettings.getSingleton().isWatchtower())
+                    return 20;
+                return -1;
+            case "academy":
+                if(ServerSettings.getSingleton().getNobleSystem() ==
+                        ServerSettings.NOBLESYSTEM_PACKETS)
+                    return 3;
+                return 1;
+        }
+        
+        logger.error("came to position in code that should never be reached: "
+                + pBuilding);
+        return -2;
+    }
+    
+    /**
+     * 
+     * @param pBuilding Name of Building
+     * @return id of building will be returned
+     * returns -2 if the building was not found
+     */
+    public static int getBuildingIdByName(String pName) {
+        for(int i = 0; i < Constants.buildingNames.length; i++) {
+            if(Constants.buildingNames[i].equals(pName)) {
+                return i;
+            }   
+        }
+        return -2;
+    }
+
+    void updateInformation(FightReport pReport) {
+        for(int i = 0; i < buildings.length; i++) {
+            if(pReport.getBuilding(i) != -1) {
+                //Building was spyed
+                if(getMaxBuildingLevel(Constants.buildingNames[i]) > 0) {
+                    //Building can be build
+                    setBuildingLevelById(i, pReport.getBuilding(i));
+                    updateTime();
                 }
             }
         }
-        logger.info("Building " + pBuilding + " not found");
-        return -2;
     }
 }

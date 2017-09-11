@@ -19,6 +19,7 @@ import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
+import de.tor.tribes.util.village.KnownVillage;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.LinkedList;
@@ -46,7 +47,7 @@ public class SingleAttackerStat {
     private int atLeast6KDamage = 0;
     private int atLeast8KDamage = 0;
     private int destroyedWallLevels = 0;
-    private Hashtable<String, Integer> destroyedBuildingLevels = null;
+    private Hashtable<Integer, Integer> destroyedBuildingLevels = null;
     private Hashtable<UnitHolder, Integer> silentKills = null;
 
     public SingleAttackerStat(Tribe pTribe) {
@@ -76,7 +77,8 @@ public class SingleAttackerStat {
             elem.addEnoblement();
         }
 
-        elem.addDestroyedBuildingLevel("Bauernhof", ((int) Math.rint(Math.random() * 30)));
+        elem.addDestroyedBuildingLevel(KnownVillage.getBuildingIdByName("Bauernhof"),
+                ((int) Math.rint(Math.random() * 30)));
         elem.addDestroyedWallLevels(((int) Math.rint(Math.random() * 60)));
 
         for (int i = 0; i < ((int) Math.rint(Math.random() * 5)); i++) {
@@ -199,16 +201,16 @@ public class SingleAttackerStat {
         return destroyedWallLevels;
     }
 
-    public void addDestroyedBuildingLevel(String pBuilding, int pLevels) {
-        Integer value = destroyedBuildingLevels.get(pBuilding);
+    public void addDestroyedBuildingLevel(int pBuildingId, int pLevels) {
+        Integer value = destroyedBuildingLevels.get(pBuildingId);
         if (value == null) {
-            destroyedBuildingLevels.put(pBuilding, pLevels);
+            destroyedBuildingLevels.put(pBuildingId, pLevels);
         } else {
-            destroyedBuildingLevels.put(pBuilding, value + pLevels);
+            destroyedBuildingLevels.put(pBuildingId, value + pLevels);
         }
     }
 
-    public Hashtable<String, Integer> getDestroyedBuildings() {
+    public Hashtable<Integer, Integer> getDestroyedBuildings() {
         return destroyedBuildingLevels;
     }
 
@@ -216,7 +218,7 @@ public class SingleAttackerStat {
         if (destroyedBuildingLevels == null || destroyedBuildingLevels.isEmpty()) {
             return 0;
         }
-        Enumeration<String> keys = destroyedBuildingLevels.keys();
+        Enumeration<Integer> keys = destroyedBuildingLevels.keys();
         int value = 0;
         while (keys.hasMoreElements()) {
             value += destroyedBuildingLevels.get(keys.nextElement());

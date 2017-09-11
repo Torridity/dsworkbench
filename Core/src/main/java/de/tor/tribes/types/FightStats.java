@@ -180,7 +180,7 @@ public class FightStats {
         }
 
         if (pReport.wasBuildingDamaged()) {
-            attackerElement.addDestroyedBuildingLevel(pReport.getAimedBuilding(), (pReport.getBuildingBefore() - pReport.getBuildingAfter()));
+            attackerElement.addDestroyedBuildingLevel(pReport.getAimedBuildingId(), (pReport.getBuildingBefore() - pReport.getBuildingAfter()));
         }
     }
 

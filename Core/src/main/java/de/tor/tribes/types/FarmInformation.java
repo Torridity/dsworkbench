@@ -23,12 +23,14 @@ import de.tor.tribes.types.ext.Barbarians;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.views.DSWorkbenchFarmManager;
 import de.tor.tribes.util.BrowserCommandSender;
+import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.TroopHelper;
 import de.tor.tribes.util.conquer.ConquerManager;
 import de.tor.tribes.util.report.ReportManager;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
+import de.tor.tribes.util.village.KnownVillage;
 import org.apache.commons.lang.math.IntRange;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.Logger;
@@ -63,13 +65,6 @@ public class FarmInformation extends ManageableType {
         TROOPS_FOUND,
         CONQUERED,
         LOCKED
-    }
-
-    public enum SPY_LEVEL {
-
-        NONE,
-        RESOURCES,
-        BUILDINGS
     }
     private FARM_STATUS status = FARM_STATUS.NOT_SPYED;
     private boolean justCreated = false;
@@ -510,58 +505,23 @@ public class FarmInformation extends ManageableType {
      * Update spy'ed buildings and resources
      */
     private void updateSpyInformation(FightReport pReport) {
-        SPY_LEVEL spyLevel = SPY_LEVEL.NONE;
-        if (pReport.getSpyedResources() != null) {
-            woodInStorage = pReport.getSpyedResources()[0];
-            clayInStorage = pReport.getSpyedResources()[1];
-            ironInStorage = pReport.getSpyedResources()[2];
+        if (pReport.getSpyLevel() >= pReport.SPY_LEVEL_RESOURCES) {
             int remaining = pReport.getSpyedResources()[0] + pReport.getSpyedResources()[1] + pReport.getSpyedResources()[2];
             if(remaining < 4) remaining = 0; //Fix for a Bug of DS Where there are Resources displayed in Spy but not hauled
             resourcesFoundInLastReport = remaining > DSWorkbenchFarmManager.getSingleton().getMinHaul(usedConfig);
-            spyLevel = SPY_LEVEL.RESOURCES;
         }
-
-        if (pReport.getStorageLevel() != -1) {
-            storageLevel = pReport.getStorageLevel();
-            spyLevel = SPY_LEVEL.BUILDINGS;
+        
+        if(pReport.getSpyLevel() >= pReport.SPY_LEVEL_BUILDINGS) {
+            storageLevel = pReport.getBuilding(KnownVillage.getBuildingIdByName("storage"));
+            woodLevel = pReport.getBuilding(KnownVillage.getBuildingIdByName("timber"));
+            clayLevel = pReport.getBuilding(KnownVillage.getBuildingIdByName("clay"));
+            ironLevel = pReport.getBuilding(KnownVillage.getBuildingIdByName("iron"));
+            hideLevel = pReport.getBuilding(KnownVillage.getBuildingIdByName("hide"));
+            wallLevel = pReport.getBuilding(KnownVillage.getBuildingIdByName("wall"));
         }
-        if (pReport.getWoodLevel() != -1) {
-            woodLevel = pReport.getWoodLevel();
-            spyLevel = SPY_LEVEL.BUILDINGS;
-        }
-        if (pReport.getClayLevel() != -1) {
-            clayLevel = pReport.getClayLevel();
-            spyLevel = SPY_LEVEL.BUILDINGS;
-        }
-        if (pReport.getIronLevel() != -1) {
-            ironLevel = pReport.getIronLevel();
-            spyLevel = SPY_LEVEL.BUILDINGS;
-        }
-        if (pReport.getHideLevel() != -1) {
-            hideLevel = pReport.getHideLevel();
-            spyLevel = SPY_LEVEL.BUILDINGS;
-        }
-        if (pReport.getWallLevel() != -1) {
-            wallLevel = pReport.getWallLevel();
-            spyLevel = SPY_LEVEL.BUILDINGS;
-        }
-
-        //set wall destruction (works also without spying)
-        if (pReport.getWallAfter() != -1) {
+        else if (pReport.getWallAfter() != -1) {
+            //set wall destruction (works also without spying)
             wallLevel = pReport.getWallAfter();
-        }
-
-        switch (spyLevel) {
-            case BUILDINGS:
-                logger.debug("Included building and resource spy information into farm information");
-                spyed = true;
-                break;
-            case RESOURCES:
-                logger.debug("Included resource spy information into farm information");
-                break;
-            default:
-                logger.debug("Included no spy information into farm information");
-                break;
         }
     }
 

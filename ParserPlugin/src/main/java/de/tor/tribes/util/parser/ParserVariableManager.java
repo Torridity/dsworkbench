@@ -18,6 +18,11 @@ package de.tor.tribes.util.parser;
 import de.tor.tribes.util.GlobalOptions;
 import java.io.FileInputStream;
 import java.io.File;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
 import java.util.Properties;
 import org.apache.log4j.Logger;
 
@@ -27,7 +32,7 @@ import org.apache.log4j.Logger;
  */
 public class ParserVariableManager {
     
-    private static Logger logger = Logger.getLogger("ParserVariableManager");
+    private static final Logger logger = Logger.getLogger("ParserVariableManager");
 
     private static ParserVariableManager SINGLETON = null;
     private Properties variableMappings = null;
@@ -47,7 +52,9 @@ public class ParserVariableManager {
             if (file.isFile() && fileExtension(file).equals("parserprop")) {
                 try {
                     logger.debug("Loading Parser Language file: " + file.getName());
-                    variableMappings.load(new FileInputStream(file));
+                    variableMappings.load(new StringReader(getTranslation(
+                            file.getAbsolutePath(), file.getName().substring(0,
+                            file.getName().length() - fileExtension(file).length()))));
                 } catch (Exception e) {
                     logger.warn("Failed to load Parser Language file: " + file.getName(), e);
                 }
@@ -121,23 +128,34 @@ public class ParserVariableManager {
         DEFAULT.put("de.report.defender.player", "Verteidiger");
         DEFAULT.put("de.report.spy.res", "Ersp\u00E4hte Rohstoffe");
         DEFAULT.put("de.report.haul", "Beute");
+        DEFAULT.put("de.report.buildings.main", "Hauptgeb\u00E4ude");
+        DEFAULT.put("de.report.buildings.barracks", "Kaserne");
+        DEFAULT.put("de.report.buildings.stable", "Stall");
+        DEFAULT.put("de.report.buildings.workshop", "Werkstatt");
+        DEFAULT.put("de.report.buildings.church", "Kirche");
+        DEFAULT.put("de.report.buildings.watchtower", "Wachturm");
+        DEFAULT.put("de.report.buildings.academy", "Adelshof");
+        DEFAULT.put("de.report.buildings.smithy", "Schmiede");
+        DEFAULT.put("de.report.buildings.rally", "Versammlungsplatz");
+        DEFAULT.put("de.report.buildings.statue", "Statue");
+        DEFAULT.put("de.report.buildings.market", "Marktplatz");
         DEFAULT.put("de.report.buildings.wood", "Holzf\u00E4llerlager");
         DEFAULT.put("de.report.buildings.clay", "Lehmgrube");
         DEFAULT.put("de.report.buildings.iron", "Eisenmine");
+        DEFAULT.put("de.report.buildings.farm", "Bauernhof");
         DEFAULT.put("de.report.buildings.storage", "Speicher");
         DEFAULT.put("de.report.buildings.hide", "Versteck");
         DEFAULT.put("de.report.buildings.wall", "Wall");
         DEFAULT.put("de.report.buildings.first.church", "Erste Kirche");
-        DEFAULT.put("de.report.buildings.curch", "Kirche");
-        DEFAULT.put("de.report.damage.ram", "Schaden durch Rammb\u00F6cke:");
+        DEFAULT.put("de.report.damage.ram", "Schaden durch Rammb\u00F6cke");
         DEFAULT.put("de.report.damage.wall", "Wall besch\u00E4digt von Level");
         DEFAULT.put("de.report.damage.to", "auf Level");
-        DEFAULT.put("de.report.damage.kata", "Schaden durch Katapultbeschuss:");
+        DEFAULT.put("de.report.damage.kata", "Schaden durch Katapultbeschuss");
         DEFAULT.put("de.report.damage.level", "Level");
         DEFAULT.put("de.report.acceptance.1", "Ver\u00E4nderung der Zustimmung");
         DEFAULT.put("de.report.acceptance.2", "Zustimmung gesunken von");
         DEFAULT.put("de.report.acceptance.3", "auf");
-        DEFAULT.put("de.report.acceptance.4", "Zustimmung:");
+        DEFAULT.put("de.report.acceptance.4", "Zustimmung");
         DEFAULT.put("de.report.acceptance.5", "Gesunken von");
         DEFAULT.put("de.report.ontheway", "Truppen des Verteidigers, die unterwegs waren");
         DEFAULT.put("de.report.outside", "Truppen des Verteidigers in anderen D\u00F6rfern");
@@ -176,5 +194,37 @@ public class ParserVariableManager {
             return fileName.substring(index + 1);
         }
         return fileName;
+    }
+    
+    private String getTranslation(String pPath, String pPrefix) throws IOException {
+        StringBuilder str = new StringBuilder();
+        String[] merged = getMergedString(pPath, 10).toString()
+                .split(System.lineSeparator());
+        
+        for (String line : merged) {
+            if(!line.startsWith("#")) {
+                //only add line if it is no comment
+                str.append(pPrefix).append(line).append(System.lineSeparator());
+            }
+        }
+        return str.toString();
+    }
+    
+    private StringBuilder getMergedString(String pPath, int pRecursion) throws IOException {
+        StringBuilder str = new StringBuilder();
+        BufferedReader br = new BufferedReader(new FileReader(pPath));
+        String line;
+        while((line = br.readLine()) != null) {
+            line = line.replaceAll("\n", "").replaceAll("\r", "");
+            if(line.startsWith("[") && line.endsWith("]")) {
+                str.append(getMergedString(new File(pPath).getParent() + "/" +
+                        line.substring(1, line.length() - 1), pRecursion - 1));
+                str.append(System.lineSeparator());
+            }
+            else {
+                str.append(line).append(System.lineSeparator());
+            }
+        }
+        return str;
     }
 }

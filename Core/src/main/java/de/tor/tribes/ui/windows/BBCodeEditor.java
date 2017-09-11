@@ -59,6 +59,7 @@ import de.tor.tribes.util.bb.TroopListFormatter;
 import de.tor.tribes.util.bb.VillageListFormatter;
 import de.tor.tribes.util.bb.WinnerLoserStatsFormatter;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
+import de.tor.tribes.util.village.KnownVillage;
 import java.awt.Color;
 import java.awt.event.ItemEvent;
 import java.util.Date;
@@ -228,7 +229,7 @@ public class BBCodeEditor extends javax.swing.JDialog {
         //sampleRequests.add(sampleSOSRequest2);
         //sample report
         FightReport sampleReport = new FightReport();
-        sampleReport.setAimedBuilding("Wall");
+        sampleReport.setAimedBuildingId(KnownVillage.getBuildingIdByName("wall"));
         sampleReport.setAttacker(sampleVillage2.getTribe());
         sampleReport.setConquered(false);
         sampleReport.setDefender(sampleVillage3.getTribe());
@@ -241,7 +242,7 @@ public class BBCodeEditor extends javax.swing.JDialog {
         FightReport sampleReport2 = new FightReport();
         sampleReport2.setAcceptanceAfter((byte) 70);
         sampleReport2.setAcceptanceBefore((byte) 100);
-        sampleReport2.setAimedBuilding("Wall");
+        sampleReport2.setAimedBuildingId(KnownVillage.getBuildingIdByName("wall"));
         sampleReport2.setAttacker(sampleVillage2.getTribe());
         sampleReport2.setConquered(false);
         sampleReport2.setDefender(sampleVillage3.getTribe());

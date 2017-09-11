@@ -80,9 +80,8 @@ public class VillageHTMLTooltipGenerator {
                 Tribe current = GlobalOptions.getSelectedProfile().getTribe();
                 if (current != null) {
                     if (current.getId() != pVillage.getTribe().getId()) {
-                        double moral = ((pVillage.getTribe().getPoints() / current.getPoints()) * 3 + 0.3) * 100;
-                        moral = (moral > 100) ? 100 : moral;
-                        b.append(buildInfoRow("Moral:", nf.format(moral) + "%", false));
+                        b.append(buildInfoRow("Moral:", DSCalculator
+                                .calculateMorale(current, pVillage.getTribe()) , false));
                     }
                 }
             }

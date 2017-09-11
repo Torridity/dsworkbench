@@ -27,6 +27,7 @@ import de.tor.tribes.util.TroopHelper;
 import de.tor.tribes.util.UIHelper;
 import de.tor.tribes.util.farm.FarmManager;
 import de.tor.tribes.util.report.ReportManager;
+import de.tor.tribes.util.village.KnownVillage;
 import org.apache.log4j.Logger;
 
 import java.util.Hashtable;
@@ -467,11 +468,11 @@ public class ReportGenerator extends javax.swing.JFrame {
 
         int[] spyInfo = getSpyInfo();
         if (spyInfo != null) {
-            r.setWoodLevel(spyInfo[0]);
-            r.setClayLevel(spyInfo[1]);
-            r.setIronLevel(spyInfo[2]);
-            r.setStorageLevel(spyInfo[3]);
-            r.setHideLevel(spyInfo[4]);
+            r.setBuilding(KnownVillage.getBuildingIdByName("timber"), spyInfo[0]);
+            r.setBuilding(KnownVillage.getBuildingIdByName("clay"), spyInfo[1]);
+            r.setBuilding(KnownVillage.getBuildingIdByName("iron"), spyInfo[2]);
+            r.setBuilding(KnownVillage.getBuildingIdByName("storage"), spyInfo[3]);
+            r.setBuilding(KnownVillage.getBuildingIdByName("hide"), spyInfo[4]);
         }
 
         if (jTroopsOutside.isSelected()) {
@@ -490,7 +491,7 @@ public class ReportGenerator extends javax.swing.JFrame {
         if (jBuildingDamaged.isSelected()) {
             r.setBuildingBefore((byte) 20);
             r.setBuildingAfter((byte) 10);
-            r.setAimedBuilding("Bauernhof");
+            r.setAimedBuildingId(KnownVillage.getBuildingIdByName("farm"));
         }
 
         System.out.println("---Adding generated report (Valid:" + r.isValid() + ")----");

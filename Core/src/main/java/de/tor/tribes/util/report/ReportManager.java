@@ -23,6 +23,7 @@ import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.SystrayHelper;
 import de.tor.tribes.util.farm.FarmManager;
+import de.tor.tribes.util.village.KnownVillageManager;
 import de.tor.tribes.util.xml.JaxenUtils;
 import java.io.File;
 import java.io.FileReader;
@@ -104,7 +105,10 @@ public class ReportManager extends GenericManager<FightReport> {
   @Override
   public void addManagedElement(final FightReport pElement) {
     boolean filtered = false;
-
+    
+    //update information of the VIllages
+    KnownVillageManager.getSingleton().updateInformation(pElement);
+    
     if (farmFilter.isValid(pElement)) {
       logger.debug("Farm filter was activated for village " + pElement.getTargetVillage());
       FarmManager.getSingleton().updateFarmInfoFromReport(pElement);

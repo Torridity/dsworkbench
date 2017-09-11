@@ -154,6 +154,17 @@ public class PluginManager {
     return false;
   }
 
+  public boolean executeObstReportParser(String pData) {
+    logger.info("Executing obst report parser");
+    try {
+      Object parser = loadParser("de.tor.tribes.util.parser.OBSTReportHandler");
+      return ((SilentParserInterface) parser).parse(pData);
+    } catch (Exception e) {
+      logger.error("Failed to execute obst report parser", e);
+    }
+    return false;
+  }
+
   public List<SOSRequest> executeSOSParser(String pData) {
     try {
       Object parser = loadParser("de.tor.tribes.util.parser.SOSParser");

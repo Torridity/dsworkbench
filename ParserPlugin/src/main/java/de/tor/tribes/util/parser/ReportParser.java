@@ -22,12 +22,13 @@ import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
 import de.tor.tribes.ui.windows.NotifierFrame;
+import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ProfileManager;
 import de.tor.tribes.util.ServerSettings;
-import de.tor.tribes.util.village.KnownVillageManager;
 import de.tor.tribes.util.SilentParserInterface;
 import de.tor.tribes.util.report.ReportManager;
+import de.tor.tribes.util.village.KnownVillage;
 import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
@@ -54,7 +55,7 @@ public class ReportParser implements SilentParserInterface {
             if (!r.isValid()) {
                 throw new Exception("No valid report data found");
             }
-            r.fillMissingSpyBuildingInformation();
+            r.fillMissingSpyInformation();
             ReportManager.getSingleton().addManagedElement(r);
             try {
                 DSWorkbenchMainFrame.getSingleton().showSuccess("DS Workbench hat einen Kampfbericht erfolgreich eingelesen und in das Berichtset 'default' übertragen.");
@@ -263,114 +264,34 @@ public class ReportParser implements SilentParserInterface {
                     //no haul
                 }
             }
-            
-            if (line.contains(getVariable("report.buildings.wood"))) {
-                logger.debug("Parse wood mine");
-                //int val = parseIntFromReportTable(line, "Holzfäller(.*)\\(Stufe(.*?)\\)", 2);
-                int val = parseIntFromReportTable(line, getVariable("report.buildings.wood"));
-                if (val != -1) {
-                    logger.debug("Got wood mine level " + val);
-                    result.setWoodLevel(val);
-                    continue;
-                } else {
-                    logger.debug("No valid wood mine level from " + line);
-                }
-            }
-            
-            if (line.contains(getVariable("report.buildings.clay"))) {
-                logger.debug("Parse clay mine");
-                //int val = parseIntFromReportTable(line, "Lehmgrube(.*)\\(Stufe(.*?)\\)", 2);
-                int val = parseIntFromReportTable(line, getVariable("report.buildings.clay"));
-                if (val != -1) {
-                    logger.debug("Got clay mine level " + val);
-                    result.setClayLevel(val);
-                    continue;
-                } else {
-                    logger.debug("No valid clay mine level from " + line);
-                }
-            }
-            
-            if (line.contains(getVariable("report.buildings.iron"))) {
-                logger.debug("Parse clay mine");
-                // int val = parseIntFromReportTable(line, "Eisenmine(.*)\\(Stufe(.*?)\\)", 2);
-                int val = parseIntFromReportTable(line, getVariable("report.buildings.iron"));
-                if (val != -1) {
-                    logger.debug("Got iron mine level " + val);
-                    result.setIronLevel(val);
-                    continue;
-                } else {
-                    logger.debug("No valid iron mine level from " + line);
-                }
-            }
-            
-            if (line.contains(getVariable("report.buildings.storage"))) {
-                logger.debug("Parse storage");
-                // int val = parseIntFromReportTable(line, "Speicher(.*)\\(Stufe(.*?)\\)", 2);
-                int val = parseIntFromReportTable(line, getVariable("report.buildings.storage"));
-                if (val != -1) {
-                    logger.debug("Got storage level " + val);
-                    result.setStorageLevel(val);
-                    continue;
-                } else {
-                    logger.debug("No valid storage level from " + line);
-                }
-            }
-            
-            if (line.contains(getVariable("report.buildings.hide"))) {
-                logger.debug("Parse hide");
-                //int val = parseIntFromReportTable(line, "Versteck(.*)\\(Stufe(.*?)\\)", 2);
-                int val = parseIntFromReportTable(line, getVariable("report.buildings.hide"));
-                if (val != -1) {
-                    logger.debug("Got hide level " + val);
-                    result.setHideLevel(val);
-                    continue;
-                } else {
-                    logger.debug("No valid hide level from " + line);
-                }
-            }
-            
-            if (line.contains(getVariable("report.buildings.wall"))) {
-                logger.debug("Parse wall");
-                //int val = parseIntFromReportTable(line, "Wall(.*)\\(Stufe(.*?)\\)", 2);
-                int val = parseIntFromReportTable(line, getVariable("report.buildings.wall"));
-                if (val != -1) {
-                    logger.debug("Got wall level " + val);
-                    result.setWallLevel(val);
-                    continue;
-                } else {
-                    logger.debug("No valid wall level from " + line);
+
+            for(int i = 0; i < Constants.buildingNames.length; i++) {
+                if (line.contains(getVariable("report.buildings." + Constants.buildingNames[i]))) {
+                    logger.debug("Parse " + Constants.buildingNames[i]);
+                    int val = parseIntFromReportTable(line, getVariable(
+                            "report.buildings." + Constants.buildingNames[i]));
+                    if (val != -1) {
+                        logger.debug("Got " + Constants.buildingNames[i] + " level " + val);
+                        result.setBuilding(i, val);
+                        break;
+                    } else {
+                        logger.debug("No valid " + Constants.buildingNames[i] + " level from " + line);
+                    }
                 }
             }
             
             if (searchChurch && line.contains(getVariable("report.buildings.first.church"))) {
                 logger.debug("Try adding first church");
                 try {
-                    KnownVillageManager.getSingleton().addChurchLevel(result.getTargetVillage(), 2);
+                    result.setBuilding(KnownVillage.getBuildingIdByName("church"), 2);
                     continue;
                 } catch (Exception e) {
                     logger.debug("Failed to add first church");
                 }
             }
             
-            if (searchChurch && line.contains(getVariable("report.buildings.curch"))) {
-                logger.debug("Parse church");
-                //int val = parseIntFromReportTable(line, "Kirche(.*)\\(Stufe(.*?)\\)", 2);
-                int val = parseIntFromReportTable(line, getVariable("report.buildings.curch"));
-                switch (val) {
-                    case 1:
-                    case 2:
-                    case 3:
-                        //Save in report instead of Village Manager
-                        KnownVillageManager.getSingleton().addChurchLevel(result.getTargetVillage(), val);
-                        logger.debug("Church level 1 added");
-                        continue;
-                    default:
-                        logger.debug("Failed to add curch");
-                }
-            }
-            
             if (line.startsWith(getVariable("report.damage.ram"))) {
-                line = line.replaceAll(getVariable("report.damage.ram"), "")
+                line = line.replaceAll(getVariable("report.damage.ram") + ":", "")
                         .replaceAll(getVariable("report.damage.wall"), "")
                         .replaceAll(getVariable("report.damage.to"), "").trim();
                 logger.debug("Found wall line");
@@ -387,39 +308,32 @@ public class ReportParser implements SilentParserInterface {
             
             if (line.startsWith(getVariable("report.damage.kata"))) {
                 //Schaden durch Katapultbeschuss: Wall beschädigt von Level 8 auf Level 7
-                line = line.replaceAll(getVariable("report.damage.kata"), "").trim().
-                        replaceAll(getVariable("report.damage.level"), "");
+                line = line.replaceAll(getVariable("report.damage.kata") + ":", "")
+                        .replaceAll(getVariable("report.damage.level"), "")
+                        .replaceAll(getVariable("report.damage.to"), "").trim();
                 logger.debug("Found cata line");
                 //Wall beschädigt von 8 auf 7
                 StringTokenizer cataT = new StringTokenizer(line, " ");
-                String target = cataT.nextToken();
-                //"damaged" token
-                cataT.nextToken();
-                //"from" token
-                cataT.nextToken();
+                String target = cataT.nextToken().trim();
                 try {
                     byte buildingBefore = Byte.parseByte(cataT.nextToken());
-                    //"to" token
-                    cataT.nextToken();
                     byte buildingAfter = Byte.parseByte(cataT.nextToken());
-                    result.setAimedBuilding(target);
-                    result.setBuildingBefore(buildingBefore);
-                    result.setBuildingAfter(buildingAfter);
+                    if(getBuildingId(target) != -1) {
+                        result.setAimedBuildingId(getBuildingId(target));
+                        result.setBuildingBefore(buildingBefore);
+                        result.setBuildingAfter(buildingAfter);
+                    }
                     continue;
                 } catch (Exception ignored) {
                 }
             }
             
-            if (line.startsWith(getVariable("report.acceptance.1")) ||
-                    line.startsWith(getVariable("report.acceptance.4"))) {
-                line = line.replaceAll(getVariable("report.acceptance.1"), "").trim()
+            if (line.startsWith(getVariable("report.acceptance.1"))) {
+                line = line.replaceAll(getVariable("report.acceptance.1") + ":", "").trim()
                         .replaceAll(getVariable("report.acceptance.2"), "")
                         .replaceAll(getVariable("report.acceptance.3"), "");
                 logger.debug("Found acceptance line");
 
-                //version 6.0
-                line = line.replaceAll(getVariable("report.acceptance.4"), "")
-                        .replaceAll(getVariable("report.acceptance.5"), "");
                 StringTokenizer acceptT = new StringTokenizer(line, " \t");
                 try {
                     result.setAcceptanceBefore(Byte.parseByte(acceptT.nextToken()));
@@ -551,6 +465,15 @@ public class ReportParser implements SilentParserInterface {
             }
         }
         return result;
+    }
+
+    private int getBuildingId(String translatedBuilding) {
+        for(int i = 0; i < Constants.buildingNames.length; i++) {
+            if(translatedBuilding.equals(getVariable("report.buildings." + Constants.buildingNames[i])))
+                return i;
+        }
+        logger.error("Could not find Building " + translatedBuilding);
+        return -1;
     }
 
     private Hashtable<UnitHolder, Integer> parseUnits(String[] pUnits) {

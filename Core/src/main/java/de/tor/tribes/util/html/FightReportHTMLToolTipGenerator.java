@@ -27,7 +27,7 @@ import java.io.IOException;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Enumeration;
+import java.util.Set;
 import org.apache.commons.lang.StringEscapeUtils;
 
 /**
@@ -127,8 +127,8 @@ public class FightReportHTMLToolTipGenerator {
         String defenderSurviveRow = "<tr><td width=\"100\"><div align=\"center\">&Uuml;berlebende:</div></td>";
         for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
             headerRow += "<td><img src=\"" + FightReportHTMLToolTipGenerator.class.getResource("/res/ui/" + unit.getPlainName() + ".png") + "\"</td>";
-            int amount = pReport.getAttackers().get(unit);
-            int died = pReport.getDiedAttackers().get(unit);
+            int amount = pReport.getAttackers().getAmountForUnit(unit);
+            int died = pReport.getDiedAttackers().getAmountForUnit(unit);
             if (amount == 0) {
                 attackerAmountRow += "<td style=\"color:#DED3B9;\">" + amount + "</td>";
             } else {
@@ -144,8 +144,8 @@ public class FightReportHTMLToolTipGenerator {
             } else {
                 attackerSurviveRow += "<td>" + (amount - died) + "</td>";
             }
-            amount = pReport.getDefenders().get(unit);
-            died = pReport.getDiedDefenders().get(unit);
+            amount = pReport.getDefenders().getAmountForUnit(unit);
+            died = pReport.getDiedDefenders().getAmountForUnit(unit);
 
             if (amount == 0) {
                 defenderAmountRow += "<td style=\"color:#DED3B9;\">" + amount + "</td>";
@@ -225,7 +225,7 @@ public class FightReportHTMLToolTipGenerator {
 
             int amount = 0;
             if (pReport.whereDefendersOnTheWay()) {
-                amount = pReport.getDefendersOnTheWay().get(unit);
+                amount = pReport.getDefendersOnTheWay().getAmountForUnit(unit);
             }
             if (amount == 0) {
                 onTheWayRow += "<td style=\"color:#DED3B9;\">" + amount + "</td>";
@@ -257,13 +257,12 @@ public class FightReportHTMLToolTipGenerator {
             }
             headerRow += "</tr>";
 
-            Enumeration<Village> outside = pReport.getDefendersOutside().keys();
-            while (outside.hasMoreElements()) {
-                Village v = outside.nextElement();
+            Set<Village> outside = pReport.getDefendersOutside().keySet();
+            for(Village v: outside) {
                 outsideRow += "<tr><td width=\"100\"><div align=\"center\">" + v.getFullName() + "</div></td>";
 
                 for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
-                    int amount = pReport.getDefendersOutside().get(v).get(unit);
+                    int amount = pReport.getDefendersOutside().get(v).getAmountForUnit(unit);
                     if (amount == 0) {
                         outsideRow += "<td style=\"color:#DED3B9;\">" + amount + "</td>";
                     } else {

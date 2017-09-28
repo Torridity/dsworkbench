@@ -16,6 +16,7 @@
 package de.tor.tribes.ui.windows;
 
 import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.io.TroopAmountFixed;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.TroopSplit;
 import de.tor.tribes.types.UserProfile;
@@ -46,9 +47,9 @@ public class TroopSplitDialog extends javax.swing.JDialog {
 
     private static Logger logger = Logger.getLogger("TroopSplitDialog");
     private boolean isInitialized = false;
-    private Hashtable<UnitHolder, Integer> mSplitAmounts = new Hashtable<>();
+    private TroopAmountFixed mSplitAmounts = new TroopAmountFixed();
     private List<TroopSplit> mSplits = new LinkedList<>();
-    private Hashtable<String, Hashtable<UnitHolder, Integer>> splitSets = new Hashtable<>();
+    private Hashtable<String, TroopAmountFixed> splitSets = new Hashtable<>();
 
     /**
      * Creates new form TroopSplitDialog
@@ -98,7 +99,7 @@ public class TroopSplitDialog extends javax.swing.JDialog {
         jUnitSelectionBox.setRenderer(new UnitListCellRenderer());
         jTroopsPerSplitList.setCellRenderer(new TroopAmountListCellRenderer());
         jSplitsList.setCellRenderer(new TroopSplitListCellRenderer());
-        mSplitAmounts.clear();
+        mSplitAmounts.fill(-1);
         isInitialized = true;
         
         //TODO re-check where everything is stored and sort correctly
@@ -458,7 +459,7 @@ public class TroopSplitDialog extends javax.swing.JDialog {
             JOptionPaneHelper.showWarningBox(this, "Ungültige Einheit", "Fehler");
             return;
         }
-        mSplitAmounts.put(unit, amount);
+        mSplitAmounts.setAmountForUnit(unit, amount);
         updateAmountsList();
         saveSplitSets();
     }//GEN-LAST:event_fireAddSplitAmountEvent
@@ -501,7 +502,7 @@ public class TroopSplitDialog extends javax.swing.JDialog {
 
         StringBuilder b = new StringBuilder();
         b.append(setName).append(",");
-        Hashtable<UnitHolder, Integer> splits = (Hashtable<UnitHolder, Integer>) mSplitAmounts.clone();
+        TroopAmountFixed splits = mSplitAmounts.clone();
 
         splitSets.put(setName, splits);
         updateSplitSetList();
@@ -511,7 +512,7 @@ public class TroopSplitDialog extends javax.swing.JDialog {
     private void fireLoadSplitSetEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireLoadSplitSetEvent
         String selection = (String) jSavedSplitsList.getSelectedValue();
         if (selection != null) {
-            mSplitAmounts = (Hashtable<UnitHolder, Integer>) splitSets.get(selection).clone();
+            mSplitAmounts = (TroopAmountFixed) splitSets.get(selection).clone();
             updateAmountsList();
         }
     }//GEN-LAST:event_fireLoadSplitSetEvent
@@ -555,13 +556,7 @@ public class TroopSplitDialog extends javax.swing.JDialog {
         List<UnitHolder> units = new LinkedList<>();
         for (Object o : selection) {
             String unit = ((String) o).split(" ")[1].trim();
-            UnitHolder u = DataHolder.getSingleton().getUnitByPlainName(unit);
-            if (u != null) {
-                units.add(u);
-            }
-        }
-        for (UnitHolder unit : units) {
-            mSplitAmounts.remove(unit);
+            mSplitAmounts.setAmountForUnit(unit, -1);
         }
         updateAmountsList();
     }
@@ -572,8 +567,8 @@ public class TroopSplitDialog extends javax.swing.JDialog {
     private void updateAmountsList() {
         DefaultListModel model = new DefaultListModel();
         for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
-            Integer amount = mSplitAmounts.get(unit);
-            if (amount != null) {
+            int amount = mSplitAmounts.getAmountForUnit(unit);
+            if (amount > 0) {
                 model.addElement(amount + " " + unit.getPlainName());
             }
         }

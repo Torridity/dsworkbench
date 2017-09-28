@@ -655,9 +655,9 @@ public class AttackSourceFilterPanel extends WizardPage {
                     VillageTroopsHolder troopsForVillage = TroopsManager.getSingleton().getTroopsForVillage(element.getVillage(), TroopsManager.TROOP_TYPE.OWN);
                     if (troopsForVillage != null) {//troop information available
                         if (element.getVillage().getType() == Village.FARM_BONUS) {//bonus village, set ignored if not enough troops
-                            element.setIgnored(troopsForVillage.getTroopPopCount() < requiredTroopAmountBonus);
+                            element.setIgnored(troopsForVillage.getTroops().getTroopPopCount() < requiredTroopAmountBonus);
                         } else {//no bonus village, set ignored if not enough troops
-                            element.setIgnored(troopsForVillage.getTroopPopCount() < requiredTroopAmount);
+                            element.setIgnored(troopsForVillage.getTroops().getTroopPopCount() < requiredTroopAmount);
                         }
                     } else {//no troop information available
                         if (element.getVillage().getType() == Village.FARM_BONUS) {//ignore if needed troops contains value != 0

@@ -21,6 +21,7 @@ import de.tor.tribes.control.GenericManagerListener;
 import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.DataHolderListener;
+import de.tor.tribes.io.TroopAmountFixed;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.NoTag;
 import de.tor.tribes.types.Tag;
@@ -780,12 +781,7 @@ private void fireApplyTroopAddEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
           TagManager.getSingleton().getTagByName("Test2").tagVillage(v.getId());
         }
         VillageTroopsHolder h = new VillageTroopsHolder(v, new Date());
-        Hashtable<UnitHolder, Integer> troops = new Hashtable<>();
-        for (UnitHolder ho : DataHolder.getSingleton().getUnits()) {
-          troops.put(ho, 1000);
-        }
-
-        h.setTroops(troops);
+        h.setTroops(new TroopAmountFixed(1000));
         TroopsManager.getSingleton().addManagedElement(h);
       }
     }
@@ -795,11 +791,7 @@ private void fireApplyTroopAddEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
       SupportVillageTroopsHolder supp = new SupportVillageTroopsHolder(v, new Date());
       for (int j = 0; j < 10; j++) {
         Village vsource = DataHolder.getSingleton().getRandomVillage();
-        Hashtable<UnitHolder, Integer> troops = new Hashtable<>();
-        for (UnitHolder ho : DataHolder.getSingleton().getUnits()) {
-          troops.put(ho, 50);
-        }
-        supp.addIncomingSupport(vsource, troops);
+        supp.addIncomingSupport(vsource, new TroopAmountFixed(50));
       }
       TroopsManager.getSingleton().addManagedElement(TroopsManager.SUPPORT_GROUP, supp);
     }
@@ -808,11 +800,7 @@ private void fireApplyTroopAddEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
       SupportVillageTroopsHolder supp = new SupportVillageTroopsHolder(v, new Date());
       for (int j = 0; j < 10; j++) {
         Village vsource = DataHolder.getSingleton().getRandomVillage();
-        Hashtable<UnitHolder, Integer> troops = new Hashtable<>();
-        for (UnitHolder ho : DataHolder.getSingleton().getUnits()) {
-          troops.put(ho, 50);
-        }
-        supp.addOutgoingSupport(vsource, troops);
+        supp.addOutgoingSupport(vsource, new TroopAmountFixed(50));
       }
       TroopsManager.getSingleton().addManagedElement(TroopsManager.SUPPORT_GROUP, supp);
     }

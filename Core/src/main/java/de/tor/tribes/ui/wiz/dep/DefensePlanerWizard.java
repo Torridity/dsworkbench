@@ -16,6 +16,7 @@
 package de.tor.tribes.ui.wiz.dep;
 
 import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.io.TroopAmountFixed;
 import de.tor.tribes.types.SOSRequest;
 import de.tor.tribes.types.TargetInformation;
 import de.tor.tribes.types.ext.Village;
@@ -101,9 +102,11 @@ public class DefensePlanerWizard extends WizardPanelProvider {
             TargetInformation info = r.getTargetInformation(target);
             info.setWallLevel(wallLevel);
 
-            info.addTroopInformation(DataHolder.getSingleton().getUnitByPlainName("spear"), (int) Math.rint(Math.random() * 14000));
-            info.addTroopInformation(DataHolder.getSingleton().getUnitByPlainName("sword"), (int) Math.rint(Math.random() * 14000));
-            info.addTroopInformation(DataHolder.getSingleton().getUnitByPlainName("heavy"), (int) Math.rint(Math.random() * 5000));
+            TroopAmountFixed troops = new TroopAmountFixed();
+            troops.setAmountForUnit("spear", (int) Math.rint(Math.random() * 14000));
+            troops.setAmountForUnit("sword", (int) Math.rint(Math.random() * 14000));
+            troops.setAmountForUnit("heavy", (int) Math.rint(Math.random() * 5000));
+            info.setTroops(troops);
 
             int cnt = (int) Math.rint(maxAttackCount * Math.random());
             for (int j = 0; j < cnt; j++) {

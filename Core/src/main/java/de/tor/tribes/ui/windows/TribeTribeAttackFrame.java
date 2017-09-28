@@ -676,7 +676,7 @@ public class TribeTribeAttackFrame extends DSWorkbenchGesturedFrame implements
                 Village v = (Village) model.getValueAt(row, jSourcesTable.convertColumnIndexToModel(0));
                 VillageTroopsHolder troops = TroopsManager.getSingleton().getTroopsForVillage(v, TroopsManager.TROOP_TYPE.IN_VILLAGE);
                 if (troops != null) {
-                    int availSnobs = troops.getTroopsOfUnitInVillage(snob);
+                    int availSnobs = troops.getTroops().getAmountForUnit(snob);
                     Integer assignedSnobs = assignedTroops.get(v);
                     if (assignedSnobs == null) {
                         assignedSnobs = 0;
@@ -2921,7 +2921,7 @@ private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
             for (Village pSource : pSourceVillages) {
                 VillageTroopsHolder troopsForVillage = TroopsManager.getSingleton().getTroopsForVillage(pSource, TroopsManager.TROOP_TYPE.OWN);
                 if (troopsForVillage != null) {
-                    int ownTroopsInVillage = troopsForVillage.getTroopPopCount();
+                    int ownTroopsInVillage = troopsForVillage.getTroops().getTroopPopCount();
                     if (ownTroopsInVillage < getRequiredTroopAmount()) {
                         if (!villagesWithSmallTroopCount.contains(pSource)) {
                             villagesWithSmallTroopCount.add(pSource);

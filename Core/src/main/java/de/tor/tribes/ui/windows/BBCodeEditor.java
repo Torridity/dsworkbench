@@ -16,7 +16,7 @@
 package de.tor.tribes.ui.windows;
 
 import de.tor.tribes.io.DataHolder;
-import de.tor.tribes.io.UnitHolder;
+import de.tor.tribes.io.TroopAmountFixed;
 import de.tor.tribes.types.drawing.AbstractForm;
 import de.tor.tribes.types.AllyStatResult;
 import de.tor.tribes.types.Attack;
@@ -63,7 +63,6 @@ import de.tor.tribes.util.village.KnownVillage;
 import java.awt.Color;
 import java.awt.event.ItemEvent;
 import java.util.Date;
-import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.DefaultListModel;
@@ -272,17 +271,17 @@ public class BBCodeEditor extends javax.swing.JDialog {
         t3.tagVillage(sampleVillage5.getId());
         //sample troops
         VillageTroopsHolder h = new VillageTroopsHolder(sampleVillage1, new Date());
-        Hashtable<UnitHolder, Integer> troops = new Hashtable<>();
-        troops.put(DataHolder.getSingleton().getUnitByPlainName("axe"), 6600);
-        troops.put(DataHolder.getSingleton().getUnitByPlainName("light"), 2200);
-        troops.put(DataHolder.getSingleton().getUnitByPlainName("ram"), 300);
-        troops.put(DataHolder.getSingleton().getUnitByPlainName("snob"), 2);
+        TroopAmountFixed troops = new TroopAmountFixed(0);
+        troops.setAmountForUnit(DataHolder.getSingleton().getUnitByPlainName("axe"), 6600);
+        troops.setAmountForUnit(DataHolder.getSingleton().getUnitByPlainName("light"), 2200);
+        troops.setAmountForUnit(DataHolder.getSingleton().getUnitByPlainName("ram"), 300);
+        troops.setAmountForUnit(DataHolder.getSingleton().getUnitByPlainName("snob"), 2);
         h.setTroops(troops);
         VillageTroopsHolder h2 = new VillageTroopsHolder(sampleVillage3, new Date());
-        troops.put(DataHolder.getSingleton().getUnitByPlainName("axe"), 5500);
-        troops.put(DataHolder.getSingleton().getUnitByPlainName("light"), 2000);
-        troops.put(DataHolder.getSingleton().getUnitByPlainName("marcher"), 300);
-        troops.put(DataHolder.getSingleton().getUnitByPlainName("ram"), 240);
+        troops.setAmountForUnit(DataHolder.getSingleton().getUnitByPlainName("axe"), 5500);
+        troops.setAmountForUnit(DataHolder.getSingleton().getUnitByPlainName("light"), 2000);
+        troops.setAmountForUnit(DataHolder.getSingleton().getUnitByPlainName("marcher"), 300);
+        troops.setAmountForUnit(DataHolder.getSingleton().getUnitByPlainName("ram"), 240);
         h2.setTroops(troops);
         sampleTroops.add(h);
         sampleTroops.add(h2);

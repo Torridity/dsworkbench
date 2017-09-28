@@ -27,6 +27,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 /**
  *
@@ -123,24 +124,21 @@ public class FightStats {
                 break;
         }
 
-        for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
-            if (!pReport.areAttackersHidden()) {
-                attackerElement.addSentUnit(unit, pReport.getAttackers().get(unit));
-                attackerElement.addLostUnit(unit, pReport.getDiedAttackers().get(unit));
-            }
-            if (!pReport.wasLostEverything()) {
-                attackerElement.addKilledUnit(unit, pReport.getDiedDefenders().get(unit));
-            }
+        if (!pReport.areAttackersHidden()) {
+            attackerElement.addSentUnits(pReport.getAttackers());
+            attackerElement.addLostUnits(pReport.getDiedAttackers());
+        }
+        if (!pReport.wasLostEverything()) {
+            attackerElement.addKilledUnits(pReport.getDiedDefenders());
+        }
 
-            if (pReport.wasConquered() && pReport.whereDefendersOnTheWay()) {
-                attackerElement.addSilentlyKilledUnit(unit, pReport.getDefendersOnTheWay().get(unit));
-            }
-            if (pReport.wasConquered() && pReport.whereDefendersOutside()) {
-                Enumeration<Village> targets = pReport.getDefendersOutside().keys();
-                while (targets.hasMoreElements()) {
-                    Village target = targets.nextElement();
-                    attackerElement.addSilentlyKilledUnit(unit, pReport.getDefendersOutside().get(target).get(unit));
-                }
+        if (pReport.wasConquered() && pReport.whereDefendersOnTheWay()) {
+            attackerElement.addSilentlyKilledUnits(pReport.getDefendersOnTheWay());
+        }
+        if (pReport.wasConquered() && pReport.whereDefendersOutside()) {
+            Set<Village> targets = pReport.getDefendersOutside().keySet();
+            for (Village target: targets) {
+                attackerElement.addSilentlyKilledUnits(pReport.getDefendersOutside().get(target));
             }
         }
 

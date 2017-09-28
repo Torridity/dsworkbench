@@ -16,6 +16,7 @@
 package de.tor.tribes.util.parser;
 
 import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.io.TroopAmountFixed;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
@@ -190,43 +191,25 @@ public class TroopsParser70 implements SilentParserInterface {
             onTheWayLine = pLineStack.remove(0);
             debug("Processing village " + pVillage);
 
-            int[] ownUnits = handleLine(pCurrentLine, getVariable("troops.own"));
-            if (ownUnits == null) {
+            TroopAmountFixed ownTroops = handleLine(pCurrentLine, getVariable("troops.own"));
+            if (ownTroops == null) {
                 throw new Exception("OwnTroops line is invalid");
             }
-            int[] inVillageUnits = handleLine(inVillageLine, getVariable("troops.in.village"));
-            if (inVillageUnits == null) {
+            TroopAmountFixed troopsInVillage = handleLine(inVillageLine, getVariable("troops.in.village"));
+            if (troopsInVillage == null) {
                 throw new RuntimeException("InVillage line is invalid");
             }
-            int[] outsideUnits = handleLine(outsideLine, getVariable("troops.outside"));
-            if (outsideUnits == null) {
+            TroopAmountFixed troopsOutside = handleLine(outsideLine, getVariable("troops.outside"));
+            if (troopsOutside == null) {
                 throw new RuntimeException("TroopsOutside line is invalid");
             }
-            int[] onTheWayUnits = handleLine(onTheWayLine, getVariable("troops.on.the.way"));
-            if (onTheWayUnits == null) {
+            TroopAmountFixed troopsOnTheWay = handleLine(onTheWayLine, getVariable("troops.on.the.way"));
+            if (troopsOnTheWay == null) {
                 throw new RuntimeException("TroopsOnTheWay line is invalid");
             }
             //add troops to troops manager
             if (!IS_DEBUG) {
                 int cnt = 0;
-                Hashtable<UnitHolder, Integer> ownTroops = new Hashtable<>();
-                Hashtable<UnitHolder, Integer> troopsInVillage = new Hashtable<>();
-                Hashtable<UnitHolder, Integer> troopsOutside = new Hashtable<>();
-                Hashtable<UnitHolder, Integer> troopsOnTheWay = new Hashtable<>();
-                for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
-                    ownTroops.put(unit, ownUnits[cnt]);
-                    troopsInVillage.put(unit, inVillageUnits[cnt]);
-                    troopsOutside.put(unit, outsideUnits[cnt]);
-                    troopsOnTheWay.put(unit, onTheWayUnits[cnt]);
-                    cnt++;
-                }
-                /*
-                 * TroopsManager.getSingleton().addTroopsForVillageFast(pVillage, new LinkedList<Integer>()); VillageTroopsHolder holder =
-                 * TroopsManager.getSingleton().getTroopsForVillage(pVillage); holder.setOwnTroops(ownTroops);
-                 * holder.setTroopsInVillage(troopsInVillage); holder.setTroopsOutside(troopsOutside);
-                 * holder.setTroopsOnTheWay(troopsOnTheWay);
-                 */
-
                 VillageTroopsHolder own = TroopsManager.getSingleton().getTroopsForVillage(pVillage, TroopsManager.TROOP_TYPE.OWN, true);
                 VillageTroopsHolder inVillage = TroopsManager.getSingleton().getTroopsForVillage(pVillage, TroopsManager.TROOP_TYPE.IN_VILLAGE, true);
                 VillageTroopsHolder outside = TroopsManager.getSingleton().getTroopsForVillage(pVillage, TroopsManager.TROOP_TYPE.OUTWARDS, true);
@@ -258,16 +241,16 @@ public class TroopsParser70 implements SilentParserInterface {
         return false;
     }
 
-    private int[] handleLine(String pLine, String pTypeProperty) {
+    private TroopAmountFixed handleLine(String pLine, String pTypeProperty) {
         try {
             debug("Test line '" + pLine + "' for property '" + pTypeProperty + "'");
             if (pLine.trim().contains(pTypeProperty)) {
                 debug("Handle line '" + pLine + "' for property '" + pTypeProperty + "'");
-                int[] units = parseUnits(pLine.substring(pLine.indexOf(pTypeProperty)));
-                if (units.length == 0) {
+                TroopAmountFixed units = parseUnits(pLine.substring(pLine.indexOf(pTypeProperty)));
+                if (!units.containsInformation()) {
                     throw new RuntimeException("Line is invalid (UnitCount)");
                 }
-                debug("Got units " + units.length);
+                debug("Got units " + units.getContainedUnits(null).size());
                 return units;
             } else {
                 throw new RuntimeException("Line is invalid (TypeProperty)");
@@ -338,7 +321,7 @@ public class TroopsParser70 implements SilentParserInterface {
      * zu " + foundTroops + ((foundTroops == 1) ? " Dorf " : " Dörfern ") + " in die Truppenübersicht eingetragen.",
      * NotifierFrame.NOTIFY_INFO); TroopsManager.getSingleton().forceUpdate(); } return retValue; }
      */
-    private int[] parseUnits(String pLine) throws RuntimeException {
+    private TroopAmountFixed parseUnits(String pLine) throws RuntimeException {
         String line = pLine.replaceAll(getVariable("troops.own"), "").
                 replaceAll(getVariable("troops.commands"), "").
                 replaceAll(getVariable("troops"), "").
@@ -346,15 +329,13 @@ public class TroopsParser70 implements SilentParserInterface {
         debug("Getting units from line '" + line + "'");
         StringTokenizer t = new StringTokenizer(line, " \t");
         int uCount = DataHolder.getSingleton().getUnits().size();
+        List<UnitHolder> allUnits = DataHolder.getSingleton().getUnits();
 
-        if (IS_DEBUG) {
-            uCount = 9;
-        }
-        int[] units = new int[uCount];
+        TroopAmountFixed units = new TroopAmountFixed(-1);
         int cnt = 0;
         while (t.hasMoreTokens()) {
             try {
-                units[cnt] = Integer.parseInt(t.nextToken());
+                units.setAmountForUnit(allUnits.get(cnt), Integer.parseInt(t.nextToken()));
                 cnt++;
             } catch (Exception e) {
                 //token with no troops
@@ -364,8 +345,8 @@ public class TroopsParser70 implements SilentParserInterface {
             throw new RuntimeException("Unit count does not match");
         }
         debug("Units: ");
-        for (int u : units) {
-            debug(u);
+        for (UnitHolder unit: allUnits) {
+            debug(units.getAmountForUnit(unit));
         }
 
         return units;

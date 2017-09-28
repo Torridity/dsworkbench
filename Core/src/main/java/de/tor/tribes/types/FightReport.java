@@ -17,6 +17,7 @@ package de.tor.tribes.types;
 
 import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.io.TroopAmountFixed;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.php.LuckViewInterface;
 import de.tor.tribes.php.UnitTableInterface;
@@ -29,13 +30,16 @@ import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.TroopHelper;
 import de.tor.tribes.util.village.KnownVillage;
 import de.tor.tribes.util.xml.JaxenUtils;
-import de.tor.tribes.util.xml.XMLHelper;
 import org.jdom.Document;
 import org.jdom.Element;
 
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
 import org.apache.log4j.Logger;
 
 /**
@@ -87,9 +91,8 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
                 : "";
         String troopsOutsideVal = "";
         if (whereDefendersOutside()) {
-            Enumeration<Village> targetKeys = defendersOutside.keys();
-            while (targetKeys.hasMoreElements()) {
-                Village target = targetKeys.nextElement();
+            Set<Village> targetKeys = defendersOutside.keySet();
+            for (Village target: targetKeys) {
                 troopsOutsideVal += target.toBBCode() + "\n\n";
                 troopsOutsideVal += "[img]" + UnitTableInterface.createAttackerUnitTableLink(defendersOutside.get(target)) + "[/img]\n\n";
             }
@@ -121,14 +124,14 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
     private double moral = 100.0;
     private Tribe attacker = null;
     private Village sourceVillage = null;
-    private Hashtable<UnitHolder, Integer> attackers = null;
-    private Hashtable<UnitHolder, Integer> diedAttackers = null;
+    private TroopAmountFixed attackers = null;
+    private TroopAmountFixed diedAttackers = null;
     private Tribe defender = null;
     private Village targetVillage = null;
-    private Hashtable<UnitHolder, Integer> defenders = null;
-    private Hashtable<UnitHolder, Integer> diedDefenders = null;
-    private Hashtable<Village, Hashtable<UnitHolder, Integer>> defendersOutside = null;
-    private Hashtable<UnitHolder, Integer> defendersOnTheWay = null;
+    private TroopAmountFixed defenders = null;
+    private TroopAmountFixed diedDefenders = null;
+    private HashMap<Village, TroopAmountFixed> defendersOutside = null;
+    private TroopAmountFixed defendersOnTheWay = null;
     private boolean conquered = false;
     private int wallBefore = -1;
     private int wallAfter = -1;
@@ -148,12 +151,12 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
     private int spyLevel = SPY_LEVEL_NONE;
 
     public FightReport() {
-        attackers = new Hashtable<>();
-        diedAttackers = new Hashtable<>();
-        defenders = new Hashtable<>();
-        diedDefenders = new Hashtable<>();
-        defendersOutside = new Hashtable<>();
-        defendersOnTheWay = new Hashtable<>();
+        attackers = new TroopAmountFixed();
+        diedAttackers = new TroopAmountFixed();
+        defenders = new TroopAmountFixed();
+        diedDefenders = new TroopAmountFixed();
+        defendersOutside = new HashMap<>();
+        defendersOnTheWay = new TroopAmountFixed();
         
         buildingLevels = new int[Constants.buildingNames.length];
         Arrays.fill(buildingLevels, -1);
@@ -218,12 +221,12 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
                 }
             }
 
-            attackers = XMLHelper.xmlToTroops(attackerElement.getChild("before"));
-            diedAttackers = XMLHelper.xmlToTroops(attackerElement.getChild("died"));
-            defenders = XMLHelper.xmlToTroops(defenderElement.getChild("before"));
-            diedDefenders = XMLHelper.xmlToTroops(defenderElement.getChild("died"));
+            attackers = new TroopAmountFixed(attackerElement.getChild("before"));
+            diedAttackers = new TroopAmountFixed(attackerElement.getChild("died"));
+            defenders = new TroopAmountFixed(defenderElement.getChild("before"));
+            diedDefenders = new TroopAmountFixed(defenderElement.getChild("died"));
             try {
-                defendersOnTheWay = XMLHelper.xmlToTroops(defenderElement.getChild("otw"));
+                defendersOnTheWay = new TroopAmountFixed(defenderElement.getChild("otw"));
             } catch (Exception ignored) {
             }
 
@@ -233,22 +236,19 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
             } catch (Exception ignored) {
             }
 
-            defendersOutside = new Hashtable<>();
+            defendersOutside = new HashMap<>();
             if (dDefendersOutside != null) {
-                for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
-                    String unitName = unit.getPlainName();
-                    for (Element e : (List<Element>) JaxenUtils.getNodes(dDefendersOutside, "support")) {
-                        int villageId = e.getAttribute("trg").getIntValue();
-                        int amount = e.getAttribute(unitName).getIntValue();
-                        Village v = DataHolder.getSingleton().getVillagesById().get(villageId);
-                        if (v != null) {
-                            Hashtable<UnitHolder, Integer> unitsInvillage = defendersOutside.get(v);
-                            if (unitsInvillage == null) {
-                                unitsInvillage = new Hashtable<>();
-                                defendersOutside.put(v, unitsInvillage);
-                            }
-                            unitsInvillage.put(unit, amount);
+                for (Element e : (List<Element>) JaxenUtils.getNodes(dDefendersOutside, "support")) {
+                    int villageId = e.getAttribute("trg").getIntValue();
+                    Village v = DataHolder.getSingleton().getVillagesById().get(villageId);
+                    if(v != null) {
+                        TroopAmountFixed unitsInvillage = defendersOutside.get(v);
+                        if (unitsInvillage == null) {
+                            unitsInvillage = new TroopAmountFixed(e);
+                        } else {
+                            unitsInvillage.addAmount(new TroopAmountFixed(e));
                         }
+                        defendersOutside.put(v, unitsInvillage);
                     }
                 }
             }
@@ -313,37 +313,36 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
             b.append("<attacker>\n");
             b.append("<id>").append(attacker.getId()).append("</id>\n");
             b.append("<src>").append(sourceVillage.getId()).append("</src>\n");
-            b.append("<before>\n");
-            b.append(XMLHelper.troopsToXML(attackers));
-            b.append("</before>\n");
-            b.append("<died>\n");
-            b.append(XMLHelper.troopsToXML(diedAttackers));
-            b.append("</died>\n");
+            b.append("<before ");
+            b.append(attackers.toXml());
+            b.append(" />\n");
+            b.append("<died ");
+            b.append(diedAttackers.toXml());
+            b.append(" />\n");
             b.append("</attacker>\n");
 
             //defender part
             b.append("<defender>\n");
             b.append("<id>").append(defender.getId()).append("</id>\n");
             b.append("<trg>").append(targetVillage.getId()).append("</trg>\n");
-            b.append("<before>\n");
-            b.append(XMLHelper.troopsToXML(defenders));
-            b.append("</before>\n");
-            b.append("<died>\n");
-            b.append(XMLHelper.troopsToXML(diedDefenders));
-            b.append("</died>\n");
+            b.append("<before ");
+            b.append(defenders.toXml());
+            b.append(" />\n");
+            b.append("<died ");
+            b.append(diedDefenders.toXml());
+            b.append(" />\n");
             if (whereDefendersOnTheWay()) {
-                b.append("<otw>\n");
-                b.append(XMLHelper.troopsToXML(defendersOnTheWay));
-                b.append("</otw>\n");
+                b.append("<otw ");
+                b.append(defendersOnTheWay.toXml());
+                b.append(" />\n");
             }
             if (whereDefendersOutside()) {
                 b.append("<outside>\n");
-                Enumeration<Village> targetVillages = defendersOutside.keys();
-                while (targetVillages.hasMoreElements()) {
-                    Village target = targetVillages.nextElement();
-                    b.append("<target id=\"").append(target.getId()).append("\">\n");
-                    b.append(XMLHelper.troopsToXML(defendersOutside.get(target)));
-                    b.append("</target>\n");
+                Set<Village> targetVillages = defendersOutside.keySet();
+                for (Village target: targetVillages) {
+                    b.append("<target id=\"").append(target.getId()).append("\" ");
+                    b.append(defendersOutside.get(target).toXml());
+                    b.append(" />\n");
                 }
                 b.append("</outside>\n");
             }
@@ -419,46 +418,36 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
     /**
      * @return the attackers
      */
-    public Hashtable<UnitHolder, Integer> getAttackers() {
+    public TroopAmountFixed getAttackers() {
         return attackers;
     }
 
     /**
      * @param attackers the attackers to set
      */
-    public void setAttackers(Hashtable<UnitHolder, Integer> attackers) {
+    public void setAttackers(TroopAmountFixed attackers) {
         this.attackers = attackers;
     }
 
     /**
      * @return the diedAttackers
      */
-    public Hashtable<UnitHolder, Integer> getDiedAttackers() {
+    public TroopAmountFixed getDiedAttackers() {
         return diedAttackers;
     }
 
     /**
      * @param diedAttackers the diedAttackers to set
      */
-    public void setDiedAttackers(Hashtable<UnitHolder, Integer> diedAttackers) {
+    public void setDiedAttackers(TroopAmountFixed diedAttackers) {
         this.diedAttackers = diedAttackers;
     }
 
-    public Hashtable<UnitHolder, Integer> getSurvivingAttackers() {
-        Hashtable<UnitHolder, Integer> result = null;
+    public TroopAmountFixed getSurvivingAttackers() {
+        TroopAmountFixed result = null;
         if (!areAttackersHidden() && attackers != null && diedAttackers != null) {
-            result = new Hashtable<>();
-            Hashtable<UnitHolder, Integer> att = attackers;
-            Hashtable<UnitHolder, Integer> diedAtt = diedAttackers;
-            for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
-                try {
-                    int survivors = att.get(unit) - diedAtt.get(unit);
-                    survivors = (survivors >= 0) ? survivors : 0;
-                    result.put(unit, survivors);
-                } catch (Exception e) {
-                    result.put(unit, 0);
-                }
-            }
+            result = (TroopAmountFixed) attackers.clone();
+            result.removeAmount(diedAttackers);
         }
         return result;
     }
@@ -514,65 +503,51 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
     /**
      * @return the defenders
      */
-    public Hashtable<UnitHolder, Integer> getDefenders() {
+    public TroopAmountFixed getDefenders() {
         return defenders;
     }
 
     /**
      * @param defenders the defenders to set
      */
-    public void setDefenders(Hashtable<UnitHolder, Integer> defenders) {
+    public void setDefenders(TroopAmountFixed defenders) {
         this.defenders = defenders;
     }
 
     /**
      * @return the diedDefenders
      */
-    public Hashtable<UnitHolder, Integer> getDiedDefenders() {
+    public TroopAmountFixed getDiedDefenders() {
         return diedDefenders;
     }
 
-    public Hashtable<UnitHolder, Integer> getSurvivingDefenders() {
-        Hashtable<UnitHolder, Integer> result = null;
+    public TroopAmountFixed getSurvivingDefenders() {
+        TroopAmountFixed result = null;
         if (!wasLostEverything() && defenders != null && diedDefenders != null) {
-            result = new Hashtable<>();
-            Hashtable<UnitHolder, Integer> def = defenders;
-            Hashtable<UnitHolder, Integer> diedDef = diedDefenders;
-            for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
-                try {
-                    int survivors = def.get(unit) - diedDef.get(unit);
-                    survivors = (survivors >= 0) ? survivors : 0;
-                    result.put(unit, survivors);
-                } catch (Exception e) {
-                    result.put(unit, 0);
-                }
-            }
+            result = (TroopAmountFixed) defenders.clone();
+            result.removeAmount(diedDefenders);
         }
         return result;
     }
 
     public boolean hasSurvivedDefenders() {
-        return (TroopHelper.getPopulation(getSurvivingDefenders()) != 0);
+        return (getSurvivingDefenders().getTroopPopCount() != 0);
     }
 
     /**
      * @param diedDefenders the diedDefenders to set
      */
-    public void setDiedDefenders(Hashtable<UnitHolder, Integer> diedDefenders) {
+    public void setDiedDefenders(TroopAmountFixed diedDefenders) {
         this.diedDefenders = diedDefenders;
     }
 
-    public void addDefendersOutside(Village pVillage, Hashtable<UnitHolder, Integer> pDefenders) {
+    public void addDefendersOutside(Village pVillage, TroopAmountFixed pDefenders) {
         defendersOutside.put(pVillage, pDefenders);
     }
 
     public boolean wasLostEverything() {
         //defenders are set to -1 if no information on them could be achieved as result of a total loss
-        try {
-            return (defenders.get(defenders.keys().nextElement()) < 0);
-        } catch (Exception e) {
-            return false;
-        }
+        return defenders.containsInformation();
     }
 
     public boolean isSimpleSnobAttack() {
@@ -580,11 +555,7 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
             //acceptance reduced, must be snob
             return false;
         }
-        int attackerCount = 0;
-        for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
-            attackerCount += attackers.get(unit);
-        }
-        return (attackerCount < 1000);
+        return (attackers.getTroopSum() < 1000);
     }
 
     //@TODO configurable guess
@@ -603,14 +574,12 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
         int attackerCount = 0;
         int spyCount = 0;
         if (attackers != null) {
-            for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
-                attackerCount += attackers.get(unit);
-                if (unit.getPlainName().equals("snob") && attackers.get(unit) >= 1) {
-                    isSnobAttack = true;
-                }
-                if (unit.getPlainName().equals("spy") && attackers.get(unit) >= 1) {
-                    spyCount = attackers.get(unit);
-                }
+            attackerCount = attackers.getTroopSum();
+            if (attackers.getAmountForUnit("snob") >= 1) {
+                isSnobAttack = true;
+            }
+            if (attackers.getAmountForUnit("spy") >= 1) {
+                spyCount = attackers.getAmountForUnit("spy");
             }
         }
         if (isSnobAttack) {
@@ -636,25 +605,15 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
         if (areAttackersHidden()) {
             return false;
         }
-        Enumeration<UnitHolder> units = diedAttackers.keys();
-        while (units.hasMoreElements()) {
-            if (diedAttackers.get(units.nextElement()) > 0) {
-                return false;
-            }
-        }
-        return true;
+        return diedAttackers.getTroopSum() == 0;
     }
 
     public boolean areAttackersHidden() {
-        try {
-            return (attackers.get(attackers.keys().nextElement()) < 0);
-        } catch (Exception e) {
-            return false;
-        }
+        return attackers.containsInformation();
     }
 
     public boolean whereDefendersOnTheWay() {
-        return (defendersOnTheWay != null && !defendersOnTheWay.isEmpty());
+        return (defendersOnTheWay != null && defendersOnTheWay.getTroopSum() != 0);
     }
 
     public boolean whereDefendersOutside() {
@@ -664,21 +623,21 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
     /**
      * @return the defendersOutside
      */
-    public Hashtable<UnitHolder, Integer> getDefendersOnTheWay() {
+    public TroopAmountFixed getDefendersOnTheWay() {
         return defendersOnTheWay;
     }
 
     /**
      * @return the defendersOutside
      */
-    public Hashtable<Village, Hashtable<UnitHolder, Integer>> getDefendersOutside() {
+    public HashMap<Village, TroopAmountFixed> getDefendersOutside() {
         return defendersOutside;
     }
 
     /**
      * @param defendersOnTheWay the defendersOnTheWay to set
      */
-    public void setDefendersOnTheWay(Hashtable<UnitHolder, Integer> defendersOnTheWay) {
+    public void setDefendersOnTheWay(TroopAmountFixed defendersOnTheWay) {
         this.defendersOnTheWay = defendersOnTheWay;
     }
 
@@ -806,16 +765,15 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
         if (wasLostEverything()) {
             return false;
         }
-        Enumeration<UnitHolder> units = attackers.keys();
         boolean spySurvived = false;
-        while (units.hasMoreElements()) {
-            UnitHolder unit = units.nextElement();
+        TroopAmountFixed survivingAtt = getSurvivingAttackers();
+        for (UnitHolder unit: DataHolder.getSingleton().getUnits()) {
             if (unit.getPlainName().equals("spy")) {
-                if (attackers.get(unit) - diedAttackers.get(unit) > 0) {
+                if (survivingAtt.getAmountForUnit(unit) > 0) {
                     spySurvived = true;
                 }
             } else {
-                if (attackers.get(unit) - diedAttackers.get(unit) > 0) {
+                if (survivingAtt.getAmountForUnit(unit) > 0) {
                     //something else survived too
                     return false;
                 }
@@ -899,12 +857,12 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
     public boolean isValid() {
         return (attacker != null
                 && sourceVillage != null
-                && !attackers.isEmpty()
-                && !diedAttackers.isEmpty()
+                && attackers != null
+                && diedAttackers != null
                 && defender != null
                 && targetVillage != null
-                && !defenders.isEmpty()
-                && !diedDefenders.isEmpty());
+                && defenders != null
+                && diedDefenders != null);
     }
 
     public int getVillageEffects() {
@@ -970,8 +928,8 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
             sAttackersDied = "Verborgen\n";
         } else {
             for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
-                sAttackers += attackers.get(unit) + " ";
-                sAttackersDied += diedAttackers.get(unit) + " ";
+                sAttackers += attackers.getAmountForUnit(unit) + " ";
+                sAttackersDied += diedAttackers.getAmountForUnit(unit) + " ";
             }
             sAttackers = sAttackers.trim() + "\n";
             sAttackersDied = sAttackersDied.trim() + "\n";
@@ -982,8 +940,8 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
             sDefendersDied = "Keine Informationen\n";
         } else {
             for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
-                sDefenders += defenders.get(unit) + " ";
-                sDefendersDied += diedDefenders.get(unit) + " ";
+                sDefenders += defenders.getAmountForUnit(unit) + " ";
+                sDefendersDied += diedDefenders.getAmountForUnit(unit) + " ";
             }
             sDefenders = sDefenders.trim() + "\n";
             sDefendersDied = sDefendersDied.trim() + "\n";
@@ -998,15 +956,14 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
 
         if (wasConquered()) {
             if (whereDefendersOutside()) {
-                Enumeration<Village> villageKeys = defendersOutside.keys();
-                while (villageKeys.hasMoreElements()) {
-                    Village v = villageKeys.nextElement();
+                Set<Village> villageKeys = defendersOutside.keySet();
+                for (Village v: villageKeys) {
                     if (v != null) {
-                        Hashtable<UnitHolder, Integer> troops = defendersOutside.get(v);
+                        TroopAmountFixed troops = defendersOutside.get(v);
                         if (troops != null) {
                             result.append(" -> ").append(v).append(" ");
                             for (UnitHolder u : DataHolder.getSingleton().getUnits()) {
-                                result.append(troops.get(u)).append(" ");
+                                result.append(troops.getAmountForUnit(u)).append(" ");
                             }
                         }
                         result.append("\n");
@@ -1162,7 +1119,7 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
         logger.debug(toXml());
     }
 
-    public void setDefendersOutside(Hashtable<Village, Hashtable<UnitHolder, Integer>> pDefendersOutside) {
+    public void setDefendersOutside(HashMap<Village, TroopAmountFixed> pDefendersOutside) {
         this.defendersOutside = pDefendersOutside;
     }
 

@@ -16,6 +16,7 @@
 package de.tor.tribes.util.generator.ui;
 
 import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.io.TroopAmountFixed;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.SOSRequest;
@@ -258,14 +259,8 @@ public class SOSGenerator extends javax.swing.JFrame {
 
             if (t != null && a.getTarget().getTribe().getId() == t.getId()) {
                 TargetInformation info = sos.addTarget(a.getTarget());
-                if (info.getTroops().isEmpty()) {
-                    Hashtable<UnitHolder, Integer> troops = getDefendingTroops();
-
-                    Enumeration<UnitHolder> keys = troops.keys();
-                    while (keys.hasMoreElements()) {
-                        UnitHolder key = keys.nextElement();
-                        info.addTroopInformation(key, troops.get(key));
-                    }
+                if (!info.getTroops().hasUnits()) {
+                    info.setTroops(getDefendingTroops());
                     info.setWallLevel(20);
                 }
                 if (jIncludeTypes.isSelected()) {
@@ -303,7 +298,7 @@ public class SOSGenerator extends javax.swing.JFrame {
             b.append("[b]Wallstufe:[/b] ").append(ti.getWallLevel()).append("\n");
             b.append("[b]Verteidiger:[/b] ");
             for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
-                b.append(ti.getTroops().get(unit)).append(" ");
+                b.append(ti.getTroops().getAmountForUnit(unit)).append(" ");
             }
             b.append("\n\n");
             for (TimedAttack a : ti.getAttacks()) {
@@ -346,30 +341,22 @@ public class SOSGenerator extends javax.swing.JFrame {
 
     }
 
-    private Hashtable<UnitHolder, Integer> getDefendingTroops() {
-        Hashtable<String, Integer> units = new Hashtable<>();
+    private TroopAmountFixed getDefendingTroops() {
+        TroopAmountFixed units = new TroopAmountFixed(0);
         if (jMedDef.isSelected()) {
-            units.put("spear", getRandomValueInRange(1000, 2000));
-            units.put("sword", getRandomValueInRange(1000, 2000));
-            units.put("heavy", getRandomValueInRange(300, 500));
-            units.put("spy", getRandomValueInRange(100, 200));
+            units.setAmountForUnit("spear", getRandomValueInRange(1000, 2000));
+            units.setAmountForUnit("sword", getRandomValueInRange(1000, 2000));
+            units.setAmountForUnit("heavy", getRandomValueInRange(300, 500));
+            units.setAmountForUnit("spy", getRandomValueInRange(100, 200));
         } else if (jFullDef.isSelected()) {
-            units.put("spear", getRandomValueInRange(5000, 6000));
-            units.put("sword", getRandomValueInRange(5000, 6000));
-            units.put("heavy", getRandomValueInRange(2000, 3000));
-            units.put("spy", getRandomValueInRange(500, 800));
+            units.setAmountForUnit("spear", getRandomValueInRange(5000, 6000));
+            units.setAmountForUnit("sword", getRandomValueInRange(5000, 6000));
+            units.setAmountForUnit("heavy", getRandomValueInRange(2000, 3000));
+            units.setAmountForUnit("spy", getRandomValueInRange(500, 800));
         } else if (jNoDef.isSelected()) {
             //add nothing
         }
-
-        Hashtable<UnitHolder, Integer> result = TroopHelper.unitTableFromSerializableFormat(units);
-        for (UnitHolder u : DataHolder.getSingleton().getUnits()) {
-            if (!result.containsKey(u)) {
-                result.put(u, 0);
-            }
-        }
-
-        return result;
+        return units;
     }
 
     private void sendToClipboard(String pText) {

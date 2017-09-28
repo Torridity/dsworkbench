@@ -16,6 +16,7 @@
 package de.tor.tribes.util.parser;
 
 import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.io.TroopAmountFixed;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.FightReport;
 import de.tor.tribes.types.ext.Tribe;
@@ -35,6 +36,7 @@ import java.awt.datatransfer.Transferable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.StringTokenizer;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
@@ -476,18 +478,13 @@ public class ReportParser implements SilentParserInterface {
         return -1;
     }
 
-    private Hashtable<UnitHolder, Integer> parseUnits(String[] pUnits) {
-        int cnt = 0;
-        Hashtable<UnitHolder, Integer> units = new Hashtable<>();
-        for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
-            if (cnt < pUnits.length) {
-                units.put(unit, Integer.parseInt(pUnits[cnt]));
-            } else {
-                units.put(unit, 0);
-            }
-            cnt++;
+    private TroopAmountFixed parseUnits(String[] pUnits) {
+        TroopAmountFixed units = new TroopAmountFixed(0);
+        List<UnitHolder> allUnits = DataHolder.getSingleton().getUnits();
+        for (int i = 0; i < pUnits.length; i++) {
+                units.setAmountForUnit(allUnits.get(i), Integer.parseInt(pUnits[i]));
         }
-
+        
         return units;
     }
 

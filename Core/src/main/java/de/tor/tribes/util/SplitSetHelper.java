@@ -15,15 +15,16 @@
  */
 package de.tor.tribes.util;
 
-import de.tor.tribes.io.DataHolder;
-import de.tor.tribes.io.UnitHolder;
-import java.io.BufferedReader;
+import de.tor.tribes.io.TroopAmountFixed;
+import de.tor.tribes.util.xml.JaxenUtils;
 import java.io.File;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.List;
 import org.apache.log4j.Logger;
+import org.jdom.Document;
+import org.jdom.Element;
 
 /**
  *
@@ -33,63 +34,42 @@ public class SplitSetHelper {
 
     private static Logger logger = Logger.getLogger("SplitHelper");
 
-    public static void loadSplitSets(Hashtable<String, Hashtable<UnitHolder, Integer>> pTarget) {
+    public static void loadSplitSets(Hashtable<String, TroopAmountFixed> pTarget) {
         String profileDir = GlobalOptions.getSelectedProfile().getProfileDirectory();
         File filterFile = new File(profileDir + "/splits.sav");
         if (!filterFile.exists()) {
             return;
         }
-
-        BufferedReader r = null;
-
+        
         try {
-            r = new BufferedReader(new FileReader(filterFile));
-            String line = "";
-            while ((line = r.readLine()) != null) {
-                String[] split = line.split(",");
-                String name = split[0];
-                Hashtable<UnitHolder, Integer> elements = new Hashtable<>();
-                for (int i = 1; i < split.length; i++) {
-                    String[] elemSplit = split[i].split("/");
-                    elements.put(DataHolder.getSingleton().getUnitByPlainName(elemSplit[0]), Integer.parseInt(elemSplit[1]));
-                }
-                pTarget.put(name, elements);
+            Document d = JaxenUtils.getDocument(filterFile);
+            for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//splits/split")) {
+                String name = e.getAttributeValue("name");
+                TroopAmountFixed amount = new TroopAmountFixed(e);
+                pTarget.put(name, amount);
             }
-        } catch (Exception e) {
-            logger.error("Failed to read split sets", e);
-        } finally {
-            try {
-                r.close();
-            } catch (Exception ignored) {
-            }
+        } catch(Exception e) {
+            logger.info("Failed to load Splits", e);
         }
     }
 
-    public static void saveSplitSets(Hashtable<String, Hashtable<UnitHolder, Integer>> pSource) {
+    public static void saveSplitSets(Hashtable<String, TroopAmountFixed> pSource) {
         String profileDir = GlobalOptions.getSelectedProfile().getProfileDirectory();
-        File filterFile = new File(profileDir + "/splits.sav");
-
+        File filterFile = new File(profileDir + "/splits.xml");
+        
         StringBuilder b = new StringBuilder();
         Enumeration<String> setKeys = pSource.keys();
-
+        
+        b.append("<splits>\n");
         while (setKeys.hasMoreElements()) {
             String key = setKeys.nextElement();
-            b.append(key).append(",");
-            Hashtable<UnitHolder, Integer> elements = pSource.get(key);
-            Enumeration<UnitHolder> keys = elements.keys();
-            int cnt = 0;
-            while (keys.hasMoreElements()) {
-
-                UnitHolder unit = keys.nextElement();
-                b.append(unit.getPlainName()).append("/").append(elements.get(unit));
-                if (cnt < elements.size() - 1) {
-                    b.append(",");
-                }
-                cnt++;
-            }
-            b.append("\n");
+            b.append("<split name=\"");
+            b.append(key).append("\" ");
+            b.append(pSource.get(key).toXml());
+            b.append(" />\n");
         }
-
+        b.append("</splits>\n");
+        
         FileWriter w = null;
         try {
             w = new FileWriter(filterFile);

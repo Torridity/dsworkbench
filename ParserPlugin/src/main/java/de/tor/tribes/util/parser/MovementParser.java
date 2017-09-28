@@ -29,6 +29,7 @@ import org.apache.log4j.Logger;
 
 import de.tor.tribes.util.SilentParserInterface;
 import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.io.TroopAmountFixed;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.StandardAttack;
@@ -152,22 +153,21 @@ public class MovementParser implements SilentParserInterface {
                 logger.debug("getting units");                
                 //get units
                 List<UnitHolder> allUnits = DataHolder.getSingleton().getUnits();
-                int uCount = allUnits.size();
-                int[] units = new int[uCount];
+                TroopAmountFixed units = new TroopAmountFixed(0);
                 int cnt = 0;
                 for(int i = 3; i < parts.length; i++) {
                     try {
-                        units[cnt] = Integer.parseInt(parts[i]);
+                        units.setAmountForUnit(allUnits.get(cnt), Integer.parseInt(parts[i]));
                         cnt++;
                     } catch (Exception e) {
                         //cell with no troops
                     }
                 }
-                if (cnt < uCount) {
+                if (cnt < allUnits.size()) {
                     continue;
                 }
                 //TODO for later
-                //parsed.setTroops(new TroopSplit(units));
+                //parsed.setTroops(units);
                 
                 logger.debug("getting standard attack");
                 //set a default attack
@@ -185,33 +185,22 @@ public class MovementParser implements SilentParserInterface {
                         parsed.setType(StandardAttackManager.getSingleton()
                                 .getElementByName(StandardAttackManager.SUPPORT_TYPE_NAME).getIcon());
                         break;
+                    default:
+                        logger.fatal("Run into impossible else path");
+                        return false;
                 }
+                
                 //figure out, if the found troops equal any standard attack
                 for (ManageableType t : StandardAttackManager.getSingleton().getAllElements()) {
                     StandardAttack a = (StandardAttack) t;
-                    boolean isSame = true;
-                    
-                    for(int i = 0; i < uCount; i++) {
-                        if(a.getFixedAmountForUnit(allUnits.get(i)) != units[i]) {
-                            isSame = false;
-                            break;
-                        }
-                    }
-                    if(isSame) {
+                    if(a.equals(units)) {
                         parsed.setType(a.getIcon());
                     }
                 }
                 
                 logger.debug("getting slowest unit");
                 //find out wich unit is the slowest
-                double slowest = -1;
-                    for(int i = 0; i < uCount; i++) {
-                    if(allUnits.get(i).getSpeed() > slowest && units[i] > 0) {
-                        slowest = allUnits.get(i).getSpeed();
-                        parsed.setUnit(allUnits.get(i));
-                    }
-                }
-                
+                parsed.setUnit(units.getSlowestUnit());
                 parsed.setTransferredToBrowser(true);
                 
                 //if the program runns till here the movement semms to be valid
@@ -221,14 +210,9 @@ public class MovementParser implements SilentParserInterface {
                 attStr.append("\nd:"); attStr.append(parsed.getTarget());
                 attStr.append("\ntime:");
                 attStr.append(dateFormat.format(parsed.getArriveTime()));
-                attStr.append("\nunits:");
-                for(int i = 0; i < uCount; i++) {
-                    attStr.append(" ");
-                    attStr.append(units[i]);
-                    attStr.append(" ");
-                    attStr.append(allUnits.get(i));
-                }
-                attStr.append("\ns:"); attStr.append(parsed.getType());
+                attStr.append("\nunits: ");
+                attStr.append(units.toXml());
+                attStr.append(" \ns:"); attStr.append(parsed.getType());
                 attStr.append("\nu:"); attStr.append(parsed.getUnit().getPlainName());
                 logger.info(attStr.toString());
                 

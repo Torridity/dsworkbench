@@ -305,10 +305,10 @@ public class TroopsManager extends GenericManager<VillageTroopsHolder> {
             return null;
         }
         List<Double> l = new LinkedList<>();
-        double off = inVillage.getOffValue();
-        double def = inVillage.getDefValue();
-        double defCav = inVillage.getDefCavalryValue();
-        double defArch = inVillage.getDefArcherValue();
+        double off = inVillage.getTroops().getOffValue();
+        double def = inVillage.getTroops().getDefValue();
+        double defCav = inVillage.getTroops().getDefCavalryValue();
+        double defArch = inVillage.getTroops().getDefArcherValue();
 
         l.add(off);
         l.add(def);

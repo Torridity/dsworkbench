@@ -18,8 +18,8 @@ package de.tor.tribes.ui.views;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.DataHolderListener;
 import de.tor.tribes.io.ServerManager;
+import de.tor.tribes.io.TroopAmountFixed;
 import de.tor.tribes.io.UnitHolder;
-import de.tor.tribes.types.UnknownUnit;
 import de.tor.tribes.types.UserProfile;
 import de.tor.tribes.types.ext.InvalidTribe;
 import de.tor.tribes.types.ext.Tribe;
@@ -49,7 +49,6 @@ import java.io.File;
 import java.net.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.Map.Entry;
 
 /**
  * @author Torridity
@@ -182,8 +181,8 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jMaxFarmSpace.setText(GlobalOptions.getProperty("max.farm.space"));
         jBrowserPath.setText(GlobalOptions.getProperty("default.browser"));
         jUseStandardBrowser.setSelected(jBrowserPath.getText().length() < 1);
-        setOffense(TroopHelper.stringPropertyToUnitTable(GlobalOptions.getProperty("standard.off")));
-        setDefense(TroopHelper.stringPropertyToUnitTable(GlobalOptions.getProperty("standard.defense.split")));
+        setOffense(new TroopAmountFixed(0).loadFromProperty(GlobalOptions.getProperty("standard.off")));
+        setDefense(new TroopAmountFixed(0).loadFromProperty(GlobalOptions.getProperty("standard.defense.split")));
         jMaxSimRounds.setText(GlobalOptions.getProperty("max.sim.rounds"));
         jTolerance.setText(GlobalOptions.getProperty("support.tolerance"));
         jMaxLossRatio.setText(GlobalOptions.getProperty("max.loss.ratio"));
@@ -191,63 +190,41 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jObstServer.setText(GlobalOptions.getProperty("obst.server"));
     }
 
-    private void setDefense(Hashtable<String, Integer> pDefense) {
-        jDefSpear.setText((pDefense.get("spear") != null) ? Integer.toString(pDefense.get("spear")) : "500");
-        jDefSword.setText((pDefense.get("sword") != null) ? Integer.toString(pDefense.get("sword")) : "500");
-        jDefArcher.setText((pDefense.get("archer") != null) ? Integer.toString(pDefense.get("archer")) : "500");
-        jDefSpy.setText((pDefense.get("spy") != null) ? Integer.toString(pDefense.get("spy")) : "50");
-        jDefHeavy.setText((pDefense.get("heavy") != null) ? Integer.toString(pDefense.get("heavy")) : "0");
+    private void setDefense(TroopAmountFixed pDefense) {
+        jDefSpear.setText((pDefense.getAmountForUnit("spear") > 0) ? Integer.toString(pDefense.getAmountForUnit("spear")) : "500");
+        jDefSword.setText((pDefense.getAmountForUnit("sword") > 0) ? Integer.toString(pDefense.getAmountForUnit("sword")) : "500");
+        jDefArcher.setText((pDefense.getAmountForUnit("archer") > 0) ? Integer.toString(pDefense.getAmountForUnit("archer")) : "500");
+        jDefSpy.setText((pDefense.getAmountForUnit("spy") > 0) ? Integer.toString(pDefense.getAmountForUnit("spy")) : "50");
+        jDefHeavy.setText((pDefense.getAmountForUnit("heavy") > 0) ? Integer.toString(pDefense.getAmountForUnit("heavy")) : "0");
     }
 
-    public Hashtable<UnitHolder, Integer> getDefense() {
-        Hashtable<UnitHolder, Integer> result = new Hashtable<>();
-        Set<Entry<String, Integer>> entries = getDefenseInternal().entrySet();
-        for (Entry<String, Integer> e : entries) {
-            UnitHolder unit = DataHolder.getSingleton().getUnitByPlainName(e.getKey());
-            if (!unit.equals(UnknownUnit.getSingleton())) {
-                result.put(unit, e.getValue());
-            }
-        }
+    public TroopAmountFixed getDefense() {
+        TroopAmountFixed result = new TroopAmountFixed();
+        result.setAmountForUnit("spear", UIHelper.parseIntFromField(jDefSpear, 500));
+        result.setAmountForUnit("sword", UIHelper.parseIntFromField(jDefSword, 500));
+        result.setAmountForUnit("archer", UIHelper.parseIntFromField(jDefArcher, 500));
+        result.setAmountForUnit("spy", UIHelper.parseIntFromField(jDefSpy, 50));
+        result.setAmountForUnit("heavy", UIHelper.parseIntFromField(jDefHeavy, 0));
+        
         return result;
     }
 
-    private Hashtable<String, Integer> getDefenseInternal() {
-        Hashtable<String, Integer> result = new Hashtable<>();
-        result.put("spear", UIHelper.parseIntFromField(jDefSpear, 500));
-        result.put("sword", UIHelper.parseIntFromField(jDefSword, 500));
-        result.put("archer", UIHelper.parseIntFromField(jDefArcher, 500));
-        result.put("spy", UIHelper.parseIntFromField(jDefSpy, 50));
-        result.put("heavy", UIHelper.parseIntFromField(jDefHeavy, 0));
-        return result;
+    private void setOffense(TroopAmountFixed pOffense) {
+        jOffAxe.setText((pOffense.getAmountForUnit("axe") > 0) ? Integer.toString(pOffense.getAmountForUnit("axe")) : "7000");
+        jOffLight.setText((pOffense.getAmountForUnit("light") > 0) ? Integer.toString(pOffense.getAmountForUnit("light")) : "3000");
+        jOffMarcher.setText((pOffense.getAmountForUnit("marcher") > 0) ? Integer.toString(pOffense.getAmountForUnit("marcher")) : "500");
+        jOffCata.setText((pOffense.getAmountForUnit("catapult") > 0) ? Integer.toString(pOffense.getAmountForUnit("catapult")) : "50");
+        jOffRam.setText((pOffense.getAmountForUnit("ram") > 0) ? Integer.toString(pOffense.getAmountForUnit("ram")) : "300");
     }
 
-    private void setOffense(Hashtable<String, Integer> pOffense) {
-        jOffAxe.setText((pOffense.get("axe") != null) ? Integer.toString(pOffense.get("axe")) : "7000");
-        jOffLight.setText((pOffense.get("light") != null) ? Integer.toString(pOffense.get("light")) : "3000");
-        jOffMarcher.setText((pOffense.get("marcher") != null) ? Integer.toString(pOffense.get("marcher")) : "500");
-        jOffCata.setText((pOffense.get("catapult") != null) ? Integer.toString(pOffense.get("catapult")) : "50");
-        jOffRam.setText((pOffense.get("ram") != null) ? Integer.toString(pOffense.get("ram")) : "300");
-    }
-
-    public Hashtable<UnitHolder, Integer> getOffense() {
-        Hashtable<UnitHolder, Integer> result = new Hashtable<>();
-        Set<Entry<String, Integer>> entries = getOffenseInternal().entrySet();
-        for (Entry<String, Integer> e : entries) {
-            UnitHolder unit = DataHolder.getSingleton().getUnitByPlainName(e.getKey());
-            if (!unit.equals(UnknownUnit.getSingleton())) {
-                result.put(unit, e.getValue());
-            }
-        }
-        return result;
-    }
-
-    private Hashtable<String, Integer> getOffenseInternal() {
-        Hashtable<String, Integer> result = new Hashtable<>();
-        result.put("axe", UIHelper.parseIntFromField(jOffAxe, 7000));
-        result.put("light", UIHelper.parseIntFromField(jOffLight, 3000));
-        result.put("marcher", UIHelper.parseIntFromField(jOffMarcher, 500));
-        result.put("catapult", UIHelper.parseIntFromField(jOffCata, 50));
-        result.put("ram", UIHelper.parseIntFromField(jOffRam, 300));
+    public TroopAmountFixed getOffense() {
+        TroopAmountFixed result = new TroopAmountFixed();
+        result.setAmountForUnit("axe", UIHelper.parseIntFromField(jOffAxe, 7000));
+        result.setAmountForUnit("light", UIHelper.parseIntFromField(jOffLight, 3000));
+        result.setAmountForUnit("marcher", UIHelper.parseIntFromField(jOffMarcher, 500));
+        result.setAmountForUnit("catapult", UIHelper.parseIntFromField(jOffCata, 50));
+        result.setAmountForUnit("ram", UIHelper.parseIntFromField(jOffRam, 300));
+        
         return result;
     }
 
@@ -2895,11 +2872,11 @@ private void fireProfileActionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
     }//GEN-LAST:event_fireDeleteFarmReportsOnExitEvent
 
     private void fireChangeOffEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireChangeOffEvent
-        GlobalOptions.addProperty("standard.off", TroopHelper.stringUnitTableToProperty(getOffenseInternal()));
+        GlobalOptions.addProperty("standard.off", getOffense().toProperty());
     }//GEN-LAST:event_fireChangeOffEvent
 
     private void fireChangeDefEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireChangeDefEvent
-        GlobalOptions.addProperty("standard.defense.split", TroopHelper.stringUnitTableToProperty(getDefenseInternal()));
+        GlobalOptions.addProperty("standard.defense.split", getDefense().toProperty());
     }//GEN-LAST:event_fireChangeDefEvent
 
     private void fireRestartReportServerEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireRestartReportServerEvent

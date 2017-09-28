@@ -457,7 +457,7 @@ public class AttackSourcePanel extends WizardPage {
             Village v = elem.getVillage();
             VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(v, TroopsManager.TROOP_TYPE.OWN);
             if (holder != null) {
-                if (holder.getAmountForUnit(snob) > 0) {
+                if (holder.getTroops().getAmountForUnit(snob) > 0) {
                     elem.setUnit(snob);
                     changeCount++;
                 }

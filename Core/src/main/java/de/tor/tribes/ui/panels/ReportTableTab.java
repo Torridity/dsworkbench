@@ -18,6 +18,7 @@ package de.tor.tribes.ui.panels;
 import de.tor.tribes.dssim.ui.DSWorkbenchSimulatorFrame;
 import de.tor.tribes.dssim.util.AStarResultReceiver;
 import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.io.TroopAmountFixed;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.FightReport;
 import de.tor.tribes.types.ext.Tribe;
@@ -386,7 +387,7 @@ public class ReportTableTab extends javax.swing.JPanel implements ListSelectionL
             TroopsManager.getSingleton().invalidate();
             for (FightReport report : selectedReports) {
                 Village source = report.getSourceVillage();
-                Hashtable<UnitHolder, Integer> attackers = report.getSurvivingAttackers();
+                TroopAmountFixed attackers = report.getSurvivingAttackers();
                 VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(source, TroopsManager.TROOP_TYPE.IN_VILLAGE, true);
                 holder.setTroops(attackers);
                 holder = TroopsManager.getSingleton().getTroopsForVillage(source, TroopsManager.TROOP_TYPE.OWN, true);
@@ -399,7 +400,7 @@ public class ReportTableTab extends javax.swing.JPanel implements ListSelectionL
             TroopsManager.getSingleton().invalidate();
             for (FightReport report : selectedReports) {
                 Village target = report.getTargetVillage();
-                Hashtable<UnitHolder, Integer> defenders = report.getSurvivingDefenders();
+                TroopAmountFixed defenders = report.getSurvivingDefenders();
                 VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(target, TroopsManager.TROOP_TYPE.IN_VILLAGE, true);
                 holder.setTroops(defenders);
             }
@@ -409,7 +410,7 @@ public class ReportTableTab extends javax.swing.JPanel implements ListSelectionL
             TroopsManager.getSingleton().invalidate();
             for (FightReport report : selectedReports) {
                 Village source = report.getSourceVillage();
-                Hashtable<UnitHolder, Integer> attackers = report.getSurvivingAttackers();
+                TroopAmountFixed attackers = report.getSurvivingAttackers();
                 VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(source, TroopsManager.TROOP_TYPE.IN_VILLAGE, true);
                 holder.setTroops(attackers);
                 holder = TroopsManager.getSingleton().getTroopsForVillage(source, TroopsManager.TROOP_TYPE.OWN, true);
@@ -418,7 +419,7 @@ public class ReportTableTab extends javax.swing.JPanel implements ListSelectionL
             }
             for (FightReport report : selectedReports) {
                 Village target = report.getTargetVillage();
-                Hashtable<UnitHolder, Integer> defenders = report.getSurvivingDefenders();
+                TroopAmountFixed defenders = report.getSurvivingDefenders();
                 VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(target, TroopsManager.TROOP_TYPE.IN_VILLAGE, true);
                 holder.setTroops(defenders);
             }
@@ -482,10 +483,10 @@ public class ReportTableTab extends javax.swing.JPanel implements ListSelectionL
         Hashtable<String, Double> values = new Hashtable<>();
         for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
             if (!report.areAttackersHidden()) {
-                values.put("att_" + unit.getPlainName(), (double) report.getAttackers().get(unit));
+                values.put("att_" + unit.getPlainName(), (double) report.getAttackers().getAmountForUnit(unit));
             }
             if (!report.wasLostEverything()) {
-                values.put("def_" + unit.getPlainName(), (double) report.getDefenders().get(unit));
+                values.put("def_" + unit.getPlainName(), (double) report.getDefenders().getAmountForUnit(unit));
             }
         }
         if (report.wasBuildingDamaged()) {
@@ -594,7 +595,7 @@ public class ReportTableTab extends javax.swing.JPanel implements ListSelectionL
     private List<FightReport> getSelectedReports() {
         final List<FightReport> selectedReports = new LinkedList<>();
         int[] selectedRows = jxReportTable.getSelectedRows();
-        if (selectedRows != null && selectedRows.length < 1) {
+        if (selectedRows == null || selectedRows.length < 1) {
             return selectedReports;
         }
         for (Integer selectedRow : selectedRows) {

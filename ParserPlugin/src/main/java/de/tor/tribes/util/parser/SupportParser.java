@@ -16,6 +16,7 @@
 package de.tor.tribes.util.parser;
 
 import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.io.TroopAmountFixed;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.UnknownUnit;
 import de.tor.tribes.types.ext.Village;
@@ -25,7 +26,6 @@ import de.tor.tribes.util.EscapeChars;
 import de.tor.tribes.util.SilentParserInterface;
 import de.tor.tribes.util.troops.SupportVillageTroopsHolder;
 import de.tor.tribes.util.troops.TroopsManager;
-import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -85,10 +85,14 @@ public class SupportParser implements SilentParserInterface {
 
                     if (supportTarget != null) {
                         //found new support
-                        Hashtable<UnitHolder, Integer> supportTroops = parseUnits(line.replaceAll(Pattern.quote(supportTarget.toString()), "").trim());
+                        TroopAmountFixed supportTroops = parseUnits(line.replaceAll(Pattern.quote(supportTarget.toString()), "").trim());
 
                         if (supportTroops != null) {
+                            //TODO look what should really be done here
+                            //first add then instantly remove all elements^^
+                            
                             holder.addOutgoingSupport(supportTarget, supportTroops);
+                            //value never used... (supporterHolder)
                             SupportVillageTroopsHolder supporterHolder = (SupportVillageTroopsHolder) TroopsManager.getSingleton().getTroopsForVillage(supportTarget, TroopsManager.TROOP_TYPE.SUPPORT);
                             if (holder != null && !touchedVillages.contains(supportTarget)) {
                                 //remove all supports if there are any to avoid old entries
@@ -117,7 +121,7 @@ public class SupportParser implements SilentParserInterface {
         return result;
     }
 
-    private Hashtable<UnitHolder, Integer> parseUnits(String pLine) {
+    private TroopAmountFixed parseUnits(String pLine) {
         String line = pLine.replaceAll(getVariable("troops.own"), "").replaceAll(getVariable("troops.commands"), "").replaceAll(getVariable("troops"), "");
         // System.out.println("Line after: " + line);
         StringTokenizer t = new StringTokenizer(line, " \t");
@@ -127,19 +131,17 @@ public class SupportParser implements SilentParserInterface {
             //get unit count (decrease due  to militia which cannot support
             uCount -= 1;
         }
-        Hashtable<UnitHolder, Integer> units = new Hashtable<>();
+        TroopAmountFixed units = new TroopAmountFixed(0);
         int cnt = 0;
         while (t.hasMoreTokens()) {
             String next = t.nextToken();
             try {
                 int amount = Integer.parseInt(next);
                 UnitHolder u = DataHolder.getSingleton().getUnits().get(cnt);
-                //  System.out.println("Put " + u + " - " + amount);
-                units.put(u, amount);
+                units.setAmountForUnit(u, amount);
                 cnt++;
-            } catch (Exception e) {
+            } catch (Exception ignored) {
                 //token with no troops
-                //  System.out.println("Invalid token: " + next);
             }
         }
         if (cnt != uCount) {

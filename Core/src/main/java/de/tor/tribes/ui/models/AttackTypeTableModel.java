@@ -17,18 +17,21 @@ package de.tor.tribes.ui.models;
 
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
+import de.tor.tribes.io.TroopAmountElement;
 import de.tor.tribes.types.StandardAttack;
-import de.tor.tribes.types.StandardAttackElement;
+import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.attack.StandardAttackManager;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
+import org.apache.log4j.Logger;
 
 /**
  *
  * @author Torridity
  */
 public class AttackTypeTableModel extends AbstractTableModel {
+    private static final Logger logger = Logger.getLogger("AttackTypeTableModel");
 
     private List<String> columnNames = new LinkedList<>();
     private List<Class> columnTypes = new LinkedList<>();
@@ -40,7 +43,7 @@ public class AttackTypeTableModel extends AbstractTableModel {
         columnTypes.add(Integer.class);
         for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
             columnNames.add(unit.getPlainName());
-            columnTypes.add(StandardAttackElement.class);
+            columnTypes.add(TroopAmountElement.class);
         }
     }
 
@@ -88,7 +91,13 @@ public class AttackTypeTableModel extends AbstractTableModel {
             }
         } else {
             UnitHolder unit = DataHolder.getSingleton().getUnits().get(columnIndex - 2);
-            a.getElementForUnit(unit).trySettingAmount((String) aValue);
+            try {
+                a.getTroops().setAmount(new TroopAmountElement(unit, (String) aValue));
+            } catch(IllegalArgumentException e) {
+                logger.info("cannot set Amount", e);
+                JOptionPaneHelper.showWarningBox(null, "Konnte den Wert nicht setzen:\n"
+                        + e.getCause().getMessage(), "Konnte den Wert nicht setzen");
+            }
         }
     }
 
@@ -103,7 +112,7 @@ public class AttackTypeTableModel extends AbstractTableModel {
                 return a.getIcon();
             default:
                 UnitHolder unit = DataHolder.getSingleton().getUnits().get(columnIndex - 2);
-                return a.getElementForUnit(unit);
+                return a.getTroops().getElementForUnit(unit);
         }
     }
 }

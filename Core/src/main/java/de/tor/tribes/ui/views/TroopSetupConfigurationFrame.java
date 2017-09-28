@@ -17,8 +17,8 @@ package de.tor.tribes.ui.views;
 
 import de.tor.tribes.control.GenericManagerListener;
 import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.io.TroopAmountElement;
 import de.tor.tribes.types.StandardAttack;
-import de.tor.tribes.types.StandardAttackElement;
 import de.tor.tribes.ui.ImageManager;
 import de.tor.tribes.ui.editors.NoteIconCellEditor;
 import de.tor.tribes.ui.editors.StandardAttackElementEditor;
@@ -270,8 +270,8 @@ public class TroopSetupConfigurationFrame extends javax.swing.JDialog implements
         jAttackTypeTable.setModel(new AttackTypeTableModel());
         jAttackTypeTable.setHighlighters(HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B));
         jAttackTypeTable.getTableHeader().setDefaultRenderer(new UnitTableHeaderRenderer());
-        jAttackTypeTable.setDefaultRenderer(StandardAttackElement.class, new StandardAttackTypeCellRenderer());
-        jAttackTypeTable.setDefaultEditor(StandardAttackElement.class, new StandardAttackElementEditor());
+        jAttackTypeTable.setDefaultRenderer(TroopAmountElement.class, new StandardAttackTypeCellRenderer());
+        jAttackTypeTable.setDefaultEditor(TroopAmountElement.class, new StandardAttackElementEditor());
         jAttackTypeTable.setDefaultEditor(Integer.class, new NoteIconCellEditor(NoteIconCellEditor.ICON_TYPE.NOTE));
         jAttackTypeTable.setRowHeight(24);
         jAttackTypeTable.getColumnExt(0).setMinWidth(120);

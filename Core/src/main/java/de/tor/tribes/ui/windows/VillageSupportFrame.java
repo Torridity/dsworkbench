@@ -702,10 +702,10 @@ public class VillageSupportFrame extends javax.swing.JFrame implements ActionLis
 
                 if (useUnits) {
                     if (jDefOnlyBox.isSelected()) {
-                        if (unit.getPlainName().equals("spear") || unit.getPlainName().equals("sword") || unit.getPlainName().equals("archer") || unit.getPlainName().equals("heavy")) {
+                        if (unit.isDefense()) {
 
                             if (troops != null) {
-                                int cnt = troops.getTroopsOfUnitInVillage(unit);
+                                int cnt = troops.getTroops().getAmountForUnit(unit);
                                 if (forceTable.get(unit) != null) {
                                     forceTable.put(unit, forceTable.get(unit) + cnt);
                                 } else {
@@ -716,7 +716,7 @@ public class VillageSupportFrame extends javax.swing.JFrame implements ActionLis
                     } else {
                         if (!unit.getPlainName().equals("spy") && !unit.getPlainName().equals("ram") && !unit.getPlainName().equals("snob")) {
                             if (troops != null) {
-                                int cnt = troops.getTroopsOfUnitInVillage(unit);
+                                int cnt = troops.getTroops().getAmountForUnit(unit);
                                 if (forceTable.get(unit) != null) {
                                     forceTable.put(unit, forceTable.get(unit) + cnt);
                                 } else {
@@ -732,10 +732,10 @@ public class VillageSupportFrame extends javax.swing.JFrame implements ActionLis
         //add units of current village
         for (UnitHolder unit : units) {
             if (jDefOnlyBox.isSelected()) {
-                if (unit.getPlainName().equals("spear") || unit.getPlainName().equals("sword") || unit.getPlainName().equals("archer") || unit.getPlainName().equals("heavy")) {
+                if (unit.isDefense()) {
                     VillageTroopsHolder troops = TroopsManager.getSingleton().getTroopsForVillage(mCurrentVillage);
                     if (troops != null) {
-                        int cnt = troops.getTroopsOfUnitInVillage(unit);
+                        int cnt = troops.getTroops().getAmountForUnit(unit);
                         if (forceTable.get(unit) != null) {
                             forceTable.put(unit, forceTable.get(unit) + cnt);
                         } else {
@@ -747,7 +747,7 @@ public class VillageSupportFrame extends javax.swing.JFrame implements ActionLis
                 if (!unit.getPlainName().equals("spy") && !unit.getPlainName().equals("ram") && !unit.getPlainName().equals("snob")) {
                     VillageTroopsHolder troops = TroopsManager.getSingleton().getTroopsForVillage(mCurrentVillage);
                     if (troops != null) {
-                        int cnt = troops.getTroopsOfUnitInVillage(unit);
+                        int cnt = troops.getTroops().getAmountForUnit(unit);
                         if (forceTable.get(unit) != null) {
                             forceTable.put(unit, forceTable.get(unit) + cnt);
                         } else {

@@ -15,6 +15,7 @@
  */
 package de.tor.tribes.ui.renderer.map;
 
+import de.tor.tribes.io.TroopAmountFixed;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.views.DSWorkbenchTroopsFrame;
@@ -31,10 +32,10 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.text.NumberFormat;
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 /**
  *
@@ -73,19 +74,17 @@ public class SupportLayerRenderer extends AbstractDirectLayerRenderer {
                 List<Village> villages = new LinkedList<>();
                 SupportVillageTroopsHolder holder = (SupportVillageTroopsHolder) TroopsManager.getSingleton().getTroopsForVillage(v, TroopsManager.TROOP_TYPE.SUPPORT);
 
-                Hashtable<Village, Hashtable<UnitHolder, Integer>> incs = holder.getIncomingSupports();
-                Hashtable<Village, Hashtable<UnitHolder, Integer>> outs = holder.getOutgoingSupports();
-
-                Enumeration<Village> keys = incs.keys();
-                while (keys.hasMoreElements()) {
-                    Village key = keys.nextElement();
+                HashMap<Village, TroopAmountFixed> incs = holder.getIncomingSupports();
+                HashMap<Village, TroopAmountFixed> outs = holder.getOutgoingSupports();
+                
+                Set<Village> keys = incs.keySet();
+                for(Village key: keys) {
                     if (!villages.contains(key)) {
                         villages.add(key);
                     }
                 }
-                keys = outs.keys();
-                while (keys.hasMoreElements()) {
-                    Village key = keys.nextElement();
+                keys = outs.keySet();
+                for(Village key: keys) {
                     if (!villages.contains(key)) {
                         villages.add(key);
                     }

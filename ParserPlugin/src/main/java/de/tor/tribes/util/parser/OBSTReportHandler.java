@@ -16,6 +16,7 @@
 package de.tor.tribes.util.parser;
 
 import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.io.TroopAmountFixed;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.FightReport;
 import de.tor.tribes.types.UnknownUnit;
@@ -30,7 +31,6 @@ import de.tor.tribes.util.report.ReportManager;
 import de.tor.tribes.util.village.KnownVillage;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -193,11 +193,7 @@ public class OBSTReportHandler implements SilentParserInterface {
                 report.setDefenders(parseUnits(m.group(1).trim().split("\\s")));
             } else {
                 //no second "Amount:" ... lost everything
-                Hashtable<UnitHolder, Integer> amounts = new Hashtable<>();
-                for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
-                  amounts.put(unit, -1);
-                }
-                report.setDefenders(amounts);
+                report.setDefenders(new TroopAmountFixed(-1));
             }
         }
         //back to offense pattern 
@@ -213,11 +209,7 @@ public class OBSTReportHandler implements SilentParserInterface {
                 report.setDiedDefenders(parseUnits(m.group(1).trim().split("\\s")));
             } else {
                 //no second "Losses:" ... lost everything
-                Hashtable<UnitHolder, Integer> amounts = new Hashtable<>();
-                for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
-                    amounts.put(unit, -1);
-                }
-                report.setDiedDefenders(amounts);
+                report.setDiedDefenders(new TroopAmountFixed(-1));
             }
         }
         unitPattern = RegExpHelper.getTroopsPattern(false, false);
@@ -362,16 +354,11 @@ public class OBSTReportHandler implements SilentParserInterface {
         return -1;
     }
 
-    private Hashtable<UnitHolder, Integer> parseUnits(String[] pUnits) {
-        int cnt = 0;
-        Hashtable<UnitHolder, Integer> units = new Hashtable<>();
-        for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
-            if (cnt < pUnits.length) {
-                units.put(unit, Integer.parseInt(pUnits[cnt]));
-            } else {
-                units.put(unit, 0);
-            }
-            cnt++;
+    private TroopAmountFixed parseUnits(String[] pUnits) {
+        TroopAmountFixed units = new TroopAmountFixed();
+        List<UnitHolder> allUnits = DataHolder.getSingleton().getUnits();
+        for (int i = 0; i < pUnits.length; i++) {
+            units.setAmountForUnit(allUnits.get(i), Integer.parseInt(pUnits[i]));
         }
 
         return units;

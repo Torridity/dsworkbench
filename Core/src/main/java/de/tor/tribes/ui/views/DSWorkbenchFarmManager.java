@@ -18,6 +18,8 @@ package de.tor.tribes.ui.views;
 import de.tor.tribes.control.GenericManagerListener;
 import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.io.TroopAmountDynamic;
+import de.tor.tribes.io.TroopAmountFixed;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.FarmInformation;
 import de.tor.tribes.types.StorageStatus;
@@ -27,7 +29,7 @@ import de.tor.tribes.ui.components.ClickAccountPanel;
 import de.tor.tribes.ui.components.CoordinateSpinner;
 import de.tor.tribes.ui.models.FarmTableModel;
 import de.tor.tribes.ui.panels.GenericTestPanel;
-import de.tor.tribes.ui.panels.TroopSelectionPanel;
+import de.tor.tribes.ui.panels.TroopSelectionPanelDynamic;
 import de.tor.tribes.ui.renderer.*;
 import de.tor.tribes.ui.windows.AbstractDSWorkbenchFrame;
 import de.tor.tribes.ui.windows.FarmInformationDetailsDialog;
@@ -64,17 +66,16 @@ import org.jdesktop.swingx.sort.TableSortController;
 public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements GenericManagerListener {
 
     public enum FARM_CONFIGURATION {
-
         A, B, C
     }
     private static Logger logger = Logger.getLogger("FarmManager");
     private static DSWorkbenchFarmManager SINGLETON = null;
     private GenericTestPanel centerPanel = null;
     private ClickAccountPanel clickAccount = null;
-    private TroopSelectionPanel aTroops = null;
-    private TroopSelectionPanel bTroops = null;
-    private TroopSelectionPanel cTroops = null;
-    private TroopSelectionPanel rTroops = null;
+    private TroopSelectionPanelDynamic aTroops = null;
+    private TroopSelectionPanelDynamic bTroops = null;
+    private TroopSelectionPanelDynamic cTroops = null;
+    private TroopSelectionPanelDynamic rTroops = null;
     private CoordinateSpinner coordSpinner = null;
 
     public static synchronized DSWorkbenchFarmManager getSingleton() {
@@ -154,13 +155,13 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
             }
         }, "FarmC", farmC, JComponent.WHEN_IN_FOCUSED_WINDOW);
 
-        aTroops = new TroopSelectionPanel();
+        aTroops = new TroopSelectionPanelDynamic();
         aTroops.setupFarm(true);
-        bTroops = new TroopSelectionPanel();
+        bTroops = new TroopSelectionPanelDynamic();
         bTroops.setupFarm(true);
-        cTroops = new TroopSelectionPanel();
+        cTroops = new TroopSelectionPanelDynamic();
         cTroops.setupFarm(true);
-        rTroops = new TroopSelectionPanel();
+        rTroops = new TroopSelectionPanelDynamic();
         rTroops.setupFarm(true);
         jATroopsPanel.add(aTroops, BorderLayout.CENTER);
         jBTroopsPanel.add(bTroops, BorderLayout.CENTER);
@@ -224,11 +225,11 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
         return jConsiderSucessRateA.isSelected() && jConsiderSucessRateB.isSelected() && jConsiderSucessRateC.isSelected();
     }
 
-    public UnitHolder[] getAllowedFarmUnits(FARM_CONFIGURATION pConfig) {
+    public UnitHolder[] getAllowedFarmUnits(FARM_CONFIGURATION pConfig, Village pVillage) {
         if (pConfig == null) {
             pConfig = FARM_CONFIGURATION.C;
         }
-        Hashtable<UnitHolder, Integer> troops;
+        TroopAmountDynamic troops;
         switch (pConfig) {
             case A:
                 troops = aTroops.getAmounts();
@@ -241,12 +242,9 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
                 break;
         }
 
-        Enumeration<UnitHolder> keys = troops.keys();
         List<UnitHolder> allowed = new LinkedList<>();
-        while (keys.hasMoreElements()) {
-            UnitHolder unit = keys.nextElement();
-            Integer amount = troops.get(unit);
-            if (amount != null && amount != 0 && !unit.getPlainName().equals("spy")) {
+        for (UnitHolder unit: DataHolder.getSingleton().getUnits()) {
+            if (troops.getAmountForUnit(unit, pVillage) > 0 && !unit.getPlainName().equals("spy")) {
                 logger.debug("Adding " + unit + " to allowed farm units");
                 allowed.add(unit);
             }
@@ -254,17 +252,17 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
         return allowed.toArray(new UnitHolder[allowed.size()]);
     }
 
-    public int getMinUnits(FARM_CONFIGURATION pConfig, UnitHolder pUnit) {
+    public TroopAmountFixed getMinUnits(FARM_CONFIGURATION pConfig, Village pVillage) {
         if (pConfig == null) {
             pConfig = FARM_CONFIGURATION.C;
         }
         switch (pConfig) {
             case A:
-                return aTroops.getAmountForUnit(pUnit);
+                return aTroops.getAmounts().transformToFixed(pVillage);
             case B:
-                return bTroops.getAmountForUnit(pUnit);
+                return bTroops.getAmounts().transformToFixed(pVillage);
             default:
-                return cTroops.getAmountForUnit(pUnit);
+                return cTroops.getAmounts().transformToFixed(pVillage);
         }
     }
 
@@ -279,8 +277,8 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
         }
     }
 
-    public int getBackupUnits(UnitHolder pUnit) {
-        return rTroops.getAmountForUnit(pUnit);
+    public TroopAmountFixed getBackupUnits(Village pVillage) {
+        return rTroops.getAmounts().transformToFixed(pVillage);
     }
 
     public boolean allowPartlyFarming() {
@@ -643,8 +641,7 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
      * Farm selection using type A
      */
     private void farmA() {
-        Hashtable<UnitHolder, Integer> troops = aTroops.getAmounts();
-        if (TroopHelper.getPopulation(troops) == 0) {
+        if (aTroops.getAmounts().hasUnits()) {
             showInfo("Keine gültigen Farmtruppen für Konfiguration A gefunden");
             return;
         }
@@ -655,8 +652,7 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
      * Farm selection using type B
      */
     private void farmB() {
-        Hashtable<UnitHolder, Integer> troops = bTroops.getAmounts();
-        if (TroopHelper.getPopulation(troops) == 0) {
+        if (bTroops.getAmounts().hasUnits()) {
             showInfo("Keine gültigen Farmtruppen für Konfiguration B gefunden");
             return;
         }
@@ -667,14 +663,14 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
      * Farm selection using type C
      */
     private void farmC() {
-        if (TroopHelper.getCapacity(cTroops.getAmounts()) == 0) {
+        if (cTroops.getAmounts().hasUnits()) {
             showInfo("Keine gültigen Farmtruppen für Konfiguration C gefunden");
             return;
         }
         farm(FARM_CONFIGURATION.C);
     }
 
-    public Hashtable<UnitHolder, Integer> getTroops(FARM_CONFIGURATION pConfig) {
+    public TroopAmountDynamic getTroops(FARM_CONFIGURATION pConfig) {
         switch (pConfig) {
             case A:
                 return aTroops.getAmounts();
@@ -1662,10 +1658,10 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
 
         for (Village v : GlobalOptions.getSelectedProfile().getTribe().getVillageList()) {
             VillageTroopsHolder h = TroopsManager.getSingleton().getTroopsForVillage(v, TroopsManager.TROOP_TYPE.OWN, true);
-            Hashtable<UnitHolder, Integer> troops = new Hashtable<>();
-            troops.put(DataHolder.getSingleton().getUnitByPlainName("axe"), 2000);
-            troops.put(DataHolder.getSingleton().getUnitByPlainName("light"), 2000);
-            troops.put(DataHolder.getSingleton().getUnitByPlainName("spy"), 100);
+            TroopAmountFixed troops = new TroopAmountFixed(0);
+            troops.setAmountForUnit(DataHolder.getSingleton().getUnitByPlainName("axe"), 2000);
+            troops.setAmountForUnit(DataHolder.getSingleton().getUnitByPlainName("light"), 2000);
+            troops.setAmountForUnit(DataHolder.getSingleton().getUnitByPlainName("spy"), 100);
             h.setTroops(troops);
         }
 
@@ -1782,10 +1778,10 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
         pConfig.setProperty(getPropertyPrefix() + ".use.ram.c", jSendRamsC.getText());
         pConfig.setProperty(getPropertyPrefix() + ".min.farm.dist.c", jMinFarmRuntimeC.getText());
         pConfig.setProperty(getPropertyPrefix() + ".max.farm.dist.c", jMaxFarmRuntimeC.getText());
-        pConfig.setProperty(getPropertyPrefix() + ".farmA.units", TroopHelper.unitTableToProperty(aTroops.getAmounts()));
-        pConfig.setProperty(getPropertyPrefix() + ".farmB.units", TroopHelper.unitTableToProperty(bTroops.getAmounts()));
-        pConfig.setProperty(getPropertyPrefix() + ".farmC.units", TroopHelper.unitTableToProperty(cTroops.getAmounts()));
-        pConfig.setProperty(getPropertyPrefix() + ".farmR.units", TroopHelper.unitTableToProperty(rTroops.getAmounts()));
+        pConfig.setProperty(getPropertyPrefix() + ".farmA.units", aTroops.getAmounts().toProperty());
+        pConfig.setProperty(getPropertyPrefix() + ".farmB.units", bTroops.getAmounts().toProperty());
+        pConfig.setProperty(getPropertyPrefix() + ".farmC.units", cTroops.getAmounts().toProperty());
+        pConfig.setProperty(getPropertyPrefix() + ".farmR.units", rTroops.getAmounts().toProperty());
         pConfig.setProperty(getPropertyPrefix() + ".disallow.partly.farming", jNotAllowPartlyFarming.isSelected());
         pConfig.setProperty(getPropertyPrefix() + ".use.success.rate", isConsiderSuccessRate());
         PropertyHelper.storeTableProperties(jFarmTable, pConfig, getPropertyPrefix());
@@ -1826,19 +1822,19 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
         UIHelper.setText(jMaxFarmRuntimeC, pConfig.getProperty(getPropertyPrefix() + ".max.farm.dist.c"), 60);
         String farmA = (String) pConfig.getProperty(getPropertyPrefix() + ".farmA.units");
         if (farmA != null) {
-            aTroops.setAmounts(TroopHelper.propertyToUnitTable(farmA));
+            aTroops.setAmounts(new TroopAmountDynamic(0).loadFromProperty(farmA));
         }
         String farmB = (String) pConfig.getProperty(getPropertyPrefix() + ".farmB.units");
         if (farmB != null) {
-            bTroops.setAmounts(TroopHelper.propertyToUnitTable(farmB));
+            bTroops.setAmounts(new TroopAmountDynamic(0).loadFromProperty(farmB));
         }
         String farmC = (String) pConfig.getProperty(getPropertyPrefix() + ".farmC.units");
         if (farmC != null) {
-            cTroops.setAmounts(TroopHelper.propertyToUnitTable(farmC));
+            cTroops.setAmounts(new TroopAmountDynamic(0).loadFromProperty(farmC));
         }
         String farmR = (String) pConfig.getProperty(getPropertyPrefix() + ".farmR.units");
         if (farmR != null) {
-            rTroops.setAmounts(TroopHelper.propertyToUnitTable(farmR));
+            rTroops.setAmounts(new TroopAmountDynamic(0).loadFromProperty(farmR));
         }
         PropertyHelper.restoreTableProperties(jFarmTable, pConfig, getPropertyPrefix());
     }

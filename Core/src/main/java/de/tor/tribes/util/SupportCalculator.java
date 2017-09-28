@@ -145,7 +145,7 @@ public class SupportCalculator {
         UnitHolder slowestPossible = null;
         while (allowedKeys.hasMoreElements()) {
             UnitHolder unit = allowedKeys.nextElement();
-            int availCount = troops.getTroopsOfUnitInVillage(unit);
+            int availCount = troops.getTroops().getAmountForUnit(unit);
             if (availCount > pMinNumber) {
                 long ms = (long) (DSCalculator.calculateMoveTimeInSeconds(pSource, pTarget, unit.getSpeed()) * 1000);
                 if (pArrive.getTime() - ms > System.currentTimeMillis()) {

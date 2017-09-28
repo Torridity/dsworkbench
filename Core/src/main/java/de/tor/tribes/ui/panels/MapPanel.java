@@ -1391,10 +1391,10 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
 
             for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
                 if (evt.getSource() == jCurrentToAStarAsAttacker) {
-                    values.put("att_" + unit.getPlainName(), (double) own.getTroopsOfUnitInVillage(unit));
+                    values.put("att_" + unit.getPlainName(), (double) own.getTroops().getAmountForUnit(unit));
                 }
                 if (evt.getSource() == jCurrentToAStarAsDefender) {
-                    values.put("def_" + unit.getPlainName(), (double) inVillage.getTroopsOfUnitInVillage(unit));
+                    values.put("def_" + unit.getPlainName(), (double) inVillage.getTroops().getAmountForUnit(unit));
                 }
             }
             if (!GlobalOptions.isOfflineMode()) {

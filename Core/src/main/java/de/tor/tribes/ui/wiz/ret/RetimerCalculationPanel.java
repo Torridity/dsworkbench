@@ -15,6 +15,7 @@
  */
 package de.tor.tribes.ui.wiz.ret;
 
+import de.tor.tribes.io.TroopAmountFixed;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.UserProfile;
@@ -336,13 +337,11 @@ public class RetimerCalculationPanel extends WizardPage {
         Village target = pAttack.getSource();
         Village source = pHolder.getVillage();
         long returnTime = pAttack.getReturnTime().getTime();
-        Hashtable<UnitHolder, Integer> amounts = pHolder.getTroops();
-        List<UnitHolder> units = TroopHelper.getContainedUnits(amounts);
+        List<UnitHolder> units = pHolder.getTroops().getContainedUnits(null);
         Collections.sort(units, UnitHolder.RUNTIME_COMPARATOR);
         for (int i = units.size() - 1; i >= 0; i--) {
             UnitHolder unit = units.get(i);
-            Integer amount = amounts.get(unit);
-            if (unit.isRetimeUnit() && amount != null && amount > 0) {
+            if (unit.isRetimeUnit()) {
                 notifyStatusUpdate(" - Teste Einheit '" + unit.getName() + "'");
                 long sendTime = returnTime - DSCalculator.calculateMoveTimeInMillis(source, target, unit.getSpeed());
                 if (sendTime > System.currentTimeMillis() + DateUtils.MILLIS_PER_MINUTE) {
@@ -354,6 +353,8 @@ public class RetimerCalculationPanel extends WizardPage {
                         }
                     }
                     if (allowFromSame) {
+                        //TODO correctly set Troops (ignore Units that are too slow)
+                        //TODO also check all other usages of Attack and things like that
                         notifyStatusUpdate(" - Einheit für Retime geeignet");
                         Attack a = new Attack();
                         a.setSource(source);

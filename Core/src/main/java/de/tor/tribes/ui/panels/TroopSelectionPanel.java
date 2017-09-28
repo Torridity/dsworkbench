@@ -19,13 +19,12 @@ import com.jidesoft.swing.LabeledTextField;
 import de.tor.tribes.control.GenericManagerListener;
 import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.io.TroopAmount;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.StandardAttack;
 import de.tor.tribes.ui.ImageManager;
 import de.tor.tribes.util.GlobalOptions;
-import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.ProfileManager;
-import de.tor.tribes.util.UIHelper;
 import de.tor.tribes.util.attack.StandardAttackManager;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -43,7 +42,8 @@ import org.apache.log4j.Logger;
  *
  * @author Torridity
  */
-public class TroopSelectionPanel extends javax.swing.JPanel implements GenericManagerListener {
+
+public abstract class TroopSelectionPanel<T extends TroopAmount> extends javax.swing.JPanel implements GenericManagerListener {
     
     private Hashtable<String, Point> unitCoordinates = new Hashtable<>();
     private LabeledTextField[][] unitFields = new LabeledTextField[20][20];
@@ -159,41 +159,8 @@ public class TroopSelectionPanel extends javax.swing.JPanel implements GenericMa
         setup(units, pTypeSeparation);
     }
     
-    public Hashtable<UnitHolder, Integer> getAmounts() {
-        Hashtable<UnitHolder, Integer> values = new Hashtable<>();
-        for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
-            values.put(unit, getAmountForUnit(unit));
-        }
-        return values;
-    }
-    
-    public void setAmounts(Hashtable<UnitHolder, Integer> pAmounts) {
-        for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
-            Integer amount = pAmounts.get(unit);
-            if (amount != null) {
-                setAmountForUnit(unit, amount);
-            } else {
-                setAmountForUnit(unit, 0);
-            }
-        }
-    }
-    
-    public int getAmountForUnit(UnitHolder pUnit) {
-        Point location = unitCoordinates.get(pUnit.getPlainName());
-        if (location != null) {
-            LabeledTextField field = unitFields[location.x][location.y];
-            return UIHelper.parseIntFromField(field, 0);
-        }
-        return 0;
-    }
-    
-    public void setAmountForUnit(UnitHolder pUnit, int pValue) {
-        Point location = unitCoordinates.get(pUnit.getPlainName());
-        if (location != null) {
-            LabeledTextField field = unitFields[location.x][location.y];
-            field.setText(Integer.toString(pValue));
-        }
-    }
+    public abstract T getAmounts();
+    public abstract void setAmounts(T pAmounts);
     
     @Override
     public void setEnabled(boolean enabled) {
@@ -298,21 +265,11 @@ public class TroopSelectionPanel extends javax.swing.JPanel implements GenericMa
     }//GEN-LAST:event_fireClick
     
     private void fireUseStandardAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireUseStandardAttackEvent
-        StandardAttack att = (StandardAttack) jStandardAttackBox.getSelectedItem();
-        if (att == null) {
-            return;
-        }
-        
-        if (!att.containsDynamicAmount()) {
-            for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
-                setAmountForUnit(unit, att.getFixedAmountForUnit(unit));
-            }
-        } else {
-            JOptionPaneHelper.showInformationBox(this, "Der gewählte Standardangriff enthält dynamische Werte,\n"
-                    + "die abhängig von der Truppenzahl eines Dorfes bestimmt werden.\n"
-                    + "Er kann daher hier nicht verwendet werden.", "Information");
-        }
+        loadFromStandardAttack();
     }//GEN-LAST:event_fireUseStandardAttackEvent
+    
+    protected abstract void loadFromStandardAttack();
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
@@ -335,10 +292,22 @@ public class TroopSelectionPanel extends javax.swing.JPanel implements GenericMa
         JFrame f = new JFrame();
         f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         f.setSize(300, 300);
-        TroopSelectionPanel panel = new TroopSelectionPanel();
+        TroopSelectionPanelFixed panel = new TroopSelectionPanelFixed();
         panel.setupDefense(false);
         f.getContentPane().add(panel);
         f.pack();
         f.setVisible(true);
+    }
+
+    protected LabeledTextField getFieldForUnit(UnitHolder pUnit) {
+        Point location = unitCoordinates.get(pUnit.getPlainName());
+        if (location != null) {
+            return unitFields[location.x][location.y];
+        }
+        return null;
+    }
+    
+    protected StandardAttack getSelectedAttack() {
+        return (StandardAttack) jStandardAttackBox.getSelectedItem();
     }
 }

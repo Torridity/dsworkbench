@@ -18,6 +18,7 @@ package de.tor.tribes.types;
 import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.io.TroopAmountFixed;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.util.village.KnownVillage;
 import java.util.Enumeration;
@@ -38,9 +39,9 @@ public class SingleAttackerStat {
     private int snobAttacks = 0;
     private int simpleSnobAttacks = 0;
     private int enoblements = 0;
-    private Hashtable<UnitHolder, Integer> sentUnits = null;
-    private Hashtable<UnitHolder, Integer> killedUnits = null;
-    private Hashtable<UnitHolder, Integer> lostUnits = null;
+    private TroopAmountFixed sentUnits = null;
+    private TroopAmountFixed killedUnits = null;
+    private TroopAmountFixed lostUnits = null;
     private int unknownDamage = 0;
     private int atLeast2KDamage = 0;
     private int atLeast4KDamage = 0;
@@ -48,16 +49,16 @@ public class SingleAttackerStat {
     private int atLeast8KDamage = 0;
     private int destroyedWallLevels = 0;
     private Hashtable<Integer, Integer> destroyedBuildingLevels = null;
-    private Hashtable<UnitHolder, Integer> silentKills = null;
+    private TroopAmountFixed silentKills = null;
 
     public SingleAttackerStat(Tribe pTribe) {
         attacker = pTribe;
         usedVillages = new LinkedList<>();
-        sentUnits = new Hashtable<>();
-        killedUnits = new Hashtable<>();
-        lostUnits = new Hashtable<>();
+        sentUnits = new TroopAmountFixed(0);
+        killedUnits = new TroopAmountFixed(0);
+        lostUnits = new TroopAmountFixed(0);
         destroyedBuildingLevels = new Hashtable<>();
-        silentKills = new Hashtable<>();
+        silentKills = new TroopAmountFixed(0);
     }
 
     public static SingleAttackerStat createRandomElement(Tribe pTribe) {
@@ -80,17 +81,22 @@ public class SingleAttackerStat {
         elem.addDestroyedBuildingLevel(KnownVillage.getBuildingIdByName("Bauernhof"),
                 ((int) Math.rint(Math.random() * 30)));
         elem.addDestroyedWallLevels(((int) Math.rint(Math.random() * 60)));
-
+        
+        TroopAmountFixed temp = new TroopAmountFixed(0);
         for (int i = 0; i < ((int) Math.rint(Math.random() * 5)); i++) {
-            elem.addKilledUnit(DataHolder.getSingleton().getRandomUnit(), (int) Math.rint(Math.random() * 500));
+            temp.setAmountForUnit(DataHolder.getSingleton().getRandomUnit(), (int) (Math.random() * 500));
         }
+        elem.addKilledUnits(temp);
 
         for (int i = 0; i < ((int) Math.rint(Math.random() * 10)); i++) {
-            elem.addSentUnit(DataHolder.getSingleton().getRandomUnit(), (int) Math.rint(Math.random() * 500));
+            temp.setAmountForUnit(DataHolder.getSingleton().getRandomUnit(), (int) (Math.random() * 500));
         }
+        elem.addSentUnits(temp);
+        
         for (int i = 0; i < ((int) Math.rint(Math.random() * 5) + 1); i++) {
-            elem.addLostUnit(DataHolder.getSingleton().getRandomUnit(), (int) Math.rint(Math.random() * 100));
+            temp.setAmountForUnit(DataHolder.getSingleton().getRandomUnit(), (int) (Math.random() * 100));
         }
+        elem.addLostUnits(temp);
 
         for (int i = 0; i < ((int) Math.rint(Math.random() * 5)); i++) {
             elem.addAtLeast2KDamage();
@@ -226,122 +232,44 @@ public class SingleAttackerStat {
         return value;
     }
 
-    public void addSentUnit(UnitHolder pUnit, Integer pAmount) {
-        Integer value = sentUnits.get(pUnit);
-        if (value == null) {
-            sentUnits.put(pUnit, pAmount);
-        } else {
-            sentUnits.put(pUnit, value + pAmount);
-        }
+    public void addSentUnits(TroopAmountFixed pTroops) {
+        sentUnits.addAmount(pTroops);
     }
 
-    public void addLostUnit(UnitHolder pUnit, Integer pAmount) {
-        Integer value = lostUnits.get(pUnit);
-        if (value == null) {
-            lostUnits.put(pUnit, pAmount);
-        } else {
-            lostUnits.put(pUnit, value + pAmount);
-        }
+    public void addLostUnits(TroopAmountFixed pTroops) {
+        lostUnits.addAmount(pTroops);
     }
 
-    public void addKilledUnit(UnitHolder pUnit, Integer pAmount) {
-        Integer value = killedUnits.get(pUnit);
-        if (value == null) {
-            killedUnits.put(pUnit, pAmount);
-        } else {
-            killedUnits.put(pUnit, value + pAmount);
-        }
+    public void addKilledUnits(TroopAmountFixed pTroops) {
+        killedUnits.addAmount(pTroops);
     }
 
-    public void addSilentlyKilledUnit(UnitHolder pUnit, Integer pAmount) {
-        Integer value = silentKills.get(pUnit);
-        if (value == null) {
-            silentKills.put(pUnit, pAmount);
-        } else {
-            silentKills.put(pUnit, value + pAmount);
-        }
+    public void addSilentlyKilledUnits(TroopAmountFixed pTroops) {
+        silentKills.addAmount(pTroops);
     }
 
     public int getSummedLosses() {
-        int value = 0;
-        for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
-            if (lostUnits != null && !lostUnits.isEmpty()) {
-                Integer val = lostUnits.get(unit);
-                if (val != null) {
-                    value += val;
-                }
-            }
-        }
-        return value;
+        return lostUnits.getTroopSum();
     }
 
     public int getSummedLossesAsFarmSpace() {
-        int value = 0;
-        for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
-            if (lostUnits != null && !lostUnits.isEmpty()) {
-                Integer val = lostUnits.get(unit);
-                if (val != null) {
-                    value += val * (int) Math.rint(unit.getPop());
-                }
-            }
-        }
-        return value;
+        return lostUnits.getTroopPopCount();
     }
 
     public int getSummedKills() {
-        int value = 0;
-
-        for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
-            if (killedUnits != null && !killedUnits.isEmpty()) {
-                Integer val = killedUnits.get(unit);
-                if (val != null) {
-                    value += val;
-                }
-            }
-        }
-        return value;
+        return killedUnits.getTroopSum();
     }
 
     public int getSummedKillsAsFarmSpace() {
-        int value = 0;
-
-        for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
-            if (killedUnits != null && !killedUnits.isEmpty()) {
-                Integer val = killedUnits.get(unit);
-                if (val != null) {
-                    value += val * (int) Math.rint(unit.getPop());
-                }
-            }
-        }
-        return value;
+        return killedUnits.getTroopPopCount();
     }
 
     public int getSummedSilentKills() {
-        int value = 0;
-
-        for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
-            if (silentKills != null && !silentKills.isEmpty()) {
-                Integer val = silentKills.get(unit);
-                if (val != null) {
-                    value += val;
-                }
-            }
-        }
-        return value;
+        return silentKills.getTroopSum();
     }
 
     public int getSummedSilentKillsAsFarmSpace() {
-        int value = 0;
-
-        for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
-            if (silentKills != null && !silentKills.isEmpty()) {
-                Integer val = silentKills.get(unit);
-                if (val != null) {
-                    value += val * (int) Math.rint(unit.getPop());
-                }
-            }
-        }
-        return value;
+        return silentKills.getTroopPopCount();
     }
 
     @Override

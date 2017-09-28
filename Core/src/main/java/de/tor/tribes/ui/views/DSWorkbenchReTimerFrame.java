@@ -1112,7 +1112,7 @@ public class DSWorkbenchReTimerFrame extends AbstractDSWorkbenchFrame implements
                 VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(candidate, TroopsManager.TROOP_TYPE.OWN);
                 boolean useVillage = true;
                 if (holder != null) {
-                    if (holder.getTroopsOfUnitInVillage(unit) == 0) {
+                    if (holder.getTroops().getAmountForUnit(unit) == 0) {
                         useVillage = false;
                     }
                 }

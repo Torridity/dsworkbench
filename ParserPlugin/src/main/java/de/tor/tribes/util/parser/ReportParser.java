@@ -35,7 +35,6 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.StringTokenizer;
 import org.apache.log4j.ConsoleAppender;
@@ -162,10 +161,10 @@ public class ReportParser implements SilentParserInterface {
                 logger.debug("Found village: " + line);
                 if (attackerPart) {
                     logger.debug(" Use village as source");
-                    result.setSourceVillage(new VillageParser().parse(line).get(0));
+                    result.setSourceVillage(VillageParser.parseSingleLine(line));
                 } else if (defenderPart) {
                     logger.debug(" Use village as target");
-                    result.setTargetVillage(new VillageParser().parse(line).get(0));
+                    result.setTargetVillage(VillageParser.parseSingleLine(line));
                 }
                 continue;
             }
@@ -417,7 +416,7 @@ public class ReportParser implements SilentParserInterface {
             
             if (troopsOutside) {
                 try {
-                    Village v = new VillageParser().parse(line).get(0);
+                    Village v = VillageParser.parseSingleLine(line);
                     if (v == null) {
                         throw new Exception();
                     }
@@ -514,7 +513,7 @@ public class ReportParser implements SilentParserInterface {
         DataHolder.getSingleton().loadData(false); // GlobalOptions.loadUserData(); 
         Transferable t = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
         String data = (String) t.getTransferData(DataFlavor.stringFlavor);
-        System.out.println(new VillageParser().parse("OMIX-A0001 (280|661) K62"));
+        System.out.println(VillageParser.parseSingleLine("OMIX-A0001 (280|661) K62"));
         System.out.println(new ReportParser().parse(data));
         //System.out.println(Integer.parseInt("4.344".replaceAll("\\.", "")));
     }

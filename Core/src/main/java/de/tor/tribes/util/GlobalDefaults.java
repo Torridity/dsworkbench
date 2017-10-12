@@ -85,6 +85,9 @@ public class GlobalDefaults {
         GLOBAL_DEFAULTS.addProperty("main.size.width", (int) Toolkit.getDefaultToolkit().getScreenSize().getHeight() - 50);
         GLOBAL_DEFAULTS.addProperty("map.marker.transparency", 80);
         GLOBAL_DEFAULTS.addProperty("map.showcontinents", true);
+        GLOBAL_DEFAULTS.addProperty("map.zoom.max", 3.0);
+        GLOBAL_DEFAULTS.addProperty("map.zoom.min", 0.4);
+        GLOBAL_DEFAULTS.addProperty("map.zoom.in.out.factor", 1.06);
         GLOBAL_DEFAULTS.addProperty("mark.villages.on.minimap", true);
         GLOBAL_DEFAULTS.addProperty("max.density.troops", 65000);
         GLOBAL_DEFAULTS.addProperty("max.farm.space", 20000);

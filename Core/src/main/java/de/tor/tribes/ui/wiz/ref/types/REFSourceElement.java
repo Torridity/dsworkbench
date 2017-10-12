@@ -16,10 +16,8 @@
 package de.tor.tribes.ui.wiz.ref.types;
 
 import de.tor.tribes.io.TroopAmountFixed;
-import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.TroopSplit;
 import de.tor.tribes.types.ext.Village;
-import java.util.Hashtable;
 
 /**
  *

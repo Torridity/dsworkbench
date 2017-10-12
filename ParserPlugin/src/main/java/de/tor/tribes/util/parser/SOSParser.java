@@ -125,10 +125,10 @@ public class SOSParser implements GenericParserInterface<SOSRequest> {
                 waitForTarget = true;
                 //  System.out.println("Wait for target");
             } else if (line.contains(getVariable("sos.source"))) {
-                List<Village> sourceVillage = new VillageParser().parse(line);
-                if (sourceVillage.size() > 0) {
+                Village sourceVillage = VillageParser.parseSingleLine(line);
+                if (sourceVillage != null) {
                     //set target
-                    source = sourceVillage.get(0);
+                    source = sourceVillage;
                     //System.out.println("source: " + source);
                 }
             } else if (line.contains(getVariable("sos.arrive.time"))) {
@@ -155,10 +155,10 @@ public class SOSParser implements GenericParserInterface<SOSRequest> {
                 waitForTroops = true;
             } else {
                 if (waitForTarget) {
-                    List<Village> targetVillage = new VillageParser().parse(line);
-                    if (targetVillage.size() > 0) {
+                    Village targetVillage = VillageParser.parseSingleLine(line);
+                    if (targetVillage != null) {
                         //set target
-                        target = targetVillage.get(0);
+                        target = targetVillage;
                         currentRequest.addTarget(target);
                         // System.out.println("Got target " + target);
                         waitForTarget = false;
@@ -242,12 +242,9 @@ public class SOSParser implements GenericParserInterface<SOSRequest> {
                     requests.put(destination.getTribe(), request);
                 }
 
-                destination = null;
-                List<Village> villages = new VillageParser().parse(usedLine);
+                destination = VillageParser.parseSingleLine(usedLine);
                 //check if there is a village in the line
-                if (!villages.isEmpty()) {
-                    //got destination
-                    destination = villages.get(villages.size() - 1);
+                if (destination != null) {
                     print("Destination: " + destination);
                     //check for existing request
                     request = requests.get(destination.getTribe());
@@ -298,17 +295,14 @@ public class SOSParser implements GenericParserInterface<SOSRequest> {
                     String[] attackSplit = usedLine.split(getVariable("sos.short.movement"));
                     if (attackSplit != null && attackSplit.length >= 2) {
                         print("Try to get attacker in split '" + attackSplit[0]);
-                        List<Village> sources = new VillageParser().parse(attackSplit[0]);
-                        if (!sources.isEmpty()) {
+                        Village source = VillageParser.parseSingleLine(attackSplit[0]);
+                        if (source != null) {
                             print("Got source");
-                            Village source = sources.get(sources.size() - 1);
                             Date arrive = null;
                             UnitHolder unit = null;
                             boolean fake = false;
-                            if (source != null) {
-                                unit = guessUnit(attackSplit[0].replaceAll(Pattern.quote(source.getName()), ""));
-                                fake = markedAsFake(attackSplit[0].replaceAll(Pattern.quote(source.getName()), ""));
-                            }
+                            unit = guessUnit(attackSplit[0].replaceAll(Pattern.quote(source.getName()), ""));
+                            fake = markedAsFake(attackSplit[0].replaceAll(Pattern.quote(source.getName()), ""));
 
                             try {
                                 String[] arriveSplit = attackSplit[1].trim().split(" ");
@@ -329,7 +323,7 @@ public class SOSParser implements GenericParserInterface<SOSRequest> {
                                 print("Failed to parse date (" + e.getMessage() + ")");
                                // e.printStackTrace();
                             }
-                            if (source != null && arrive != null) {
+                            if (arrive != null) {
                                 try {
                                     //  System.out.println("T " + dateFormat.format(arrive));
                                     if (unit != null && unit.getPlainName().equals("ag")) {

@@ -32,7 +32,6 @@ import java.awt.event.ItemEvent;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Enumeration;
-import java.util.Hashtable;
 import javax.swing.DefaultComboBoxModel;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;

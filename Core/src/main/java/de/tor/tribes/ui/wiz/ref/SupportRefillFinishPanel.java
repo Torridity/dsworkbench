@@ -441,7 +441,6 @@ public class SupportRefillFinishPanel extends WizardPage {
       }
       
       //TODO set real Troop Amount
-      //TODO merge Code with fireTransferAllToAttackPlanEvent (reduce code that is twice)
       for (int row : selection) {
         int modelRow = jxResultsTable.convertRowIndexToModel(row);
         REFResultElement move = getModel().getRow(modelRow);

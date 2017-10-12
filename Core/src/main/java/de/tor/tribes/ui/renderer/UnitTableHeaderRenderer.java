@@ -43,7 +43,8 @@ public class UnitTableHeaderRenderer extends DefaultTableCellRenderer {
         if (unit.equals(UnknownUnit.getSingleton())) {
             return result;
         }
-        result.setIcon(ImageManager.getUnitIcon(DataHolder.getSingleton().getUnitByPlainName((String) value)));
+        
+        result.setIcon(ImageManager.getUnitIcon(unit));
         result.setText("");
         return result;
 

@@ -19,8 +19,6 @@ import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.TroopAmountFixed;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.ext.Village;
-import de.tor.tribes.util.DSCalculator;
-import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.SilentParserInterface;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.TroopsManager.TROOP_TYPE;
@@ -52,7 +50,7 @@ public class NonPAPlaceParser implements SilentParserInterface {
             if (v == null) {
                 //try to get current village
                 try {
-                    v = new VillageParser().parse(currentLine).get(0);
+                    v = VillageParser.parseSingleLine(currentLine);
                 } catch (Exception e) {
                     v = null;
                 }
@@ -71,7 +69,7 @@ public class NonPAPlaceParser implements SilentParserInterface {
                             break;
                         } else {
                             //get troops from other villages
-                            Village supportingVillage = extractVillage(currentLine);
+                            Village supportingVillage = VillageParser.parseSingleLine(currentLine);
                             if (supportingVillage != null) {
                                 TroopAmountFixed support = parseUnits(currentLine);
                                 supportsToThis.put(supportingVillage, support);
@@ -88,7 +86,7 @@ public class NonPAPlaceParser implements SilentParserInterface {
                     while (true) {
                         currentLine = lineTok.nextToken();
                         //get troops in other village
-                        Village supportedVillage = extractVillage(currentLine);
+                        Village supportedVillage = VillageParser.parseSingleLine(currentLine);
 
                         if (supportedVillage != null) {
                             TroopAmountFixed outside = parseUnits(currentLine);
@@ -209,45 +207,6 @@ public class NonPAPlaceParser implements SilentParserInterface {
         }
         TroopsManager.getSingleton().revalidate(true);
         return true;
-    }
-
-    //TODO use Village Parser instead
-    private Village extractVillage(String pLine) {
-        //tokenize line by tab and space
-        StringTokenizer elemTok = new StringTokenizer(pLine, " \t");
-        //try to find village line
-        String nextToken = null;
-        while (elemTok.hasMoreElements()) {
-            String currentToken = null;
-            if (nextToken == null) {
-                currentToken = elemTok.nextToken();
-            } else {
-                currentToken = nextToken;
-            }
-
-            if (elemTok.hasMoreTokens()) {
-                nextToken = elemTok.nextToken();
-            }
-
-//search village
-            if (currentToken.startsWith("(") && currentToken.endsWith(")")) {
-                //check if we got a village
-                try {
-                    String coord = currentToken.substring(currentToken.lastIndexOf("(") + 1, currentToken.lastIndexOf(")"));
-                    if (ServerSettings.getSingleton().getCoordType() != 2) {
-                        String[] split = coord.trim().split("[(\\:)]");
-                        int[] xy = DSCalculator.hierarchicalToXy(Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2]));
-                        return DataHolder.getSingleton().getVillages()[xy[0]][xy[1]];
-                    } else {
-                        String[] split = coord.trim().split("[(\\|)]");
-                        return DataHolder.getSingleton().getVillages()[Integer.parseInt(split[0])][Integer.parseInt(split[1])];
-                    }
-
-                } catch (Exception ignored) {
-                }
-            }
-        }
-        return null;
     }
 
     private TroopAmountFixed parseUnits(String pLine) {

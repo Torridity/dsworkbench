@@ -39,8 +39,10 @@ import org.apache.log4j.Logger;
 /**
  *
  * @author Torridity
+ * 
+ * parses data got from the OBST server that WB is running
  */
-public class OBSTReportHandler implements SilentParserInterface {
+public class OBSTServerReportHandler implements SilentParserInterface {
 
     private static Logger logger = Logger.getLogger("OBSTReportParser");
 
@@ -116,12 +118,12 @@ public class OBSTReportHandler implements SilentParserInterface {
 
         m = Pattern.compile(getVariable("report.village.2") + ":\\s+(.*)\n").matcher(data);
         if (m.find()) {
-            List<Village> source = new VillageParser().parse(m.group(1));
-            if (source.isEmpty()) {
+            Village source = VillageParser.parseSingleLine(m.group(1));
+            if (source == null) {
                 logger.error("No source village found");
                 return report;
             } else {
-                report.setSourceVillage(source.get(0));
+                report.setSourceVillage(source);
                 report.setAttacker(report.getSourceVillage().getTribe());
             }
         } else {
@@ -130,12 +132,12 @@ public class OBSTReportHandler implements SilentParserInterface {
 
         m = Pattern.compile(getVariable("report.village.3") + ":\\s+(.*)\n").matcher(data);
         if (m.find()) {
-            List<Village> target = new VillageParser().parse(m.group(1));
-            if (target.isEmpty()) {
+            Village target = VillageParser.parseSingleLine(m.group(1));
+            if (target == null) {
                 logger.error("No target village found");
                 return report;
             } else {
-                report.setTargetVillage(target.get(0));
+                report.setTargetVillage(target);
                 report.setDefender(report.getTargetVillage().getTribe());
             }
         } else {

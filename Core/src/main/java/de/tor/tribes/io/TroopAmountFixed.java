@@ -28,7 +28,6 @@ import org.jdom.Element;
 /**
  * This Class holds a fixed troop split
  * 
- * This Class uses the Functions of the TroopAmount Class
  * @author extremeCrazyCoder
  */
 public class TroopAmountFixed extends TroopAmount {

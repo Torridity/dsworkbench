@@ -21,7 +21,6 @@ import de.tor.tribes.io.TroopAmountDynamic;
 import de.tor.tribes.io.TroopAmountElement;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.StandardAttack;
-import java.awt.Point;
 
 /**
  *

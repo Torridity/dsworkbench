@@ -32,7 +32,6 @@ public class ServerSettings {
 
     private static Logger logger = Logger.getLogger("ServerSettings");
     private String SERVER_ID = "de26";
-    private int COORD = 2;
     private Dimension mapSize = null;
     private int BONUS_NEW = 0;
     private int SNOB_RANGE = 70;
@@ -77,11 +76,10 @@ public class ServerSettings {
             
             logger.debug(" - reading map system");
             try {
-                //TODO use real Cordinates
-                setCoordType(1000);
+                setMapSize(Integer.parseInt(JaxenUtils.getNodeValue(d, "//coord/map_size")));
             } catch (Exception inner) {
                 logger.warn("Unable to read map Size", inner);
-                setCoordType(1000);
+                setMapSize(1000);
             }
             
             logger.debug(" - reading bonus type");
@@ -204,29 +202,12 @@ public class ServerSettings {
         return SERVER_ID;
     }
     
-    //TODO rewrite this
-    public void setCoordType(int pMapSize) {
-        if (pMapSize == 1000) {
-            COORD = 2;
-        } else if (pMapSize == 500) {
-            COORD = 1;
-        } else {
-            throw new IllegalArgumentException("Invalid map size (" + pMapSize + "). Falling back to 1000x1000.");
+    public void setMapSize(int pMapSize) {
+        if (pMapSize < 50 || pMapSize > 1000) {
+            logger.warn("Invalid map size (" + pMapSize + "). Falling back to 1000x1000");
+            pMapSize = 1000;
         }
-
-        switch (COORD) {
-            case 1: {
-                mapSize = new Dimension(pMapSize, pMapSize);
-                break;
-            }
-            default: {
-                mapSize = new Dimension(pMapSize, pMapSize);
-            }
-        }
-    }
-
-    public int getCoordType() {
-        return COORD;
+        mapSize = new Dimension(pMapSize, pMapSize);
     }
 
     public Dimension getMapDimension() {

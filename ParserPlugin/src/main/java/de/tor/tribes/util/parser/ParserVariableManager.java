@@ -16,12 +16,10 @@
 package de.tor.tribes.util.parser;
 
 import de.tor.tribes.util.GlobalOptions;
-import java.io.FileInputStream;
 import java.io.File;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.Reader;
 import java.io.StringReader;
 import java.util.Properties;
 import org.apache.log4j.Logger;

@@ -258,7 +258,8 @@ private void fireTribeChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:ev
     return;
   }
   wizCtrl.setProblem(null);
-  currentSettings.put("tribe", tribe.getName());
+  currentSettings.put("tribe.name", tribe.getName());
+  currentSettings.put("tribe.id", tribe.getId());
 }//GEN-LAST:event_fireTribeChangedEvent
 
   private void downloadDataFile(URL pSource, String pLocalName) throws Exception {
@@ -268,21 +269,8 @@ private void fireTribeChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:ev
     int bytes = 0;
     byte[] data = new byte[1024];
     ByteArrayOutputStream result = new ByteArrayOutputStream();
-    int sum = 0;
-    while (bytes != -1) {
-
-      if (bytes != -1) {
+    while ((bytes = isr.read(data)) != -1) {
         result.write(data, 0, bytes);
-      }
-
-      bytes = isr.read(data);
-      sum += bytes;
-      if (sum % 500 == 0) {
-        try {
-          Thread.sleep(50);
-        } catch (Exception ignored) {
-        }
-      }
     }
 
     tempWriter.write(result.toByteArray());

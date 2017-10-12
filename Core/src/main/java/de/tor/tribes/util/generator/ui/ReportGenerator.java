@@ -17,14 +17,12 @@ package de.tor.tribes.util.generator.ui;
 
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.TroopAmountFixed;
-import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.FarmInformation;
 import de.tor.tribes.types.FightReport;
 import de.tor.tribes.types.ext.InvalidTribe;
 import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.PluginManager;
-import de.tor.tribes.util.TroopHelper;
 import de.tor.tribes.util.UIHelper;
 import de.tor.tribes.util.farm.FarmManager;
 import de.tor.tribes.util.report.ReportManager;
@@ -32,8 +30,6 @@ import de.tor.tribes.util.village.KnownVillage;
 import org.apache.log4j.Logger;
 
 import java.util.List;
-import java.util.Map.Entry;
-import java.util.Set;
 
 /**
  *

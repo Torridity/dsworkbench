@@ -99,23 +99,10 @@ public final class GithubVersionCheck {
             int bytes = 0;
             byte[] data = new byte[1024];
             ByteArrayOutputStream result = new ByteArrayOutputStream();
-            int sum = 0;
-            while (bytes != -1) {
-
-                if (bytes != -1) {
-                    result.write(data, 0, bytes);
-                }
-
-                bytes = in.read(data);
-                sum += bytes;
-                if (sum % 500 == 0) {
-                    try {
-                        Thread.sleep(50);
-                    } catch (Exception ignored) {
-                    }
-                }
+            while ((bytes = in.read(data)) != -1) {
+                result.write(data, 0, bytes);
             }
-
+            
             JSONObject latestRelease = new JSONObject(new String(result.toByteArray()));
             String latestTagName = (String) latestRelease.get("tag_name");
 

@@ -20,7 +20,6 @@ import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.util.DSCalculator;
-import de.tor.tribes.util.ServerSettings;
 import org.jdom.Element;
 
 /**

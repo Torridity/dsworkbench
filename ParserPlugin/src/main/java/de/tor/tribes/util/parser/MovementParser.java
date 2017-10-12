@@ -45,7 +45,6 @@ import de.tor.tribes.util.attack.StandardAttackManager;
 public class MovementParser implements SilentParserInterface {
     private static final Logger logger = Logger.getLogger("MovementParser");
     
-    //TODO remove and replace with TroopMovement.
     public static final int RETURNING_TYPE = 0;
     public static final int ATTACK_TYPE = 1;
     public static final int SUPPORT_TYPE = 2;
@@ -113,12 +112,12 @@ public class MovementParser implements SilentParserInterface {
                 switch(movementType) {
                     case ATTACK_TYPE:
                     case SUPPORT_TYPE:
-                        parsed.setSource(new VillageParser().parse(parts[1]).get(0));
-                        parsed.setTarget(new VillageParser().parse(parts[0]).get(0));
+                        parsed.setSource(VillageParser.parseSingleLine(parts[1]));
+                        parsed.setTarget(VillageParser.parseSingleLine((parts[0])));
                         break;
                     case RETURNING_TYPE:
-                        parsed.setSource(new VillageParser().parse(parts[0]).get(0));
-                        parsed.setTarget(new VillageParser().parse(parts[1]).get(0));
+                        parsed.setSource(VillageParser.parseSingleLine(parts[0]));
+                        parsed.setTarget(VillageParser.parseSingleLine(parts[1]));
                         break;
                     default:
                         logger.fatal("Run into impossible else path");

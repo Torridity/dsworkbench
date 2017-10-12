@@ -118,7 +118,7 @@ public class ClockFrame extends javax.swing.JFrame implements ActionListener {
             if (diff > 0) {
                 ratio = (float) ((millis - markerMin) / (markerMax - markerMin));
             }
-
+            
             Color c1 = Color.GREEN;
             if (millis >= 500) {
                 c1 = Color.YELLOW;
@@ -144,10 +144,16 @@ public class ClockFrame extends javax.swing.JFrame implements ActionListener {
             cp.setValue(millis);
         }
 
-        for (TimerPanel p : timers.toArray(new TimerPanel[timers.size()])) {
+        for (final TimerPanel p : timers.toArray(new TimerPanel[timers.size()])) {
             if (p.isExpired()) {
-                playSound(p.getSound());
                 SystrayHelper.showInfoMessage("Timer  '" + p.getName() + "' ist abgelaufen");
+                //moved playing the sound to a new Thread because of graphic problems
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        playSound(p.getSound());
+                    }
+                }).start();
                 removeTimer(p);
             } else {
                 p.update();
@@ -504,7 +510,14 @@ private void fireAlwaysOnTopChangedEvent(javax.swing.event.ChangeEvent evt) {//G
 }//GEN-LAST:event_fireAlwaysOnTopChangedEvent
 
 private void fireTestSoundEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireTestSoundEvent
-    playSound((String) jComboBox1.getSelectedItem());
+    final String sound = (String) jComboBox1.getSelectedItem();
+    //moved playing the sound to a new Thread because of graphic problems
+    new Thread(new Runnable() {
+        @Override
+        public void run() {
+            playSound(sound);
+        }
+    }).start();
 }//GEN-LAST:event_fireTestSoundEvent
 
     private void fireCreateTimer(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCreateTimer

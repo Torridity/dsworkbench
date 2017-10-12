@@ -28,8 +28,9 @@ import org.apache.log4j.Logger;
  * @author extremeCrazyCoder
  */
 public class TroopAmountElement {
-    private static Logger logger = Logger.getLogger("TroopAmountElement");
+    private static final Logger logger = Logger.getLogger("TroopAmountElement");
     public static final String ALL_TROOPS = "Alle";
+    public static final String RND_VALUE = "rnd";
     private UnitHolder unit = null;
     private String dynamicAmount = "";
     //buffer to speed up
@@ -66,14 +67,17 @@ public class TroopAmountElement {
             throw new IllegalArgumentException("Unable to parse Math");
         }
         //ok we can parse look if its fixed
-        val = parse(pAmount, -1);
-        if(val instanceof String) {
+        String pAmountLower = pAmount.toLowerCase();
+        if(pAmountLower.contains(ALL_TROOPS.toLowerCase())
+                || pAmountLower.contains(RND_VALUE.toLowerCase())) {
             fixed = false;
-            dynamicAmount = (String) val;
-        } else if(val instanceof Double) {
+            dynamicAmount = pAmount;
+        } else {
             fixed = true;
-            double dVal = (Double) val;
-            dynamicAmount = Integer.toString((int) dVal);
+            val = parse(pAmount, -1);
+            if(val instanceof Double) {
+                dynamicAmount = Integer.toString(((Double) val).intValue());
+            }
         }
     }
 
@@ -89,7 +93,7 @@ public class TroopAmountElement {
             logger.error("cant get Amount " + availableAmount + "/" + dynamicAmount);
             throw new RuntimeException("cant get Amount");
         } else if(val instanceof Double) {
-            int wanted = (int) (((Double) val).doubleValue());
+            int wanted = ((Double) val).intValue();
             if(wanted < -1 || (!isFixed() && wanted < 0)) {
                 //limit if illigal value
                 wanted = 0;
@@ -129,8 +133,7 @@ public class TroopAmountElement {
         if(pOther instanceof TroopAmountElement) {
             TroopAmountElement otherAmount = (TroopAmountElement) pOther;
             if(!this.unit.equals(otherAmount.getUnit())) return false;
-            if(!this.dynamicAmount.equals(otherAmount.toString())) return false;
-            return true;
+            return this.dynamicAmount.equals(otherAmount.toString());
         }
         return false;
     }
@@ -222,7 +225,7 @@ public class TroopAmountElement {
      * returns a double if able to parse
      * returns a String if unable to parse
      */
-    private final String[] mathChars = {"+", "-", "*", "/", "%", "^"};
+    private final String[] mathChars = {"+", "-", "*", "/", "%", "^", "<", ">", "="};
     private Object innerParse(String noBrackets, int pDynValue, int level) {
         if(noBrackets.length() == 0) return (double) 0;
         
@@ -286,13 +289,26 @@ public class TroopAmountElement {
                             dAll*= dInner;
                             break;
                         case "/":
-                            dAll/= dInner;
+                            //check Division through Zero
+                            if(dInner != 0)
+                                dAll/= dInner;
+                            else
+                                dAll = 0;
                             break;
                         case "%":
                             dAll= dAll % dInner;
                             break;
                         case "^":
                             dAll= Math.pow(dAll, dInner);
+                            break;
+                        case "<":
+                            dAll= (dAll < dInner)?(1.0):(0.0);
+                            break;
+                        case ">":
+                            dAll= (dAll > dInner)?(1.0):(0.0);
+                            break;
+                        case "=":
+                            dAll= (dAll == dInner)?(1.0):(0.0);
                             break;
                     }
                     result = dAll;
@@ -308,9 +324,8 @@ public class TroopAmountElement {
     private final String[] elementPreChars = {"_"};
     private Object elementParse(String element, int pDynValue) {
         if(element.length() == 0) return (double) 0;
-        
         //3.Level of parsing
-        //remove all operators that belong to a single Number
+        
         if(element.equalsIgnoreCase(ALL_TROOPS)) {
             //element is all Troops placeholder
             if(pDynValue >= 0) {
@@ -320,6 +335,12 @@ public class TroopAmountElement {
                 return element;
             }
         }
+        if(element.equalsIgnoreCase(RND_VALUE)) {
+            //element is random placeholder
+            return (double) Math.random();
+        }
+        
+        //remove all operators that belong to a single Number
         for (String elementPostChar : elementPostChars) {
             if (element.endsWith(elementPostChar)) {
                 //element uses postfix

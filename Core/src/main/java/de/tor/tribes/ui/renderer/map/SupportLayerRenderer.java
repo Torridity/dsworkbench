@@ -16,7 +16,6 @@
 package de.tor.tribes.ui.renderer.map;
 
 import de.tor.tribes.io.TroopAmountFixed;
-import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.views.DSWorkbenchTroopsFrame;
 import de.tor.tribes.util.DSCalculator;

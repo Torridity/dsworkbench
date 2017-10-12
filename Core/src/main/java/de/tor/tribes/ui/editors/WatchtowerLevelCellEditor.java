@@ -25,7 +25,6 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
-import org.apache.log4j.Logger;
 
 /**
  * @author Charon

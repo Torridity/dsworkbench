@@ -25,7 +25,6 @@ import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.EscapeChars;
 import de.tor.tribes.util.GlobalOptions;
-import de.tor.tribes.util.ServerSettings;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
@@ -206,17 +205,11 @@ public class SelectionHTMLExporter {
                 String allyGuest = guestBaseURL;
                 allyGuest += "guest.php?screen=info_ally&id=" + a.getId();
                 allyBlock = allyBlock.replaceAll(ALLY_GUEST_LINK, "<a href=\"" + allyGuest + "\" target=\"_blank\">Gastzugang</a>");
-                if (ServerSettings.getSingleton().getCoordType() == 2) {
-                    String dsRealLink = "http://dsreal.de/index.php?tool=akte&mode=ally&world=" + server + "&id=" + a.getId();
-                    allyBlock = allyBlock.replaceAll(ALLY_DSREAL_LINK, "<a href=\"" + dsRealLink + "\" target=\"_blank\">DS Real</a>");
-                    String twPlusLink = "http://" + server + ".twplus.org/file/ally/" + a.getId() + "/";
-                    allyBlock = allyBlock.replaceAll(ALLY_TWPLUS_LINK, "<a href=\"" + twPlusLink + "\" target=\"_blank\">TWPlus</a>");
-                } else {
-                    //use TWPlus instead of ds real and use empty tw plus ling
-                    String twPlusLink = "http://" + server + ".twplus.org/file/ally/" + a.getId() + "/";
-                    allyBlock = allyBlock.replaceAll(ALLY_DSREAL_LINK, "<a href=\"" + twPlusLink + "\" target=\"_blank\">TWPlus</a>");
-                    allyBlock = allyBlock.replaceAll(ALLY_TWPLUS_LINK, "");
-                }
+                
+                String dsRealLink = "http://dsreal.de/index.php?tool=akte&mode=ally&world=" + server + "&id=" + a.getId();
+                allyBlock = allyBlock.replaceAll(ALLY_DSREAL_LINK, "<a href=\"" + dsRealLink + "\" target=\"_blank\">DS Real</a>");
+                String twPlusLink = "http://" + server + ".twplus.org/file/ally/" + a.getId() + "/";
+                allyBlock = allyBlock.replaceAll(ALLY_TWPLUS_LINK, "<a href=\"" + twPlusLink + "\" target=\"_blank\">TWPlus</a>");
             } else {
                 //no addional information for barbarian or no ally
                 allyBlock = allyBlock.replaceAll(ALLY_GUEST_LINK, "");
@@ -243,17 +236,11 @@ public class SelectionHTMLExporter {
                     String tribeGuest = guestBaseURL;
                     tribeGuest += "guest.php?screen=info_player&id=" + t.getId();
                     tribeBlock = tribeBlock.replaceAll(TRIBE_GUEST_LINK, "<a href=\"" + tribeGuest + "\" target=\"_blank\">Gastzugang</a>");
-                    if (ServerSettings.getSingleton().getCoordType() == 2) {
-                        String dsRealLink = "http://dsreal.de/index.php?tool=akte&mode=player&world=" + server + "&id=" + t.getId();
-                        tribeBlock = tribeBlock.replaceAll(TRIBE_DSREAL_LINK, "<a href=\"" + dsRealLink + "\" target=\"_blank\">DS Real</a>");
-                        String twPlusLink = "http://" + server + ".twplus.org/file/player/" + t.getId() + "/";
-                        tribeBlock = tribeBlock.replaceAll(TRIBE_TWPLUS_LINK, "<a href=\"" + twPlusLink + "\" target=\"_blank\">TWPlus</a>");
-                    } else {
-                        //use TWPlus instead of ds real and use empty tw plus ling
-                        String twPlusLink = "http://" + server + ".twplus.org/file/player/" + t.getId() + "/";
-                        tribeBlock = tribeBlock.replaceAll(TRIBE_DSREAL_LINK, "<a href=\"" + twPlusLink + "\" target=\"_blank\">TWPlus</a>");
-                        tribeBlock = tribeBlock.replaceAll(TRIBE_TWPLUS_LINK, "");
-                    }
+                    
+                    String dsRealLink = "http://dsreal.de/index.php?tool=akte&mode=player&world=" + server + "&id=" + t.getId();
+                    tribeBlock = tribeBlock.replaceAll(TRIBE_DSREAL_LINK, "<a href=\"" + dsRealLink + "\" target=\"_blank\">DS Real</a>");
+                    String twPlusLink = "http://" + server + ".twplus.org/file/player/" + t.getId() + "/";
+                    tribeBlock = tribeBlock.replaceAll(TRIBE_TWPLUS_LINK, "<a href=\"" + twPlusLink + "\" target=\"_blank\">TWPlus</a>");
                 } else {
                     //no additional information for barbarians
                     tribeBlock = tribeBlock.replaceAll(TRIBE_GUEST_LINK, "");

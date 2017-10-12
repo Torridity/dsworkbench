@@ -79,7 +79,7 @@ public class TroopsParser implements SilentParserInterface {
                 villageLines--;
             } else {
                 try {
-                    Village current = new VillageParser().parse(line).get(0);
+                    Village current = VillageParser.parseSingleLine(line);
                     if (current != null) {
                         v = current;
                         villageLines = 4;

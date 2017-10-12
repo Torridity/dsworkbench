@@ -1,12 +1,12 @@
 #variables for suisse servers
 troops.own=eigeni
 troops.in.village=im Dorf
-troops.outside=uswärts
-troops.on.the.way=untrwägs
-troops.place.from.village=Us däm Dorf
+troops.outside=usw\u00e4rts
+troops.on.the.way=untrw\u00e4gs
+troops.place.from.village=Us d\u00e4m Dorf
 troops.place.overall=Insgesamt
-troops.place.in.other.villages=Truppen in anderen Dörfern
-troops.commands=Befäu
+troops.place.in.other.villages=Truppen in anderen D\u00f6rfern
+troops.commands=Bef\u00e4u
 troops=Truppe
 groups.all=???
 groups.edit=bearbeite

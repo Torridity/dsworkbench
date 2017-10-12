@@ -36,7 +36,7 @@ public class SplitSetHelper {
 
     public static void loadSplitSets(Hashtable<String, TroopAmountFixed> pTarget) {
         String profileDir = GlobalOptions.getSelectedProfile().getProfileDirectory();
-        File filterFile = new File(profileDir + "/splits.sav");
+        File filterFile = new File(profileDir + "/splits.xml");
         if (!filterFile.exists()) {
             return;
         }
@@ -70,18 +70,11 @@ public class SplitSetHelper {
         }
         b.append("</splits>\n");
         
-        FileWriter w = null;
-        try {
-            w = new FileWriter(filterFile);
+        try (FileWriter w = new FileWriter(filterFile)) {
             w.write(b.toString());
             w.flush();
         } catch (Exception e) {
             logger.error("Failed to write split sets", e);
-        } finally {
-            try {
-                w.close();
-            } catch (Exception ignored) {
-            }
         }
     }
 }

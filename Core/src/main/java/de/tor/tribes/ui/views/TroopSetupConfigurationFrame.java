@@ -171,8 +171,8 @@ public class TroopSetupConfigurationFrame extends javax.swing.JDialog implements
         jHelpPanel.setPreferredSize(new java.awt.Dimension(200, 200));
         jHelpPanel.setLayout(new java.awt.GridBagLayout());
 
-        jTextPane1.setContentType("text/html");
-        jTextPane1.setText("<html>Standardangriffe sind voreingestellte Angriffe mit einer festgelegten Truppenzahl, die an vielen Stellen in DS Workbench verwendet werden k&ouml;nnen. So dienen sie z.B. dazu, die Angriffe eines Angriffsplans im Versammlungsplatz zu \n&ouml;ffnen und, sofern das DS Workbench Userscript installiert ist, die Truppen direkt einzuf&uuml;gen. Voraussetzung ist neben dem installierten Userscript auch, dass man die Truppeninformationen aus dem Spielaccount nach DS Workbench importiert \nhat. Mehr dazu erf&auml;hrst du in der Programmhilfe, die du mit F1 &ouml;ffnest. F&uuml;r die Festlegung von Standardangriffen hast du verschiedene M&ouml;glichkeiten:\n<UL><LI><I>Ganze Zahlen</I>, um eine feste Anzahl einer Truppenart einzufügen (z.B: '100')\n<LI><I>Alle</I>, um alle Truppen von einem Typ einzufügen die in DS Workbench importiert sind (z.B: 'Alle'). Beachte, dass diese Anzahl nicht der Zahl im Spiel entsprechen muss, falls die importierten Truppeninformationen veraltet sind.\n<LI><I>Alle - X</I>, um alle Truppen abzüglich einer bestimmten Anzahl einzufügen (z.B: 'Alle - 100') \n<LI><I>X%</I>, um einen prozentualen Anteil aller Truppen einzufügen (z.B: '50%') \n</UL> </html>");
+        jTextPane1.setContentType("text/html"); // NOI18N
+        jTextPane1.setText("<html>Standardangriffe sind voreingestellte Angriffe mit einer festgelegten Truppenzahl, die an vielen Stellen in DS Workbench verwendet werden k&ouml;nnen. \nSo dienen sie z.B. dazu, die Angriffe eines Angriffsplans im Versammlungsplatz zu &ouml;ffnen und die Truppen direkt einzuf&uuml;gen. \nDazu müssen die Truppeninformationen aus dem Spielaccount nach DS Workbench importiert werden.\nMehr dazu erf&auml;hrst du in der Programmhilfe, die du mit F1 &ouml;ffnest.\nIn den Standardangriffen k&ouml;nnen verschiedene Konstanten und mathematische Rechenoperationen benutzt werden :\n<UL><LI><B>+ - * /</B> Die Mathematischen grundrechenoperatoren</LI>\n<LI><B>^</B> um eine Zahl zu Potenzieren</LI>\n<LI><B>%</B> der Modulo-Operator</LI>\n<LI><B>Alle</B> entspricht der Anzahl an Truppen dieses Typs, die gerade im Dorf vorhanden sind</LI>\n<LI><B>X%</B>, um einen prozentualen Anteil aller Truppen einzufügen (z.B: '50%') \n<LI><B>rnd</B> eine Zufallszahl von 0 bis 1 (um z.B. bei 50% der Fakes einen spy mitzuschicken</LI>\n<LI><B>&gt; &lt; =</B> Vergleichsoperatoren (1 bei ja / 0 bei nein)</LI>\n</UL>\nDas Ergebnis wird abgerundet bevor die Truppen losgeschickt werden.\n </html>");
         jScrollPane2.setViewportView(jTextPane1);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -356,7 +356,7 @@ public class TroopSetupConfigurationFrame extends javax.swing.JDialog implements
             java.util.logging.Logger.getLogger(TroopSetupConfigurationFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
-
+        
         /*
          * Create and display the form
          */

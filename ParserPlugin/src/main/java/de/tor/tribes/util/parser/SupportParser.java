@@ -47,6 +47,7 @@ public class SupportParser implements SilentParserInterface {
     [002]PICO (78|424) K40 	im Dorf	5549	4381	0	4375	2	0	0	364	0	0	0	0	Truppen
     [004]PICO (70|468) K40 	im Dorf	404	28	0	1842	2	0	0	0	0	0	0	4	Truppen
      */
+    @Override
     public boolean parse(String pTroopsString) {
         StringTokenizer lineTok = new StringTokenizer(pTroopsString, "\n\r");
         Village supportSender = null;
@@ -58,7 +59,7 @@ public class SupportParser implements SilentParserInterface {
             String line = lineTok.nextToken();
             if (line.indexOf(getVariable("troops.in.village")) > 0) {
                 try {
-                    supportSender = new VillageParser().parse(line).get(0);
+                    supportSender = VillageParser.parseSingleLine(line);
                 } catch (Exception e) {
                     supportSender = null;
                 }
@@ -73,37 +74,25 @@ public class SupportParser implements SilentParserInterface {
                     }
                 }
             } else {
-                if (supportSender != null) {
-                    //might be support target village
-                    SupportVillageTroopsHolder holder = (SupportVillageTroopsHolder) TroopsManager.getSingleton().getTroopsForVillage(supportSender, TroopsManager.TROOP_TYPE.SUPPORT, true);
-                    Village supportTarget = null;
-                    try {
-                        supportTarget = new VillageParser().parse(line).get(0);
-                    } catch (Exception e) {
-                        supportTarget = null;
-                    }
+                Village supportTarget = null;
+                try {
+                    supportTarget = VillageParser.parseSingleLine(line);
+                } catch (Exception e) {
+                    continue;
+                }
+                if (supportSender != null && supportTarget != null) {
+                    //found new support
+                    TroopAmountFixed supportTroops = parseUnits(line.replaceAll(Pattern.quote(supportTarget.toString()), "").trim());
 
-                    if (supportTarget != null) {
-                        //found new support
-                        TroopAmountFixed supportTroops = parseUnits(line.replaceAll(Pattern.quote(supportTarget.toString()), "").trim());
-
-                        if (supportTroops != null) {
-                            //TODO look what should really be done here
-                            //first add then instantly remove all elements^^
-                            
-                            holder.addOutgoingSupport(supportTarget, supportTroops);
-                            //value never used... (supporterHolder)
-                            SupportVillageTroopsHolder supporterHolder = (SupportVillageTroopsHolder) TroopsManager.getSingleton().getTroopsForVillage(supportTarget, TroopsManager.TROOP_TYPE.SUPPORT);
-                            if (holder != null && !touchedVillages.contains(supportTarget)) {
-                                //remove all supports if there are any to avoid old entries
-                                holder.clearSupports();
-                                touchedVillages.add(supportTarget);
-                            }
-                            supporterHolder = (SupportVillageTroopsHolder) TroopsManager.getSingleton().getTroopsForVillage(supportTarget, TroopsManager.TROOP_TYPE.SUPPORT, true);
-                            supporterHolder.addIncomingSupport(supportSender, supportTroops);
-                            supportCount++;
-                        } 
-                    }
+                    if (supportTroops != null) {
+                        //might be support target village
+                        SupportVillageTroopsHolder holder = (SupportVillageTroopsHolder) TroopsManager.getSingleton().getTroopsForVillage(supportSender, TroopsManager.TROOP_TYPE.SUPPORT, true);
+                        holder.addOutgoingSupport(supportTarget, supportTroops);
+                        
+                        SupportVillageTroopsHolder supporterHolder = (SupportVillageTroopsHolder) TroopsManager.getSingleton().getTroopsForVillage(supportTarget, TroopsManager.TROOP_TYPE.SUPPORT, true);
+                        supporterHolder.addIncomingSupport(supportSender, supportTroops);
+                        supportCount++;
+                    } 
                 }
             }
         }

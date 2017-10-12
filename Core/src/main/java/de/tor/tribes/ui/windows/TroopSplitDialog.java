@@ -45,7 +45,7 @@ import java.util.List;
  */
 public class TroopSplitDialog extends javax.swing.JDialog {
 
-    private static Logger logger = Logger.getLogger("TroopSplitDialog");
+    private static final Logger logger = Logger.getLogger("TroopSplitDialog");
     private boolean isInitialized = false;
     private TroopAmountFixed mSplitAmounts = new TroopAmountFixed();
     private List<TroopSplit> mSplits = new LinkedList<>();

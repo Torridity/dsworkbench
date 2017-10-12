@@ -25,7 +25,6 @@ import de.tor.tribes.types.ext.Barbarians;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.views.DSWorkbenchFarmManager;
 import de.tor.tribes.util.BrowserCommandSender;
-import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.TroopHelper;
 import de.tor.tribes.util.conquer.ConquerManager;
@@ -39,7 +38,6 @@ import org.apache.log4j.Logger;
 import org.jdom.Element;
 
 import java.util.*;
-import java.util.Map.Entry;
 
 /**
  *

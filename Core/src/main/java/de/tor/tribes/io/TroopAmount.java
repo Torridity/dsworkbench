@@ -22,11 +22,12 @@ import org.apache.log4j.Logger;
 
 /**
  * This Class holds many functions for calculations with troops
+ * 
  * @author extremeCrazyCoder
  */
 
 public abstract class TroopAmount extends ManageableType implements Cloneable {
-    private static Logger logger = Logger.getLogger("TroopAmount");
+    private static final Logger logger = Logger.getLogger("TroopAmount");
 
     @Override
     public String getElementIdentifier() {

@@ -24,7 +24,6 @@ import de.tor.tribes.ui.wiz.ref.types.REFSourceElement;
 import de.tor.tribes.ui.wiz.ref.types.REFTargetElement;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.JOptionPaneHelper;
-import de.tor.tribes.util.TroopHelper;
 import de.tor.tribes.util.algo.AbstractAttackAlgorithm;
 import de.tor.tribes.util.algo.BruteForce;
 import de.tor.tribes.util.algo.Iterix;

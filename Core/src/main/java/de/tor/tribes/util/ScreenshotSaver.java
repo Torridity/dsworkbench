@@ -55,12 +55,7 @@ public class ScreenshotSaver extends Thread {
                 try {
                     Point2D.Double pos = MapPanel.getSingleton().getCurrentPosition();
                     String first = "";
-                    if (ServerSettings.getSingleton().getCoordType() != 2) {
-                        int[] hier = DSCalculator.xyToHierarchical((int) pos.x, (int) pos.y);
-                        first = "Zentrum: " + hier[0] + ":" + hier[1] + ":" + hier[2];
-                    } else {
-                        first = "Zentrum: " + (int) Math.floor(pos.getX()) + "|" + (int) Math.floor(pos.getY());
-                    }
+                    first = "Zentrum: " + (int) Math.floor(pos.getX()) + "|" + (int) Math.floor(pos.getY());
 
                     BufferedImage result = ImageUtils.createCompatibleBufferedImage(mScreen.getWidth(null), mScreen.getHeight(null), BufferedImage.OPAQUE);
                     Graphics2D g2d = (Graphics2D) result.getGraphics();

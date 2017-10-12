@@ -27,10 +27,11 @@ import org.jdom.Element;
 /**
  * This Class holds a troop Amount
  * wichs Amounts depend on the Amount of Troops in Village
+ * 
  * @author extremeCrazyCoder
  */
 public class TroopAmountDynamic extends TroopAmount {
-    private static Logger logger = Logger.getLogger("TroopAmountDynamic");
+    private static final Logger logger = Logger.getLogger("TroopAmountDynamic");
     HashMap<UnitHolder, TroopAmountElement> amounts;
     
     public TroopAmountDynamic() {

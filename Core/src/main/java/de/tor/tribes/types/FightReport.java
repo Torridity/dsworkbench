@@ -27,7 +27,6 @@ import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.BBSupport;
 import de.tor.tribes.util.Constants;
-import de.tor.tribes.util.TroopHelper;
 import de.tor.tribes.util.village.KnownVillage;
 import de.tor.tribes.util.xml.JaxenUtils;
 import org.jdom.Document;

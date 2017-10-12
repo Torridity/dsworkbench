@@ -15,7 +15,6 @@
  */
 package de.tor.tribes.util.parser;
 
-import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.types.VillageMerchantInfo;
 import de.tor.tribes.util.GenericParserInterface;
@@ -43,7 +42,10 @@ public class MerchantParser implements GenericParserInterface<VillageMerchantInf
             //parse single line for village
             String line = lineTok.nextToken();
             logger.debug("Parsing line '" + line + "'");
-            Village v = null;
+            Village v = VillageParser.parseSingleLine(line);
+            if(v == null) continue;
+            logger.debug("Got village '" + v + "'");
+            
             StringTokenizer t = new StringTokenizer(line, " \t");
             String merchants = null;
             String farm = null;
@@ -61,12 +63,6 @@ public class MerchantParser implements GenericParserInterface<VillageMerchantInf
                             farm = d;
                             logger.debug("Got farm space '" + farm + "'");
                         }
-                    } else if (d.trim().matches("[(][0-9]{1,3}[|][0-9]{1,3}[)]")) {
-                        String[] split = d.trim().replaceAll("\\(", "").replaceAll("\\)", "").split("\\|");
-                        int x = Integer.parseInt(split[0]);
-                        int y = Integer.parseInt(split[1]);
-                        v = DataHolder.getSingleton().getVillages()[x][y];
-                        logger.debug("Got village '" + v + "'");
                     }
                 }
 

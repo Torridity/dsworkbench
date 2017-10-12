@@ -56,7 +56,6 @@ import java.io.IOException;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.Map.Entry;
 import javax.swing.*;
 
 import org.apache.commons.configuration.Configuration;

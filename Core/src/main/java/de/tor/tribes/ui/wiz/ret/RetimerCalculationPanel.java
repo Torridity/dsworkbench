@@ -15,7 +15,6 @@
  */
 package de.tor.tribes.ui.wiz.ret;
 
-import de.tor.tribes.io.TroopAmountFixed;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.UserProfile;

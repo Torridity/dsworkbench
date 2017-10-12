@@ -233,10 +233,10 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
                     GlobalOptions.addProperty("proxyUser", (String) result.get("proxyUser"));
                     GlobalOptions.addProperty("proxyPassword", (String) result.get("proxyPassword"));
                     GlobalOptions.addProperty("default.server", (String) result.get("server"));
-                    GlobalOptions.addProperty("default.player", (String) result.get("tribe"));
+                    GlobalOptions.addProperty("default.player", (String) result.get("tribe.id"));
                     logger.debug("Creating initial profile");
                     UserProfile p = UserProfile.create(GlobalOptions.getProperty("default.server"),
-                            GlobalOptions.getProperty("default.player"));
+                            (String) result.get("tribe.name"));
                     GlobalOptions.setSelectedProfile(p);
                     GlobalOptions.addProperty("selected.profile", Long.toString(p.getProfileId()));
                     logger.debug(" - Disabling first start wizard");

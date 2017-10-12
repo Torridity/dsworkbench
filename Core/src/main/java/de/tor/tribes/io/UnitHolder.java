@@ -229,7 +229,7 @@ public class UnitHolder implements Serializable {
     public boolean equals(Object other) {
         if(other instanceof UnitHolder) {
             UnitHolder otherU = (UnitHolder) other;
-            return getPlainName().equals(otherU.getPlainName());
+            return hashCode() == other.hashCode();
         }
         return false;
     }

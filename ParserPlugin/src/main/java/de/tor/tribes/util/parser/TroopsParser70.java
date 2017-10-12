@@ -136,7 +136,7 @@ public class TroopsParser70 implements SilentParserInterface {
             String currentLine = lineList.remove(0);
             Village v = null;
             try {
-                v = new VillageParser().parse(currentLine).get(0);
+                v = VillageParser.parseSingleLine(currentLine);
             } catch (Exception e) {
                 //no village in line
             }

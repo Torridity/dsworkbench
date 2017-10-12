@@ -22,7 +22,6 @@ import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.StandardAttack;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.UIHelper;
-import java.awt.Point;
 
 /**
  *

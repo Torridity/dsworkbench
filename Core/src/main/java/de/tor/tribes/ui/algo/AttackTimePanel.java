@@ -20,7 +20,6 @@ import com.visutools.nav.bislider.ColorisationListener;
 import de.tor.tribes.types.DefenseTimeSpan;
 import de.tor.tribes.types.TimeSpan;
 import de.tor.tribes.types.TimeSpanDivider;
-import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.ui.renderer.TimeFrameListCellRenderer;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.JOptionPaneHelper;
@@ -290,13 +289,12 @@ public class AttackTimePanel extends javax.swing.JPanel implements DragGestureLi
         TimeSpan arrive = null;
         IntRange range = new IntRange(Math.round(jSendTimeFrame.getMinimumColoredValue()), Math.round(jSendTimeFrame.getMaximumColoredValue()));
 
-        Tribe t = null;
         if (jDayButton.isSelected()) {
-            arrive = new TimeSpan(dateTimeField.getSelectedDate(), range, t);
+            arrive = new TimeSpan(dateTimeField.getSelectedDate(), range);
         } else if (jAlwaysButton.isSelected()) {
-            arrive = new TimeSpan(range, t);
+            arrive = new TimeSpan(range);
         } else if (jExactTimeButton.isSelected()) {
-            arrive = new TimeSpan(dateTimeField.getSelectedDate(), t);
+            arrive = new TimeSpan(dateTimeField.getSelectedDate());
         }
         if (arrive != null) {
             arrive.setDirection(TimeSpan.DIRECTION.ARRIVE);
@@ -584,11 +582,11 @@ public class AttackTimePanel extends javax.swing.JPanel implements DragGestureLi
                 .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addComponent(jLabel9, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel8, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 61, Short.MAX_VALUE))
+                    .addComponent(jLabel8, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGap(18, 18, 18)
-                        .addComponent(dateTimeField, javax.swing.GroupLayout.DEFAULT_SIZE, 376, Short.MAX_VALUE))
+                        .addComponent(dateTimeField, javax.swing.GroupLayout.DEFAULT_SIZE, 372, Short.MAX_VALUE))
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGap(23, 23, 23)
                         .addComponent(jSendTimeFrame, javax.swing.GroupLayout.DEFAULT_SIZE, 371, Short.MAX_VALUE)))

@@ -95,8 +95,14 @@ public class AttackTypeTableModel extends AbstractTableModel {
                 a.getTroops().setAmount(new TroopAmountElement(unit, (String) aValue));
             } catch(IllegalArgumentException e) {
                 logger.info("cannot set Amount", e);
+                StringBuilder error = new StringBuilder();
+                Throwable cause = e.getCause();
+                if(cause != null) {
+                    error.append(cause.getMessage()).append("\n");
+                }
+                error.append(e.getMessage());
                 JOptionPaneHelper.showWarningBox(null, "Konnte den Wert nicht setzen:\n"
-                        + e.getCause().getMessage(), "Konnte den Wert nicht setzen");
+                        + error.toString(), "Konnte den Wert nicht setzen");
             }
         }
     }

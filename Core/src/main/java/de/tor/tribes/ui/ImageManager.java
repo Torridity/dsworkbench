@@ -367,7 +367,6 @@ public class ImageManager {
      * Get the cursor for the provided ID
      */
     public static Cursor getCursor(int pID) {
-
         if (!cursorSupported) {
             return Cursor.getDefaultCursor();
         }

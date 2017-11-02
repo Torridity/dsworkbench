@@ -108,21 +108,8 @@ public class ServerManager {
         int bytes = 0;
         byte[] data = new byte[1024];
         ByteArrayOutputStream result = new ByteArrayOutputStream();
-        int sum = 0;
-        while (bytes != -1) {
-            if (bytes != -1) {
-                result.write(data, 0, bytes);
-            }
-
-            bytes = isr.read(data);
-            sum += bytes;
-            //TODO why this??
-            if (sum % 500 == 0) {
-                try {
-                    Thread.sleep(50);
-                } catch (Exception ignored) {
-                }
-            }
+        while ((bytes = isr.read(data)) != -1) {
+            result.write(data, 0, bytes);
         }
         SerializedPhpParser serializedPhpParser = new SerializedPhpParser(result.toString());
         return (LinkedHashMap<String, String>) serializedPhpParser.parse();

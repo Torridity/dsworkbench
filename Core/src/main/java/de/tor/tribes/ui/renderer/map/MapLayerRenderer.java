@@ -25,7 +25,6 @@ import de.tor.tribes.ui.panels.MapPanel;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ImageUtils;
-import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.Skin;
 import de.tor.tribes.util.mark.MarkerManager;
 import java.awt.AlphaComposite;
@@ -205,9 +204,6 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
             return;
         }
         int contSpacing = 100;
-        if (ServerSettings.getSingleton().getCoordType() != 2) {
-            contSpacing = 50;
-        }
         int fieldHeight = pSettings.getFieldHeight();
         int fieldWidth = pSettings.getFieldWidth();
         //draw vertical borders

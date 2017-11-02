@@ -17,6 +17,7 @@ package de.tor.tribes.ui.views;
 
 import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.io.TroopAmountFixed;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.php.UnitTableInterface;
 import de.tor.tribes.types.*;
@@ -55,7 +56,6 @@ import java.io.IOException;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.Map.Entry;
 import javax.swing.*;
 
 import org.apache.commons.configuration.Configuration;
@@ -364,8 +364,8 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
                 if (rows.length == 1 || clickAccount.useClick()) {
                     Village source = defense.getSupporter();
                     Village target = defense.getTarget();
-                    Hashtable<UnitHolder, Integer> units = DSWorkbenchSettingsDialog.getSingleton().getDefense();
-                    if (units == null || units.isEmpty()) {
+                    TroopAmountFixed units = DSWorkbenchSettingsDialog.getSingleton().getDefense();
+                    if (units == null || units.hasUnits()) {
                         showError("Fehlerhafte Einstellungen für die unterstützenden Einheiten");
                         break;
                     }
@@ -407,11 +407,10 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
                 Village target = defense.getTarget();
                 int needed = defense.getNeededSupports();
                 int available = defense.getSupports().length;
-                Hashtable<UnitHolder, Integer> split = DSWorkbenchSettingsDialog.getSingleton().getDefense();
-                Hashtable<UnitHolder, Integer> need = new Hashtable<>();
-                Set<Entry<UnitHolder, Integer>> entries = split.entrySet();
-                for (Entry<UnitHolder, Integer> entry : entries) {
-                    need.put(entry.getKey(), (needed - available) * entry.getValue());
+                TroopAmountFixed split = DSWorkbenchSettingsDialog.getSingleton().getDefense();
+                TroopAmountFixed need = new TroopAmountFixed();
+                for (UnitHolder unit: DataHolder.getSingleton().getUnits()) {
+                    need.setAmountForUnit(unit, (needed - available) * split.getAmountForUnit(unit));
                 }
 
                 if (extended) {
@@ -434,7 +433,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
         }
     }
 
-    private String buildSimpleRequestTable(Village pTarget, Hashtable<UnitHolder, Integer> pNeed, DefenseInformation pDefense) {
+    private String buildSimpleRequestTable(Village pTarget, TroopAmountFixed pNeed, DefenseInformation pDefense) {
         StringBuilder b = new StringBuilder();
         SimpleDateFormat df = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
         b.append("[table]\n");
@@ -442,8 +441,8 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
         int colCount = 0;
 
         for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
-            Integer value = pNeed.get(unit);
-            if (value != null && value > 0) {
+            int value = pNeed.getAmountForUnit(unit);
+            if (value > 0) {
                 b.append("[|]").append("[unit]").append(unit.getPlainName()).append("[/unit]");
                 colCount++;
             }
@@ -455,8 +454,8 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
         nf.setMaximumFractionDigits(0);
         b.append("[*]");
         for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
-            Integer value = pNeed.get(unit);
-            if (value != null && value > 0) {
+            int value = pNeed.getAmountForUnit(unit);
+            if (value > 0) {
                 b.append("[|]").append(nf.format(value));
             }
         }
@@ -502,7 +501,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
     }
 
     public de.tor.tribes.io.UnitHolder getSlowestUnit() {
-        return TroopHelper.getSlowestUnit(DSWorkbenchSettingsDialog.getSingleton().getDefense());
+        return DSWorkbenchSettingsDialog.getSingleton().getDefense().getSlowestUnit();
     }
 
     private void removeSelection() {
@@ -1025,10 +1024,12 @@ private void fireAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRS
             TargetInformation info = r.addTarget(target);
             info.setWallLevel(wallLevel);
 
-            info.addTroopInformation(DataHolder.getSingleton().getUnitByPlainName("spear"), (int) Math.rint(Math.random() * 14000));
-            info.addTroopInformation(DataHolder.getSingleton().getUnitByPlainName("sword"), (int) Math.rint(Math.random() * 14000));
-            info.addTroopInformation(DataHolder.getSingleton().getUnitByPlainName("heavy"), (int) Math.rint(Math.random() * 5000));
-
+            TroopAmountFixed troops = new TroopAmountFixed();
+            troops.setAmountForUnit("spear", (int) Math.rint(Math.random() * 14000));
+            troops.setAmountForUnit("sword", (int) Math.rint(Math.random() * 14000));
+            troops.setAmountForUnit("heavy", (int) Math.rint(Math.random() * 5000));
+            info.setTroops(troops);
+            
             int cnt = (int) Math.rint(maxAttackCount * Math.random());
             for (int j = 0; j < cnt; j++) {
                 int idx = (int) Math.rint(Math.random() * (attackerVillages.length - 2));

@@ -16,6 +16,7 @@
 package de.tor.tribes.util;
 
 import de.tor.tribes.types.ext.Village;
+import de.tor.tribes.types.ext.Tribe;
 import java.awt.Point;
 import java.util.List;
 
@@ -158,5 +159,26 @@ public class DSCalculator {
     
     public static double calculateRiseSpeed() {
         return ServerSettings.getSingleton().getSpeed();
+    }
+    
+    public static String calculateMorale(Tribe pAttacker, Tribe pDefender) {
+        String moral;
+        switch(ServerSettings.getSingleton().getMoralType()) {
+            //TODO Correct this
+            case ServerSettings.TIME_LIMITED_POINTBASED_MORAL:
+            case ServerSettings.TIMEBASED_MORAL:
+                moral = "Unbekannt";
+                break;
+            case ServerSettings.POINTBASED_MORAL:
+                int temp = (int) (((pDefender.getPoints() / pAttacker.getPoints()) * 3 + 0.3) * 100);
+                temp = (temp > 100) ? 100 : temp;
+                moral = temp + "%";
+                break;
+            case ServerSettings.NO_MORAL:
+            default:
+                moral = "100%";
+                break;
+        }
+        return moral;
     }
 }

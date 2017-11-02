@@ -16,11 +16,11 @@
 package de.tor.tribes.ui.windows;
 
 import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.io.TroopAmountFixed;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.ui.renderer.TroopAmountListCellRenderer;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.text.NumberFormat;
-import java.util.HashMap;
 import java.util.List;
 import javax.swing.DefaultListModel;
 
@@ -41,21 +41,16 @@ public class TroopDetailsDialog extends javax.swing.JDialog {
     }
 
     public void setupAndShow(List<VillageTroopsHolder> pInfo) {
-        HashMap<UnitHolder, Integer> amounts = new HashMap<>(); //initialize map
-        for (UnitHolder u : DataHolder.getSingleton().getUnits()) {
-            amounts.put(u, 0);
-        } //fill map 
+        TroopAmountFixed amounts = new TroopAmountFixed(0); //initialize map
         for (VillageTroopsHolder holder : pInfo) {
-            for (UnitHolder u : DataHolder.getSingleton().getUnits()) {
-                amounts.put(u, amounts.get(u) + holder.getTroopsOfUnitInVillage(u));
-            }
+            amounts.addAmount(holder.getTroops());
         } //fill list 
         DefaultListModel model = new DefaultListModel();
         NumberFormat nf = NumberFormat.getInstance();
         nf.setMinimumFractionDigits(0);
         nf.setMaximumFractionDigits(0);
         for (UnitHolder u : DataHolder.getSingleton().getUnits()) {
-            model.addElement(nf.format(amounts.get(u)) + " " + u.getPlainName());
+            model.addElement(nf.format(amounts.getAmountForUnit(u)) + " " + u.getPlainName());
         }
 
         jTroopAmountList.setModel(model);

@@ -19,6 +19,7 @@ import org.jdom.Element;
 
 import java.io.Serializable;
 import java.util.Comparator;
+import java.util.Objects;
 
 /**
  *
@@ -180,7 +181,7 @@ public class UnitHolder implements Serializable {
 
     public boolean isDefense() {
         String plain = getPlainName();
-        return plain != null && (plain.equals("spear") || plain.equals("sword") || plain.equals("archer") || plain.equals("spy") || plain.equals("heavy") || plain.equals("catapult"));
+        return plain != null && (plain.equals("spear") || plain.equals("sword") || plain.equals("archer") || plain.equals("spy") || plain.equals("heavy") || plain.equals("catapult") || plain.equals("knight"));
     }
 
     public boolean isOffense() {
@@ -222,6 +223,31 @@ public class UnitHolder implements Serializable {
     @Override
     public String toString() {
         return getName();// + "(" + getSpeed() + " Minuten/Feld)";
+    }
+    
+    @Override
+    public boolean equals(Object other) {
+        if(other instanceof UnitHolder) {
+            UnitHolder otherU = (UnitHolder) other;
+            return hashCode() == other.hashCode();
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 89 * hash + Objects.hashCode(this.plainName);
+        hash = 89 * hash + Objects.hashCode(this.name);
+        hash = 89 * hash + (int) (Double.doubleToLongBits(this.pop) ^ (Double.doubleToLongBits(this.pop) >>> 32));
+        hash = 89 * hash + (int) (Double.doubleToLongBits(this.speed) ^ (Double.doubleToLongBits(this.speed) >>> 32));
+        hash = 89 * hash + (int) (Double.doubleToLongBits(this.attack) ^ (Double.doubleToLongBits(this.attack) >>> 32));
+        hash = 89 * hash + (int) (Double.doubleToLongBits(this.defense) ^ (Double.doubleToLongBits(this.defense) >>> 32));
+        hash = 89 * hash + (int) (Double.doubleToLongBits(this.defenseCavalry) ^ (Double.doubleToLongBits(this.defenseCavalry) >>> 32));
+        hash = 89 * hash + (int) (Double.doubleToLongBits(this.defenseArcher) ^ (Double.doubleToLongBits(this.defenseArcher) >>> 32));
+        hash = 89 * hash + (int) (Double.doubleToLongBits(this.carry) ^ (Double.doubleToLongBits(this.carry) >>> 32));
+        hash = 89 * hash + (int) (Double.doubleToLongBits(this.buildTime) ^ (Double.doubleToLongBits(this.buildTime) >>> 32));
+        return hash;
     }
 
     private static class RuntimeComparator implements Comparator<UnitHolder>, java.io.Serializable {

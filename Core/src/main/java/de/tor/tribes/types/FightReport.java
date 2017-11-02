@@ -17,6 +17,7 @@ package de.tor.tribes.types;
 
 import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.io.TroopAmountFixed;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.php.LuckViewInterface;
 import de.tor.tribes.php.UnitTableInterface;
@@ -25,17 +26,20 @@ import de.tor.tribes.types.ext.InvalidTribe;
 import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.BBSupport;
-import de.tor.tribes.util.TroopHelper;
+import de.tor.tribes.util.Constants;
+import de.tor.tribes.util.village.KnownVillage;
 import de.tor.tribes.util.xml.JaxenUtils;
-import de.tor.tribes.util.xml.XMLHelper;
 import org.jdom.Document;
 import org.jdom.Element;
 
-import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
+import org.apache.log4j.Logger;
 
 /**
  *
@@ -86,9 +90,8 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
                 : "";
         String troopsOutsideVal = "";
         if (whereDefendersOutside()) {
-            Enumeration<Village> targetKeys = defendersOutside.keys();
-            while (targetKeys.hasMoreElements()) {
-                Village target = targetKeys.nextElement();
+            Set<Village> targetKeys = defendersOutside.keySet();
+            for (Village target: targetKeys) {
                 troopsOutsideVal += target.toBBCode() + "\n\n";
                 troopsOutsideVal += "[img]" + UnitTableInterface.createAttackerUnitTableLink(defendersOutside.get(target)) + "[/img]\n\n";
             }
@@ -102,7 +105,7 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
                 ? "[b]Schaden durch Rammen:[/b] Wall beschädigt von Level " + getWallBefore() + " auf Level " + getWallAfter()
                 : "";
         String cataChangeVal = (wasBuildingDamaged())
-                ? "[b]Schaden durch Katapultbeschuss:[/b] " + aimedBuilding + " beschädigt von Level " + getBuildingBefore() + " auf Level " + getBuildingAfter()
+                ? "[b]Schaden durch Katapultbeschuss:[/b] " + Constants.buildingNames[aimedBuildingId] + " beschädigt von Level " + getBuildingBefore() + " auf Level " + getBuildingAfter()
                 : "";
         return new String[]{attackerVal, sourceVal, defenderVal, targetVal, sendDateVal, resultVal, luckVal, moraleVal, attackerTroopsVal, defenderTroopsVal, troopsOutsideVal, troopsEnRouteVal, loyalityChangeVal, wallChangeVal, cataChangeVal};
     }
@@ -111,44 +114,51 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
     public String getStandardTemplate() {
         return STANDARD_TEMPLATE;
     }
+    
+    private Logger logger = Logger.getLogger("FightReport");
+    
     private boolean won = false;
     private long timestamp = 0;
     private double luck = 0.0;
     private double moral = 100.0;
     private Tribe attacker = null;
     private Village sourceVillage = null;
-    private Hashtable<UnitHolder, Integer> attackers = null;
-    private Hashtable<UnitHolder, Integer> diedAttackers = null;
+    private TroopAmountFixed attackers = null;
+    private TroopAmountFixed diedAttackers = null;
     private Tribe defender = null;
     private Village targetVillage = null;
-    private Hashtable<UnitHolder, Integer> defenders = null;
-    private Hashtable<UnitHolder, Integer> diedDefenders = null;
-    private Hashtable<Village, Hashtable<UnitHolder, Integer>> defendersOutside = null;
-    private Hashtable<UnitHolder, Integer> defendersOnTheWay = null;
+    private TroopAmountFixed defenders = null;
+    private TroopAmountFixed diedDefenders = null;
+    private HashMap<Village, TroopAmountFixed> defendersOutside = null;
+    private TroopAmountFixed defendersOnTheWay = null;
     private boolean conquered = false;
-    private byte wallBefore = -1;
-    private byte wallAfter = -1;
-    private String aimedBuilding = null;
-    private byte buildingBefore = -1;
-    private byte buildingAfter = -1;
-    private byte acceptanceBefore = 100;
-    private byte acceptanceAfter = 100;
+    private int wallBefore = -1;
+    private int wallAfter = -1;
+    private int aimedBuildingId = -1;
+    private int buildingBefore = -1;
+    private int buildingAfter = -1;
+    private int acceptanceBefore = 100;
+    private int acceptanceAfter = 100;
     private int[] spyedResources = null;
     private int[] haul = null;
-    private int woodLevel = -1;
-    private int clayLevel = -1;
-    private int ironLevel = -1;
-    private int storageLevel = -1;
-    private int hideLevel = -1;
-    private int wallLevel = -1;
+    private int[] buildingLevels;
+    
+    public final int SPY_LEVEL_NONE = 0;
+    public final int SPY_LEVEL_RESOURCES = 1;
+    public final int SPY_LEVEL_BUILDINGS = 2;
+    public final int SPY_LEVEL_OUTSIDE = 3;
+    private int spyLevel = SPY_LEVEL_NONE;
 
     public FightReport() {
-        attackers = new Hashtable<>();
-        diedAttackers = new Hashtable<>();
-        defenders = new Hashtable<>();
-        diedDefenders = new Hashtable<>();
-        defendersOutside = new Hashtable<>();
-        defendersOnTheWay = new Hashtable<>();
+        attackers = new TroopAmountFixed();
+        diedAttackers = new TroopAmountFixed();
+        defenders = new TroopAmountFixed();
+        diedDefenders = new TroopAmountFixed();
+        defendersOutside = new HashMap<>();
+        defendersOnTheWay = new TroopAmountFixed();
+        
+        buildingLevels = new int[Constants.buildingNames.length];
+        Arrays.fill(buildingLevels, -1);
     }
 
     public static String toInternalRepresentation(FightReport pReport) {
@@ -170,11 +180,6 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
 
     @Override
     public void loadFromXml(Element pElement) {
-        if (pElement.getChild("ver") != null) {
-            loadFromXml10(pElement);
-            return;
-        }
-
         try {
             this.timestamp = Long.parseLong(pElement.getChild("timestamp").getText());
             this.moral = Double.parseDouble(pElement.getChild("moral").getText());
@@ -215,14 +220,12 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
                 }
             }
 
-            Element aAmount = attackerElement.getChild("amount");
-            Element aDiedAmount = attackerElement.getChild("died");
-            Element dAmount = defenderElement.getChild("amount");
-            Element dDiedAmount = defenderElement.getChild("died");
-            Element dDefendersOnTheWay = null;
-
+            attackers = new TroopAmountFixed(attackerElement.getChild("before"));
+            diedAttackers = new TroopAmountFixed(attackerElement.getChild("died"));
+            defenders = new TroopAmountFixed(defenderElement.getChild("before"));
+            diedDefenders = new TroopAmountFixed(defenderElement.getChild("died"));
             try {
-                dDefendersOnTheWay = defenderElement.getChild("ontheway");
+                defendersOnTheWay = new TroopAmountFixed(defenderElement.getChild("otw"));
             } catch (Exception ignored) {
             }
 
@@ -232,34 +235,19 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
             } catch (Exception ignored) {
             }
 
-            attackers = new Hashtable<>();
-            diedAttackers = new Hashtable<>();
-            defenders = new Hashtable<>();
-            diedDefenders = new Hashtable<>();
-            defendersOnTheWay = new Hashtable<>();
-            defendersOutside = new Hashtable<>();
-            for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
-                String unitName = unit.getPlainName();
-                attackers.put(unit, aAmount.getAttribute(unitName).getIntValue());
-                diedAttackers.put(unit, aDiedAmount.getAttribute(unitName).getIntValue());
-                defenders.put(unit, dAmount.getAttribute(unitName).getIntValue());
-                diedDefenders.put(unit, dDiedAmount.getAttribute(unitName).getIntValue());
-                if (dDefendersOnTheWay != null) {
-                    defendersOnTheWay.put(unit, dDefendersOnTheWay.getAttribute(unitName).getIntValue());
-                }
-                if (dDefendersOutside != null) {
-                    for (Element e : (List<Element>) JaxenUtils.getNodes(dDefendersOutside, "support")) {
-                        int villageId = e.getAttribute("trg").getIntValue();
-                        int amount = e.getAttribute(unitName).getIntValue();
-                        Village v = DataHolder.getSingleton().getVillagesById().get(villageId);
-                        if (v != null) {
-                            Hashtable<UnitHolder, Integer> unitsInvillage = defendersOutside.get(v);
-                            if (unitsInvillage == null) {
-                                unitsInvillage = new Hashtable<>();
-                                defendersOutside.put(v, unitsInvillage);
-                            }
-                            unitsInvillage.put(unit, amount);
+            defendersOutside = new HashMap<>();
+            if (dDefendersOutside != null) {
+                for (Element e : (List<Element>) JaxenUtils.getNodes(dDefendersOutside, "support")) {
+                    int villageId = e.getAttribute("trg").getIntValue();
+                    Village v = DataHolder.getSingleton().getVillagesById().get(villageId);
+                    if(v != null) {
+                        TroopAmountFixed unitsInvillage = defendersOutside.get(v);
+                        if (unitsInvillage == null) {
+                            unitsInvillage = new TroopAmountFixed(e);
+                        } else {
+                            unitsInvillage.addAmount(new TroopAmountFixed(e));
                         }
+                        defendersOutside.put(v, unitsInvillage);
                     }
                 }
             }
@@ -269,158 +257,45 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
                 this.wallBefore = Byte.parseByte(e.getAttribute("before").getValue());
                 this.wallAfter = Byte.parseByte(e.getAttribute("after").getValue());
             } catch (Exception e) {
-                this.wallBefore = (byte) -1;
-                this.wallAfter = (byte) -1;
+                this.wallBefore = -1;
+                this.wallAfter = -1;
             }
             try {
                 Element e = pElement.getChild("building");
-                this.aimedBuilding = URLDecoder.decode(e.getAttribute("target").getValue(), "UTF-8");
+                this.aimedBuildingId =  Byte.parseByte(e.getAttribute("target").getValue());
                 this.buildingBefore = Byte.parseByte(e.getAttribute("before").getValue());
                 this.buildingAfter = Byte.parseByte(e.getAttribute("after").getValue());
             } catch (Exception e) {
-                this.buildingBefore = (byte) -1;
-                this.buildingAfter = (byte) -1;
+                this.buildingBefore = -1;
+                this.buildingAfter = -1;
+                logger.debug("cannot read building damage", e);
             }
             try {
                 Element e = pElement.getChild("acceptance");
                 this.acceptanceBefore = Byte.parseByte(e.getAttribute("before").getValue());
                 this.acceptanceAfter = Byte.parseByte(e.getAttribute("after").getValue());
             } catch (Exception e) {
-                this.acceptanceBefore = (byte) 100;
-                this.acceptanceAfter = (byte) 100;
+                this.acceptanceBefore = 100;
+                this.acceptanceAfter = 100;
+                logger.debug("cannot read acceptance", e);
             }
-        } catch (Exception ignored) {
-        }
-    }
-
-    /**
-     * Loader for version 1.0
-     */
-    public void loadFromXml10(Element pElement) {
-        try {
-            this.timestamp = Long.parseLong(pElement.getChild("timestamp").getText());
-            this.moral = Double.parseDouble(pElement.getChild("moral").getText());
-            this.luck = Double.parseDouble(pElement.getChild("luck").getText());
-            //attacker stuff
-            Element attackerElement = pElement.getChild("attacker");
-            Element defenderElement = pElement.getChild("defender");
-            int source = Integer.parseInt(attackerElement.getChild("src").getText());
-            this.sourceVillage = DataHolder.getSingleton().getVillagesById().get(source);
-
-            int attackerId = Integer.parseInt(attackerElement.getChild("id").getText());
-            Tribe attElement = DataHolder.getSingleton().getTribes().get(attackerId);
-            if (attElement != null) {
-                setAttacker(attElement);
-            } else {
-                if (attackerId != -666 && sourceVillage != null && sourceVillage.getTribe() != null) {
-                    setAttacker(sourceVillage.getTribe());
-                } else {
-                    setAttacker(InvalidTribe.getSingleton());
+            try {
+                Element e = pElement.getChild("spyBuildings");
+                
+                for(int i = 0; i < buildingLevels.length; i++) {
+                    buildingLevels[i] = Integer.parseInt(e.getChildText(
+                            Constants.buildingNames[i]));
                 }
+            } catch (Exception e) {
+                logger.debug("Failed to read buildings", e);
             }
-
-            int target = Integer.parseInt(defenderElement.getChild("trg").getText());
-            this.targetVillage = DataHolder.getSingleton().getVillagesById().get(target);
-
-            int defenderId = Integer.parseInt(defenderElement.getChild("id").getText());
-            Tribe defendingTribe = DataHolder.getSingleton().getTribes().get(defenderId);
-            if (defendingTribe != null) {
-                setDefender(defendingTribe);
-            } else {
-                if (defenderId > 0 && targetVillage != null && targetVillage.getTribe() != null) {
-                    setDefender(targetVillage.getTribe());
-                } else {
-                    if (defenderId == -666) {
-                        setDefender(InvalidTribe.getSingleton());
-                    } else {
-                        setDefender(Barbarians.getSingleton());
-                    }
-                }
+            try {
+                spyLevel = Integer.parseInt(pElement.getChildText("spyLevel"));
+            } catch (Exception e) {
+                logger.debug("Failed to read spy Level", e);
             }
-
-            Element aAmount = attackerElement.getChild("before");
-            Element aDiedAmount = attackerElement.getChild("died");
-            Element dAmount = defenderElement.getChild("before");
-            Element dDiedAmount = defenderElement.getChild("died");
-            Element dDefendersOnTheWay = defenderElement.getChild("otw");
-            Element dDefendersOutside = defenderElement.getChild("outside");
-
-            this.attackers = XMLHelper.xmlToTroops(aAmount);
-            this.diedAttackers = XMLHelper.xmlToTroops(aDiedAmount);
-            this.defenders = XMLHelper.xmlToTroops(dAmount);
-            this.diedDefenders = XMLHelper.xmlToTroops(dDiedAmount);
-
-            if (dDefendersOnTheWay != null) {
-                this.defendersOnTheWay = XMLHelper.xmlToTroops(dDefendersOnTheWay);
-            }
-
-            if (dDefendersOutside != null) {
-                for (Element e : (List<Element>) dDefendersOutside.getChildren("target")) {
-                    int id = Integer.parseInt(e.getAttributeValue("id"));
-                    Village targetVillage = DataHolder.getSingleton().getVillagesById().get(id);
-                    addDefendersOutside(targetVillage, XMLHelper.xmlToTroops(e));
-                }
-            }
-            /*
-             * attackers = new Hashtable<UnitHolder, Integer>(); diedAttackers = new Hashtable<UnitHolder, Integer>(); defenders = new
-             * Hashtable<UnitHolder, Integer>(); diedDefenders = new Hashtable<UnitHolder, Integer>(); defendersOnTheWay = new
-             * Hashtable<UnitHolder, Integer>(); defendersOutside = new Hashtable<Village, Hashtable<UnitHolder, Integer>>(); for
-             * (UnitHolder unit : DataHolder.getSingleton().getUnits()) { String unitName = unit.getPlainName(); attackers.put(unit,
-             * aAmount.getAttribute(unitName).getIntValue()); diedAttackers.put(unit, aDiedAmount.getAttribute(unitName).getIntValue());
-             * defenders.put(unit, dAmount.getAttribute(unitName).getIntValue()); diedDefenders.put(unit,
-             * dDiedAmount.getAttribute(unitName).getIntValue()); if (dDefendersOnTheWay != null) { defendersOnTheWay.put(unit,
-             * dDefendersOnTheWay.getAttribute(unitName).getIntValue()); } if (dDefendersOutside != null) { for (Element e : (List<Element>)
-             * JaxenUtils.getNodes(dDefendersOutside, "support")) { int villageId = e.getAttribute("trg").getIntValue(); int amount =
-             * e.getAttribute(unitName).getIntValue(); Village v = DataHolder.getSingleton().getVillagesById().get(villageId); if (v !=
-             * null) { Hashtable<UnitHolder, Integer> unitsInvillage = defendersOutside.get(v); if (unitsInvillage == null) { unitsInvillage
-             * = new Hashtable<UnitHolder, Integer>(); defendersOutside.put(v, unitsInvillage); } unitsInvillage.put(unit, amount); } } } }
-             */
-
-
-            Element wallElement = pElement.getChild("wall");
-            if (wallElement != null) {
-                this.wallBefore = Byte.parseByte(wallElement.getAttribute("before").getValue());
-                this.wallAfter = Byte.parseByte(wallElement.getAttribute("after").getValue());
-
-            }
-            Element buildingElement = pElement.getChild("building");
-            if (buildingElement != null) {
-                this.aimedBuilding = URLDecoder.decode(buildingElement.getAttribute("target").getValue(), "UTF-8");
-                this.buildingBefore = Byte.parseByte(buildingElement.getAttribute("before").getValue());
-                this.buildingAfter = Byte.parseByte(buildingElement.getAttribute("after").getValue());
-            }
-
-            Element accElement = pElement.getChild("acceptance");
-            if (accElement != null) {
-                this.acceptanceBefore = Byte.parseByte(accElement.getAttribute("before").getValue());
-                this.acceptanceAfter = Byte.parseByte(accElement.getAttribute("after").getValue());
-            }
-
-            Element haul = pElement.getChild("haul");
-            if (haul != null) {
-                setHaul(Integer.parseInt(haul.getAttributeValue("wood")),
-                        Integer.parseInt(haul.getAttributeValue("clay")),
-                        Integer.parseInt(haul.getAttributeValue("iron")));
-            }
-            Element spy = pElement.getChild("spy");
-            if (spy != null) {
-                setSpyedResources(Integer.parseInt(spy.getAttributeValue("wood")),
-                        Integer.parseInt(spy.getAttributeValue("clay")),
-                        Integer.parseInt(spy.getAttributeValue("iron")));
-            }
-
-            Element buildings = pElement.getChild("buildings");
-            if (buildings != null) {
-                this.woodLevel = Integer.parseInt(buildings.getAttributeValue("wood"));
-                this.clayLevel = Integer.parseInt(buildings.getAttributeValue("clay"));
-                this.ironLevel = Integer.parseInt(buildings.getAttributeValue("iron"));
-                this.storageLevel = Integer.parseInt(buildings.getAttributeValue("storage"));
-                this.hideLevel = Integer.parseInt(buildings.getAttributeValue("hide"));
-                if (buildingElement.getAttribute("wall") != null) {
-                    this.wallLevel = Integer.parseInt(buildings.getAttributeValue("wall"));
-                }
-            }
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            logger.warn("failed to fully read the report", e);
         }
     }
 
@@ -430,7 +305,6 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
         try {
             b.append("<report>\n");
             //general part
-            b.append("<ver>1.0</ver>\n");
             b.append("<timestamp>").append(timestamp).append("</timestamp>\n");
             b.append("<moral>").append(moral).append("</moral>\n");
             b.append("<luck>").append(luck).append("</luck>\n");
@@ -438,48 +312,36 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
             b.append("<attacker>\n");
             b.append("<id>").append(attacker.getId()).append("</id>\n");
             b.append("<src>").append(sourceVillage.getId()).append("</src>\n");
-            b.append("<before>\n");
-            b.append(XMLHelper.troopsToXML(attackers));
-            b.append("</before>\n");
-            b.append("<died>\n");
-            b.append(XMLHelper.troopsToXML(diedAttackers));
-            b.append("</died>\n");
+            b.append("<before ");
+            b.append(attackers.toXml());
+            b.append(" />\n");
+            b.append("<died ");
+            b.append(diedAttackers.toXml());
+            b.append(" />\n");
             b.append("</attacker>\n");
 
-            /*
-             * String sAttackers = "<amount "; String sDiedAttackers = "<died "; String sDefenders = "<amount "; String sDiedDefenders =
-             * "<died "; String sDefendersOnTheWay = null; if (whereDefendersOnTheWay()) { sDefendersOnTheWay = "<ontheway "; }
-             *
-             * Enumeration<UnitHolder> units = attackers.keys(); while (units.hasMoreElements()) { UnitHolder unit = units.nextElement();
-             * sAttackers += unit.getPlainName() + "=\"" + attackers.get(unit) + "\" "; sDiedAttackers += unit.getPlainName() + "=\"" +
-             * diedAttackers.get(unit) + "\" "; sDefenders += unit.getPlainName() + "=\"" + defenders.get(unit) + "\" "; sDiedDefenders +=
-             * unit.getPlainName() + "=\"" + diedDefenders.get(unit) + "\" "; if (sDefendersOnTheWay != null) { sDefendersOnTheWay +=
-             * unit.getPlainName() + "=\"" + defendersOnTheWay.get(unit) + "\" "; } } xml += sAttackers + "/>\n"; xml += sDiedAttackers +
-             * "/>\n"; xml += "</attacker>\n";
-             */
             //defender part
             b.append("<defender>\n");
             b.append("<id>").append(defender.getId()).append("</id>\n");
             b.append("<trg>").append(targetVillage.getId()).append("</trg>\n");
-            b.append("<before>\n");
-            b.append(XMLHelper.troopsToXML(defenders));
-            b.append("</before>\n");
-            b.append("<died>\n");
-            b.append(XMLHelper.troopsToXML(diedDefenders));
-            b.append("</died>\n");
+            b.append("<before ");
+            b.append(defenders.toXml());
+            b.append(" />\n");
+            b.append("<died ");
+            b.append(diedDefenders.toXml());
+            b.append(" />\n");
             if (whereDefendersOnTheWay()) {
-                b.append("<otw>\n");
-                b.append(XMLHelper.troopsToXML(defendersOnTheWay));
-                b.append("</otw>\n");
+                b.append("<otw ");
+                b.append(defendersOnTheWay.toXml());
+                b.append(" />\n");
             }
             if (whereDefendersOutside()) {
                 b.append("<outside>\n");
-                Enumeration<Village> targetVillages = defendersOutside.keys();
-                while (targetVillages.hasMoreElements()) {
-                    Village target = targetVillages.nextElement();
-                    b.append("<target id=\"").append(target.getId()).append("\">\n");
-                    b.append(XMLHelper.troopsToXML(defendersOutside.get(target)));
-                    b.append("</target>\n");
+                Set<Village> targetVillages = defendersOutside.keySet();
+                for (Village target: targetVillages) {
+                    b.append("<target id=\"").append(target.getId()).append("\" ");
+                    b.append(defendersOutside.get(target).toXml());
+                    b.append(" />\n");
                 }
                 b.append("</outside>\n");
             }
@@ -490,7 +352,7 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
                 b.append("<wall before=\"").append(getWallBefore()).append("\" after=\"").append(getWallAfter()).append("\"/>\n");
             }
             if (wasBuildingDamaged()) {
-                b.append("<building target=\"").append(URLEncoder.encode(aimedBuilding, "UTF-8")).append("\" before=\"").append(getBuildingBefore()).append("\" after=\"").append(getBuildingAfter()).append("\"/>\n");
+                b.append("<building target=\"").append(aimedBuildingId).append("\" before=\"").append(getBuildingBefore()).append("\" after=\"").append(getBuildingAfter()).append("\"/>\n");
             }
             if (wasSnobAttack()) {
                 b.append("<acceptance before=\"").append(getAcceptanceBefore()).append("\" after=\"").append(getAcceptanceAfter()).append("\"/>\n");
@@ -504,20 +366,15 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
                 b.append("<spy wood=\"").append(spyedResources[0]).append("\" clay=\"").append(spyedResources[1]).append("\" iron=\"").append(spyedResources[2]).append("\"/>\n");
             }
 
-            b.append("<buildings wood=\"").
-                    append(woodLevel).
-                    append("\" clay=\"").
-                    append(clayLevel).
-                    append("\" iron=\"").
-                    append(ironLevel).
-                    append("\" storage=\"").
-                    append(storageLevel).
-                    append("\" hide=\"").
-                    append(hideLevel).
-                    append("\" wall=\"").
-                    append(wallLevel).
-                    append("\"/>\n");
-
+            b.append("<spyBuildings");
+            for(int i = 0; i < buildingLevels.length; i++) {
+                b.append(" ").append(Constants.buildingNames[i]).append("=\"");
+                b.append(buildingLevels[i]).append("\"");
+            }
+            b.append("/>\n");
+            
+            b.append("<spyLevel>").append(spyLevel).append("</spyLevel>\n");
+            
             b.append("</report>");
             return b.toString();
         } catch (Exception e) {
@@ -560,46 +417,36 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
     /**
      * @return the attackers
      */
-    public Hashtable<UnitHolder, Integer> getAttackers() {
+    public TroopAmountFixed getAttackers() {
         return attackers;
     }
 
     /**
      * @param attackers the attackers to set
      */
-    public void setAttackers(Hashtable<UnitHolder, Integer> attackers) {
+    public void setAttackers(TroopAmountFixed attackers) {
         this.attackers = attackers;
     }
 
     /**
      * @return the diedAttackers
      */
-    public Hashtable<UnitHolder, Integer> getDiedAttackers() {
+    public TroopAmountFixed getDiedAttackers() {
         return diedAttackers;
     }
 
     /**
      * @param diedAttackers the diedAttackers to set
      */
-    public void setDiedAttackers(Hashtable<UnitHolder, Integer> diedAttackers) {
+    public void setDiedAttackers(TroopAmountFixed diedAttackers) {
         this.diedAttackers = diedAttackers;
     }
 
-    public Hashtable<UnitHolder, Integer> getSurvivingAttackers() {
-        Hashtable<UnitHolder, Integer> result = null;
+    public TroopAmountFixed getSurvivingAttackers() {
+        TroopAmountFixed result = null;
         if (!areAttackersHidden() && attackers != null && diedAttackers != null) {
-            result = new Hashtable<>();
-            Hashtable<UnitHolder, Integer> att = attackers;
-            Hashtable<UnitHolder, Integer> diedAtt = diedAttackers;
-            for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
-                try {
-                    int survivors = att.get(unit) - diedAtt.get(unit);
-                    survivors = (survivors >= 0) ? survivors : 0;
-                    result.put(unit, survivors);
-                } catch (Exception e) {
-                    result.put(unit, 0);
-                }
-            }
+            result = (TroopAmountFixed) attackers.clone();
+            result.removeAmount(diedAttackers);
         }
         return result;
     }
@@ -652,116 +499,54 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
         return haul;
     }
 
-    public void setWoodLevel(int woodLevel) {
-        this.woodLevel = woodLevel;
-    }
-
-    public int getWoodLevel() {
-        return woodLevel;
-    }
-
-    public void setClayLevel(int clayLevel) {
-        this.clayLevel = clayLevel;
-    }
-
-    public int getClayLevel() {
-        return clayLevel;
-    }
-
-    public void setIronLevel(int ironLevel) {
-        this.ironLevel = ironLevel;
-    }
-
-    public int getIronLevel() {
-        return ironLevel;
-    }
-
-    public void setStorageLevel(int storageLevel) {
-        this.storageLevel = storageLevel;
-    }
-
-    public int getStorageLevel() {
-        return storageLevel;
-    }
-
-    public void setHideLevel(int hideLevel) {
-        this.hideLevel = hideLevel;
-    }
-
-    public int getHideLevel() {
-        return hideLevel;
-    }
-
-    public void setWallLevel(int wallLevel) {
-        this.wallLevel = wallLevel;
-    }
-
-    public int getWallLevel() {
-        return wallLevel;
-    }
-
     /**
      * @return the defenders
      */
-    public Hashtable<UnitHolder, Integer> getDefenders() {
+    public TroopAmountFixed getDefenders() {
         return defenders;
     }
 
     /**
      * @param defenders the defenders to set
      */
-    public void setDefenders(Hashtable<UnitHolder, Integer> defenders) {
+    public void setDefenders(TroopAmountFixed defenders) {
         this.defenders = defenders;
     }
 
     /**
      * @return the diedDefenders
      */
-    public Hashtable<UnitHolder, Integer> getDiedDefenders() {
+    public TroopAmountFixed getDiedDefenders() {
         return diedDefenders;
     }
 
-    public Hashtable<UnitHolder, Integer> getSurvivingDefenders() {
-        Hashtable<UnitHolder, Integer> result = null;
+    public TroopAmountFixed getSurvivingDefenders() {
+        TroopAmountFixed result = null;
         if (!wasLostEverything() && defenders != null && diedDefenders != null) {
-            result = new Hashtable<>();
-            Hashtable<UnitHolder, Integer> def = defenders;
-            Hashtable<UnitHolder, Integer> diedDef = diedDefenders;
-            for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
-                try {
-                    int survivors = def.get(unit) - diedDef.get(unit);
-                    survivors = (survivors >= 0) ? survivors : 0;
-                    result.put(unit, survivors);
-                } catch (Exception e) {
-                    result.put(unit, 0);
-                }
-            }
+            result = (TroopAmountFixed) defenders.clone();
+            result.removeAmount(diedDefenders);
         }
         return result;
     }
 
     public boolean hasSurvivedDefenders() {
-        return (TroopHelper.getPopulation(getSurvivingDefenders()) != 0);
+        return (getSurvivingDefenders().getTroopPopCount() != 0);
     }
 
     /**
      * @param diedDefenders the diedDefenders to set
      */
-    public void setDiedDefenders(Hashtable<UnitHolder, Integer> diedDefenders) {
+    public void setDiedDefenders(TroopAmountFixed diedDefenders) {
         this.diedDefenders = diedDefenders;
     }
 
-    public void addDefendersOutside(Village pVillage, Hashtable<UnitHolder, Integer> pDefenders) {
+    public void addDefendersOutside(Village pVillage, TroopAmountFixed pDefenders) {
         defendersOutside.put(pVillage, pDefenders);
     }
 
     public boolean wasLostEverything() {
         //defenders are set to -1 if no information on them could be achieved as result of a total loss
-        try {
-            return (defenders.get(defenders.keys().nextElement()) < 0);
-        } catch (Exception e) {
-            return false;
-        }
+        return defenders.containsInformation();
     }
 
     public boolean isSimpleSnobAttack() {
@@ -769,11 +554,7 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
             //acceptance reduced, must be snob
             return false;
         }
-        int attackerCount = 0;
-        for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
-            attackerCount += attackers.get(unit);
-        }
-        return (attackerCount < 1000);
+        return (attackers.getTroopSum() < 1000);
     }
 
     //@TODO configurable guess
@@ -792,14 +573,12 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
         int attackerCount = 0;
         int spyCount = 0;
         if (attackers != null) {
-            for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
-                attackerCount += attackers.get(unit);
-                if (unit.getPlainName().equals("snob") && attackers.get(unit) >= 1) {
-                    isSnobAttack = true;
-                }
-                if (unit.getPlainName().equals("spy") && attackers.get(unit) >= 1) {
-                    spyCount = attackers.get(unit);
-                }
+            attackerCount = attackers.getTroopSum();
+            if (attackers.getAmountForUnit("snob") >= 1) {
+                isSnobAttack = true;
+            }
+            if (attackers.getAmountForUnit("spy") >= 1) {
+                spyCount = attackers.getAmountForUnit("spy");
             }
         }
         if (isSnobAttack) {
@@ -825,25 +604,15 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
         if (areAttackersHidden()) {
             return false;
         }
-        Enumeration<UnitHolder> units = diedAttackers.keys();
-        while (units.hasMoreElements()) {
-            if (diedAttackers.get(units.nextElement()) > 0) {
-                return false;
-            }
-        }
-        return true;
+        return diedAttackers.getTroopSum() == 0;
     }
 
     public boolean areAttackersHidden() {
-        try {
-            return (attackers.get(attackers.keys().nextElement()) < 0);
-        } catch (Exception e) {
-            return false;
-        }
+        return attackers.containsInformation();
     }
 
     public boolean whereDefendersOnTheWay() {
-        return (defendersOnTheWay != null && !defendersOnTheWay.isEmpty());
+        return (defendersOnTheWay != null && defendersOnTheWay.getTroopSum() != 0);
     }
 
     public boolean whereDefendersOutside() {
@@ -853,21 +622,21 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
     /**
      * @return the defendersOutside
      */
-    public Hashtable<UnitHolder, Integer> getDefendersOnTheWay() {
+    public TroopAmountFixed getDefendersOnTheWay() {
         return defendersOnTheWay;
     }
 
     /**
      * @return the defendersOutside
      */
-    public Hashtable<Village, Hashtable<UnitHolder, Integer>> getDefendersOutside() {
+    public HashMap<Village, TroopAmountFixed> getDefendersOutside() {
         return defendersOutside;
     }
 
     /**
      * @param defendersOnTheWay the defendersOnTheWay to set
      */
-    public void setDefendersOnTheWay(Hashtable<UnitHolder, Integer> defendersOnTheWay) {
+    public void setDefendersOnTheWay(TroopAmountFixed defendersOnTheWay) {
         this.defendersOnTheWay = defendersOnTheWay;
     }
 
@@ -895,7 +664,7 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
     /**
      * @param wallBefore the wallBefore to set
      */
-    public void setWallBefore(byte wallBefore) {
+    public void setWallBefore(int wallBefore) {
         this.wallBefore = wallBefore;
     }
 
@@ -909,22 +678,22 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
     /**
      * @param wallAfter the wallAfter to set
      */
-    public void setWallAfter(byte wallAfter) {
+    public void setWallAfter(int wallAfter) {
         this.wallAfter = wallAfter;
     }
 
     /**
      * @return the aimedBuilding
      */
-    public String getAimedBuilding() {
-        return aimedBuilding;
+    public int getAimedBuildingId() {
+        return aimedBuildingId;
     }
 
     /**
      * @param aimedBuilding the aimedBuilding to set
      */
-    public void setAimedBuilding(String aimedBuilding) {
-        this.aimedBuilding = aimedBuilding;
+    public void setAimedBuildingId(int pAimedBuildingId) {
+        this.aimedBuildingId = pAimedBuildingId;
     }
 
     /**
@@ -937,7 +706,7 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
     /**
      * @param buildingBefore the buildingBefore to set
      */
-    public void setBuildingBefore(byte buildingBefore) {
+    public void setBuildingBefore(int buildingBefore) {
         this.buildingBefore = buildingBefore;
     }
 
@@ -951,7 +720,7 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
     /**
      * @param buildingAfter the buildingAfter to set
      */
-    public void setBuildingAfter(byte buildingAfter) {
+    public void setBuildingAfter(int buildingAfter) {
         this.buildingAfter = buildingAfter;
     }
 
@@ -965,7 +734,7 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
     /**
      * @param acceptanceBefore the acceptanceBefore to set
      */
-    public void setAcceptanceBefore(byte acceptanceBefore) {
+    public void setAcceptanceBefore(int acceptanceBefore) {
         this.acceptanceBefore = acceptanceBefore;
     }
 
@@ -979,7 +748,7 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
     /**
      * @param acceptanceAfter the acceptanceAfter to set
      */
-    public void setAcceptanceAfter(byte acceptanceAfter) {
+    public void setAcceptanceAfter(int acceptanceAfter) {
         this.acceptanceAfter = acceptanceAfter;
     }
 
@@ -995,16 +764,15 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
         if (wasLostEverything()) {
             return false;
         }
-        Enumeration<UnitHolder> units = attackers.keys();
         boolean spySurvived = false;
-        while (units.hasMoreElements()) {
-            UnitHolder unit = units.nextElement();
+        TroopAmountFixed survivingAtt = getSurvivingAttackers();
+        for (UnitHolder unit: DataHolder.getSingleton().getUnits()) {
             if (unit.getPlainName().equals("spy")) {
-                if (attackers.get(unit) - diedAttackers.get(unit) > 0) {
+                if (survivingAtt.getAmountForUnit(unit) > 0) {
                     spySurvived = true;
                 }
             } else {
-                if (attackers.get(unit) - diedAttackers.get(unit) > 0) {
+                if (survivingAtt.getAmountForUnit(unit) > 0) {
                     //something else survived too
                     return false;
                 }
@@ -1086,28 +854,18 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
     }
 
     public boolean isValid() {
-
-//        System.out.println(getAttacker());
-//        System.out.println(getSourceVillage());
-//        System.out.println(getDefender());
-//        System.out.println(getTargetVillage());
-//        System.out.println(getAttackers());
-//        System.out.println(getDiedAttackers());
-//        System.out.println(getDefenders());
-//        System.out.println(getDiedDefenders());
-
         return (attacker != null
                 && sourceVillage != null
-                && !attackers.isEmpty()
-                && !diedAttackers.isEmpty()
+                && attackers != null
+                && diedAttackers != null
                 && defender != null
                 && targetVillage != null
-                && !defenders.isEmpty()
-                && !diedDefenders.isEmpty());
+                && defenders != null
+                && diedDefenders != null);
     }
 
-    public byte getVillageEffects() {
-        byte effect = 0;
+    public int getVillageEffects() {
+        int effect = 0;
         if (wasWallDamaged()) {
             effect += 1;
         }
@@ -1169,8 +927,8 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
             sAttackersDied = "Verborgen\n";
         } else {
             for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
-                sAttackers += attackers.get(unit) + " ";
-                sAttackersDied += diedAttackers.get(unit) + " ";
+                sAttackers += attackers.getAmountForUnit(unit) + " ";
+                sAttackersDied += diedAttackers.getAmountForUnit(unit) + " ";
             }
             sAttackers = sAttackers.trim() + "\n";
             sAttackersDied = sAttackersDied.trim() + "\n";
@@ -1181,8 +939,8 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
             sDefendersDied = "Keine Informationen\n";
         } else {
             for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
-                sDefenders += defenders.get(unit) + " ";
-                sDefendersDied += diedDefenders.get(unit) + " ";
+                sDefenders += defenders.getAmountForUnit(unit) + " ";
+                sDefendersDied += diedDefenders.getAmountForUnit(unit) + " ";
             }
             sDefenders = sDefenders.trim() + "\n";
             sDefendersDied = sDefendersDied.trim() + "\n";
@@ -1197,15 +955,14 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
 
         if (wasConquered()) {
             if (whereDefendersOutside()) {
-                Enumeration<Village> villageKeys = defendersOutside.keys();
-                while (villageKeys.hasMoreElements()) {
-                    Village v = villageKeys.nextElement();
+                Set<Village> villageKeys = defendersOutside.keySet();
+                for (Village v: villageKeys) {
                     if (v != null) {
-                        Hashtable<UnitHolder, Integer> troops = defendersOutside.get(v);
+                        TroopAmountFixed troops = defendersOutside.get(v);
                         if (troops != null) {
                             result.append(" -> ").append(v).append(" ");
                             for (UnitHolder u : DataHolder.getSingleton().getUnits()) {
-                                result.append(troops.get(u)).append(" ");
+                                result.append(troops.getAmountForUnit(u)).append(" ");
                             }
                         }
                         result.append("\n");
@@ -1219,7 +976,7 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
             result.append("Wall zerstört von Stufe ").append(getWallBefore()).append(" auf ").append(getWallAfter()).append("\n");
         }
         if (wasBuildingDamaged()) {
-            result.append(aimedBuilding).append(" zerstört von Stufe ").append(getBuildingBefore()).append(" auf ").append(getBuildingAfter()).append("\n");
+            result.append(Constants.buildingNames[aimedBuildingId]).append(" zerstört von Stufe ").append(getBuildingBefore()).append(" auf ").append(getBuildingAfter()).append("\n");
         }
         if (wasSnobAttack()) {
             result.append("Zustimmung gesenkt von ").append(getAcceptanceBefore()).append(" auf ").append(getAcceptanceAfter()).append("\n");
@@ -1277,18 +1034,15 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
         hash = 53 * hash + (this.conquered ? 1 : 0);
         hash = 53 * hash + this.wallBefore;
         hash = 53 * hash + this.wallAfter;
-        hash = 53 * hash + (this.aimedBuilding != null ? this.aimedBuilding.hashCode() : 0);
+        hash = 53 * hash + this.aimedBuildingId;
         hash = 53 * hash + this.buildingBefore;
         hash = 53 * hash + this.buildingAfter;
         hash = 53 * hash + this.acceptanceBefore;
         hash = 53 * hash + this.acceptanceAfter;
         hash = 53 * hash + Arrays.hashCode(this.spyedResources);
         hash = 53 * hash + Arrays.hashCode(this.haul);
-        hash = 53 * hash + this.woodLevel;
-        hash = 53 * hash + this.clayLevel;
-        hash = 53 * hash + this.ironLevel;
-        hash = 53 * hash + this.storageLevel;
-        hash = 53 * hash + this.hideLevel;
+        for(int i = 0; i < this.buildingLevels.length; i++)
+            hash = 53 * hash + this.buildingLevels[i];
         return hash;
     }
 
@@ -1311,18 +1065,15 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
         hash = 53 * hash + (this.conquered ? 1 : 0);
         hash = 53 * hash + this.wallBefore;
         hash = 53 * hash + this.wallAfter;
-        hash = 53 * hash + (this.aimedBuilding != null ? this.aimedBuilding.hashCode() : 0);
+        hash = 53 * hash + this.aimedBuildingId;
         hash = 53 * hash + this.buildingBefore;
         hash = 53 * hash + this.buildingAfter;
         hash = 53 * hash + this.acceptanceBefore;
         hash = 53 * hash + this.acceptanceAfter;
         hash = 53 * hash + Arrays.hashCode(this.spyedResources);
         hash = 53 * hash + Arrays.hashCode(this.haul);
-        hash = 53 * hash + this.woodLevel;
-        hash = 53 * hash + this.clayLevel;
-        hash = 53 * hash + this.ironLevel;
-        hash = 53 * hash + this.storageLevel;
-        hash = 53 * hash + this.hideLevel;
+        for(int i = 0; i < this.buildingLevels.length; i++)
+            hash = 53 * hash + this.buildingLevels[i];
         return hash;
     }
     
@@ -1330,24 +1081,56 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
         This method fills buildings that had not been spyed with zero,
         because buildings with level 0 are not shown by DS
     */
-    public void fillMissingSpyBuildingInformation() {
-        //Find out if we spyed buildings
-        boolean spyedBuildings = false;
-        
-        spyedBuildings |= storageLevel != -1;
-        spyedBuildings |= woodLevel != -1;
-        spyedBuildings |= clayLevel != -1;
-        spyedBuildings |= ironLevel != -1;
-        spyedBuildings |= hideLevel != -1;
-        spyedBuildings |= wallLevel != -1;
-        
-        if(spyedBuildings) {
-            if(storageLevel == -1) storageLevel = 0;
-            if(woodLevel == -1) woodLevel = 0;
-            if(clayLevel == -1) clayLevel = 0;
-            if(ironLevel == -1) ironLevel = 0;
-            if(hideLevel == -1) hideLevel = 0;
-            if(wallLevel == -1) wallLevel = 0;
+    public void fillMissingSpyInformation() {
+        logger.debug(toXml());
+        if (spyedResources != null) {
+            if(spyedResources[0] != 0) spyLevel = SPY_LEVEL_RESOURCES;
+            if(spyedResources[1] != 0) spyLevel = SPY_LEVEL_RESOURCES;
+            if(spyedResources[2] != 0) spyLevel = SPY_LEVEL_RESOURCES;
         }
+        
+        for(int i = 0; i < buildingLevels.length; i++) {
+            if(buildingLevels[i] != -1)
+                spyLevel = SPY_LEVEL_BUILDINGS;
+        }
+        
+        if(whereDefendersOnTheWay() && spyLevel == SPY_LEVEL_BUILDINGS) {
+            //Some Buildings e.g. main cannot be zero
+            //outside Troops can only be spyed if buildings were spyed too
+            spyLevel = SPY_LEVEL_OUTSIDE;
+        }
+
+        //set wall destruction (works also without spying)
+        if (wallAfter != -1 && spyLevel < SPY_LEVEL_BUILDINGS) {
+            buildingLevels[KnownVillage.getBuildingIdByName("wall")] = wallAfter;
+        }
+
+        switch (spyLevel) {
+            case SPY_LEVEL_OUTSIDE:
+            case SPY_LEVEL_BUILDINGS:
+                for(int i = 0; i < this.buildingLevels.length; i++)
+                    if(this.buildingLevels[i] == -1) this.buildingLevels[i] = 0;
+            case SPY_LEVEL_RESOURCES:
+                if(spyedResources == null)
+                    spyedResources = new int[]{0, 0, 0};
+            default:
+        }
+        logger.debug(toXml());
+    }
+
+    public void setDefendersOutside(HashMap<Village, TroopAmountFixed> pDefendersOutside) {
+        this.defendersOutside = pDefendersOutside;
+    }
+
+    public void setBuilding(int pBuildingId, int pLevel) {
+        buildingLevels[pBuildingId] = pLevel;
+    }
+    
+    public int getBuilding(int pBuilding) {
+        return buildingLevels[pBuilding];
+    }
+
+    public int getSpyLevel() {
+        return spyLevel;
     }
 }

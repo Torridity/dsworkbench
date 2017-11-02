@@ -17,13 +17,10 @@ package de.tor.tribes.util.troops;
 
 import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.io.TroopAmountFixed;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.ext.Village;
-import de.tor.tribes.util.xml.JaxenUtils;
 import java.util.Date;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.List;
 import org.jdom.Element;
 import de.tor.tribes.util.BBSupport;
 import de.tor.tribes.util.GlobalOptions;
@@ -37,7 +34,7 @@ public class VillageTroopsHolder extends ManageableType implements BBSupport {
     private final static String STANDARD_TEMPLATE = "[table]\n"
             + "[**]%SPEAR_ICON%[||]%SWORD_ICON%[||]%AXE_ICON%[||]%ARCHER_ICON%[||]%SPY_ICON%[||]%LIGHT_ICON%[||]%MARCHER_ICON%[||]%HEAVY_ICON%[||]%RAM_ICON%[||]%CATA_ICON%[||]%SNOB_ICON%[/**]\n";
     private Village village = null;
-    private Hashtable<UnitHolder, Integer> troops = new Hashtable<>();
+    private TroopAmountFixed troops = new TroopAmountFixed();
     private Date state = null;
 
     @Override
@@ -45,17 +42,7 @@ public class VillageTroopsHolder extends ManageableType implements BBSupport {
         this.village = DataHolder.getSingleton().getVillagesById().get(Integer.parseInt(e.getChild("id").getText()));
         this.state = new Date(Long.parseLong(e.getChild("state").getText()));
 
-        Element troopsElement = (Element) JaxenUtils.getNodes(e, "troops").get(0);
-
-        Hashtable<UnitHolder, Integer> hTroops = new Hashtable<>();
-
-        for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
-            try {
-                hTroops.put(unit, troopsElement.getAttribute(unit.getPlainName()).getIntValue());
-            } catch (Exception ex) {
-                hTroops.put(unit, 0);
-            }
-        }
+        TroopAmountFixed hTroops = new TroopAmountFixed(e.getChild("troops"));
         setTroops(hTroops);
     }
 
@@ -64,10 +51,7 @@ public class VillageTroopsHolder extends ManageableType implements BBSupport {
     }
 
     public VillageTroopsHolder(Village pVillage, Date pState) {
-        troops = new Hashtable<>();
-        for (UnitHolder u : DataHolder.getSingleton().getUnits()) {
-            troops.put(u, 0);
-        }
+        troops = new TroopAmountFixed(0);
         this.village = pVillage;
         this.state = pState;
     }
@@ -79,18 +63,14 @@ public class VillageTroopsHolder extends ManageableType implements BBSupport {
         builder.append("<id>").append(village.getId()).append("</id>\n");
         builder.append("<state>").append(state.getTime()).append("</state>\n");
         builder.append("<troops ");
-
-        List<UnitHolder> units = DataHolder.getSingleton().getUnits();
-        for (UnitHolder unit : units) {
-            builder.append(unit.getPlainName()).append("=\"").append(troops.get(unit)).append("\" ");
-        }
-        builder.append("/>\n");
+        builder.append(troops.toXml());
+        builder.append(" />\n");
         builder.append("</troopInfo>");
         return builder.toString();
     }
 
     public void clear() {
-        troops.clear();
+        troops.fill(-1);
     }
 
     public Village getVillage() {
@@ -101,34 +81,16 @@ public class VillageTroopsHolder extends ManageableType implements BBSupport {
         this.village = mVillage;
     }
 
-    public void setTroops(Hashtable<UnitHolder, Integer> pTroops) {
-        troops = (Hashtable<UnitHolder, Integer>) pTroops.clone();
+    public void setTroops(TroopAmountFixed pTroops) {
+        troops = pTroops.clone();
     }
 
-    public Hashtable<UnitHolder, Integer> getTroops() {
+    public TroopAmountFixed getTroops() {
         return troops;
     }
 
-    public int getTroopsOfUnitInVillage(UnitHolder pUnit) {
-        Integer result = troops.get(pUnit);
-        return (result == null) ? 0 : result;
-    }
-
-    public int getAmountForUnit(UnitHolder pUnit) {
-        Integer result = troops.get(pUnit);
-        return (result == null) ? 0 : result;
-    }
-
-    public void setAmountForUnit(UnitHolder pUnit, int pAmount) {
-        troops.put(pUnit, (pAmount < 0) ? 0 : pAmount);
-    }
-
     public float getFarmSpace() {
-        double farmSpace = 0;
-        for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
-            farmSpace += troops.get(unit) * unit.getPop();
-        }
-
+        double farmSpace = troops.getTroopPopCount();
         int max = GlobalOptions.getProperties().getInt("max.farm.space");
 
         //calculate farm space depending on pop bonus
@@ -145,90 +107,13 @@ public class VillageTroopsHolder extends ManageableType implements BBSupport {
         this.state = mState;
     }
 
-    public double getOffValue() {
-            Enumeration<UnitHolder> units = troops.keys();
-            int result = 0;
-            while (units.hasMoreElements()) {
-                UnitHolder unit = units.nextElement();
-                result += unit.getAttack() * troops.get(unit);
-            }
-
-            return result;
-       
-    }
-
-    public double getRealOffValue() {
-        Enumeration<UnitHolder> units = troops.keys();
-        int result = 0;
-        while (units.hasMoreElements()) {
-            UnitHolder unit = units.nextElement();
-            if (unit.getPlainName().equals("axe")
-                    || unit.getPlainName().equals("light")
-                    || unit.getPlainName().equals("marcher")
-                    || unit.getPlainName().equals("heavy")
-                    || unit.getPlainName().equals("ram")
-                    || unit.getPlainName().equals("catapult")) {
-                result += unit.getAttack() * troops.get(unit);
-            }
-        }
-
-        return result;
-    }
-
-    public double getDefValue() {
-            Enumeration<UnitHolder> units = troops.keys();
-
-            int result = 0;
-            while (units.hasMoreElements()) {
-                UnitHolder unit = units.nextElement();
-                result += unit.getDefense() * troops.get(unit);
-            }
-
-            return result;
-    }
-
-    public double getDefArcherValue() {
-            Enumeration<UnitHolder> units = troops.keys();
-            int result = 0;
-            while (units.hasMoreElements()) {
-                UnitHolder unit = units.nextElement();
-                result += unit.getDefenseArcher() * troops.get(unit);
-            }
-
-            return result;
-    }
-
-    public double getDefCavalryValue() {
-            Enumeration<UnitHolder> units = troops.keys();
-            int result = 0;
-            while (units.hasMoreElements()) {
-                UnitHolder unit = units.nextElement();
-                result += unit.getDefenseCavalry() * troops.get(unit);
-            }
-
-            return result;
-    }
-
-    public int getTroopPopCount() {
-            Enumeration<UnitHolder> units = troops.keys();
-            int result = 0;
-            while (units.hasMoreElements()) {
-                UnitHolder unit = units.nextElement();
-                result += unit.getPop() * troops.get(unit);
-            }
-
-            return result;
-    }
-
     @Override
     public String toString() {
         String result = "";
         result += "Village: " + village + "\n";
-        Enumeration<UnitHolder> keys = troops.keys();
         result += "Truppen\n";
-        while (keys.hasMoreElements()) {
-            UnitHolder unit = keys.nextElement();
-            result += unit.getName() + " " + troops.get(unit) + "\n";
+        for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
+            result += unit.getName() + " " + troops.getAmountForUnit(unit) + "\n";
         }
         return result;
     }
@@ -301,11 +186,7 @@ public class VillageTroopsHolder extends ManageableType implements BBSupport {
         if (u == null) {
             return "-";
         }
-        Integer i = troops.get(u);
-        if (i == null) {
-            return "0";
-        }
-
+        Integer i = troops.getAmountForUnit(u);
         return i.toString();
     }
 }

@@ -16,6 +16,7 @@
 package de.tor.tribes.ui.wiz.ref;
 
 import de.tor.tribes.control.ManageableType;
+import de.tor.tribes.io.TroopAmountFixed;
 import de.tor.tribes.ui.wiz.tap.*;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.AbstractTroopMovement;
@@ -403,7 +404,7 @@ public class SupportRefillFinishPanel extends WizardPage {
 
     private void fireTransferAllToAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireTransferAllToAttackPlanEvent
       List<Attack> attacks = new LinkedList<>();
-      Hashtable<UnitHolder, Integer> split = SupportRefillSettingsPanel.getSingleton().getSplit();
+      TroopAmountFixed split = SupportRefillSettingsPanel.getSingleton().getSplit();
       StandardAttack standardAttackType = null;
       for (ManageableType t : StandardAttackManager.getSingleton().getAllElements()) {
         StandardAttack a = (StandardAttack) t;
@@ -412,7 +413,8 @@ public class SupportRefillFinishPanel extends WizardPage {
           break;
         }
       }
-
+      
+      //TODO set real Troop Amount
       for (int row = 0; row < jxResultsTable.getRowCount(); row++) {
         int modelRow = jxResultsTable.convertRowIndexToModel(row);
         REFResultElement move = getModel().getRow(modelRow);
@@ -428,7 +430,7 @@ public class SupportRefillFinishPanel extends WizardPage {
     private void fireSelectedToAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireSelectedToAttackPlanEvent
       int[] selection = jxResultsTable.getSelectedRows();
       List<Attack> attacks = new LinkedList<>();
-      Hashtable<UnitHolder, Integer> split = SupportRefillSettingsPanel.getSingleton().getSplit();
+      TroopAmountFixed split = SupportRefillSettingsPanel.getSingleton().getSplit();
       StandardAttack used = null;
       for (ManageableType t : StandardAttackManager.getSingleton().getAllElements()) {
         StandardAttack a = (StandardAttack) t;
@@ -437,7 +439,8 @@ public class SupportRefillFinishPanel extends WizardPage {
           break;
         }
       }
-
+      
+      //TODO set real Troop Amount
       for (int row : selection) {
         int modelRow = jxResultsTable.convertRowIndexToModel(row);
         REFResultElement move = getModel().getRow(modelRow);

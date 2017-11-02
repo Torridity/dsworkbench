@@ -23,6 +23,7 @@ import de.tor.tribes.dssim.types.SimulatorResult;
 import de.tor.tribes.dssim.types.UnitHolder;
 import de.tor.tribes.dssim.util.UnitManager;
 import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.io.TroopAmountFixed;
 import de.tor.tribes.types.DefenseInformation;
 import de.tor.tribes.types.SOSRequest;
 import de.tor.tribes.types.TargetInformation;
@@ -44,8 +45,8 @@ import org.apache.log4j.Logger;
 public class DefenseAnalyzer extends Thread {
     private static Logger logger = Logger.getLogger("DefenseAnalyzer");
 
-    private Hashtable<de.tor.tribes.io.UnitHolder, Integer> standardOff = null;
-    private Hashtable<de.tor.tribes.io.UnitHolder, Integer> standardDefSplit = null;
+    private TroopAmountFixed standardOff = null;
+    private TroopAmountFixed standardDefSplit = null;
     private int maxRuns = 0;
     private double maxLossRatio = 0;
     private boolean running = false;
@@ -54,8 +55,8 @@ public class DefenseAnalyzer extends Thread {
     private DefenseAnalyzerListener listener = null;
 
     public DefenseAnalyzer(DefenseAnalyzerListener pListener,
-            Hashtable<de.tor.tribes.io.UnitHolder, Integer> pStandardOff,
-            Hashtable<de.tor.tribes.io.UnitHolder, Integer> pStandardDefSplit,
+            TroopAmountFixed pStandardOff,
+            TroopAmountFixed pStandardDefSplit,
             int pMaxRuns, double pMaxLossRatio, boolean pReAnalyze) {
         if (pListener == null) {
             throw new IllegalArgumentException("pListener must not be null");
@@ -77,13 +78,10 @@ public class DefenseAnalyzer extends Thread {
         void fireFinishedEvent();
     }
 
-    private Hashtable<UnitHolder, AbstractUnitElement> dswbUnitsToSimulatorUnits(Hashtable<de.tor.tribes.io.UnitHolder, Integer> pInput) {
+    private Hashtable<UnitHolder, AbstractUnitElement> dswbUnitsToSimulatorUnits(TroopAmountFixed pInput) {
         Hashtable<UnitHolder, AbstractUnitElement> result = new Hashtable<>();
         for (de.tor.tribes.io.UnitHolder unit : DataHolder.getSingleton().getUnits()) {
-            Integer value = pInput.get(unit);
-            if (value == null) {
-                value = 0;
-            }
+            int value = pInput.getAmountForUnit(unit);
             result.put(UnitManager.getSingleton().getUnitByPlainName(unit.getPlainName()), new AbstractUnitElement(UnitManager.getSingleton().getUnitByPlainName(unit.getPlainName()), value, 10));
         }
         return result;
@@ -194,7 +192,7 @@ public class DefenseAnalyzer extends Thread {
 
     private Hashtable<UnitHolder, AbstractUnitElement> getDefense(TargetInformation pTargetInfo, DefenseInformation pInfo, int pAdditionalSplits) {
         int supportCount = pInfo.getSupports().length;
-        Hashtable<de.tor.tribes.io.UnitHolder, Integer> units = new Hashtable<>();
+        TroopAmountFixed units = new TroopAmountFixed();
         VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(pTargetInfo.getTarget(), TroopsManager.TROOP_TYPE.IN_VILLAGE);
         if (holder != null) {
             units = holder.getTroops();
@@ -204,11 +202,9 @@ public class DefenseAnalyzer extends Thread {
         Hashtable<UnitHolder, AbstractUnitElement> result = dswbUnitsToSimulatorUnits(units);
 
         for (de.tor.tribes.io.UnitHolder unit : DataHolder.getSingleton().getUnits()) {
-            Integer value = standardDefSplit.get(unit);
-            if (value != null) {
-                AbstractUnitElement elem = result.get(UnitManager.getSingleton().getUnitByPlainName(unit.getPlainName()));
-                elem.setCount(elem.getCount() + ((value * (supportCount + pAdditionalSplits))));
-            }
+            int value = standardDefSplit.getAmountForUnit(unit);
+            AbstractUnitElement elem = result.get(UnitManager.getSingleton().getUnitByPlainName(unit.getPlainName()));
+            elem.setCount(elem.getCount() + ((value * (supportCount + pAdditionalSplits))));
         }
         return result;
     }

@@ -15,9 +15,8 @@
  */
 package de.tor.tribes.types;
 
+import de.tor.tribes.io.TroopAmountFixed;
 import de.tor.tribes.types.ext.Village;
-import de.tor.tribes.io.UnitHolder;
-import java.util.Hashtable;
 
 /**
  *
@@ -30,12 +29,12 @@ public class SupportType {
         INCOMING, OUTGOING
     }
     private Village village = null;
-    private Hashtable<UnitHolder, Integer> support = null;
+    private TroopAmountFixed support = null;
     private DIRECTION direction = null;
 
-    public SupportType(Village pVillage, Hashtable<UnitHolder, Integer> pSupport, DIRECTION pDirection) {
+    public SupportType(Village pVillage, TroopAmountFixed pSupport, DIRECTION pDirection) {
         village = pVillage;
-        support = (Hashtable<UnitHolder, Integer>) pSupport.clone();
+        support = (TroopAmountFixed) pSupport.clone();
         direction = pDirection;
     }
 
@@ -43,13 +42,8 @@ public class SupportType {
         return village;
     }
 
-    public Hashtable<UnitHolder, Integer> getSupport() {
+    public TroopAmountFixed getSupport() {
         return support;
-    }
-
-    public Integer getTroopsOfUnit(UnitHolder pUnit) {
-        Integer amount = support.get(pUnit);
-        return (amount == null) ? 0 : amount;
     }
 
     public DIRECTION getDirection() {

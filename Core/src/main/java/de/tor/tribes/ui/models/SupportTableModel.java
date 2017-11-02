@@ -16,6 +16,7 @@
 package de.tor.tribes.ui.models;
 
 import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.io.TroopAmountFixed;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.SupportType;
 import de.tor.tribes.types.ext.Tribe;
@@ -24,11 +25,10 @@ import de.tor.tribes.ui.ImageManager;
 import de.tor.tribes.util.troops.SupportVillageTroopsHolder;
 import de.tor.tribes.util.troops.TroopsManager;
 import java.text.NumberFormat;
-import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import javax.swing.ImageIcon;
 import javax.swing.table.AbstractTableModel;
 
@@ -53,18 +53,16 @@ public class SupportTableModel extends AbstractTableModel {
             SupportVillageTroopsHolder holder = (SupportVillageTroopsHolder) TroopsManager.getSingleton().getTroopsForVillage(v, TroopsManager.TROOP_TYPE.SUPPORT);
             if (holder != null) {
                 //add incs 
-                Hashtable<Village, Hashtable<UnitHolder, Integer>> supp = holder.getIncomingSupports();
-                Enumeration<Village> keys = supp.keys();
-                while (keys.hasMoreElements()) {
-                    Village supportSource = keys.nextElement();
+                HashMap<Village, TroopAmountFixed> supp = holder.getIncomingSupports();
+                Set<Village> keys = supp.keySet();
+                for (Village supportSource: keys) {
                     data.add(new SupportType(supportSource, supp.get(supportSource), SupportType.DIRECTION.INCOMING));
                 }
                 
                 //add outs 
                 supp = holder.getOutgoingSupports();
-                keys = supp.keys();
-                while (keys.hasMoreElements()) {
-                    Village supportSource = keys.nextElement();
+                keys = supp.keySet();
+                for (Village supportSource: keys) {
                     data.add(new SupportType(supportSource, supp.get(supportSource), SupportType.DIRECTION.OUTGOING));
                 }
             }
@@ -240,29 +238,29 @@ public class SupportTableModel extends AbstractTableModel {
             case VILLAGE:
                 return h.getVillage();
             case SPEAR:
-                return h.getTroopsOfUnit(DataHolder.getSingleton().getUnitByPlainName("spear"));
+                return h.getSupport().getAmountForUnit("spear");
             case SWORD:
-                return h.getTroopsOfUnit(DataHolder.getSingleton().getUnitByPlainName("sword"));
+                return h.getSupport().getAmountForUnit("sword");
             case AXE:
-                return h.getTroopsOfUnit(DataHolder.getSingleton().getUnitByPlainName("axe"));
+                return h.getSupport().getAmountForUnit("axe");
             case ARCHER:
-                return h.getTroopsOfUnit(DataHolder.getSingleton().getUnitByPlainName("archer"));
+                return h.getSupport().getAmountForUnit("archer");
             case SPY:
-                return h.getTroopsOfUnit(DataHolder.getSingleton().getUnitByPlainName("spy"));
+                return h.getSupport().getAmountForUnit("spy");
             case LIGHT:
-                return h.getTroopsOfUnit(DataHolder.getSingleton().getUnitByPlainName("light"));
+                return h.getSupport().getAmountForUnit("light");
             case MARCHER:
-                return h.getTroopsOfUnit(DataHolder.getSingleton().getUnitByPlainName("marcher"));
+                return h.getSupport().getAmountForUnit("marcher");
             case HEAVY:
-                return h.getTroopsOfUnit(DataHolder.getSingleton().getUnitByPlainName("heavy"));
+                return h.getSupport().getAmountForUnit("heavy");
             case RAM:
-                return h.getTroopsOfUnit(DataHolder.getSingleton().getUnitByPlainName("ram"));
+                return h.getSupport().getAmountForUnit("ram");
             case CATA:
-                return h.getTroopsOfUnit(DataHolder.getSingleton().getUnitByPlainName("catapult"));
+                return h.getSupport().getAmountForUnit("catapult");
             case KNIGHT:
-                return h.getTroopsOfUnit(DataHolder.getSingleton().getUnitByPlainName("knight"));
+                return h.getSupport().getAmountForUnit("knight");
             case SNOB:
-                return h.getTroopsOfUnit(DataHolder.getSingleton().getUnitByPlainName("snob"));
+                return h.getSupport().getAmountForUnit("snob");
         }
         return null;
     }   

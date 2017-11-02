@@ -16,23 +16,20 @@
 package de.tor.tribes.util.generator.ui;
 
 import de.tor.tribes.io.DataHolder;
-import de.tor.tribes.io.UnitHolder;
+import de.tor.tribes.io.TroopAmountFixed;
 import de.tor.tribes.types.FarmInformation;
 import de.tor.tribes.types.FightReport;
 import de.tor.tribes.types.ext.InvalidTribe;
 import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.PluginManager;
-import de.tor.tribes.util.TroopHelper;
 import de.tor.tribes.util.UIHelper;
 import de.tor.tribes.util.farm.FarmManager;
 import de.tor.tribes.util.report.ReportManager;
+import de.tor.tribes.util.village.KnownVillage;
 import org.apache.log4j.Logger;
 
-import java.util.Hashtable;
 import java.util.List;
-import java.util.Map.Entry;
-import java.util.Set;
 
 /**
  *
@@ -467,11 +464,11 @@ public class ReportGenerator extends javax.swing.JFrame {
 
         int[] spyInfo = getSpyInfo();
         if (spyInfo != null) {
-            r.setWoodLevel(spyInfo[0]);
-            r.setClayLevel(spyInfo[1]);
-            r.setIronLevel(spyInfo[2]);
-            r.setStorageLevel(spyInfo[3]);
-            r.setHideLevel(spyInfo[4]);
+            r.setBuilding(KnownVillage.getBuildingIdByName("timber"), spyInfo[0]);
+            r.setBuilding(KnownVillage.getBuildingIdByName("clay"), spyInfo[1]);
+            r.setBuilding(KnownVillage.getBuildingIdByName("iron"), spyInfo[2]);
+            r.setBuilding(KnownVillage.getBuildingIdByName("storage"), spyInfo[3]);
+            r.setBuilding(KnownVillage.getBuildingIdByName("hide"), spyInfo[4]);
         }
 
         if (jTroopsOutside.isSelected()) {
@@ -490,7 +487,7 @@ public class ReportGenerator extends javax.swing.JFrame {
         if (jBuildingDamaged.isSelected()) {
             r.setBuildingBefore((byte) 20);
             r.setBuildingAfter((byte) 10);
-            r.setAimedBuilding("Bauernhof");
+            r.setAimedBuildingId(KnownVillage.getBuildingIdByName("farm"));
         }
 
         System.out.println("---Adding generated report (Valid:" + r.isValid() + ")----");
@@ -516,80 +513,54 @@ public class ReportGenerator extends javax.swing.JFrame {
         return result;
     }
 
-    private Hashtable<UnitHolder, Integer> getAttackingTroops(Village pVillage) {
-        Hashtable<String, Integer> units = new Hashtable<>();
+    private TroopAmountFixed getAttackingTroops(Village pVillage) {
+        TroopAmountFixed units = new TroopAmountFixed(0);
         if (jFarming.isSelected()) {
             FarmInformation info = FarmManager.getSingleton().getFarmInformation(pVillage);
             if (info == null || info.getFarmTroop() == null) {
-                units.put("light", getRandomValueInRange(30, 60));
-                units.put("spy", 1);
+                units.setAmountForUnit(DataHolder.getSingleton().getUnitByPlainName("light"), getRandomValueInRange(30, 60));
+                units.setAmountForUnit(DataHolder.getSingleton().getUnitByPlainName("spy"), 1);
             } else {
                 units = info.getFarmTroop();
             }
         } else if (jOffing.isSelected()) {
-            units.put("axe", getRandomValueInRange(5000, 7000));
-            units.put("light", getRandomValueInRange(2000, 2300));
-            units.put("spy", getRandomValueInRange(100, 150));
-            units.put("ram", getRandomValueInRange(240, 300));
-            units.put("catapult", getRandomValueInRange(20, 50));
+            units.setAmountForUnit(DataHolder.getSingleton().getUnitByPlainName("axe"), getRandomValueInRange(5000, 7000));
+            units.setAmountForUnit(DataHolder.getSingleton().getUnitByPlainName("light"), getRandomValueInRange(2000, 2300));
+            units.setAmountForUnit(DataHolder.getSingleton().getUnitByPlainName("spy"), getRandomValueInRange(100, 150));
+            units.setAmountForUnit(DataHolder.getSingleton().getUnitByPlainName("ram"), getRandomValueInRange(240, 300));
+            units.setAmountForUnit(DataHolder.getSingleton().getUnitByPlainName("catapult"), getRandomValueInRange(20, 50));
         } else if (jFaking.isSelected()) {
-            units.put("spear", getRandomValueInRange(80, 110));
-            units.put("spy", getRandomValueInRange(20, 40));
-            units.put("ram", 1);
+            units.setAmountForUnit(DataHolder.getSingleton().getUnitByPlainName("spear"), getRandomValueInRange(80, 110));
+            units.setAmountForUnit(DataHolder.getSingleton().getUnitByPlainName("spy"), getRandomValueInRange(20, 40));
+            units.setAmountForUnit(DataHolder.getSingleton().getUnitByPlainName("ram"), 1);
         } else if (jSnobbing.isSelected()) {
-            units.put("axe", getRandomValueInRange(100, 300));
-            units.put("spy", 1);
-            units.put("snob", 1);
-        }
-
-        Hashtable<UnitHolder, Integer> result = TroopHelper.unitTableFromSerializableFormat(units);
-        for (UnitHolder u : DataHolder.getSingleton().getUnits()) {
-            if (!result.containsKey(u)) {
-                result.put(u, 0);
-            }
-        }
-
-        return result;
-    }
-
-    public Hashtable<UnitHolder, Integer> getReducedTroopAmount(Hashtable<UnitHolder, Integer> pUnits, double pPercent) {
-        Hashtable<UnitHolder, Integer> units = new Hashtable<>();
-        Set<Entry<UnitHolder, Integer>> entries = pUnits.entrySet();
-        for (Entry<UnitHolder, Integer> entry : entries) {
-            int val = entry.getValue();
-            if (val == -1) {
-                val = -1;
-            } else {
-                val = (int) Math.rint(entry.getValue() - pPercent * entry.getValue());
-            }
-            units.put(entry.getKey(), val);
+            units.setAmountForUnit(DataHolder.getSingleton().getUnitByPlainName("axe"), getRandomValueInRange(100, 300));
+            units.setAmountForUnit(DataHolder.getSingleton().getUnitByPlainName("spy"), 1);
+            units.setAmountForUnit(DataHolder.getSingleton().getUnitByPlainName("snob"), 1);
         }
         return units;
     }
 
-    private Hashtable<UnitHolder, Integer> getDefendingTroops() {
-        Hashtable<String, Integer> units = new Hashtable<>();
+    public TroopAmountFixed getReducedTroopAmount(TroopAmountFixed pUnits, double pPercent) {
+        TroopAmountFixed result = pUnits.clone();
+        result.multiplyWith(1d - pPercent);
+        return result;
+    }
+
+    private TroopAmountFixed getDefendingTroops() {
+       TroopAmountFixed units = new TroopAmountFixed(0);
         if (jSomeDef.isSelected()) {
-            units.put("spear", getRandomValueInRange(1000, 2000));
-            units.put("sword", getRandomValueInRange(1000, 2000));
-            units.put("heavy", getRandomValueInRange(300, 500));
-            units.put("spy", getRandomValueInRange(100, 200));
+            units.setAmountForUnit("spear", getRandomValueInRange(1000, 2000));
+            units.setAmountForUnit("sword", getRandomValueInRange(1000, 2000));
+            units.setAmountForUnit("heavy", getRandomValueInRange(300, 500));
+            units.setAmountForUnit("spy", getRandomValueInRange(100, 200));
         } else if (jFullDef.isSelected()) {
-            for (UnitHolder u : DataHolder.getSingleton().getUnits()) {
-                units.put(u.getPlainName(), -1);
-            }
+            units.fill(-1);
         } else if (jEmpty.isSelected()) {
             //add nothing
         }
-
-        Hashtable<UnitHolder, Integer> result = TroopHelper.unitTableFromSerializableFormat(units);
-        for (UnitHolder u : DataHolder.getSingleton().getUnits()) {
-            if (!result.containsKey(u)) {
-                result.put(u, 0);
-            }
-        }
-
-        return result;
+        
+        return units;
     }
 
     private int getRandomValueInRange(int min, int max) {

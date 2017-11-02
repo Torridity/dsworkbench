@@ -110,8 +110,8 @@
           <SubComponents>
             <Component class="javax.swing.JTextPane" name="jTextPane1">
               <Properties>
-                <Property name="contentType" type="java.lang.String" value="text/html"/>
-                <Property name="text" type="java.lang.String" value="&lt;html&gt;Standardangriffe sind voreingestellte Angriffe mit einer festgelegten Truppenzahl, die an vielen Stellen in DS Workbench verwendet werden k&amp;ouml;nnen. So dienen sie z.B. dazu, die Angriffe eines Angriffsplans im Versammlungsplatz zu &#xa;&amp;ouml;ffnen und, sofern das DS Workbench Userscript installiert ist, die Truppen direkt einzuf&amp;uuml;gen. Voraussetzung ist neben dem installierten Userscript auch, dass man die Truppeninformationen aus dem Spielaccount nach DS Workbench importiert &#xa;hat. Mehr dazu erf&amp;auml;hrst du in der Programmhilfe, die du mit F1 &amp;ouml;ffnest. F&amp;uuml;r die Festlegung von Standardangriffen hast du verschiedene M&amp;ouml;glichkeiten:&#xa;&lt;UL&gt;&lt;LI&gt;&lt;I&gt;Ganze Zahlen&lt;/I&gt;, um eine feste Anzahl einer Truppenart einzuf&#xfc;gen (z.B: &apos;100&apos;)&#xa;&lt;LI&gt;&lt;I&gt;Alle&lt;/I&gt;, um alle Truppen von einem Typ einzuf&#xfc;gen die in DS Workbench importiert sind (z.B: &apos;Alle&apos;). Beachte, dass diese Anzahl nicht der Zahl im Spiel entsprechen muss, falls die importierten Truppeninformationen veraltet sind.&#xa;&lt;LI&gt;&lt;I&gt;Alle - X&lt;/I&gt;, um alle Truppen abz&#xfc;glich einer bestimmten Anzahl einzuf&#xfc;gen (z.B: &apos;Alle - 100&apos;) &#xa;&lt;LI&gt;&lt;I&gt;X%&lt;/I&gt;, um einen prozentualen Anteil aller Truppen einzuf&#xfc;gen (z.B: &apos;50%&apos;) &#xa;&lt;/UL&gt; &lt;/html&gt;"/>
+                <Property name="contentType" type="java.lang.String" value="text/html" noResource="true"/>
+                <Property name="text" type="java.lang.String" value="&lt;html&gt;Standardangriffe sind voreingestellte Angriffe mit einer festgelegten Truppenzahl, die an vielen Stellen in DS Workbench verwendet werden k&amp;ouml;nnen. &#xa;So dienen sie z.B. dazu, die Angriffe eines Angriffsplans im Versammlungsplatz zu &amp;ouml;ffnen und die Truppen direkt einzuf&amp;uuml;gen. &#xa;Dazu m&#xfc;ssen die Truppeninformationen aus dem Spielaccount nach DS Workbench importiert werden.&#xa;Mehr dazu erf&amp;auml;hrst du in der Programmhilfe, die du mit F1 &amp;ouml;ffnest.&#xa;In den Standardangriffen k&amp;ouml;nnen verschiedene Konstanten und mathematische Rechenoperationen benutzt werden :&#xa;&lt;UL&gt;&lt;LI&gt;&lt;B&gt;+ - * /&lt;/B&gt; Die Mathematischen grundrechenoperatoren&lt;/LI&gt;&#xa;&lt;LI&gt;&lt;B&gt;^&lt;/B&gt; um eine Zahl zu Potenzieren&lt;/LI&gt;&#xa;&lt;LI&gt;&lt;B&gt;%&lt;/B&gt; der Modulo-Operator&lt;/LI&gt;&#xa;&lt;LI&gt;&lt;B&gt;Alle&lt;/B&gt; entspricht der Anzahl an Truppen dieses Typs, die gerade im Dorf vorhanden sind&lt;/LI&gt;&#xa;&lt;LI&gt;&lt;B&gt;X%&lt;/B&gt;, um einen prozentualen Anteil aller Truppen einzuf&#xfc;gen (z.B: &apos;50%&apos;) &#xa;&lt;LI&gt;&lt;B&gt;rnd&lt;/B&gt; eine Zufallszahl von 0 bis 1 (um z.B. bei 50% der Fakes einen spy mitzuschicken&lt;/LI&gt;&#xa;&lt;LI&gt;&lt;B&gt;&amp;gt; &amp;lt; =&lt;/B&gt; Vergleichsoperatoren (1 bei ja / 0 bei nein)&lt;/LI&gt;&#xa;&lt;/UL&gt;&#xa;Das Ergebnis wird abgerundet bevor die Truppen losgeschickt werden.&#xa; &lt;/html&gt;"/>
               </Properties>
             </Component>
           </SubComponents>
@@ -127,6 +127,7 @@
   </Properties>
   <SyntheticProperties>
     <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
+    <SyntheticProperty name="generateCenter" type="boolean" value="false"/>
   </SyntheticProperties>
   <AuxValues>
     <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>

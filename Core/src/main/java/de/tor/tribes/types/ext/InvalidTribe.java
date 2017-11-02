@@ -15,11 +15,6 @@
  */
 package de.tor.tribes.types.ext;
 
-import de.tor.tribes.types.ext.Tribe;
-import de.tor.tribes.types.ext.Ally;
-import de.tor.tribes.types.ext.Village;
-import de.tor.tribes.types.ext.NoAlly;
-
 /**
  *
  * @author Torridity

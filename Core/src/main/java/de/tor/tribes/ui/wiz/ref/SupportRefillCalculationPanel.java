@@ -24,7 +24,6 @@ import de.tor.tribes.ui.wiz.ref.types.REFSourceElement;
 import de.tor.tribes.ui.wiz.ref.types.REFTargetElement;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.JOptionPaneHelper;
-import de.tor.tribes.util.TroopHelper;
 import de.tor.tribes.util.algo.AbstractAttackAlgorithm;
 import de.tor.tribes.util.algo.BruteForce;
 import de.tor.tribes.util.algo.Iterix;
@@ -367,7 +366,7 @@ public class SupportRefillCalculationPanel extends WizardPage {
             calculator = new Iterix();
         }
         Hashtable<UnitHolder, List<Village>> sources = new Hashtable<>();
-        UnitHolder slowest = TroopHelper.getSlowestUnit(SupportRefillSettingsPanel.getSingleton().getSplit());
+        UnitHolder slowest = SupportRefillSettingsPanel.getSingleton().getSplit().getSlowestUnit();
         
         List<Village> sourceVillages = new LinkedList<>();
         for (REFSourceElement element : SupportRefillSourcePanel.getSingleton().getAllElements()) {

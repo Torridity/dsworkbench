@@ -17,6 +17,7 @@ package de.tor.tribes.util;
 
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.ServerManager;
+import de.tor.tribes.io.TroopAmountFixed;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.StandardAttack;
@@ -27,7 +28,6 @@ import de.tor.tribes.util.attack.StandardAttackManager;
 import java.awt.Desktop;
 import java.net.URI;
 import java.util.Date;
-import java.util.Hashtable;
 import org.apache.log4j.Logger;
 
 /**
@@ -74,7 +74,7 @@ public class BrowserCommandSender {
             for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
                 int amount = 0;
                 if (a != null) {
-                    amount = a.getAmountForUnit(unit, pSource);
+                    amount = a.getTroops().getAmountForUnit(unit, pSource);
                 }
                 url += "&" + unit.getPlainName() + "=" + amount;
             }
@@ -146,14 +146,14 @@ public class BrowserCommandSender {
     }
 
     public static boolean sendTroops(Village pSource, Village pTarget) {
-        return sendTroops(pSource, pTarget, new Hashtable<UnitHolder, Integer>());
+        return sendTroops(pSource, pTarget, new TroopAmountFixed(0));
     }
 
-    public static boolean sendTroops(Village pSource, Village pTarget, Hashtable<UnitHolder, Integer> pTroops) {
+    public static boolean sendTroops(Village pSource, Village pTarget, TroopAmountFixed pTroops) {
         return sendTroops(pSource, pTarget, pTroops, null);
     }
 
-    public static boolean sendTroops(Village pSource, Village pTarget, Hashtable<UnitHolder, Integer> pTroops, UserProfile pProfile) {
+    public static boolean sendTroops(Village pSource, Village pTarget, TroopAmountFixed pTroops, UserProfile pProfile) {
         try {
             String baseURL = ServerManager.getServerURL(GlobalOptions.getSelectedServer());
             logger.debug("Transfer troops to browser for village '" + pSource + "' to '" + pTarget + "'");
@@ -171,8 +171,8 @@ public class BrowserCommandSender {
             url += pSource.getId() + "&screen=place&mode=command&target=" + pTarget.getId();
             url += "&type=0";
             for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
-                Integer amount = pTroops.get(unit);
-                if (amount == null) {
+                int amount = pTroops.getAmountForUnit(unit);
+                if (amount < 0) {
                     amount = 0;
                 }
                 url += "&" + unit.getPlainName() + "=" + amount;

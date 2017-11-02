@@ -15,14 +15,14 @@
  */
 package de.tor.tribes.ui.algo;
 
-import java.awt.Color;
-import java.awt.Point;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import javax.swing.JViewport;
+import de.tor.tribes.util.UIHelper;
+
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
+import java.awt.*;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  *
@@ -96,15 +96,7 @@ public class AlgorithmLogPanel extends javax.swing.JPanel {
     }
 
     private void scroll() {
-        try {
-            Point point = new Point(0, (int) (jTextPane1.getSize().getHeight()));
-            JViewport vp = jScrollPane1.getViewport();
-            if ((vp == null) || (point == null)) {
-                return;
-            }
-            vp.setViewPosition(point);
-        } catch (Throwable ignored) {
-        }
+        UIHelper.applyCorrectViewPosition(jTextPane1, jScrollPane1);
     }
 
     public void updateStatus(int pCurrentStatus, int pMaxStatus) {

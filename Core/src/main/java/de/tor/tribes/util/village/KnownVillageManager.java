@@ -17,6 +17,7 @@ package de.tor.tribes.util.village;
 
 import de.tor.tribes.control.GenericManager;
 import de.tor.tribes.control.ManageableType;
+import de.tor.tribes.types.FightReport;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.panels.MinimapPanel;
 import de.tor.tribes.util.xml.JaxenUtils;
@@ -72,12 +73,6 @@ public class KnownVillageManager extends GenericManager<KnownVillage> {
                         KnownVillage v = new KnownVillage(e);
                         if (getKnownVillage(v.getVillage()) == null) {
                             addManagedElement(v);
-                            if (v.hasChurch()) {
-                                churchVillages.add(v);
-                            }
-                            if (v.hasWatchtower()) {
-                                watchtowerVillages.add(v);
-                            }
                         } else {
                             //somehow this village appears twice in saved data
                             //this should never happen
@@ -97,7 +92,8 @@ public class KnownVillageManager extends GenericManager<KnownVillage> {
                 logger.info("KnownVillages file not found under '" + pFile + "'");
             }
         }
-        revalidate();
+        rebuildWatchtowerChurchCache();
+        revalidate(true);
     }
 
     @Override
@@ -116,12 +112,6 @@ public class KnownVillageManager extends GenericManager<KnownVillage> {
                     KnownVillage v = new KnownVillage(e);
                     if (getKnownVillage(v.getVillage()) == null) {
                         addManagedElement(v);
-                        if (v.hasChurch()) {
-                            churchVillages.add(v);
-                        }
-                        if (v.hasWatchtower()) {
-                            watchtowerVillages.add(v);
-                        }
                     } else {
                         //Village ist already Known
                         KnownVillage merge = getKnownVillage(v.getVillage());
@@ -138,6 +128,7 @@ public class KnownVillageManager extends GenericManager<KnownVillage> {
             MinimapPanel.getSingleton().redraw();
             result = false;
         }
+        rebuildWatchtowerChurchCache();
         revalidate(true);
         return result;
     }
@@ -156,13 +147,6 @@ public class KnownVillageManager extends GenericManager<KnownVillage> {
         result += "</villages>\n";
         logger.debug("Export data generated successfully");
         return result;
-    }
-
-    /**
-     * Load markers from database (not implemented yet)
-     */
-    public void loadChurchesFromDatabase(String pUrl) {
-        logger.info("Not implemented yet");
     }
 
     @Override
@@ -211,18 +195,20 @@ public class KnownVillageManager extends GenericManager<KnownVillage> {
             if (v == null) {
                 v = new KnownVillage(pVillage);
                 v.setChurchLevel(pLevel);
-                if (!churchVillages.contains(v)) {
+                if(pLevel > 0) {
                     churchVillages.add(v);
                 }
                 addManagedElement(v);
             } else {
                 v.setChurchLevel(pLevel);
-                if (!churchVillages.contains(v)) {
+                if (!churchVillages.contains(v) && pLevel > 0) {
                     churchVillages.add(v);
+                }
+                else if(churchVillages.contains(v) && pLevel == 0) {
+                    churchVillages.remove(v);
                 }
                 fireDataChangedEvents();
             }
-
         }
     }
 
@@ -256,14 +242,17 @@ public class KnownVillageManager extends GenericManager<KnownVillage> {
             if (v == null) {
                 v = new KnownVillage(pVillage);
                 v.setWatchtowerLevel(pLevel);
-                if (!watchtowerVillages.contains(v)) {
+                if(pLevel > 0) {
                     watchtowerVillages.add(v);
                 }
                 addManagedElement(v);
             } else {
                 v.setWatchtowerLevel(pLevel);
-                if (!watchtowerVillages.contains(v)) {
+                if (!watchtowerVillages.contains(v) && pLevel > 0) {
                     watchtowerVillages.add(v);
+                }
+                else if(watchtowerVillages.contains(v) && pLevel == 0) {
+                    watchtowerVillages.remove(v);
                 }
                 fireDataChangedEvents();
             }
@@ -298,5 +287,45 @@ public class KnownVillageManager extends GenericManager<KnownVillage> {
             }
         }
         return null;
+    }
+
+    public void updateInformation(FightReport pReport) {
+        if(pReport.getSpyLevel() >= pReport.SPY_LEVEL_BUILDINGS) {
+            //update Building info if Buildings were spyed
+            KnownVillage v = getKnownVillage(pReport.getTargetVillage());
+            
+            if (v != null) {
+                v.updateInformation(pReport);
+            } else {
+                v = new KnownVillage(pReport.getTargetVillage());
+                v.updateInformation(pReport);
+                addManagedElement(v);
+            }
+            churchVillages.remove(v);
+            watchtowerVillages.remove(v);
+            if (v.hasChurch()) {
+                churchVillages.add(v);
+            }
+            if (v.hasWatchtower()) {
+                watchtowerVillages.add(v);
+            }
+            fireDataChangedEvents();
+        }
+    }
+    
+    private void rebuildWatchtowerChurchCache() {
+        churchVillages.clear();
+        watchtowerVillages.clear();
+        
+        for(ManageableType e :getAllElements()) {
+            KnownVillage v = (KnownVillage) e;
+            if (v.hasChurch()) {
+                churchVillages.add(v);
+            }
+            if (v.hasWatchtower()) {
+                watchtowerVillages.add(v);
+            }
+        }
+        fireDataChangedEvents();
     }
 }

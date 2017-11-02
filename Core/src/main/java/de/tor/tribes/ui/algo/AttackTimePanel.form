@@ -105,12 +105,12 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="1" max="-2" attributes="0">
                       <Component id="jLabel9" alignment="0" max="32767" attributes="1"/>
-                      <Component id="jLabel8" alignment="0" pref="61" max="32767" attributes="1"/>
+                      <Component id="jLabel8" alignment="0" pref="0" max="32767" attributes="1"/>
                   </Group>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace type="separate" max="-2" attributes="0"/>
-                          <Component id="dateTimeField" pref="376" max="32767" attributes="1"/>
+                          <Component id="dateTimeField" pref="372" max="32767" attributes="1"/>
                       </Group>
                       <Group type="102" attributes="0">
                           <EmptySpace min="-2" pref="23" max="-2" attributes="0"/>

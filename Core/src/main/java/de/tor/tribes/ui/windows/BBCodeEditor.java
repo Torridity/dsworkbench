@@ -16,7 +16,7 @@
 package de.tor.tribes.ui.windows;
 
 import de.tor.tribes.io.DataHolder;
-import de.tor.tribes.io.UnitHolder;
+import de.tor.tribes.io.TroopAmountFixed;
 import de.tor.tribes.types.drawing.AbstractForm;
 import de.tor.tribes.types.AllyStatResult;
 import de.tor.tribes.types.Attack;
@@ -59,10 +59,10 @@ import de.tor.tribes.util.bb.TroopListFormatter;
 import de.tor.tribes.util.bb.VillageListFormatter;
 import de.tor.tribes.util.bb.WinnerLoserStatsFormatter;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
+import de.tor.tribes.util.village.KnownVillage;
 import java.awt.Color;
 import java.awt.event.ItemEvent;
 import java.util.Date;
-import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.DefaultListModel;
@@ -228,7 +228,7 @@ public class BBCodeEditor extends javax.swing.JDialog {
         //sampleRequests.add(sampleSOSRequest2);
         //sample report
         FightReport sampleReport = new FightReport();
-        sampleReport.setAimedBuilding("Wall");
+        sampleReport.setAimedBuildingId(KnownVillage.getBuildingIdByName("wall"));
         sampleReport.setAttacker(sampleVillage2.getTribe());
         sampleReport.setConquered(false);
         sampleReport.setDefender(sampleVillage3.getTribe());
@@ -241,7 +241,7 @@ public class BBCodeEditor extends javax.swing.JDialog {
         FightReport sampleReport2 = new FightReport();
         sampleReport2.setAcceptanceAfter((byte) 70);
         sampleReport2.setAcceptanceBefore((byte) 100);
-        sampleReport2.setAimedBuilding("Wall");
+        sampleReport2.setAimedBuildingId(KnownVillage.getBuildingIdByName("wall"));
         sampleReport2.setAttacker(sampleVillage2.getTribe());
         sampleReport2.setConquered(false);
         sampleReport2.setDefender(sampleVillage3.getTribe());
@@ -271,17 +271,17 @@ public class BBCodeEditor extends javax.swing.JDialog {
         t3.tagVillage(sampleVillage5.getId());
         //sample troops
         VillageTroopsHolder h = new VillageTroopsHolder(sampleVillage1, new Date());
-        Hashtable<UnitHolder, Integer> troops = new Hashtable<>();
-        troops.put(DataHolder.getSingleton().getUnitByPlainName("axe"), 6600);
-        troops.put(DataHolder.getSingleton().getUnitByPlainName("light"), 2200);
-        troops.put(DataHolder.getSingleton().getUnitByPlainName("ram"), 300);
-        troops.put(DataHolder.getSingleton().getUnitByPlainName("snob"), 2);
+        TroopAmountFixed troops = new TroopAmountFixed(0);
+        troops.setAmountForUnit(DataHolder.getSingleton().getUnitByPlainName("axe"), 6600);
+        troops.setAmountForUnit(DataHolder.getSingleton().getUnitByPlainName("light"), 2200);
+        troops.setAmountForUnit(DataHolder.getSingleton().getUnitByPlainName("ram"), 300);
+        troops.setAmountForUnit(DataHolder.getSingleton().getUnitByPlainName("snob"), 2);
         h.setTroops(troops);
         VillageTroopsHolder h2 = new VillageTroopsHolder(sampleVillage3, new Date());
-        troops.put(DataHolder.getSingleton().getUnitByPlainName("axe"), 5500);
-        troops.put(DataHolder.getSingleton().getUnitByPlainName("light"), 2000);
-        troops.put(DataHolder.getSingleton().getUnitByPlainName("marcher"), 300);
-        troops.put(DataHolder.getSingleton().getUnitByPlainName("ram"), 240);
+        troops.setAmountForUnit(DataHolder.getSingleton().getUnitByPlainName("axe"), 5500);
+        troops.setAmountForUnit(DataHolder.getSingleton().getUnitByPlainName("light"), 2000);
+        troops.setAmountForUnit(DataHolder.getSingleton().getUnitByPlainName("marcher"), 300);
+        troops.setAmountForUnit(DataHolder.getSingleton().getUnitByPlainName("ram"), 240);
         h2.setTroops(troops);
         sampleTroops.add(h);
         sampleTroops.add(h2);

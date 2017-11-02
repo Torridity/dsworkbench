@@ -300,39 +300,39 @@ public class TroopsTableModel extends AbstractTableModel {
             case LAST_CHANGE:
                 return h.getState();//new SimpleDateFormat("dd.MM.yy HH:mm:ss.SSS").format(h.getState());
             case SPEAR:
-                return h.getTroopsOfUnitInVillage(DataHolder.getSingleton().getUnitByPlainName("spear"));
+                return h.getTroops().getAmountForUnit("spear");
             case SWORD:
-                return h.getTroopsOfUnitInVillage(DataHolder.getSingleton().getUnitByPlainName("sword"));
+                return h.getTroops().getAmountForUnit("sword");
             case AXE:
-                return h.getTroopsOfUnitInVillage(DataHolder.getSingleton().getUnitByPlainName("axe"));
+                return h.getTroops().getAmountForUnit("axe");
             case ARCHER:
-                return h.getTroopsOfUnitInVillage(DataHolder.getSingleton().getUnitByPlainName("archer"));
+                return h.getTroops().getAmountForUnit("archer");
             case SPY:
-                return h.getTroopsOfUnitInVillage(DataHolder.getSingleton().getUnitByPlainName("spy"));
+                return h.getTroops().getAmountForUnit("spy");
             case LIGHT:
-                return h.getTroopsOfUnitInVillage(DataHolder.getSingleton().getUnitByPlainName("light"));
+                return h.getTroops().getAmountForUnit("light");
             case MARCHER:
-                return h.getTroopsOfUnitInVillage(DataHolder.getSingleton().getUnitByPlainName("marcher"));
+                return h.getTroops().getAmountForUnit("marcher");
             case HEAVY:
-                return h.getTroopsOfUnitInVillage(DataHolder.getSingleton().getUnitByPlainName("heavy"));
+                return h.getTroops().getAmountForUnit("heavy");
             case RAM:
-                return h.getTroopsOfUnitInVillage(DataHolder.getSingleton().getUnitByPlainName("ram"));
+                return h.getTroops().getAmountForUnit("ram");
             case CATA:
-                return h.getTroopsOfUnitInVillage(DataHolder.getSingleton().getUnitByPlainName("catapult"));
+                return h.getTroops().getAmountForUnit("catapult");
             case KNIGHT:
-                return h.getTroopsOfUnitInVillage(DataHolder.getSingleton().getUnitByPlainName("knight"));
+                return h.getTroops().getAmountForUnit("knight");
             case MILITIA:
-                return h.getTroopsOfUnitInVillage(DataHolder.getSingleton().getUnitByPlainName("militia"));
+                return h.getTroops().getAmountForUnit("militia");
             case SNOB:
-                return h.getTroopsOfUnitInVillage(DataHolder.getSingleton().getUnitByPlainName("snob"));
+                return h.getTroops().getAmountForUnit("snob");
             case OFF:
-                return h.getOffValue();
+                return h.getTroops().getOffValue();
             case DEF:
-                return h.getDefValue();
+                return h.getTroops().getDefValue();
             case DEF_CAV:
-                return h.getDefCavalryValue();
+                return h.getTroops().getDefCavalryValue();
             case DEF_ARCH:
-                return h.getDefArcherValue();
+                return h.getTroops().getDefArcherValue();
             case OUTSIDE:
                 return 0;
             case INSIDE:
@@ -368,43 +368,43 @@ public class TroopsTableModel extends AbstractTableModel {
         }
         switch (colContent) {
             case SPEAR:
-                h.getTroops().put(DataHolder.getSingleton().getUnitByPlainName("spear"), val);
+                h.getTroops().setAmountForUnit("spear", val);
                 break;
             case SWORD:
-                h.getTroops().put(DataHolder.getSingleton().getUnitByPlainName("sword"), val);
+                h.getTroops().setAmountForUnit("sword", val);
                 break;
             case AXE:
-                h.getTroops().put(DataHolder.getSingleton().getUnitByPlainName("axe"), val);
+                h.getTroops().setAmountForUnit("axe", val);
                 break;
             case ARCHER:
-                h.getTroops().put(DataHolder.getSingleton().getUnitByPlainName("archer"), val);
+                h.getTroops().setAmountForUnit("archer", val);
                 break;
             case SPY:
-                h.getTroops().put(DataHolder.getSingleton().getUnitByPlainName("spy"), val);
+                h.getTroops().setAmountForUnit("spy", val);
                 break;
             case LIGHT:
-                h.getTroops().put(DataHolder.getSingleton().getUnitByPlainName("light"), val);
+                h.getTroops().setAmountForUnit("light", val);
                 break;
             case MARCHER:
-                h.getTroops().put(DataHolder.getSingleton().getUnitByPlainName("marcher"), val);
+                h.getTroops().setAmountForUnit("marcher", val);
                 break;
             case HEAVY:
-                h.getTroops().put(DataHolder.getSingleton().getUnitByPlainName("heavy"), val);
+                h.getTroops().setAmountForUnit("heavy", val);
                 break;
             case RAM:
-                h.getTroops().put(DataHolder.getSingleton().getUnitByPlainName("ram"), val);
+                h.getTroops().setAmountForUnit("ram", val);
                 break;
             case CATA:
-                h.getTroops().put(DataHolder.getSingleton().getUnitByPlainName("catapult"), val);
+                h.getTroops().setAmountForUnit("catapult", val);
                 break;
             case KNIGHT:
-                h.getTroops().put(DataHolder.getSingleton().getUnitByPlainName("knight"), val);
+                h.getTroops().setAmountForUnit("knight", val);
                 break;
             case MILITIA:
-                h.getTroops().put(DataHolder.getSingleton().getUnitByPlainName("militia"), val);
+                h.getTroops().setAmountForUnit("militia", val);
                 break;
             case SNOB:
-                h.getTroops().put(DataHolder.getSingleton().getUnitByPlainName("snob"), val);
+                h.getTroops().setAmountForUnit("snob", val);
                 break;
         }
         //update troops layer

@@ -127,7 +127,7 @@ public class GroupParser implements SilentParserInterface {
                         groupsToken = elemTok.nextToken().trim();
                     }
 
-                    Village v = new VillageParser().parse(villageToken).get(0);
+                    Village v = VillageParser.parseSingleLine(villageToken);
 
                     if (v != null) {
                         //valid line found
@@ -209,62 +209,14 @@ public class GroupParser implements SilentParserInterface {
                 }
             }
         }
-
-
-
-        //  Pattern pattern = Pattern.compile("Der[\\s](.*)[\\s]hat[\\s]gewonnen[\\s]?");
-        //pattern = Pattern.compile("Moral:[\\s]([0-9|\\.-]{3,5})%");
-        //String villageRegEx = "(.*)[\\s](\\([0-9]{1,3})\\|([0-9]{1,3}\\))[\\s]K([1-9]{1,2})";
-        //pattern = Pattern.compile("Herkunft:[\\s](.*)[\\s]\\(([0-9]{1,3})\\|([0-9]{1,3})\\)[\\s]K([1-9]{1,2})");
-        // pattern = Pattern.compile("Angreifer:(.*?)[\\s](.*)");
-        //      pattern = Pattern.compile("Anzahl:[\\s]*([0-9]{1,})[\\s]([0-9]{1,})[\\s]([0-9]{1,})[\\s]([0-9]{1,})[\\s]([0-9]{1,})[\\s]([0-9]{1,})[\\s]([0-9]{1,})[\\s]([0-9]{1,})[\\s]([0-9]{1,})[\\s]([0-9]{1,})[\\s]([0-9]{1,})[\\s]([0-9]{1,})");
-        //pattern = Pattern.compile("(.*)[\\s*]\\(([0-9]{1,3})\\|([0-9]{1,3})\\)[\\s*]K([1-9]{1,2})[\\s*](.*)[\\s*]eigene[\\s]*([0-9]{1,})[\\s*]Befehle[\\s*]im Dorf[\\s*]([0-9]{1,})");
-
-        //015 R.I.P. Frankfurt Lions 01 (382|891) K83  	119.04	2	Off; Off_F	» bearbeiten
-
-        // String groups = "[(.*);\\s]*(.*)\\s(»[\\s]*bearbeiten)";
-
-// 015 R.I.P. Frankfurt Lions 01 (382|891) K83     2 Off; Off_F » bearbeiten
-        // Pattern pattern = Pattern.compile(villageRegEx + "(.*)([0-9]{1,2})\\s" + groups);
-        //  pattern = Pattern.compile(groups);
-        // Matcher matcher = pattern.matcher(pGroups);//" 015 R.I.P. Frankfurt Lions 03 (383|892) K83     2 Off; Off_F » bearbeiten");
-
-        //matcher = pattern.matcher("Moral: 100%");
-        //matcher = pattern.matcher("Herkunft:    Barbarendorf (521|866) K85");
-        //matcher = pattern.matcher("Angreifer:bla HeinxxBlöd (gelöscht)");
-        //  matcher = pattern.matcher("Anzahl:\n    6374	3258	7960	4324	600	2200	300	1552	0	656	0	0");
-        //  matcher = pattern.matcher("015 R.I.P. Frankfurt Lions 01 (382|891) K83  	119.04\neigene	0 Befehle\nim Dorf	0");//	0	5145	0	100	2113	252	0	300	100	0	0	Befehle\nim Dorf	0	0	5145	0	100	2113	252	0	300	100	0	0	Truppen\nauswärts	0	0	0	0	0	0	0	0	0	0	0	0\nunterwegs	0	0	0	0	100	0	0	0	0	0	0	0	Befehle");
-
-        //matcher = pattern.matcher("015 R.I.P. Frankfurt Lions 01 (382|891) K83  umbenennen\neigene 	0 Befehle\nim Dorf	0");//	0	5145	0	100	2113	252	0	300	100	0	0 	Befehle\nim Dorf 	0	0	5145	0	100	2113	252	0	300	100	0	0 	Truppen\nauswärts 	0	0	0	0	0	0	0	0	0	0	0	0\nunterwegs 	0	0	0	0	100	0	0	0	0	0	0	0 	Befehle");
-       /* if (matcher.matches()) {
-        System.out.println("Village " + matcher.group(1) + " " + matcher.group(2) + "/" + matcher.group(3) + " K" + matcher.group(4));
-        System.out.println("Groups: " + matcher.group(6));
-        System.out.println("Groups: " + matcher.group(7));
-        System.out.println("-------------------");
-        //1 : Name
-        //2 : xKoord
-        //3 : yKoord
-        //4 : Kont
-        //5 : Misc
-        //6 : GroupCount
-        //7 : Groups
-        //8 : end stuff
-        } else {
-        //no groups
-        }*/
-        //System.out.println("D " + (System.currentTimeMillis() - s));
+        
         if (!groupMap.isEmpty()) {
             DSWorkbenchMainFrame.getSingleton().fireGroupParserEvent(groupMap);
             return true;
         }
         return false;
     }
-
-//v = DataHolder.getSingleton().getVillages()[Integer.parseInt(split[1])][Integer.parseInt(split[2])];
-//next 4 lines are village
-                        /*villageLines = 4;*/
-//  }
-
+    
     private String getVariable(String pProperty) {
         return ParserVariableManager.getSingleton().getProperty(pProperty);
     }

@@ -133,7 +133,7 @@ public class ReportServer {
                 response.setStatusCode(HttpStatus.SC_OK);
                 EntityTemplate body;
 
-                if (OBSTReportHandler.handleReport(data)) {
+                if (PluginManager.getSingleton().executeObstReportParser(data)) {
                     body = new EntityTemplate(new ContentProducer() {
                         public void writeTo(final OutputStream outstream) throws IOException {
                             OutputStreamWriter writer = new OutputStreamWriter(outstream, "UTF-8");

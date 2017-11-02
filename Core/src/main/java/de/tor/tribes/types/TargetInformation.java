@@ -18,9 +18,9 @@ package de.tor.tribes.types;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
+import de.tor.tribes.io.TroopAmountFixed;
 import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.xml.JaxenUtils;
-import de.tor.tribes.util.xml.XMLHelper;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
@@ -42,7 +42,7 @@ public class TargetInformation {
     private Village target = null;
     private Hashtable<Village, List<TimedAttack>> timedAttacks = null;
     private int iWallLevel = 20;
-    private Hashtable<UnitHolder, Integer> troops = null;
+    private TroopAmountFixed troops = null;
     private int delta = 0;
     private int snobs = 0;
     private int fakes = 0;
@@ -52,7 +52,7 @@ public class TargetInformation {
     
     public TargetInformation(Village pTarget) {
         target = pTarget;
-        troops = new Hashtable<>();
+        troops = new TroopAmountFixed();
         timedAttacks = new Hashtable<>();
     }
     
@@ -226,21 +226,29 @@ public class TargetInformation {
     /**
      * @return the troops
      */
-    public Hashtable<UnitHolder, Integer> getTroops() {
+    public TroopAmountFixed getTroops() {
         return troops;
     }
 
     /**
-     * @param troops the troops to set
+     * @param pUnit the Unit wich's amount should be set
+     * @param pAmount the amount to set
      */
-    public void addTroopInformation(UnitHolder pUnit, Integer pAmount) {
-        troops.put(pUnit, pAmount);
+    public void addTroopInformation(UnitHolder pUnit, int pAmount) {
+        troops.setAmountForUnit(pUnit, pAmount);
+    }
+
+    /**
+     * @param pTroops the troops to set
+     */
+    public void setTroops(TroopAmountFixed pTroops) {
+        this.troops = pTroops.clone();
     }
     
     public String getTroopInformationAsHTML() {
         StringBuilder b = new StringBuilder();
         for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
-            Integer amount = troops.get(unit);
+            Integer amount = troops.getAmountForUnit(unit);
             if (amount != null) {
                 b.append("<img src=\"").append(SOSRequest.class.getResource("/res/ui/" + unit.getPlainName() + ".png")).append("\"/>&nbsp;").append(amount).append("\n");
             }
@@ -249,18 +257,18 @@ public class TargetInformation {
     }
     
     public void merge(TargetInformation pInfo) {
+        if (pInfo == null) {
+            logger.error("Tryed to merge Target info with null");
+            return;
+        }
         boolean millis = ServerSettings.getSingleton().isMillisArrival();
         List<TimedAttack> thisAttacks = getAttacks();
         int attCount = thisAttacks.size();
         List<TimedAttack> theOtherAttacks = null;
-        if (pInfo != null) {
             theOtherAttacks = pInfo.getAttacks();
-        }
-        Hashtable<UnitHolder, Integer> theOtherTroopInfo = pInfo.getTroops();
-        Enumeration<UnitHolder> units = theOtherTroopInfo.keys();
-        while (units.hasMoreElements()) {
-            UnitHolder unit = units.nextElement();
-            addTroopInformation(unit, theOtherTroopInfo.get(unit));
+        TroopAmountFixed theOtherTroopInfo = pInfo.getTroops();
+        for(UnitHolder unit: DataHolder.getSingleton().getUnits()) {
+            addTroopInformation(unit, theOtherTroopInfo.getAmountForUnit(unit));
         }
         if (theOtherAttacks != null) {
             for (TimedAttack theOtherAttack : theOtherAttacks) {
@@ -290,14 +298,12 @@ public class TargetInformation {
     @Override
     public String toString() {
         String result = " Stufe des Walls: " + iWallLevel + "\n";
-        Enumeration<UnitHolder> units = troops.keys();
-        if (troops.isEmpty()) {
+        if (troops.containsInformation()) {
             result += " Truppen im Dorf: -Keine Informationen-\n\n";
         } else {
             result += " Truppen im Dorf:\n";
-            while (units.hasMoreElements()) {
-                UnitHolder unit = units.nextElement();
-                result += "  " + troops.get(unit) + " " + unit + "\n";
+            for(UnitHolder unit: DataHolder.getSingleton().getUnits()) {
+                result += "  " + troops.getAmountForUnit(unit) + " " + unit + "\n";
             }
         }
         result += "\n";
@@ -312,7 +318,7 @@ public class TargetInformation {
     public String toXml() {
         StringBuilder b = new StringBuilder();
         b.append("<wall>").append(iWallLevel).append("</wall>\n");
-        b.append(XMLHelper.troopsToXML(troops));
+        b.append("<troops ").append(troops.toXml()).append("< />\n");
         b.append("<attacks>\n");
         for (TimedAttack a : getAttacks()) {
             b.append("<attack source=\"").append(a.getSource().getId()).append("\" arrive=\"").append(a.getlArriveTime()).append("\"").
@@ -325,12 +331,7 @@ public class TargetInformation {
     
     public void loadFromXml(Element e) {
         this.iWallLevel = Integer.parseInt(e.getChild("wall").getText());
-        Hashtable<UnitHolder, Integer> troops = XMLHelper.xmlToTroops(e);
-        Enumeration<UnitHolder> keys = troops.keys();
-        while (keys.hasMoreElements()) {
-            UnitHolder key = keys.nextElement();
-            addTroopInformation(key, troops.get(key));
-        }
+        troops = new TroopAmountFixed(e.getChild("troops"));
         
         for (Element attack : (List<Element>) JaxenUtils.getNodes(e, "attacks/attack")) {
             int sourceId = Integer.parseInt(attack.getAttributeValue("source"));

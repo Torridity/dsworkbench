@@ -114,8 +114,8 @@ public class SOSFormater {
         String offRow = "";
 
         for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
-            Integer amount = pTargetInfo.getTroops().get(unit);
-            if (amount != null && amount != 0) {
+            int amount = pTargetInfo.getTroops().getAmountForUnit(unit);
+            if (amount > 0) {
                 if (unit.getPlainName().equals("spear") || unit.getPlainName().equals("sword") || unit.getPlainName().equals("archer") || unit.getPlainName().equals("spy") || unit.getPlainName().equals("heavy") || unit.getPlainName().equals("knight")) {
                     defRow += unit.toBBCode() + " " + nf.format(amount) + " ";
                 } else {

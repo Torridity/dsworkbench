@@ -122,7 +122,7 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
             }
         }
     }
-    private static Logger logger = Logger.getLogger("DoItYourselflAttackPlaner");
+    private static final Logger logger = Logger.getLogger("DoItYourselflAttackPlaner");
     private static DSWorkbenchDoItYourselfAttackPlaner SINGLETON = null;
 
     /**
@@ -173,12 +173,14 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
         super.toBack();
     }
 
+    @Override
     public void storeCustomProperties(Configuration pConfig) {
         pConfig.setProperty(getPropertyPrefix() + ".alwaysOnTop", jAlwaysOnTopBox.isSelected());
         PropertyHelper.storeTableProperties(jAttackTable, pConfig, getPropertyPrefix());
 
     }
 
+    @Override
     public void restoreCustomProperties(Configuration pConfig) {
         try {
             jAlwaysOnTopBox.setSelected(pConfig.getBoolean(getPropertyPrefix() + ".alwaysOnTop"));
@@ -189,6 +191,7 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
         PropertyHelper.restoreTableProperties(jAttackTable, pConfig, getPropertyPrefix());
     }
 
+    @Override
     public String getPropertyPrefix() {
         return "manual.attack.planer.view";
     }
@@ -253,8 +256,6 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
         jAttackTypeComboBox.setModel(typeModel);
 
         jUnitComboBox.setRenderer(new UnitListCellRenderer());
-
-        //@TODO implement XX:YY:ZZ if needed...currently no server has this system
 
         jSourceVillage.setValue(new Point(500, 500));
         jTargetVillage.setValue(new Point(500, 500));

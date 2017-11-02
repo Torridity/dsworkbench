@@ -1177,19 +1177,9 @@ class MinimapRepaintThread extends Thread {
                 Composite a = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4f);
                 Font f = g2d.getFont();
                 Font t = new Font("Serif", Font.BOLD, (int) Math.round(30 * hField));
-                int coordType = ServerSettings.getSingleton().getCoordType();
-                if (coordType != 2) {
-                    t = new Font("Serif", Font.BOLD, 20);
-                }
                 g2d.setFont(t);
                 int fact = 10;
-                int mid = 50;
-                if (coordType != 2) {
-                    fact = 5;
-                    mid = 25;
-                }
-
-                mid = (int) Math.round(mid * wField);
+                int mid = (int) Math.round(50 * wField);
 
                 for (int i = 0; i < 10; i++) {
                     for (int j = 0; j < 10; j++) {
@@ -1206,10 +1196,6 @@ class MinimapRepaintThread extends Thread {
                         int wk = 100;
                         int hk = 100;
 
-                        if (coordType != 2) {
-                            wk = 50;
-                            hk = 50;
-                        }
                         if (i == 9) {
                             wk -= 1;
                         }

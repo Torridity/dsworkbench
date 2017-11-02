@@ -38,7 +38,6 @@ public class ShapeStroke implements Stroke {
 
     private Shape shapes[];
     private float advance;
-    private boolean stretchToFit = false;
     private boolean repeat = true;
     private AffineTransform t = new AffineTransform();
     private static final float FLATNESS = 1;

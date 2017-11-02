@@ -111,7 +111,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
         }
     }
     // <editor-fold defaultstate="collapsed" desc=" Member variables ">
-    private static Logger logger = Logger.getLogger("MapCanvas");
+    private static final Logger logger = Logger.getLogger("MapCanvas");
     private BufferedImage mBuffer = null;
     //private VolatileImage mBuffer = null;
     private double dCenterX = 500.0;
@@ -187,6 +187,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                 public void run() {
                     SwingUtilities.invokeLater(new Runnable() {
 
+                        @Override
                         public void run() {
                             repaint();
                         }
@@ -806,7 +807,8 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
         });
 
         //</editor-fold>
-        // <editor-fold defaultstate="collapsed" desc=" MouseMotionListener for dragging operations ">
+        
+        //< editor-fold defaultstate="collapsed" desc="MouseMotionListener for dragging operations">
         addMouseMotionListener(new MouseMotionListener() {
 
             @Override
@@ -927,7 +929,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
             }
         });
 
-        //<editor-fold>
+        //</editor-fold>
     }
 
     public boolean isAttackCursor() {
@@ -1255,12 +1257,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                         Village[] list = v.getTribe().getVillageList();
                         Arrays.sort(list);
                         for (Village current : list) {
-                            if (ServerSettings.getSingleton().getCoordType() != 2) {
-                                int[] hier = DSCalculator.xyToHierarchical((int) current.getX(), (int) current.getY());
-                                builder.append(hier[0]).append(":").append(hier[1]).append(":").append(hier[2]).append("\n");
-                            } else {
-                                builder.append(current.getX()).append("|").append(current.getY()).append("\n");
-                            }
+                            builder.append(current.getX()).append("|").append(current.getY()).append("\n");
                         }
                         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(builder.toString()), null);
                         JOptionPaneHelper.showInformationBox(this, "Dörfer in die Zwischenablage kopiert", "Information");
@@ -1314,12 +1311,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
             if (v != null) {
                 try {
                     StringBuilder builder = new StringBuilder();
-                    if (ServerSettings.getSingleton().getCoordType() != 2) {
-                        int[] hier = DSCalculator.xyToHierarchical((int) v.getX(), (int) v.getY());
-                        builder.append(hier[0]).append(":").append(hier[1]).append(":").append(hier[2]);
-                    } else {
-                        builder.append(v.getX()).append("|").append(v.getY());
-                    }
+                    builder.append(v.getX()).append("|").append(v.getY());
                     Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(builder.toString()), null);
                     JOptionPaneHelper.showInformationBox(this, "Koordinaten in die Zwischenablage kopiert", "Information");
                 } catch (Exception e) {
@@ -1391,10 +1383,10 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
 
             for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
                 if (evt.getSource() == jCurrentToAStarAsAttacker) {
-                    values.put("att_" + unit.getPlainName(), (double) own.getTroopsOfUnitInVillage(unit));
+                    values.put("att_" + unit.getPlainName(), (double) own.getTroops().getAmountForUnit(unit));
                 }
                 if (evt.getSource() == jCurrentToAStarAsDefender) {
-                    values.put("def_" + unit.getPlainName(), (double) inVillage.getTroopsOfUnitInVillage(unit));
+                    values.put("def_" + unit.getPlainName(), (double) inVillage.getTroops().getAmountForUnit(unit));
                 }
             }
             if (!GlobalOptions.isOfflineMode()) {
@@ -1430,12 +1422,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
             try {
                 StringBuilder builder = new StringBuilder();
                 for (Village v : markedVillages) {
-                    if (ServerSettings.getSingleton().getCoordType() != 2) {
-                        int[] hier = DSCalculator.xyToHierarchical((int) v.getX(), (int) v.getY());
-                        builder.append(hier[0]).append(":").append(hier[1]).append(":").append(hier[2]).append("\n");
-                    } else {
-                        builder.append(v.getX()).append("|").append(v.getY()).append("\n");
-                    }
+                    builder.append(v.getX()).append("|").append(v.getY()).append("\n");
                 }
                 Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(builder.toString()), null);
                 JOptionPaneHelper.showInformationBox(this, "Koordinaten in die Zwischenablage kopiert", "Information");

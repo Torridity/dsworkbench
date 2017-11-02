@@ -56,7 +56,6 @@ public class Village implements Comparable<Village>, Serializable, BBSupport {
     }
 
     @Override
-    //@TODO ATTENTION: Workaround...check if this causes errors
     public boolean equals(Object obj) {
         if (obj != null && obj instanceof Village) {
             return id == ((Village) obj).getId();
@@ -213,12 +212,7 @@ public class Village implements Comparable<Village>, Serializable, BBSupport {
 
     public String getCoordAsString() {
         if (coordAsString == null) {
-            if (ServerSettings.getSingleton().getCoordType() != 2) {
-                int[] hier = DSCalculator.xyToHierarchical((int) x, (int) y);
-                coordAsString = "(" + hier[0] + ":" + hier[1] + ":" + hier[2] + ")";
-            } else {
-                coordAsString = "(" + x + "|" + y + ")";
-            }
+            coordAsString = "(" + x + "|" + y + ")";
         }
         return coordAsString;
     }
@@ -277,11 +271,7 @@ public class Village implements Comparable<Village>, Serializable, BBSupport {
 
     public int getContinent() {
         if (continent == -1) {
-            if (ServerSettings.getSingleton().getCoordType() != 2) {
-                continent = DSCalculator.xyToHierarchical(x, y)[0];
-            } else {
-                continent = DSCalculator.getContinent(x, y);
-            }
+            continent = DSCalculator.getContinent(x, y);
         }
         return continent;
     }
@@ -350,10 +340,6 @@ public class Village implements Comparable<Village>, Serializable, BBSupport {
     }
 
     public String toBBCode() {
-        if (ServerSettings.getSingleton().getCoordType() != 2) {
-            int[] hier = DSCalculator.xyToHierarchical(x, y);
-            return "[coord]" + hier[0] + ":" + hier[1] + ":" + hier[2] + "[/coord]";
-        }
         return "[coord]" + x + "|" + y + "[/coord]";
     }
 

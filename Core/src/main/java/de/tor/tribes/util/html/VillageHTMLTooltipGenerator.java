@@ -80,9 +80,8 @@ public class VillageHTMLTooltipGenerator {
                 Tribe current = GlobalOptions.getSelectedProfile().getTribe();
                 if (current != null) {
                     if (current.getId() != pVillage.getTribe().getId()) {
-                        double moral = ((pVillage.getTribe().getPoints() / current.getPoints()) * 3 + 0.3) * 100;
-                        moral = (moral > 100) ? 100 : moral;
-                        b.append(buildInfoRow("Moral:", nf.format(moral) + "%", false));
+                        b.append(buildInfoRow("Moral:", DSCalculator
+                                .calculateMorale(current, pVillage.getTribe()) , false));
                     }
                 }
             }
@@ -284,21 +283,21 @@ public class VillageHTMLTooltipGenerator {
             b.append("<img src=\"").append(VillageHTMLTooltipGenerator.class.getResource("/res/ui/" + unit.getPlainName() + ".png")).append("\"/>");
             b.append("<BR/>\n");
             if (inVillage != null) {
-                Integer amount = inVillage.getTroopsOfUnitInVillage(unit);
+                Integer amount = inVillage.getTroops().getAmountForUnit(unit);
                 if (amount == 0) {
                     b.append("<font style=\"color:#DED3B9;\">0</font>\n");
                 } else {
                     b.append("<font>").append(amount).append("</font>\n");
                 }
                 b.append("<BR/>\n");
-                amount = (outside == null) ? 0 : outside.getTroopsOfUnitInVillage(unit);
+                amount = (outside == null) ? 0 : outside.getTroops().getAmountForUnit(unit);
                 if (amount == 0) {
                     b.append("<font style=\"color:#DED3B9;\">0</font>\n");
                 } else {
                     b.append("<font>").append(amount).append("</font>\n");
                 }
                 b.append("<BR/>\n");
-                amount = (onTheWay == null) ? 0 : onTheWay.getTroopsOfUnitInVillage(unit);
+                amount = (onTheWay == null) ? 0 : onTheWay.getTroops().getAmountForUnit(unit);
                 if (amount == 0) {
                     b.append("<font style=\"color:#DED3B9;\">0</font>\n");
                 } else {

@@ -16,9 +16,9 @@
 package de.tor.tribes.php;
 
 import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.io.TroopAmountFixed;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.UnknownUnit;
-import java.util.Hashtable;
 
 /**
  *
@@ -28,31 +28,31 @@ public class UnitTableInterface {
 
   private static final String[] units = new String[]{"spear", "sword", "axe", "archer", "spy", "light", "marcher", "heavy", "ram", "catapult", "knight", "snob", "militia"};
 
-  public static String createAttackerUnitTableLink(Hashtable<UnitHolder, Integer> pIn, Hashtable<UnitHolder, Integer> pOut) {
+  public static String createAttackerUnitTableLink(TroopAmountFixed pIn, TroopAmountFixed pOut) {
     return createUnitTableLink(pIn, pOut, false);
   }
 
-  public static String createAttackerUnitTableLink(Hashtable<UnitHolder, Integer> pIn) {
+  public static String createAttackerUnitTableLink(TroopAmountFixed pIn) {
     return createUnitTableLink(pIn, false);
   }
 
-  public static String createDefenderUnitTableLink(Hashtable<UnitHolder, Integer> pIn, Hashtable<UnitHolder, Integer> pOut) {
+  public static String createDefenderUnitTableLink(TroopAmountFixed pIn, TroopAmountFixed pOut) {
     return createUnitTableLink(pIn, pOut, true);
   }
 
-  public static String createDefenderUnitTableLink(Hashtable<UnitHolder, Integer> pIn) {
+  public static String createDefenderUnitTableLink(TroopAmountFixed pIn) {
     return createUnitTableLink(pIn, false);
   }
 
-  public static String createUnitTableLink(Hashtable<UnitHolder, Integer> pIn, Hashtable<UnitHolder, Integer> pOut, boolean pMilitia) {
+  public static String createUnitTableLink(TroopAmountFixed pIn, TroopAmountFixed pOut, boolean pMilitia) {
     StringBuilder b = new StringBuilder();
     b.append("http://torridity.de/tools/unitTable.php?in=");
 
     for (int i = 0; i < units.length; i++) {
       UnitHolder u = DataHolder.getSingleton().getUnitByPlainName(units[i]);
       if (!u.equals(UnknownUnit.getSingleton()) && (pMilitia || !u.getPlainName().equals("militia"))) {
-        Integer amount = pIn.get(u);
-        b.append(i).append(".").append((amount == null) ? 0 : amount);
+        int amount = pIn.getAmountForUnit(u);
+        b.append(i).append(".").append((amount == -1) ? 0 : amount);
         if (i < units.length - 1) {
           b.append("_");
         }
@@ -63,8 +63,8 @@ public class UnitTableInterface {
     for (int i = 0; i < units.length; i++) {
       UnitHolder u = DataHolder.getSingleton().getUnitByPlainName(units[i]);
       if (!u.equals(UnknownUnit.getSingleton()) && (pMilitia || !u.getPlainName().equals("militia"))) {
-        Integer amount = pOut.get(u);
-        b.append(i).append(".").append((amount == null) ? 0 : amount);
+        int amount = pOut.getAmountForUnit(u);
+        b.append(i).append(".").append((amount == -1) ? 0 : amount);
         b.append("_");
       }
     }
@@ -72,15 +72,15 @@ public class UnitTableInterface {
     return result.substring(0, result.length() - 1);
   }
 
-  public static String createUnitTableLink(Hashtable<UnitHolder, Integer> pIn, boolean pMilitia) {
+  public static String createUnitTableLink(TroopAmountFixed pIn, boolean pMilitia) {
     StringBuilder b = new StringBuilder();
     b.append("http://torridity.de/tools/unitTable.php?in=");
 
     for (int i = 0; i < units.length; i++) {
       UnitHolder u = DataHolder.getSingleton().getUnitByPlainName(units[i]);
       if (!u.equals(UnknownUnit.getSingleton()) && (pMilitia || !u.getPlainName().equals("militia"))) {
-        Integer amount = pIn.get(u);
-        b.append(i).append(".").append((amount == null) ? 0 : amount);
+        int amount = pIn.getAmountForUnit(u);
+        b.append(i).append(".").append((amount == -1) ? 0 : amount);
         b.append("_");
       }
     }

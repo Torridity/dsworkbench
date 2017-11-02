@@ -18,13 +18,14 @@ package de.tor.tribes.ui.wiz.ref;
 import com.jidesoft.swing.JideBoxLayout;
 import com.jidesoft.swing.JideSplitPane;
 import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.io.TroopAmountFixed;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.php.UnitTableInterface;
 import de.tor.tribes.types.UserProfile;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.components.VillageOverviewMapPanel;
 import de.tor.tribes.ui.models.REFSettingsTableModel;
-import de.tor.tribes.ui.panels.TroopSelectionPanel;
+import de.tor.tribes.ui.panels.TroopSelectionPanelFixed;
 import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
 import de.tor.tribes.ui.util.ColorGradientHelper;
 import de.tor.tribes.ui.wiz.ref.types.REFTargetElement;
@@ -45,11 +46,9 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
-import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
@@ -71,8 +70,8 @@ public class SupportRefillSettingsPanel extends WizardPage implements ActionList
             + "auf den Weg geschickt hat. Hast du deine Einstellungen getroffen, klicke auf 'Notwendige Unterstützungen berechnen' um die Tabelle zu aktualisieren.";
     private static SupportRefillSettingsPanel singleton = null;
     private VillageOverviewMapPanel overviewPanel = null;
-    private TroopSelectionPanel targetAmountPanel = null;
-    private TroopSelectionPanel splitAmountPanel = null;
+    private TroopSelectionPanelFixed targetAmountPanel = null;
+    private TroopSelectionPanelFixed splitAmountPanel = null;
 
     public static synchronized SupportRefillSettingsPanel getSingleton() {
         if (singleton == null) {
@@ -124,10 +123,10 @@ public class SupportRefillSettingsPanel extends WizardPage implements ActionList
             }
         });
 
-        targetAmountPanel = new TroopSelectionPanel();
+        targetAmountPanel = new TroopSelectionPanelFixed();
         targetAmountPanel.setupDefense(true);
         jTargetAmountsPanel.add(targetAmountPanel, BorderLayout.CENTER);
-        splitAmountPanel = new TroopSelectionPanel();
+        splitAmountPanel = new TroopSelectionPanelFixed();
         splitAmountPanel.setupDefense(true);
         jSplitSizePanel.add(splitAmountPanel, BorderLayout.CENTER);
         jInfoTextPane.setText(GENERAL_INFO);
@@ -155,15 +154,14 @@ public class SupportRefillSettingsPanel extends WizardPage implements ActionList
         StringBuilder b = new StringBuilder();
         b.append("Ich benötige die aufgelisteten oder vergleichbare Unterstützungen in den folgenden Dörfern:\n\n");
 
-        Hashtable<UnitHolder, Integer> split = splitAmountPanel.getAmounts();
+        TroopAmountFixed split = splitAmountPanel.getAmounts();
 
         for (REFTargetElement defense : selection) {
             Village target = defense.getVillage();
             int needed = defense.getNeededSupports();
-            Hashtable<UnitHolder, Integer> need = new Hashtable<>();
-            Set<Map.Entry<UnitHolder, Integer>> entries = split.entrySet();
-            for (Map.Entry<UnitHolder, Integer> entry : entries) {
-                need.put(entry.getKey(), needed * entry.getValue());
+            TroopAmountFixed need = new TroopAmountFixed();
+            for (UnitHolder unit: DataHolder.getSingleton().getUnits()) {
+                need.setAmountForUnit(unit, needed * split.getAmountForUnit(unit));
             }
 
             if (extended) {
@@ -183,15 +181,15 @@ public class SupportRefillSettingsPanel extends WizardPage implements ActionList
         }
     }
 
-    private String buildSimpleRequestTable(Village pTarget, Hashtable<UnitHolder, Integer> pNeed, REFTargetElement pDefense) {
+    private String buildSimpleRequestTable(Village pTarget, TroopAmountFixed pNeed, REFTargetElement pDefense) {
         StringBuilder b = new StringBuilder();
         b.append("[table]\n");
         b.append("[**]").append(pTarget.toBBCode());
         int colCount = 0;
 
         for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
-            Integer value = pNeed.get(unit);
-            if (value != null && value > 0) {
+            int value = pNeed.getAmountForUnit(unit);
+            if (value > 0) {
                 b.append("[|]").append("[unit]").append(unit.getPlainName()).append("[/unit]");
                 colCount++;
             }
@@ -203,8 +201,8 @@ public class SupportRefillSettingsPanel extends WizardPage implements ActionList
         nf.setMaximumFractionDigits(0);
         b.append("[*]");
         for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
-            Integer value = pNeed.get(unit);
-            if (value != null && value > 0) {
+            int value = pNeed.getAmountForUnit(unit);
+            if (value > 0) {
                 b.append("[|]").append(nf.format(value));
             }
         }
@@ -233,15 +231,15 @@ public class SupportRefillSettingsPanel extends WizardPage implements ActionList
 
     public void storeProperties() {
         UserProfile profile = GlobalOptions.getSelectedProfile();
-        profile.addProperty("ref.filter.amount", TroopHelper.unitTableToProperty(targetAmountPanel.getAmounts()));
-        profile.addProperty("ref.filter.split", TroopHelper.unitTableToProperty(splitAmountPanel.getAmounts()));
+        profile.addProperty("ref.filter.amount", targetAmountPanel.getAmounts().toProperty());
+        profile.addProperty("ref.filter.split", splitAmountPanel.getAmounts().toProperty());
         profile.addProperty("ref.allow.similar.amount", jAllowSimilarTroops.isSelected());
     }
 
     public void restoreProperties() {
         UserProfile profile = GlobalOptions.getSelectedProfile();
-        targetAmountPanel.setAmounts(TroopHelper.propertyToUnitTable(profile.getProperty("ref.filter.amount")));
-        splitAmountPanel.setAmounts(TroopHelper.propertyToUnitTable(profile.getProperty("ref.filter.split")));
+        targetAmountPanel.setAmounts(new TroopAmountFixed(0).loadFromProperty(profile.getProperty("ref.filter.amount")));
+        splitAmountPanel.setAmounts(new TroopAmountFixed(0).loadFromProperty(profile.getProperty("ref.filter.split")));
         String val = profile.getProperty("ref.allow.similar.amount");
         if (val == null) {
             jAllowSimilarTroops.setSelected(true);
@@ -250,7 +248,7 @@ public class SupportRefillSettingsPanel extends WizardPage implements ActionList
         }
     }
 
-    public Hashtable<UnitHolder, Integer> getSplit() {
+    public TroopAmountFixed getSplit() {
         return splitAmountPanel.getAmounts();
     }
 
@@ -532,14 +530,14 @@ public class SupportRefillSettingsPanel extends WizardPage implements ActionList
     }//GEN-LAST:event_fireViewStateChangeEvent
 
     private void fireCalculateNeededSupportsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCalculateNeededSupportsEvent
-        Hashtable<UnitHolder, Integer> target = targetAmountPanel.getAmounts();
-        Hashtable<UnitHolder, Integer> split = splitAmountPanel.getAmounts();
+        TroopAmountFixed target = targetAmountPanel.getAmounts();
+        TroopAmountFixed split = splitAmountPanel.getAmounts();
 
-        if (TroopHelper.getPopulation(target) == 0) {
+        if (target.getTroopPopCount() == 0) {
             jStatusLabel.setText("Keine gewünschte Truppenstärke angegeben");
             return;
         }
-        if (TroopHelper.getPopulation(split) == 0) {
+        if (split.getTroopPopCount() == 0) {
             jStatusLabel.setText("Menge einer Einzelunterstützung nicht angegeben");
             return;
         }
@@ -561,8 +559,8 @@ public class SupportRefillSettingsPanel extends WizardPage implements ActionList
     }//GEN-LAST:event_fireCalculateNeededSupportsEvent
 
     private void fireCalculateAndExportRequiredTroopsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCalculateAndExportRequiredTroopsEvent
-        Hashtable<UnitHolder, Integer> target = targetAmountPanel.getAmounts();
-        if (TroopHelper.getPopulation(target) == 0) {
+        TroopAmountFixed target = targetAmountPanel.getAmounts();
+        if (target.getTroopPopCount() == 0) {
             jStatusLabel.setText("Keine gewünschte Truppenstärke angegeben");
             return;
         }
@@ -572,7 +570,7 @@ public class SupportRefillSettingsPanel extends WizardPage implements ActionList
         for (int i = 0; i < getModel().getRowCount(); i++) {
             REFTargetElement elem = getModel().getRow(jVillageTable.convertRowIndexToModel(i));
             Village v = elem.getVillage();
-            Hashtable<UnitHolder, Integer> requiredTroops = TroopHelper.getRequiredTroops(v, target);
+            TroopAmountFixed requiredTroops = TroopHelper.getRequiredTroops(v, target);
             b.append("[table]\n");
             b.append("[**]").append(v.toBBCode()).append("[|]");
             b.append("[img]").append(UnitTableInterface.createDefenderUnitTableLink(requiredTroops)).append("[/img][/**]\n");

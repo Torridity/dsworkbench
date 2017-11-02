@@ -360,7 +360,7 @@ public class AttackPlanHTMLExporter {
             for (UnitHolder u : DataHolder.getSingleton().getUnits()) {
                 int amount = 0;
                 if (stdAttack != null) {
-                    amount = stdAttack.getAmountForUnit(u, a.getSource());
+                    amount = stdAttack.getTroops().getAmountForUnit(u, a.getSource());
                 }
                 placeURL += "&" + u.getPlainName() + "=" + amount;
             }

@@ -34,7 +34,7 @@ import java.util.List;
  */
 public class StandardAttackManager extends GenericManager<StandardAttack> {
 
-    private static Logger logger = Logger.getLogger("StandardAttackManager");
+    private static final Logger logger = Logger.getLogger("StandardAttackManager");
     public static final String NO_TYPE_NAME = "Keine Auswahl";
     public static final String FAKE_TYPE_NAME = "Fake";
     public static final String OFF_TYPE_NAME = "Off";
@@ -192,8 +192,7 @@ public class StandardAttackManager extends GenericManager<StandardAttack> {
 
     @Override
     public void saveElements(String pFile) {
-        try {
-            FileWriter w = new FileWriter(pFile);
+        try (FileWriter w = new FileWriter(pFile)) {
             w.write("<stdAttacks>\n");
 
             for (ManageableType element : getAllElements()) {

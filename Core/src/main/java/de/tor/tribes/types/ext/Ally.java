@@ -15,6 +15,8 @@
  */
 package de.tor.tribes.types.ext;
 
+import de.tor.tribes.util.StringHelper;
+
 import java.io.Serializable;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -243,23 +245,7 @@ public class Ally implements Comparable<Ally>, Serializable {
 
         @Override
         public int compare(Ally s1, Ally s2) {
-            int n1 = s1.toString().length(), n2 = s2.toString().length();
-            for (int i1 = 0, i2 = 0; i1 < n1 && i2 < n2; i1++, i2++) {
-                char c1 = s1.toString().charAt(i1);
-                char c2 = s2.toString().charAt(i2);
-                if (c1 != c2) {
-                    c1 = Character.toUpperCase(c1);
-                    c2 = Character.toUpperCase(c2);
-                    if (c1 != c2) {
-                        c1 = Character.toLowerCase(c1);
-                        c2 = Character.toLowerCase(c2);
-                        if (c1 != c2) {
-                            return c1 - c2;
-                        }
-                    }
-                }
-            }
-            return n1 - n2;
+            return StringHelper.compareByStringRepresentations(s1, s2);
         }
     }
 }

@@ -25,3 +25,6 @@ nbactions.xml
 
 # General
 release/
+
+# macOS specific files
+.DS_STORE

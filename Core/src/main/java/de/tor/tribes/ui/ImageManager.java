@@ -295,7 +295,9 @@ public class ImageManager {
             throw new Exception("Failed to load cursors");
         }
         if (Toolkit.getDefaultToolkit().getMaximumCursorColors() < 16) {
-            logger.warn("Insufficient color depth for custom cursors on current platform. Setting sytem-cursor mode.");
+            logger.warn("Insufficient color depth for custom cursors on current platform:"
+                    + Toolkit.getDefaultToolkit().getMaximumCursorColors()
+                    + " Setting sytem-cursor mode.");
             cursorSupported = false;
         }
     }
@@ -365,7 +367,6 @@ public class ImageManager {
      * Get the cursor for the provided ID
      */
     public static Cursor getCursor(int pID) {
-
         if (!cursorSupported) {
             return Cursor.getDefaultCursor();
         }

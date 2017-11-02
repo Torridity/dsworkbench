@@ -37,12 +37,14 @@ public class Constants {
     public final static Color NAP_MARKER = new Color(127, 0, 127);
     public final static Color ALLY_MARKER = new Color(0, 160, 244);
     public final static String SERVER_DIR = "./servers";
-    public static Hashtable<String, Integer> LAYERS = null;
+    public final static Hashtable<String, Integer> LAYERS = new Hashtable<>();
     public final static int LAYER_COUNT = 10;
     public final static boolean DEBUG = false;
-
+    public static final String[] buildingNames = {"main", "barracks", "stable", "workshop",
+        "church", "watchtower", "academy", "smithy", "rally", "statue", "market", "timber",
+        "clay", "iron", "farm", "storage", "hide", "wall"};
+    
     static {
-        LAYERS = new Hashtable<>();
         LAYERS.put("Markierungen", 0);
         LAYERS.put("Dörfer", 1);
         LAYERS.put("Dorfsymbole", 2);

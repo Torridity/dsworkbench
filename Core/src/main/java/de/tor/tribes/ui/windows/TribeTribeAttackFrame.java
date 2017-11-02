@@ -514,21 +514,8 @@ public class TribeTribeAttackFrame extends DSWorkbenchGesturedFrame implements
 
         jSourcesTable.getTableHeader().setDefaultRenderer(new DefaultTableHeaderRenderer());
         jVictimTable.getTableHeader().setDefaultRenderer(new DefaultTableHeaderRenderer());
-        String[] cols = new String[]{"Einheit", "Fake", "Anwendbar"};
-        for (String col : cols) {
-            TableColumnExt columns = jSourcesTable.getColumnExt(col);
-            columns.setPreferredWidth(80);
-            columns.setMaxWidth(80);
-            columns.setWidth(80);
-        }
-
-        cols = new String[]{"Fake", "Angriffe", "Anwendbar"};
-        for (String col : cols) {
-            TableColumnExt columns = jVictimTable.getColumnExt(col);
-            columns.setPreferredWidth(80);
-            columns.setMaxWidth(80);
-            columns.setWidth(80);
-        }
+        UIHelper.initTableColums(jSourcesTable, "Einheit", "Fake", "Anwendbar");
+        UIHelper.initTableColums(jVictimTable, "Fake", "Angriffe", "Anwendbar");
 
         jSourcesTable.setHighlighters(HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B));
         jVictimTable.setHighlighters(HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B));
@@ -689,7 +676,7 @@ public class TribeTribeAttackFrame extends DSWorkbenchGesturedFrame implements
                 Village v = (Village) model.getValueAt(row, jSourcesTable.convertColumnIndexToModel(0));
                 VillageTroopsHolder troops = TroopsManager.getSingleton().getTroopsForVillage(v, TroopsManager.TROOP_TYPE.IN_VILLAGE);
                 if (troops != null) {
-                    int availSnobs = troops.getTroopsOfUnitInVillage(snob);
+                    int availSnobs = troops.getTroops().getAmountForUnit(snob);
                     Integer assignedSnobs = assignedTroops.get(v);
                     if (assignedSnobs == null) {
                         assignedSnobs = 0;
@@ -2164,22 +2151,9 @@ private void fireCalculateAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
                     snobSources = sourcesForUnit.size();
                 }
             }
-            if (sourcesForUnit == null) {
-                sourcesForUnit = new LinkedList<>();
-                sourcesForUnit.add(vSource);
-                sources.put(uSource, sourcesForUnit);
-            } else {
-                sourcesForUnit.add(vSource);
-            }
+            TroopHelper.fillSourcesWithAttacksForUnit(vSource, sources, sourcesForUnit, uSource);
         } else {
-            List<Village> fakesForUnit = fakes.get(uSource);
-            if (fakesForUnit == null) {
-                fakesForUnit = new LinkedList<>();
-                fakesForUnit.add(vSource);
-                fakes.put(uSource, fakesForUnit);
-            } else {
-                fakesForUnit.add(vSource);
-            }
+            TroopHelper.fillSourcesWithAttacksForUnit(vSource, fakes, null, uSource);
         }
     }
     // </editor-fold>
@@ -2391,23 +2365,9 @@ private void showAttackInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:eve
         UnitHolder uSource = (UnitHolder) attackModel.getValueAt(i, 1);
         boolean fake = (Boolean) attackModel.getValueAt(i, 2);
         if (!fake) {
-            List<Village> sourcesForUnit = sources.get(uSource);
-            if (sourcesForUnit == null) {
-                sourcesForUnit = new LinkedList<>();
-                sourcesForUnit.add(vSource);
-                sources.put(uSource, sourcesForUnit);
-            } else {
-                sourcesForUnit.add(vSource);
-            }
+            TroopHelper.fillSourcesWithAttacksForUnit(vSource, sources, null, uSource);
         } else {
-            List<Village> fakesForUnit = fakes.get(uSource);
-            if (fakesForUnit == null) {
-                fakesForUnit = new LinkedList<>();
-                fakesForUnit.add(vSource);
-                fakes.put(uSource, fakesForUnit);
-            } else {
-                fakesForUnit.add(vSource);
-            }
+            TroopHelper.fillSourcesWithAttacksForUnit(vSource, fakes, null, uSource);
         }
     }
     DSWorkbenchAttackInfoPanel info = new DSWorkbenchAttackInfoPanel();
@@ -2637,17 +2597,12 @@ private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
             Boolean fake = (Boolean) jSourcesTable.getValueAt(row, 2);
             b.append(v.getId()).append(";").append(unit.getPlainName()).append(";").append(fake).append("\n");
         }
-        try {
-            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(b.toString()), null);
-            showSuccess(rows.length + ((rows.length == 1) ? " Eintrag kopiert" : " Einträge kopiert"));
-        } catch (HeadlessException hex) {
-            showError("Fehler beim Kopieren der Einträge");
-            return;
-        }
 
-        if (pType.equals(TRANSFER_TYPE.CUT_SOURCE_TO_INTERNAL_CLIPBOARD)) {
-            deleteAction(jSourcesTable);
-            showSuccess(rows.length + ((rows.length == 1) ? " Eintrag ausgeschnitten" : " Einträge ausgeschnitten"));
+        if(copyToClipboard(b.toString(), rows)) {
+            if (pType.equals(TRANSFER_TYPE.CUT_SOURCE_TO_INTERNAL_CLIPBOARD)) {
+                deleteAction(jSourcesTable);
+                showSuccess(rows.length + ((rows.length == 1) ? " Eintrag ausgeschnitten" : " Einträge ausgeschnitten"));
+            }
         }
     }
 
@@ -2675,9 +2630,24 @@ private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
             return;
         }
 
-        if (pType.equals(TRANSFER_TYPE.CUT_TARGET_TO_INTERNAL_CLIPBOARD)) {
-            deleteAction(jVictimTable);
-            showSuccess(rows.length + ((rows.length == 1) ? " Eintrag ausgeschnitten" : " Einträge ausgeschnitten"));
+        if (copyToClipboard(b.toString(), rows)) {
+            if (pType.equals(TRANSFER_TYPE.CUT_SOURCE_TO_INTERNAL_CLIPBOARD)) {
+                deleteAction(jVictimTable);
+                showSuccess(rows.length + ((rows.length == 1) ? " Eintrag ausgeschnitten" : " Einträge ausgeschnitten"));
+            }
+        }
+    }
+
+    private boolean copyToClipboard(String s, int[] rows) {
+        try {
+            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(s), null);
+            showSuccess(rows.length + ((rows.length == 1) ? " Eintrag kopiert" : " Einträge kopiert"));
+
+            return true;
+        } catch (HeadlessException hex) {
+            showError("Fehler beim Kopieren der Einträge");
+
+            return false;
         }
     }
 
@@ -2951,7 +2921,7 @@ private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event
             for (Village pSource : pSourceVillages) {
                 VillageTroopsHolder troopsForVillage = TroopsManager.getSingleton().getTroopsForVillage(pSource, TroopsManager.TROOP_TYPE.OWN);
                 if (troopsForVillage != null) {
-                    int ownTroopsInVillage = troopsForVillage.getTroopPopCount();
+                    int ownTroopsInVillage = troopsForVillage.getTroops().getTroopPopCount();
                     if (ownTroopsInVillage < getRequiredTroopAmount()) {
                         if (!villagesWithSmallTroopCount.contains(pSource)) {
                             villagesWithSmallTroopCount.add(pSource);

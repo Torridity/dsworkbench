@@ -521,7 +521,7 @@ public class GlobalOptions {
         
         private boolean getBoolean(String key, boolean def) {
             Object obj = getObject(key, def);
-            if(obj instanceof Boolean) return ((Boolean) obj).booleanValue();
+            if(obj instanceof Boolean) return (Boolean) obj;
             
             try {
                 return Boolean.parseBoolean(obj.toString());
@@ -539,7 +539,7 @@ public class GlobalOptions {
         
         private int getInt(String key, boolean def) {
             Object obj = getObject(key, def);
-            if(obj instanceof Integer) return ((Integer) obj).intValue();
+            if(obj instanceof Integer) return (Integer) obj;
             
             try {
                 String objStr = obj.toString();
@@ -560,7 +560,7 @@ public class GlobalOptions {
         
         private long getLong(String key, boolean def) {
             Object obj = getObject(key, def);
-            if(obj instanceof Long) return ((Long) obj).longValue();
+            if(obj instanceof Long) return (Long) obj;
             
             try {
                 String objStr = obj.toString();
@@ -572,6 +572,25 @@ public class GlobalOptions {
                 if(!def) return getLong(key, true);
                 logger.fatal("'" + key + "' ist kein Long", e);
                 throw new RuntimeException("'" + key + "' ist kein Long", e);
+            }
+        }
+        
+        public double getDouble(String key) {
+            return getDouble(key, false);
+        }
+        
+        private double getDouble(String key, boolean def) {
+            Object obj = getObject(key, def);
+            if(obj instanceof Double) return (Double) obj;
+            
+            try {
+                String objStr = obj.toString();
+                return Double.parseDouble(objStr);
+            }
+            catch(Exception e) {
+                if(!def) return getDouble(key, true);
+                logger.fatal("'" + key + "' ist kein Double", e);
+                throw new RuntimeException("'" + key + "' ist kein Double", e);
             }
         }
         

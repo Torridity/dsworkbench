@@ -17,20 +17,20 @@ package de.tor.tribes.util.bb;
 
 import de.tor.tribes.types.SOSRequest;
 import de.tor.tribes.types.ext.Village;
+import org.apache.commons.lang.StringUtils;
+
 import java.text.NumberFormat;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
-import org.apache.commons.lang.StringUtils;
 
 /**
- *
  * @author Torridity
  */
 public class SosListFormatter extends BasicFormatter<SOSRequest> {
 
-    private final String[] VARIABLES = new String[]{LIST_START, LIST_END, ELEMENT_COUNT, ELEMENT_ID};
+    private static final String[] VARIABLES = new String[] {LIST_START, LIST_END, ELEMENT_COUNT, ELEMENT_ID};
     public static final String STANDARD_TEMPLATE = new SOSRequest().getStandardTemplate();
     private static final String TEMPLATE_PROPERTY = "sos.list.bbexport.template";
 
@@ -52,7 +52,7 @@ public class SosListFormatter extends BasicFormatter<SOSRequest> {
         String beforeList = getHeader();
         String listItemTemplate = getLineTemplate();
         String afterList = getFooter();
-        String replacedStart = StringUtils.replaceEach(beforeList, new String[]{ELEMENT_COUNT}, new String[]{f.format(pElements.size())});
+        String replacedStart = StringUtils.replaceEach(beforeList, new String[] {ELEMENT_COUNT}, new String[] {f.format(pElements.size())});
         b.append(replacedStart);
         for (SOSRequest s : pElements) {
             Enumeration<Village> targets = s.getTargets();
@@ -60,12 +60,12 @@ public class SosListFormatter extends BasicFormatter<SOSRequest> {
                 Village target = targets.nextElement();
                 String[] replacements = s.getReplacementsForTarget(target, pExtended);
                 String itemLine = StringUtils.replaceEach(listItemTemplate, s.getBBVariables(), replacements);
-                itemLine = StringUtils.replaceEach(itemLine, new String[]{ELEMENT_ID, ELEMENT_COUNT}, new String[]{f.format(cnt), f.format(pElements.size())});
+                itemLine = StringUtils.replaceEach(itemLine, new String[] {ELEMENT_ID, ELEMENT_COUNT}, new String[] {f.format(cnt), f.format(pElements.size())});
                 b.append(itemLine).append("\n").append("\n");
             }
             cnt++;
         }
-        String replacedEnd = StringUtils.replaceEach(afterList, new String[]{ELEMENT_COUNT}, new String[]{f.format(pElements.size())});
+        String replacedEnd = StringUtils.replaceEach(afterList, new String[] {ELEMENT_COUNT}, new String[] {f.format(pElements.size())});
         b.append(replacedEnd);
         return b.toString();
     }

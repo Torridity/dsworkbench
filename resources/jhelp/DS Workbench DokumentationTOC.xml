@@ -108,10 +108,8 @@
   <tocitem text="Ansichten " image="images.tictac_orange">
    <tocitem text="Angriffe " target="pages.attack_view" image="images.tictac_orange">
     <tocitem text="Userscript - Angriffsinformationen " target="pages.attack_info_script" image="images.tictac_grey"/>
-
-    <tocitem text="Angriffe als IGMs versenden " target="pages.attacks_as_igm" image="images.tictac_grey"/>
-
    </tocitem>
+   
    <tocitem text="Markierungen " target="pages.markers_view" image="images.tictac_grey"/>
 
    <tocitem text="Truppen&#252;bersicht " target="pages.troops_view" image="images.tictac_grey"/>

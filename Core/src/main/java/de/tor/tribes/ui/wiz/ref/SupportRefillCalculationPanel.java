@@ -93,6 +93,7 @@ public class SupportRefillCalculationPanel extends WizardPage {
     public void storeProperties() {
         UserProfile profile = GlobalOptions.getSelectedProfile();
         profile.addProperty("ref.calculation.arrive", jArriveTime.getSelectedDate().getTime());
+        profile.addProperty("ref.calculation.aren", jCheckUseArriveTime.isSelected());
     }
     
     public void restoreProperties() {
@@ -105,6 +106,14 @@ public class SupportRefillCalculationPanel extends WizardPage {
         } catch (Exception ignored) {
         }
         jArriveTime.setDate(new Date(date));
+
+        try {
+            jCheckUseArriveTime.setSelected(
+                    Boolean.parseBoolean(profile.getProperty("ref.calculation.aren")));
+        } catch (Exception ignored) {
+            jCheckUseArriveTime.setSelected(false);
+        }
+        jCheckUseArriveTimeActionPerformed(null);
     }
 
     /**
@@ -136,6 +145,7 @@ public class SupportRefillCalculationPanel extends WizardPage {
         jArriveTime = new de.tor.tribes.ui.components.DateTimeField();
         jBruteForce = new javax.swing.JRadioButton();
         jSystematicCalculation = new javax.swing.JRadioButton();
+        jCheckUseArriveTime = new javax.swing.JCheckBox();
 
         jInfoScrollPane.setMinimumSize(new java.awt.Dimension(19, 180));
         jInfoScrollPane.setPreferredSize(new java.awt.Dimension(19, 180));
@@ -259,12 +269,12 @@ public class SupportRefillCalculationPanel extends WizardPage {
 
         jLabel3.setText("Späteste Ankunftzeit");
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel3.add(jLabel3, gridBagConstraints);
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel3.add(jArriveTime, gridBagConstraints);
@@ -275,6 +285,7 @@ public class SupportRefillCalculationPanel extends WizardPage {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 2;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel3.add(jBruteForce, gridBagConstraints);
@@ -282,11 +293,23 @@ public class SupportRefillCalculationPanel extends WizardPage {
         buttonGroup1.add(jSystematicCalculation);
         jSystematicCalculation.setText("Systematische Berechnung");
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel3.add(jSystematicCalculation, gridBagConstraints);
+
+        jCheckUseArriveTime.setText("Ankunftszeit");
+        jCheckUseArriveTime.setToolTipText("");
+        jCheckUseArriveTime.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCheckUseArriveTimeActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        jPanel3.add(jCheckUseArriveTime, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -344,22 +367,38 @@ public class SupportRefillCalculationPanel extends WizardPage {
             }
         }
     }//GEN-LAST:event_fireCalculateAttacksEvent
+
+    private void jCheckUseArriveTimeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckUseArriveTimeActionPerformed
+        jLabel3.setEnabled(jCheckUseArriveTime.isSelected());
+        jArriveTime.setEnabled(jCheckUseArriveTime.isSelected());
+    }//GEN-LAST:event_jCheckUseArriveTimeActionPerformed
     
     protected TimeFrame getTimeFrame() {
-        Date arrive = jArriveTime.getSelectedDate();
-        TimeFrame f = new TimeFrame(new Date(System.currentTimeMillis()), new Date(System.currentTimeMillis()), arrive, arrive);
-        f.addArriveTimeSpan(new TimeSpan(arrive));
-        f.addStartTimeSpan(new TimeSpan(new IntRange(0, 24)));
-        return f;
+        if(jCheckUseArriveTime.isSelected()) {
+            Date arrive = jArriveTime.getSelectedDate();
+            TimeFrame f = new TimeFrame(new Date(System.currentTimeMillis()), new Date(System.currentTimeMillis()), arrive, arrive);
+            f.addArriveTimeSpan(new TimeSpan(arrive));
+            f.addStartTimeSpan(new TimeSpan(new IntRange(0, 24)));
+            return f;
+        } else {
+            //add 1 Jear to timespan to ensure that every movement is possible
+            TimeFrame f = new TimeFrame(new Date(System.currentTimeMillis()), new Date(System.currentTimeMillis()),
+                    new Date(System.currentTimeMillis() + 60 * 60 * 24 * 365 * 1000), new Date(System.currentTimeMillis() + 60 * 60 * 24 * 365 * 1000));
+            
+            f.addArriveTimeSpan(new TimeSpan(new IntRange(0,24)));
+            f.addStartTimeSpan(new TimeSpan(new IntRange(0,24)));
+            return f;
+        }
     }
     
     private void initializeCalculation() {
-        if (jArriveTime.getSelectedDate().getTime() < System.currentTimeMillis()) {
+        TimeFrame f = getTimeFrame();
+        
+        if (f.getArriveRange().getMaximumLong() < System.currentTimeMillis()) {
             notifyStatusUpdate("Die gewählte Ankunftzeit liegt in der Vergangenheit");
             notifyStatusUpdate("Berechnung abgebrochen!");
             return;
         }
-        TimeFrame f = getTimeFrame();
         if (jBruteForce.isSelected()) {
             calculator = new BruteForce();
         } else if (jSystematicCalculation.isSelected()) {
@@ -462,6 +501,7 @@ public class SupportRefillCalculationPanel extends WizardPage {
     private javax.swing.JLabel jAvailableSupports;
     private javax.swing.JRadioButton jBruteForce;
     private javax.swing.JButton jCalculateButton;
+    private javax.swing.JCheckBox jCheckUseArriveTime;
     private javax.swing.JScrollPane jInfoScrollPane;
     private javax.swing.JTextPane jInfoTextPane;
     private javax.swing.JLabel jLabel1;

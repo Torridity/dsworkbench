@@ -298,9 +298,9 @@ public class TimeFrame {
               ranges.add(newRange);
             }
           }
+          //increment current date by one day
+          thisDate = DateUtils.addDays(thisDate, 1);
         }
-        //increment current date by one day
-        thisDate = DateUtils.addDays(thisDate, 1);
       }
     }
     Collections.sort(ranges, new Comparator<LongRange>() {
@@ -377,9 +377,9 @@ public class TimeFrame {
               ranges.add(newRange);
             }
           }
+          //increment current date by one day
+          thisDate = DateUtils.addDays(thisDate, 1);
         }
-        //increment current date by one day
-        thisDate = DateUtils.addDays(thisDate, 1);
       }
     }
     Collections.sort(ranges, new Comparator<LongRange>() {

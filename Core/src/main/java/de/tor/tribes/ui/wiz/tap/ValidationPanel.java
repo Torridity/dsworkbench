@@ -40,6 +40,7 @@ import java.util.List;
 import java.util.Map;
 import javax.swing.SwingUtilities;
 import javax.swing.table.AbstractTableModel;
+import org.apache.log4j.Logger;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.netbeans.spi.wizard.Wizard;
 import org.netbeans.spi.wizard.WizardPage;
@@ -50,7 +51,8 @@ import org.netbeans.spi.wizard.WizardPanelNavResult;
  * @author Torridity
  */
 public class ValidationPanel extends WizardPage implements SettingsChangedListener {
-
+    
+    Logger logger = Logger.getLogger("ValidationPanel");
     @Override
     public void fireTimeFrameChangedEvent() {
     }
@@ -336,6 +338,7 @@ public class ValidationPanel extends WizardPage implements SettingsChangedListen
     }//GEN-LAST:event_fireChangeViewEvent
 
     protected void setup() {
+        logger.debug("Setting up Validation Panel");
         sourceOverviewPanel.reset();
         targetOverviewPanel.reset();
         TAPAttackSourceElement[] sourceElements = AttackSourceFilterPanel.getSingleton().getFilteredElements();
@@ -345,8 +348,11 @@ public class ValidationPanel extends WizardPage implements SettingsChangedListen
         Hashtable<Village, Integer> validTargets = new Hashtable<>();
 
         TimeFrame f = TimeSettingsPanel.getSingleton().getTimeFrame();
+        logger.debug("Got timeFrame" + f.toString());
         for (TAPAttackSourceElement sourceElement : sourceElements) {
+            logger.debug("running through sources");
             for (TAPAttackTargetElement targetElement : targetElements) {
+                logger.debug("running through targets");
                 long runtime = DSCalculator.calculateMoveTimeInMillis(sourceElement.getVillage(), targetElement.getVillage(), sourceElement.getUnit().getSpeed());
                 if (f.isMovementPossible(runtime)) {
                     Integer sourceVal = validSources.get(sourceElement.getVillage());

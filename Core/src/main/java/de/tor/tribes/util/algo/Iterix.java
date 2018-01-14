@@ -21,17 +21,12 @@ import de.tor.tribes.types.AbstractTroopMovement;
 import de.tor.tribes.types.Fake;
 import de.tor.tribes.types.Off;
 import de.tor.tribes.types.ext.Village;
-import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.ServerSettings;
-import java.awt.Color;
-import java.io.FileWriter;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
 import org.apache.log4j.Logger;
 
 /**
@@ -43,8 +38,6 @@ public class Iterix extends AbstractAttackAlgorithm {
     private static final boolean LOG_TIMES = false; 
     
     private static Logger logger = Logger.getLogger("SystematicAlgorithm");
-    private JLabel[][] labels;
-    private JLabel[][] labels2;
     
     //[unit type id * source.size() + source][target]
     private int[][] mappings;
@@ -56,7 +49,6 @@ public class Iterix extends AbstractAttackAlgorithm {
     //list where the unit type ids are obtained from
     private List<UnitHolder> troops;
     
-    JFrame f;
     int selectedSource = 0;
     int selectedTarget = 0;
     int round = 0;
@@ -156,10 +148,6 @@ public class Iterix extends AbstractAttackAlgorithm {
                 if(LOG_TIMES) {
                     System.out.println("solved: " + (System.currentTimeMillis() - s1));
                 }
-            /* int[] sourceMappings = buildSourceMappings(mappings);
-                int[] targetMappings = buildTargetMappings(mappings);
-                drawResults(sourceMappings, targetMappings);
-                colorSelectedValues(selectedSource, selectedTarget);*/
             } catch (Exception ewe) {
                 logger.error("Unexpexted error during off calculation", ewe);
                 logError("Unerwarteter Fehler bei der Off-Berechnung!");
@@ -171,23 +159,17 @@ public class Iterix extends AbstractAttackAlgorithm {
             int cnt = 0;
             for (int i = 0; i < mappings.length; i++) {
                 for (int j = 0; j < pTargets.size(); j++) {
+                    Village target = pTargets.get(j);
+                    Off movementForTarget = movements.get(target);
+                    if (movementForTarget == null) {
+                        movementForTarget = new Off(target, pMaxAttacksTable.get(target));
+                        movements.put(target, movementForTarget);
+                    }
+                    
                     if (result[i][j] != 0) {
                         cnt++;
                         Village source = offSources.get(i % offSources.size());
-                        Village target = pTargets.get(j);
-                        Off movementForTarget = movements.get(target);
-                        if (movementForTarget == null) {
-                            movementForTarget = new Off(target, pMaxAttacksTable.get(target));
-                            movements.put(target, movementForTarget);
-                        }
                         movementForTarget.addOff(troops.get((int) (i / offSources.size())), source);
-                    } else {
-                        Village target = pTargets.get(j);
-                        Off movementForTarget = movements.get(target);
-                        if (movementForTarget == null) {
-                            movementForTarget = new Off(target, pMaxAttacksTable.get(target));
-                            movements.put(target, movementForTarget);
-                        }
                     }
                 }
             }
@@ -324,10 +306,6 @@ public class Iterix extends AbstractAttackAlgorithm {
                 if(LOG_TIMES) {
                     System.out.println("solved: " + (System.currentTimeMillis() - s1));
                 }
-            /* int[] sourceMappings = buildSourceMappings(mappings);
-                int[] targetMappings = buildTargetMappings(mappings);
-                drawResults(sourceMappings, targetMappings);
-                colorSelectedValues(selectedSource, selectedTarget);*/
             } catch (Exception ewe) {
                 logger.error("Unexpexted error during off calculation", ewe);
                 logError("Unerwarteter Fehler bei der Off-Berechnung!");
@@ -339,22 +317,16 @@ public class Iterix extends AbstractAttackAlgorithm {
         Hashtable<Village, Fake> fakeMovements = new Hashtable<>();
         for (int i = 0; i < mappings.length; i++) {
             for (int j = 0; j < pTargets.size(); j++) {
+                Village target = pTargets.get(j);
+                Fake movementForTarget = fakeMovements.get(target);
+                if (movementForTarget == null) {
+                    movementForTarget = new Fake(target, pMaxAttacksTable.get(target));
+                    fakeMovements.put(target, movementForTarget);
+                }
+                
                 if (result[i][j] != 0) {
                     Village source = fakeSources.get(i % fakeSources.size());
-                    Village target = pTargets.get(j);
-                    Fake movementForTarget = fakeMovements.get(target);
-                    if (movementForTarget == null) {
-                        movementForTarget = new Fake(target, pMaxAttacksTable.get(target));
-                        fakeMovements.put(target, movementForTarget);
-                    }
                     movementForTarget.addOff(troops.get((int) i / fakeSources.size()), source);
-                } else {
-                    Village target = pTargets.get(j);
-                    Fake movementForTarget = fakeMovements.get(target);
-                    if (movementForTarget == null) {
-                        movementForTarget = new Fake(target, pMaxAttacksTable.get(target));
-                        fakeMovements.put(target, movementForTarget);
-                    }
                 }
             }
         }
@@ -365,11 +337,6 @@ public class Iterix extends AbstractAttackAlgorithm {
                 movementList.add(fakeMovements.get(target));
             }
         }
-
-        /*JFrame jf = new JFrame();
-        jf.add(f);
-        jf.pack();
-        jf.setVisible(true);*/
         
         if(LOG_TIMES) {
             System.out.println("Overall " + (System.currentTimeMillis() - s));
@@ -397,7 +364,7 @@ public class Iterix extends AbstractAttackAlgorithm {
                 // long send = pTimeFrame.getEnd() - (long) runtime * 1000;
                 //if (pTimeFrame.inside(new Date(send), s.getTribe())) {
                 long lRuntime = (long) runtime * 1000;
-                if (pTimeFrame.isMovementPossible(lRuntime, s)) {
+                if (pTimeFrame.isMovementPossible(lRuntime)) {
                     fail = false;
                     break;
                 }
@@ -440,7 +407,7 @@ public class Iterix extends AbstractAttackAlgorithm {
                     long runtime = Math.round(DSCalculator.calculateMoveTimeInSeconds(pSources.get(i),
                             pTargets.get(j), troops.get(z).getSpeed())  * 1000);
                     
-                    if (pTimeFrame.isMovementPossible(runtime, pSources.get(i))) {
+                    if (pTimeFrame.isMovementPossible(runtime)) {
                         tMappings[z * pSources.size() + i][j] = pMaxAttacksTable.get(pTargets.get(j));
                         cnt++;
                     } else {
@@ -449,19 +416,9 @@ public class Iterix extends AbstractAttackAlgorithm {
                 }
             }
         }
-
-
-        /*int[] s = buildSourceMappings(tMappings);
-        int c = 0;
-        for (Integer i : s) {
-        if (i != 0) {
-        c++;
-        }
-        }*/
-
+        
         int maxCount = troops.size() * pSources.size() * pTargets.size();
         logInfo("   * " + cnt + " von " + maxCount + " Herkunft-Ziel Kombinationen möglich");
-        // logInfo("   * " + c + " von " + pSources.size() + " Herkunftsdörfer werden verwendet");
         return tMappings;
     }
 
@@ -699,133 +656,5 @@ public class Iterix extends AbstractAttackAlgorithm {
         }
         tMap += (System.currentTimeMillis() - s);
         return targetMappings;
-    }
-
-    private void drawResults(int[] sourceMappings, int[] targetMappings) {
-        for (int i = 0; i < mappings.length; i++) {
-            for (int j = 0; j < mappings[0].length; j++) {
-                labels[i][j].setText("" + mappings[i][j]);
-                labels2[i][j].setText("" + result[i][j]);
-            }
-
-        }
-
-        for (int i = 0; i < sourceMappings.length; i++) {
-            labels[i][mappings[0].length].setBackground(Color.GREEN);
-            labels[i][mappings[0].length].setText("" + sourceMappings[i]);
-        }
-
-        for (int i = 0; i < targetMappings.length; i++) {
-            labels[mappings.length][i].setBackground(Color.GREEN);
-            labels[mappings.length][i].setText("" + targetMappings[i]);
-        }
-
-    }
-
-    private void colorSelectedValues(int pSourceIdx, int pTargetIdx) {
-        for (int i = 0; i < mappings.length; i++) {
-            for (int j = 0; j < mappings[0].length; j++) {
-                if (i == pSourceIdx || j == pTargetIdx) {
-                    labels[i][j].setBackground(Color.BLUE);
-                    labels2[i][j].setBackground(Color.BLUE);
-                } else {
-                    labels[i][j].setBackground(Constants.DS_BACK);
-                    labels2[i][j].setBackground(Constants.DS_BACK);
-                }
-
-                if (i == pSourceIdx && j == pTargetIdx) {
-                    labels[i][j].setBackground(Color.RED);
-                    labels2[i][j].setBackground(Color.RED);
-                }
-
-                if (result[i][j] >= 1) {
-                    labels2[i][j].setBackground(Color.MAGENTA);
-                }
-
-            }
-        }
-    }
-
-    public void mappingsToCSV(double[][] pMappings, int[] pSourceMappings, int[] pTargetMappings, String pFile) {
-        try {
-            FileWriter w = new FileWriter(pFile);
-            for (int i = 0; i < pMappings.length; i++) {
-                String line = "";
-                for (int j = 0; j < pMappings[0].length; j++) {
-                    line += pMappings[i][j] + ";";
-                }
-
-                line = line + pSourceMappings[i] + "\n";
-                w.write(line);
-            }
-
-            String line = "";
-            for (int mapping : pTargetMappings) {
-                line += mapping + ";";
-            }
-
-            line = line.substring(0, line.length() - 1) + "\n";
-            w.write(line);
-            w.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private boolean test(int[][] data) {
-        int x = (int) (9.0 * Math.random());
-        int y = (int) (9.0 * Math.random());
-
-        data[x][y] = (int) Math.rint(10.0 * Math.random());
-        int sum = sum(data);
-        System.out.println("Added " + data[x][y]);
-        System.out.println("Sum: " + sum);
-        //  print(data);
-        System.out.println("===============");
-
-        if (sum < 100 && sum % 2 == 0) {
-            System.out.println("Taking sum " + sum + " and going to next level...");
-            boolean res = test(data);
-            if (res) {
-                System.out.println("Finished in Iteration");
-                return true;
-            }
-        } else if (sum == 100) {
-            System.out.println("Finished");
-            return true;
-        }
-        System.out.println("Reset " + x + "/" + y + " at sum " + sum);
-        data[x][y] = 0;
-        return test(data);
-    }
-
-    private int sum(int[][] data) {
-        int sum = 0;
-        for (int i = 0; i < 10; i++) {
-            for (int j = 0; j < 10; j++) {
-                sum += data[i][j];
-            }
-        }
-        return sum;
-    }
-
-    private void print(int[][] data) {
-        for (int i = 0; i < 10; i++) {
-            String row = "";
-            for (int j = 0; j < 10; j++) {
-                row += data[i][j] + " ";
-            }
-            System.out.println(row);
-        }
-    }
-
-    public static void main(String[] args) {
-        int[][] data = new int[10][10];
-        for (int i = 0; i < 10; i++) {
-            for (int j = 0; j < 10; j++) {
-                data[i][j] = 0;
-            }
-        }
-        new Iterix().test(data);
     }
 }

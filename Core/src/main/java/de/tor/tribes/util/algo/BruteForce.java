@@ -97,7 +97,7 @@ public class BruteForce extends AbstractAttackAlgorithm {
 
                         long runtime = (long) time * 1000;
                         //check if attack is somehow possible
-                        if (pTimeFrame.isMovementPossible(runtime, v)) {
+                        if (pTimeFrame.isMovementPossible(runtime)) {
                             //only calculate if time is in time frame
                             //get list of source villages for current target
                             Hashtable<UnitHolder, List<Village>> attacksForVillage = attacks.get(v);
@@ -234,7 +234,7 @@ public class BruteForce extends AbstractAttackAlgorithm {
 
                         long runtime = (long) time * 1000;
                         //check if attack is somehow possible
-                        if (pTimeFrame.isMovementPossible(runtime, v)) {
+                        if (pTimeFrame.isMovementPossible(runtime)) {
                             //only calculate if time is in time frame
                             //get list of source villages for current target
                             Hashtable<UnitHolder, List<Village>> attacksForVillage = attacks.get(v);

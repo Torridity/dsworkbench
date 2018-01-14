@@ -17,7 +17,6 @@ package de.tor.tribes.ui.algo;
 
 import com.visutools.nav.bislider.ColorisationEvent;
 import com.visutools.nav.bislider.ColorisationListener;
-import de.tor.tribes.types.DefenseTimeSpan;
 import de.tor.tribes.types.TimeSpan;
 import de.tor.tribes.types.TimeSpanDivider;
 import de.tor.tribes.ui.renderer.TimeFrameListCellRenderer;
@@ -252,9 +251,13 @@ public class AttackTimePanel extends javax.swing.JPanel implements DragGestureLi
         TimeSpan arrive = getArriveSpan();
         if (start != null) {
             jLabel5.setText(start.toString());
+        } else {
+            jLabel5.setText("-------------");
         }
         if (arrive != null) {
             jLabel6.setText(arrive.toString());
+        } else {
+            jLabel6.setText("-------------");
         }
     }
 
@@ -264,18 +267,22 @@ public class AttackTimePanel extends javax.swing.JPanel implements DragGestureLi
      * @return TimeSpan The send span
      */
     private TimeSpan getSendSpan() {
-        TimeSpan start;
+        TimeSpan start = null;
         IntRange range = new IntRange(Math.round(jSendTimeFrame.getMinimumColoredValue()), Math.round(jSendTimeFrame.getMaximumColoredValue()));
+        if (range.getMinimumInteger() == range.getMaximumInteger() && !jExactTimeButton.isSelected()) {
+            return null;
+        }
+        
         if (jAlwaysButton.isSelected()) {
             start = new TimeSpan(range);
-        } else {
-            if (jExactTimeButton.isSelected()) {
-                range = null;
-            }
+        } else if (jDayButton.isSelected()) {
             start = new TimeSpan(dateTimeField.getSelectedDate(), range);
+        } else if (jExactTimeButton.isSelected()) {
+            start = new TimeSpan(dateTimeField.getSelectedDate());
         }
-
-        start.setDirection(TimeSpan.DIRECTION.SEND);
+        if (start != null) {
+            start.setDirection(TimeSpan.DIRECTION.SEND);
+        }
 
         return start;
     }
@@ -288,11 +295,14 @@ public class AttackTimePanel extends javax.swing.JPanel implements DragGestureLi
     private TimeSpan getArriveSpan() {
         TimeSpan arrive = null;
         IntRange range = new IntRange(Math.round(jSendTimeFrame.getMinimumColoredValue()), Math.round(jSendTimeFrame.getMaximumColoredValue()));
-
-        if (jDayButton.isSelected()) {
-            arrive = new TimeSpan(dateTimeField.getSelectedDate(), range);
-        } else if (jAlwaysButton.isSelected()) {
+        if (range.getMinimumInteger() == range.getMaximumInteger() && !jExactTimeButton.isSelected()) {
+            return null;
+        }
+        
+        if (jAlwaysButton.isSelected()) {
             arrive = new TimeSpan(range);
+        } else if (jDayButton.isSelected()) {
+            arrive = new TimeSpan(dateTimeField.getSelectedDate(), range);
         } else if (jExactTimeButton.isSelected()) {
             arrive = new TimeSpan(dateTimeField.getSelectedDate());
         }
@@ -324,39 +334,14 @@ public class AttackTimePanel extends javax.swing.JPanel implements DragGestureLi
         return frame;
     }
 
-    protected void addDefenseTimeSpan(DefenseTimeSpan s) {
-        //add span
-        DefaultListModel model = (DefaultListModel) jTimeFrameList.getModel();
-        if (s.getDirection().equals(TimeSpan.DIRECTION.SEND)) {
-            ((DefaultListModel) jTimeFrameList.getModel()).add(0, s);
-        } else {
-            ((DefaultListModel) jTimeFrameList.getModel()).add(jTimeFrameList.getModel().getSize(), s);
-        }
-
-        List<TimeSpan> spans = new LinkedList<>();
-        for (int i = 0; i < model.getSize(); i++) {
-            spans.add((TimeSpan) model.getElementAt(i));
-        }
-
-
-        Collections.sort(spans);
-        model = new DefaultListModel();
-        for (TimeSpan span : spans) {
-            model.addElement(span);
-        }
-        jTimeFrameList.setModel(model);
-        fireTimeFrameChangedEvent();
-
-    }
-
     /**
      * Try to add a new timespan. Before it is checked for intersection
      *
      * @param s The new timespan
      */
     protected void addTimeSpan(TimeSpan s) {
-        if (s.getSpan() != null && !s.isValidAtExactTime() && s.getSpan().getMinimumInteger() == s.getSpan().getMaximumInteger()) {
-            JOptionPaneHelper.showWarningBox(this, "Der angegebene Zeitrahmen ist ungültig. Der Zeitraum muss mindestens eine Stunde betragen.", "Warnung");
+        if (s == null) {
+            JOptionPaneHelper.showWarningBox(this, "Der angegebene Zeitrahmen ist ungültig", "Warnung");
             return;
         }
         //check if timeframe exists or intersects with other existing frame

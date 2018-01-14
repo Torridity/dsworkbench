@@ -348,7 +348,7 @@ public class ValidationPanel extends WizardPage implements SettingsChangedListen
         for (TAPAttackSourceElement sourceElement : sourceElements) {
             for (TAPAttackTargetElement targetElement : targetElements) {
                 long runtime = DSCalculator.calculateMoveTimeInMillis(sourceElement.getVillage(), targetElement.getVillage(), sourceElement.getUnit().getSpeed());
-                if (f.isMovementPossible(runtime, targetElement.getVillage())) {
+                if (f.isMovementPossible(runtime)) {
                     Integer sourceVal = validSources.get(sourceElement.getVillage());
                     if (sourceVal == null) {
                         sourceVal = 0;

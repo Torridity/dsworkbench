@@ -646,7 +646,12 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
             showInfo("Keine gültigen Farmtruppen für Konfiguration A gefunden");
             return;
         }
-        farm(FARM_CONFIGURATION.A);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                farm(FARM_CONFIGURATION.A);
+            }
+        }).start();
     }
 
     /**
@@ -657,7 +662,12 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
             showInfo("Keine gültigen Farmtruppen für Konfiguration B gefunden");
             return;
         }
-        farm(FARM_CONFIGURATION.B);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                farm(FARM_CONFIGURATION.B);
+            }
+        }).start();
     }
 
     /**
@@ -668,7 +678,12 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
             showInfo("Keine gültigen Farmtruppen für Konfiguration C gefunden");
             return;
         }
-        farm(FARM_CONFIGURATION.C);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                farm(FARM_CONFIGURATION.C);
+            }
+        }).start();
     }
 
     public TroopAmountDynamic getTroops(FARM_CONFIGURATION pConfig) {

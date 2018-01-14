@@ -1383,7 +1383,13 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
                 copyBBToExternalClipboardEvent();
                 break;
             case BROWSER_LINK:
-                sendAttacksToBrowser();
+                //use own thread against blocking of render thread
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        sendAttacksToBrowser();
+                    }
+                }).start();
                 break;
             case FILE_HTML:
                 copyHTMLToFileEvent();

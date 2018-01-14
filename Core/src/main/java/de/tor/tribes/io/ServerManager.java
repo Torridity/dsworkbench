@@ -51,42 +51,43 @@ public class ServerManager {
         }
     }
     
-    //TODO buffer servers to reduce traffic
     public static void loadServerList(Proxy pProxy) throws Exception {
         SERVERS = new LinkedHashMap<>();
-        logger.debug("Loading servers for die-staemme.de");
-        LinkedHashMap<String, String> serversDe = loadServerList("https://www.die-staemme.de", pProxy);
-        logger.debug("Loading servers for staemme.ch");
-        LinkedHashMap<String, String> serversCh = loadServerList("https://www.staemme.ch", pProxy);
-        for (String id : serversDe.keySet()) {
-            logger.debug("Adding server with id " + id + " and URL " + serversDe.get(id));
-            SERVERS.put(id, serversDe.get(id));
-        }
-        for (String id : serversCh.keySet()) {
-            logger.debug("Adding server with id " + id + " and URL " + serversCh.get(id));
-            SERVERS.put(id, serversCh.get(id));
-        }
-
-        logger.debug("REading custom servers from servers.txt");
+        logger.debug("Reading servers from servers.txt");
 
         BufferedReader r = null;
         try {
             if (new File("servers.txt").exists()) {
                 r = new BufferedReader(new FileReader("servers.txt"));
-                int cnt = 0;
+                int cnt = 0, regCnt = 0;
                 String line;
                 while ((line = r.readLine()) != null) {
-                    if (!line.startsWith("#")) {//not commented line
+                    if (line.startsWith("#") || line.trim().length() <= 1) {//commented or empty line
+                        continue;
+                    }
+                    if(line.startsWith("\\")) {
+                        //region
+                        logger.debug("Loading servers for " + line.substring(1));
+                        LinkedHashMap<String, String> serversRegion = loadServerList(line.substring(1), pProxy);
+                        regCnt++;
+                        
+                        for (String id : serversRegion.keySet()) {
+                            logger.debug("Adding server with id " + id + " and URL " + serversRegion.get(id));
+                            SERVERS.put(id, serversRegion.get(id));
+                            cnt++;
+                        }
+                    } else {
+                        //single server
                         String[] split = line.split(";");
                         logger.debug("Adding server with id " + split[0] + " and URL " + split[1]);
                         SERVERS.put(split[0], split[1]);
                         cnt++;
                     }
                 }
-                logger.info("Read " + cnt + " external servers");
+                logger.info("Read " + regCnt + " regions and " + cnt + " servers");
             }
         } catch (Throwable e) {
-            logger.warn("Failed to read external servers. Skipping it.");
+            logger.warn("Failed to read servers. Skipping it.", e);
         } finally {
             if (r != null) {
                 try {

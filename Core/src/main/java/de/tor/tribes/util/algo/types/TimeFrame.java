@@ -142,13 +142,14 @@ public class TimeFrame {
    * @param pRuntime Runtime to fit into
    * @param pVillage Village for which the arrive date should be valid
    * @param pUsedSendTimes Already used send times (possible times are checked
-   * in steps of 10 seconds). This argument may be 'null'. Then send times are
+   * in steps of 1ms). This argument may be 'null'. Then send times are
    * not checked.
    * @return Date Fitted arrive time
    */
   public Date getFittedArriveTime(long pRuntime, de.tor.tribes.types.ext.Village pVillage, List<Long> pUsedSendTimes) {
     List<LongRange> startRanges = startTimespansToRanges(pVillage.getTribe());
     List<LongRange> arriveRanges = arriveTimespansToRanges(pVillage);
+    List<LongRange> possible = new ArrayList();
     for (LongRange currentStartRange : startRanges) {
       LongRange arriveRangeForStartRange = new LongRange(currentStartRange.getMinimumLong() + pRuntime, currentStartRange.getMaximumLong() + pRuntime);
       for (LongRange currentArriveRange : arriveRanges) {
@@ -184,21 +185,56 @@ public class TimeFrame {
             //check everything until 'maxArriveForStartRange'
             checkEnd = maxArriveForStartRange;
           }
-
-          int cnt = 0;
-          while (cnt < 100) {
-            long arriveTime = checkStart + Math.round(Math.random() * (checkEnd - checkStart));
-            if (pUsedSendTimes == null || cnt > 100 || !pUsedSendTimes.contains(arriveTime - pRuntime)) {
-              if (pUsedSendTimes != null) {
-                pUsedSendTimes.add(arriveTime - pRuntime);
+          
+          if(checkStart != checkEnd) {
+            //We are handling real Ranges
+            int cnt = 0;
+            while (cnt < 20) {
+              long arriveTime = checkStart + Math.round(Math.random() * (checkEnd - checkStart));
+              if (pUsedSendTimes == null || !pUsedSendTimes.contains(arriveTime - pRuntime)) {
+                if (pUsedSendTimes != null) {
+                  pUsedSendTimes.add(arriveTime - pRuntime);
+                }
+                return new Date(arriveTime);
               }
-              return new Date(arriveTime);
+              cnt++;
             }
-            cnt++;
+            //We found nothing with random, try systematic search
+            for(long i = checkStart; i <= checkEnd; i++) {
+                if(!pUsedSendTimes.contains(i - pRuntime)) {
+                  pUsedSendTimes.add(i - pRuntime);
+                  return new Date(i);
+                }
+            }
+          } else {
+            //We are handling a fixed arrive Time
+            if(pUsedSendTimes == null || !pUsedSendTimes.contains(checkStart - pRuntime)) {
+              if (pUsedSendTimes != null) {
+                pUsedSendTimes.add(checkStart - pRuntime);
+              }
+              return new Date(checkStart);
+            }
           }
+          possible.add(new LongRange(checkStart, checkEnd));
         }
       }
     }
+    
+    if(!possible.isEmpty()) {
+        long cnt = 0;
+        for(LongRange r: possible) {
+            cnt += r.getMaximumLong() - r.getMinimumLong() + 1;
+        }
+        cnt = (long) (Math.random() * cnt);
+        for(LongRange r: possible) {
+            Long span = r.getMaximumLong() - r.getMinimumLong() + 1;
+            if(cnt < span) {
+                return new Date(r.getMinimumLong() + cnt);
+            }
+            cnt -= span;
+        }
+    }
+    
     return null;
   }
 

@@ -45,6 +45,7 @@ import org.apache.log4j.Logger;
 
 public abstract class TroopSelectionPanel<T extends TroopAmount> extends javax.swing.JPanel implements GenericManagerListener {
     
+    private Logger logger = Logger.getLogger("TroopSelectionPanel");
     private Hashtable<String, Point> unitCoordinates = new Hashtable<>();
     private LabeledTextField[][] unitFields = new LabeledTextField[20][20];
     
@@ -265,7 +266,11 @@ public abstract class TroopSelectionPanel<T extends TroopAmount> extends javax.s
     }//GEN-LAST:event_fireClick
     
     private void fireUseStandardAttackEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireUseStandardAttackEvent
-        loadFromStandardAttack();
+        try {
+            loadFromStandardAttack();
+        } catch(Exception e) {
+            logger.warn("Error during loading Standard Attack", e);
+        }
     }//GEN-LAST:event_fireUseStandardAttackEvent
     
     protected abstract void loadFromStandardAttack();

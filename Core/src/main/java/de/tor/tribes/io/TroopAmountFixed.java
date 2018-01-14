@@ -18,6 +18,8 @@ package de.tor.tribes.io;
 import de.tor.tribes.types.StandardAttack;
 import de.tor.tribes.types.UnknownUnit;
 import de.tor.tribes.types.ext.Village;
+import de.tor.tribes.util.troops.TroopsManager;
+import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -251,7 +253,17 @@ public class TroopAmountFixed extends TroopAmount {
 
     @Override
     protected int getInternalAmountForUnit(UnitHolder pUnit, Village pVillage) {
-        return getAmountForUnit(pUnit);
+        if(pVillage == null) {
+            return getAmountForUnit(pUnit);
+        } else {
+            VillageTroopsHolder own = TroopsManager.getSingleton().getTroopsForVillage(pVillage, TroopsManager.TROOP_TYPE.OWN);
+            if (own == null) {
+                //no info available
+                //just use 0 for all Units
+                return 0;
+            }
+            return Math.min(own.getTroops().getAmountForUnit(pUnit), getAmountForUnit(pUnit));
+        }
     }
     
     @Override

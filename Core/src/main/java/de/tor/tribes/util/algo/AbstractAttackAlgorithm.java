@@ -30,8 +30,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * @TODO (DIFF) Check max. snob runtime
- *
  * @author Torridity
  */
 public abstract class AbstractAttackAlgorithm extends Thread {

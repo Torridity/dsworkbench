@@ -31,8 +31,6 @@ import java.util.Date;
 import org.apache.log4j.Logger;
 
 /**
- * http://de8.die-staemme.de/game.php?t=743256&village=269739&screen=place
- * http://de8.die-staemme.de/game.php?t=743256&village=273090&screen=place&mode=command&target=285904
  *
  * @author Charon
  */
@@ -134,8 +132,13 @@ public class BrowserCommandSender {
                 Process p = Runtime.getRuntime().exec(new String[]{browser, url});
                 p.waitFor();
             }
+            int sleep = GlobalOptions.getProperties().getInt("command.sleep.time");
+            if (sleep < 100) {
+                logger.warn("command.sleep.time must not be smaller than 100. Setting value to minimum.");
+                sleep = 100;
+            }
             try {
-                Thread.sleep(100);
+                Thread.sleep(sleep);
             } catch (Exception ignored) {
             }
             return true;
@@ -186,8 +189,13 @@ public class BrowserCommandSender {
                 p.waitFor();
             }
 
+            int sleep = GlobalOptions.getProperties().getInt("command.sleep.time");
+            if (sleep < 100) {
+                logger.warn("command.sleep.time must not be smaller than 100. Setting value to minimum.");
+                sleep = 100;
+            }
             try {
-                Thread.sleep(100);
+                Thread.sleep(sleep);
             } catch (Exception ignored) {
             }
         } catch (Throwable t) {
@@ -213,8 +221,13 @@ public class BrowserCommandSender {
                 logger.error("Failed opening URL " + pUrl);
             }
         }
+        int sleep = GlobalOptions.getProperties().getInt("command.sleep.time");
+        if (sleep < 100) {
+            logger.warn("command.sleep.time must not be smaller than 100. Setting value to minimum.");
+            sleep = 100;
+        }
         try {
-            Thread.sleep(100);
+            Thread.sleep(sleep);
         } catch (Exception ignored) {
         }
     }
@@ -237,8 +250,13 @@ public class BrowserCommandSender {
                 return false;
             }
         }
+        int sleep = GlobalOptions.getProperties().getInt("command.sleep.time");
+        if (sleep < 100) {
+            logger.warn("command.sleep.time must not be smaller than 100. Setting value to minimum.");
+            sleep = 100;
+        }
         try {
-            Thread.sleep(100);
+            Thread.sleep(sleep);
         } catch (Exception ignored) {
         }
         return true;
@@ -260,8 +278,13 @@ public class BrowserCommandSender {
                 Process p = Runtime.getRuntime().exec(new String[]{browser, url});
                 p.waitFor();
             }
+            int sleep = GlobalOptions.getProperties().getInt("command.sleep.time");
+            if (sleep < 100) {
+                logger.warn("command.sleep.time must not be smaller than 100. Setting value to minimum.");
+                sleep = 100;
+            }
             try {
-                Thread.sleep(100);
+                Thread.sleep(sleep);
             } catch (Exception ignored) {
             }
             return true;
@@ -287,8 +310,13 @@ public class BrowserCommandSender {
                 Process p = Runtime.getRuntime().exec(new String[]{browser, url});
                 p.waitFor();
             }
+            int sleep = GlobalOptions.getProperties().getInt("command.sleep.time");
+            if (sleep < 100) {
+                logger.warn("command.sleep.time must not be smaller than 100. Setting value to minimum.");
+                sleep = 100;
+            }
             try {
-                Thread.sleep(100);
+                Thread.sleep(sleep);
             } catch (Exception ignored) {
             }
             return true;
@@ -314,8 +342,13 @@ public class BrowserCommandSender {
                 Process p = Runtime.getRuntime().exec(new String[]{browser, url});
                 p.waitFor();
             }
+            int sleep = GlobalOptions.getProperties().getInt("command.sleep.time");
+            if (sleep < 100) {
+                logger.warn("command.sleep.time must not be smaller than 100. Setting value to minimum.");
+                sleep = 100;
+            }
             try {
-                Thread.sleep(100);
+                Thread.sleep(sleep);
             } catch (Exception ignored) {
             }
             return true;
@@ -342,8 +375,13 @@ public class BrowserCommandSender {
                 p.waitFor();
             }
 
+            int sleep = GlobalOptions.getProperties().getInt("command.sleep.time");
+            if (sleep < 100) {
+                logger.warn("command.sleep.time must not be smaller than 100. Setting value to minimum.");
+                sleep = 100;
+            }
             try {
-                Thread.sleep(100);
+                Thread.sleep(sleep);
             } catch (Exception ignored) {
             }
             return true;
@@ -370,8 +408,13 @@ public class BrowserCommandSender {
                 p.waitFor();
             }
 
+            int sleep = GlobalOptions.getProperties().getInt("command.sleep.time");
+            if (sleep < 100) {
+                logger.warn("command.sleep.time must not be smaller than 100. Setting value to minimum.");
+                sleep = 100;
+            }
             try {
-                Thread.sleep(100);
+                Thread.sleep(sleep);
             } catch (Exception ignored) {
             }
             return true;

@@ -32,6 +32,7 @@ import de.tor.tribes.ui.panels.GenericTestPanel;
 import de.tor.tribes.ui.panels.TroopSelectionPanelDynamic;
 import de.tor.tribes.ui.renderer.*;
 import de.tor.tribes.ui.windows.AbstractDSWorkbenchFrame;
+import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
 import de.tor.tribes.ui.windows.FarmInformationDetailsDialog;
 import de.tor.tribes.util.*;
 import de.tor.tribes.util.farm.FarmManager;
@@ -645,7 +646,12 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
             showInfo("Keine gültigen Farmtruppen für Konfiguration A gefunden");
             return;
         }
-        farm(FARM_CONFIGURATION.A);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                farm(FARM_CONFIGURATION.A);
+            }
+        }).start();
     }
 
     /**
@@ -656,7 +662,12 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
             showInfo("Keine gültigen Farmtruppen für Konfiguration B gefunden");
             return;
         }
-        farm(FARM_CONFIGURATION.B);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                farm(FARM_CONFIGURATION.B);
+            }
+        }).start();
     }
 
     /**
@@ -667,7 +678,12 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
             showInfo("Keine gültigen Farmtruppen für Konfiguration C gefunden");
             return;
         }
-        farm(FARM_CONFIGURATION.C);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                farm(FARM_CONFIGURATION.C);
+            }
+        }).start();
     }
 
     public TroopAmountDynamic getTroops(FARM_CONFIGURATION pConfig) {
@@ -870,6 +886,7 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
         jByVillage = new javax.swing.JRadioButton();
         jButton1 = new javax.swing.JButton();
         jSearchButton = new javax.swing.JButton();
+        jByCurrent = new javax.swing.JRadioButton();
         buttonGroup1 = new javax.swing.ButtonGroup();
         jFarmFromReportSelectionDialog = new javax.swing.JDialog();
         jLabel15 = new javax.swing.JLabel();
@@ -1342,12 +1359,16 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
 
         jLabel14.setText("Radius [Felder]");
         gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(5, 25, 5, 5);
         jFarmFromBarbarianSelectionDialog.getContentPane().add(jLabel14, gridBagConstraints);
 
         jRangeField.setText("20");
         gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 1.0;
@@ -1379,6 +1400,7 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jFarmFromBarbarianSelectionDialog.getContentPane().add(jByCenter, gridBagConstraints);
 
@@ -1406,7 +1428,7 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 4;
+        gridBagConstraints.gridy = 5;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
@@ -1420,10 +1442,20 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 4;
+        gridBagConstraints.gridy = 5;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jFarmFromBarbarianSelectionDialog.getContentPane().add(jSearchButton, gridBagConstraints);
+
+        buttonGroup1.add(jByCurrent);
+        jByCurrent.setText("Um das aktuelle Dorf");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jFarmFromBarbarianSelectionDialog.getContentPane().add(jByCurrent, gridBagConstraints);
 
         jFarmFromReportSelectionDialog.setTitle("Berichte durchsuchen...");
         jFarmFromReportSelectionDialog.setModal(true);
@@ -1576,6 +1608,10 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
                 Tribe yourTribe = GlobalOptions.getSelectedProfile().getTribe();
                 Point center = DSCalculator.calculateCenterOfMass(Arrays.asList(yourTribe.getVillageList()));
                 added = FarmManager.getSingleton().findFarmsFromBarbarians(center, UIHelper.parseIntFromField(jRangeField, 20));
+            } else if(jByCurrent.isSelected()) {
+                added = FarmManager.getSingleton().findFarmsFromBarbarians(
+                        DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage().getPosition(),
+                        UIHelper.parseIntFromField(jRangeField, 20));
             }
 
             if (added == 0) {
@@ -1697,6 +1733,7 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
     private javax.swing.JPanel jBTroopsPanel;
     private javax.swing.JButton jButton1;
     private javax.swing.JRadioButton jByCenter;
+    private javax.swing.JRadioButton jByCurrent;
     private javax.swing.JRadioButton jByVillage;
     private javax.swing.JRadioButton jByVillageCenter;
     private javax.swing.JPanel jCSettingsTab;

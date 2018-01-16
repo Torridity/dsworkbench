@@ -83,7 +83,7 @@ import org.jdesktop.swingx.painter.MattePainter;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonFrame;
 
 /**
- * @TODO add some simple runtime and retime calculator to replace excel
+ * 
  *
  * @author Charon
  * @author extremeCrazyCoder

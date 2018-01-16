@@ -1,7 +1,14 @@
-#List of custom servers where the first element in each line is the server id 
-#and the second element is the base URL of the server. Servers from regions 
-#‚de‘ and ‚ch‘ are obtained automatically and don’t have to be added here.
+#List of servers
 #
-zz1;https://zz1.tribalwars.works
-zz2;https://zz2.tribalwars.works
+#Add a server (without adding the whole Region:
+#[name];[url]    (with [name] as the name displayed by Workbench; [url] the base server url
+#e.g.:
+#zz1;https://zz1.tribalwars.works
+#
+#Adding a whole region:
+#\[url]
+\https://www.die-staemme.de
+\https://www.staemme.ch
+\https://www.tribalwars.works
+
 #fr1;https://fr1.guerretribale.fr

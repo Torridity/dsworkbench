@@ -270,12 +270,6 @@ public class GenericTestPanel extends javax.swing.JPanel {
             public void mouseReleased(MouseEvent e) {
             }
         }));
-        transferTaskPane.getContentPane().add(factoryButton("/res/ui/atts_igm.png", "Markierte Angriffe als IGM verschicken. (PA notwendig) Der/die Empf&auml;nger der IGMs sind die Besitzer der Herkunftsd&ouml;rfer der geplanten Angriffe.", new MouseAdapter() {
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-            }
-        }));
         transferTaskPane.getContentPane().add(factoryButton("/res/ui/re-time.png", "Markierten Angriff in das Werkzeug 'Retimer' einfügen", new MouseAdapter() {
 
             @Override

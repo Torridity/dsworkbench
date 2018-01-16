@@ -40,6 +40,7 @@ import java.awt.Color;
 import java.awt.Point;
 import java.util.*;
 import javax.swing.SwingUtilities;
+import org.apache.log4j.Logger;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.netbeans.spi.wizard.Wizard;
 import org.netbeans.spi.wizard.WizardPage;
@@ -57,7 +58,9 @@ public class SupportRefillFinishPanel extends WizardPage {
           + "vorher abschickst, falls die Abschickzeit mitten in der Nacht liegt oder du die Unterstützungen schnell in den Zieldörfern haben möchtest.";
   private static SupportRefillFinishPanel singleton = null;
   private VillageOverviewMapPanel overviewPanel = null;
-
+  
+  private Logger logger = Logger.getLogger("SupportRefillFinishPanel");
+  
   public static synchronized SupportRefillFinishPanel getSingleton() {
     if (singleton == null) {
       singleton = new SupportRefillFinishPanel();
@@ -128,8 +131,8 @@ public class SupportRefillFinishPanel extends WizardPage {
         jInfoScrollPane.setMinimumSize(new java.awt.Dimension(19, 180));
         jInfoScrollPane.setPreferredSize(new java.awt.Dimension(19, 180));
 
-        jInfoTextPane.setContentType("text/html");
         jInfoTextPane.setEditable(false);
+        jInfoTextPane.setContentType("text/html"); // NOI18N
         jInfoTextPane.setText("<html>Du befindest dich im <b>Angriffsmodus</b>. Hier kannst du die Herkunftsd&ouml;rfer ausw&auml;hlen, die f&uuml;r Angriffe verwendet werden d&uuml;rfen. Hierf&uuml;r hast die folgenden M&ouml;glichkeiten:\n<ul>\n<li>Einf&uuml;gen von Dorfkoordinaten aus der Zwischenablage per STRG+V</li>\n<li>Einf&uuml;gen der Herkunftsd&ouml;rfer aus der Gruppen&uuml;bersicht</li>\n<li>Einf&uuml;gen der Herkunftsd&ouml;rfer aus dem SOS-Analyzer</li>\n<li>Einf&uuml;gen der Herkunftsd&ouml;rfer aus Berichten</li>\n<li>Einf&uuml;gen aus der Auswahlübersicht</li>\n<li>Manuelle Eingabe</li>\n</ul>\n</html>\n");
         jInfoScrollPane.setViewportView(jInfoTextPane);
 
@@ -468,6 +471,16 @@ public class SupportRefillFinishPanel extends WizardPage {
   public void update() {
     List<AbstractTroopMovement> results = SupportRefillCalculationPanel.getSingleton().getResults();
     TimeFrame timeFrame = SupportRefillCalculationPanel.getSingleton().getTimeFrame();
+    if(logger.isDebugEnabled()) {
+        StringBuilder log = new StringBuilder();
+        for(AbstractTroopMovement movement: results) {
+            log.append(System.lineSeparator());
+            log.append(movement.getTarget().getCoordAsString()).append("/");
+            log.append(movement.getOffCount());
+        }
+        
+        logger.debug(log);
+    }
     List<Long> used = new LinkedList<>();
     REFResultTableModel model = new REFResultTableModel();
     int perfectTargets = 0;

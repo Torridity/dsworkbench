@@ -226,17 +226,17 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
                         logger.debug("Wizard result: " + result);
                     }
                     logger.debug("- First start wizard finished");
-                    GlobalOptions.addProperty("proxySet", (String) result.get("proxySet"));
-                    GlobalOptions.addProperty("proxyHost", (String) result.get("proxyHost"));
-                    GlobalOptions.addProperty("proxyPort", (String) result.get("proxyPort"));
-                    GlobalOptions.addProperty("proxyType", (String) result.get("proxyType"));
-                    GlobalOptions.addProperty("proxyUser", (String) result.get("proxyUser"));
-                    GlobalOptions.addProperty("proxyPassword", (String) result.get("proxyPassword"));
-                    GlobalOptions.addProperty("default.server", (String) result.get("server"));
-                    GlobalOptions.addProperty("default.player", (String) result.get("tribe.id"));
+                    GlobalOptions.addProperty("proxySet", result.get("proxySet").toString());
+                    GlobalOptions.addProperty("proxyHost", result.get("proxyHost").toString());
+                    GlobalOptions.addProperty("proxyPort", result.get("proxyPort").toString());
+                    GlobalOptions.addProperty("proxyType", result.get("proxyType").toString());
+                    GlobalOptions.addProperty("proxyUser", result.get("proxyUser").toString());
+                    GlobalOptions.addProperty("proxyPassword", result.get("proxyPassword").toString());
+                    GlobalOptions.addProperty("default.server", result.get("server").toString());
+                    GlobalOptions.addProperty("default.player", result.get("tribe.id").toString());
                     logger.debug("Creating initial profile");
                     UserProfile p = UserProfile.create(GlobalOptions.getProperty("default.server"),
-                            (String) result.get("tribe.name"));
+                            result.get("tribe.name").toString());
                     GlobalOptions.setSelectedProfile(p);
                     GlobalOptions.addProperty("selected.profile", Long.toString(p.getProfileId()));
                     logger.debug(" - Disabling first start wizard");

@@ -151,8 +151,7 @@ public class DataHolder {
   }
 
   /**
-   * Check if server is supported or not. Currently only 1000x1000 servers are
-   * allowed
+   * Check if server is supported or not.
    */
   public boolean serverSupported() {
     fireDataHolderEvents("Prüfe Server Einstellungen");
@@ -1099,12 +1098,11 @@ public class DataHolder {
     logger.debug("Loading units");
     try {
       Document d = JaxenUtils.getDocument(new File(unitFile));
-      d = JaxenUtils.getDocument(new File(unitFile));
       List<Element> l = (List<Element>) JaxenUtils.getNodes(d, "/config/*");
       for (Element e : l) {
         try {
           UnitHolder unit = new UnitHolder(e);
-          if (unit != null && unit.getPlainName() != null) {
+          if (unit.getPlainName() != null) {
             mUnits.add(unit);
             mUnitsByName.put(unit.getPlainName(), unit);
           }
@@ -1129,11 +1127,9 @@ public class DataHolder {
   /**
    * Get all villages<BR> !!Attention!!<B>This call blocks while loading data.
    * It is only intended to be used internally</B> !!Attention!!
-   *
-   * @TODO Blocking added again due to obvious deadlock....keep an eye on it!
    */
   public synchronized Village[][] getVillages() {
-      if (loading) {
+    if (loading) {
       //block getting villages while loading to avoid nullpointer exceptions
       try {
         Thread.sleep(50);

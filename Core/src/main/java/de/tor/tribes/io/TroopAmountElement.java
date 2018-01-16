@@ -102,6 +102,9 @@ public class TroopAmountElement {
             if (availableAmount >= wanted) {
                 //enough troops available
                 return wanted;
+            } else if(pVillage == null) {
+                //no village given with fixed amount, just return the Amount
+                return wanted;
             } else {
                 //return max. avail count
                 return availableAmount;

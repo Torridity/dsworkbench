@@ -172,7 +172,6 @@ public class DataHolder {
                 } else {
                     //download settings.xml
                     logger.debug("Server settings do not exist at " + getDataDirectory());
-                    ServerManager.loadServerList(DSWorkbenchSettingsDialog.getSingleton().getWebProxy());
                     String sURL = ServerManager.getServerURL(GlobalOptions.getSelectedServer());
                     new File(DataHolder.getSingleton().getDataDirectory()).mkdirs();
                     fireDataHolderEvents("Lese Server Einstellungen");

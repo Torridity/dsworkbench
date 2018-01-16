@@ -51,7 +51,7 @@ public class ServerManager {
         }
     }
     
-    public static void loadServerList(Proxy pProxy) throws Exception {
+    public static void loadServerList(Proxy pProxy) {
         SERVERS = new LinkedHashMap<>();
         logger.debug("Reading servers from servers.txt");
 

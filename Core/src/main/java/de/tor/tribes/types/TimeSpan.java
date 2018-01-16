@@ -292,13 +292,17 @@ public class TimeSpan implements Comparable<TimeSpan> {
   @Override
   public String toString() {
     String result = null;
-    int startHour =(int) (getSpan().getMinimumLong() / DateUtils.MILLIS_PER_HOUR);
-    int endHour =(int) ((getSpan().getMaximumLong() + 1) / DateUtils.MILLIS_PER_HOUR);
     
     if (isValidAtSpecificDay()) {
       SimpleDateFormat fDate = new SimpleDateFormat("dd.MM.yy");
+      int startHour =(int) DateUtils.getFragmentInHours(new Date(getSpan().getMinimumLong()), Calendar.DATE);
+      int endHour =(int) DateUtils.getFragmentInHours(new Date(getSpan().getMaximumLong() + 1), Calendar.DATE);
+      
       result = "Am " + fDate.format(getDate()) + ", von " + startHour + " Uhr bis " + endHour + " Uhr";
     } else if (isValidAtEveryDay()) {
+      int startHour =(int) (getSpan().getMinimumLong() / DateUtils.MILLIS_PER_HOUR);
+      int endHour =(int) ((getSpan().getMaximumLong() + 1) / DateUtils.MILLIS_PER_HOUR);
+      
       result = "T\u00E4glich, von " + startHour + " Uhr bis " + endHour + " Uhr";
     } else if (isValidAtExactTime()) {
       SimpleDateFormat f = new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss 'Uhr'");

@@ -99,7 +99,7 @@
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel6">
       <Properties>
-        <Property name="text" type="java.lang.String" value="&lt;html&gt;&amp;copy; Torridity (2008-2015)&lt;/html&gt;"/>
+        <Property name="text" type="java.lang.String" value="&lt;html&gt;&amp;copy; Torridity (2008-2018)&lt;/html&gt;"/>
       </Properties>
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">

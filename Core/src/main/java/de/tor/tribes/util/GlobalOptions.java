@@ -129,7 +129,7 @@ public class GlobalOptions {
         return MINIMAL;
     }
 
-    public static void setInternatDataDamaged(boolean pValue) {
+    public static void setInternalDataDamaged(boolean pValue) {
         logger.info("Internal data markes as " + ((pValue) ? "'DAMAGED'" : "'VALID'"));
         internalDataDamaged = pValue;
     }

@@ -19,6 +19,7 @@ import de.tor.tribes.ui.views.DSWorkbenchSettingsDialog;
 import de.tor.tribes.io.DataHolder;
 import org.apache.log4j.Logger;
 import de.tor.tribes.io.DataHolderListener;
+import de.tor.tribes.io.ServerManager;
 import de.tor.tribes.types.UserProfile;
 import de.tor.tribes.ui.renderer.ProfileTreeNodeRenderer;
 import de.tor.tribes.ui.wiz.FirstStartWizard;
@@ -121,22 +122,22 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
         javax.swing.GroupLayout jProfileDialogLayout = new javax.swing.GroupLayout(jProfileDialog.getContentPane());
         jProfileDialog.getContentPane().setLayout(jProfileDialogLayout);
         jProfileDialogLayout.setHorizontalGroup(
-            jProfileDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jProfileDialogLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jProfileDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 380, Short.MAX_VALUE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.Alignment.TRAILING))
-                .addContainerGap())
+                jProfileDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jProfileDialogLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(jProfileDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 380, Short.MAX_VALUE)
+                                        .addComponent(jButton1, javax.swing.GroupLayout.Alignment.TRAILING))
+                                .addContainerGap())
         );
         jProfileDialogLayout.setVerticalGroup(
-            jProfileDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jProfileDialogLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 187, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jButton1)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                jProfileDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jProfileDialogLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 187, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jButton1)
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -157,7 +158,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
         pack();
     }// </editor-fold>                        
 
-    private void fireSelectAccountEvent(java.awt.event.MouseEvent evt) {                                        
+    private void fireSelectAccountEvent(java.awt.event.MouseEvent evt) {
         Object[] path = jTree1.getSelectionPath().getPath();
         UserProfile profile = null;
         try {
@@ -168,6 +169,10 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
             JOptionPaneHelper.showWarningBox(jProfileDialog, "Bitte eine Profil auswählen.", "Bitte wählen");
         } else {
             String server = profile.getServerId();
+            if (ServerManager.getServerURL(server) == null) {
+                //no world data update any longer
+                JOptionPaneHelper.showWarningBox(jProfileDialog, "Der Server des gewählten Profils scheint nicht mehr verfügbar zu sein. Es wird keine Aktualisierung der Weltdaten mehr stattfinden.", "Server nicht verfügbar.");
+            }
             GlobalOptions.setSelectedServer(server);
             GlobalOptions.setSelectedProfile(profile);
             GlobalOptions.addProperty("default.server", server);
@@ -175,7 +180,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
             GlobalOptions.addProperty("default.player", Long.toString(profile.getProfileId()));
             jProfileDialog.setVisible(false);
         }
-    }                                       
+    }
 
     protected HIDE_RESULT hideSplash() {
         try {

@@ -1,6 +1,6 @@
 # DS Workbench
 
-[![Github Releases (by Release)](https://img.shields.io/github/downloads/Torridity/dsworkbench/3.6/total.svg)](https://github.com/Torridity/dsworkbench/releases/tag/3.6)
+[![Github Releases (by Release)](https://img.shields.io/github/downloads/Torridity/dsworkbench/3.61/total.svg)](https://github.com/Torridity/dsworkbench/releases/tag/3.61)
 
 DS Workbench is a planning tool for the browser game "Tribal Wars" (http://www.die-staemme.de/).
 It is implemented as desktop application and written mostly in Java. Formerly, this project and

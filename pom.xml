@@ -6,7 +6,7 @@
     <artifactId>dsworkbench</artifactId>
     <name>DSWorkbench</name>
     <packaging>pom</packaging>
-    <version>3.6</version>
+    <version>3.61</version>
 
     <description>
         Parent project for DS Workbench. The project contains two modules: core and plugins which are put together

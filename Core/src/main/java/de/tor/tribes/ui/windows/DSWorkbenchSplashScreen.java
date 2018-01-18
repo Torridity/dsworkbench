@@ -263,6 +263,8 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
 
         logger.debug("Starting profile selection");
         boolean settingsRestored = false;
+        
+        ServerManager.loadServerList(DSWorkbenchSettingsDialog.getSingleton().getWebProxy());
         try {
             //open profile selection
             if (ProfileManager.getSingleton().getProfiles().length == 0) {

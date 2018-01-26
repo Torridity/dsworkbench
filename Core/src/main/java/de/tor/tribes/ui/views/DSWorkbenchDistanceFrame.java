@@ -15,7 +15,6 @@
  */
 package de.tor.tribes.ui.views;
 
-import com.jidesoft.swing.RangeSlider;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.UnknownUnit;
@@ -84,6 +83,7 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
     private GenericTestPanel centerPanel = null;
     private static final DistanceTableCellRenderer cellRenderer = new DistanceTableCellRenderer();
     private JComboBox unitBox = null;
+    private com.visutools.nav.bislider.BiSlider slider;
 
     public static synchronized DSWorkbenchDistanceFrame getSingleton() {
         if (SINGLETON == null) {
@@ -137,7 +137,7 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
             }
         });
         jDistanceTable.getSelectionModel().addListSelectionListener(DSWorkbenchDistanceFrame.this);
-        cellRenderer.setUnit(DataHolder.getSingleton().getUnitByPlainName("snob"));
+        cellRenderer.setUnit(UnknownUnit.getSingleton());
 
         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
         if (!Constants.DEBUG) {
@@ -153,12 +153,14 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
         super.toBack();
     }
 
+    @Override
     public void storeCustomProperties(Configuration pConfig) {
         pConfig.setProperty(getPropertyPrefix() + ".menu.visible", centerPanel.isMenuVisible());
         pConfig.setProperty(getPropertyPrefix() + ".alwaysOnTop", jAlwaysOnTop.isSelected());
 
     }
 
+    @Override
     public void restoreCustomProperties(Configuration pConfig) {
         centerPanel.setMenuVisible(pConfig.getBoolean(getPropertyPrefix() + ".menu.visible", true));
 
@@ -170,6 +172,7 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
         setAlwaysOnTop(jAlwaysOnTop.isSelected());
     }
 
+    @Override
     public String getPropertyPrefix() {
         return "distance.view";
     }
@@ -177,19 +180,20 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
     private void buildMenu() {
         JXTaskPane editPane = new JXTaskPane();
         editPane.setTitle("Bereichsfärbung");
-        final RangeSlider slider = new RangeSlider(RangeSlider.HORIZONTAL);
-        slider.setMajorTickSpacing(10);
-        slider.setMaximum(70);
-        slider.setMinorTickSpacing(1);
-        slider.setPaintLabels(true);
-        slider.setPaintTicks(true);
-        slider.setValue(10);
-        slider.setExtent(10);
+        slider = new com.visutools.nav.bislider.BiSlider();
+        slider.setBackground(getBackground());
+        slider.setSegmentSize(10);
+        slider.setMinimumValue(0);
+        slider.setMaximumColor(Constants.DS_BACK_LIGHT);
+        slider.setMinimumColor(Constants.DS_BACK_LIGHT);
+        slider.setMaximumValue(70);
+        slider.setMinimumColoredValue(10);
+        slider.setMaximumColoredValue(20);
         slider.addMouseListener(new java.awt.event.MouseAdapter() {
-
+            
             public void mouseReleased(java.awt.event.MouseEvent evt) {
-                cellRenderer.setMarkerMin(slider.getLowValue());
-                cellRenderer.setMarkerMax(slider.getHighValue());
+                cellRenderer.setMarkerMin(slider.getMinimumColoredValue());
+                cellRenderer.setMarkerMax(slider.getMaximumColoredValue());
                 jDistanceTable.repaint();
             }
         });
@@ -471,7 +475,6 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         jAlwaysOnTop.setText("Immer im Vordergrund");
-        jAlwaysOnTop.setOpaque(false);
         jAlwaysOnTop.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 fireDistanceFrameAlwaysOnTopEvent(evt);
@@ -513,9 +516,9 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
         infoPanel.setCollapsed(true);
 }//GEN-LAST:event_jXLabel1fireHideInfoEvent
 
-private void fireDistanceFrameAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fireDistanceFrameAlwaysOnTopEvent
-    setAlwaysOnTop(!isAlwaysOnTop());
-}//GEN-LAST:event_fireDistanceFrameAlwaysOnTopEvent
+    private void fireDistanceFrameAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fireDistanceFrameAlwaysOnTopEvent
+        setAlwaysOnTop(!isAlwaysOnTop());
+    }//GEN-LAST:event_fireDistanceFrameAlwaysOnTopEvent
 
     @Override
     public void fireVillagesDraggedEvent(List<Village> pVillages, Point pDropLocation) {

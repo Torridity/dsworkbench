@@ -17,6 +17,7 @@ package de.tor.tribes.util;
 
 import de.tor.tribes.util.xml.JaxenUtils;
 import java.awt.Dimension;
+import java.awt.Rectangle;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +33,7 @@ public class ServerSettings {
 
     private static Logger logger = Logger.getLogger("ServerSettings");
     private String SERVER_ID = "de26";
-    private Dimension mapSize = null;
+    private Rectangle mapSize = null;
     private int BONUS_NEW = 0;
     private int SNOB_RANGE = 70;
     private boolean church = false;
@@ -207,12 +208,16 @@ public class ServerSettings {
             logger.warn("Invalid map size (" + pMapSize + "). Falling back to 1000x1000");
             pMapSize = 1000;
         }
-        mapSize = new Dimension(pMapSize, pMapSize);
+        pMapSize = (int) Math.floor(pMapSize / 2.0);
+        mapSize = new Rectangle(500 - pMapSize, 500 - pMapSize, pMapSize * 2, pMapSize * 2);
     }
 
-    public Dimension getMapDimension() {
+    /**
+     * @return returns the part of the map where villages can be placed
+     */
+    public Rectangle getMapDimension() {
         if (mapSize == null) {
-            return new Dimension(1000, 1000);
+            return new Rectangle(0, 0, 1000, 1000);
         }
         return mapSize;
     }

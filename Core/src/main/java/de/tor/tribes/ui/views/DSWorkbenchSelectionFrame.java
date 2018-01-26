@@ -47,6 +47,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.HeadlessException;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
@@ -869,7 +870,10 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
         if (evt.getSource() == jPerformSelection) {
             Point start = new Point((Integer) jStartX.getValue(), (Integer) jStartY.getValue());
             Point end = new Point((Integer) jEndX.getValue(), (Integer) jEndY.getValue());
-            if (start.x < 0 || end.x < 0 || start.y > ServerSettings.getSingleton().getMapDimension().height || end.y > ServerSettings.getSingleton().getMapDimension().getHeight()) {
+            Rectangle mapDim = ServerSettings.getSingleton().getMapDimension();
+            
+            if (start.x < mapDim.getMinX() || start.x > mapDim.getMaxX() || start.y < mapDim.getMinY() || start.y > mapDim.getMaxY()
+                    || end.x < mapDim.getMinX() || end.x > mapDim.getMaxX() || end.y < mapDim.getMinY() || end.y > mapDim.getMaxY()) {
                 showError("Ungültiger Start- oder Endpunkt");
             } else if ((Math.abs(end.x - start.x) * (end.y - start.y)) > 30000) {
                 showError("<html>Die angegebene Auswahl k&ouml;nnte mehr als 10.000 D&ouml;rfer umfassen.<br/>"

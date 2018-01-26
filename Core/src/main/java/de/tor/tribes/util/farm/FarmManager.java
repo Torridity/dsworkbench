@@ -27,6 +27,7 @@ import de.tor.tribes.util.*;
 import de.tor.tribes.util.report.ReportManager;
 import java.awt.HeadlessException;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.UnsupportedFlavorException;
@@ -200,10 +201,12 @@ public class FarmManager extends GenericManager<FarmInformation> {
     invalidate();
     for (Village v : GlobalOptions.getSelectedProfile().getTribe().getVillageList()) {
       Ellipse2D.Double e = new Ellipse2D.Double((int) v.getX() - pRadius, (int) v.getY() - pRadius, 2 * pRadius, 2 * pRadius);
+      
+      Rectangle mapDim = ServerSettings.getSingleton().getMapDimension();
       for (int x = (int) v.getX() - pRadius; x < (int) v.getX() + pRadius; x++) {
         for (int y = (int) v.getY() - pRadius; y < (int) v.getY() + pRadius; y++) {
-          if (x > 0 && x < ServerSettings.getSingleton().getMapDimension().width
-                  && y > 0 && y < ServerSettings.getSingleton().getMapDimension().height) {
+          if (x >= mapDim.getMinX() && x <= mapDim.getMaxX()
+                  && y >= mapDim.getMinY() && y <= mapDim.getMaxY()) {
             if (e.contains(new Point2D.Double(x, y))) {
               Village farm = DataHolder.getSingleton().getVillages()[x][y];
               if (farm != null && farm.getTribe().equals(Barbarians.getSingleton())) {
@@ -232,10 +235,12 @@ public class FarmManager extends GenericManager<FarmInformation> {
     int addCount = 0;
     invalidate();
     Ellipse2D.Double e = new Ellipse2D.Double(pCenter.x - pRadius, pCenter.y - pRadius, 2 * pRadius, 2 * pRadius);
+      
+    Rectangle mapDim = ServerSettings.getSingleton().getMapDimension();
     for (int i = pCenter.x - pRadius; i < pCenter.x + pRadius; i++) {
       for (int j = pCenter.y - pRadius; j < pCenter.y + pRadius; j++) {
-        if (i > 0 && i < ServerSettings.getSingleton().getMapDimension().width
-                && j > 0 && j < ServerSettings.getSingleton().getMapDimension().height) {
+        if (i >= mapDim.getMinX() && i <= mapDim.getMaxX()
+            && j >= mapDim.getMinY() && j <= mapDim.getMaxY()) {
           if (e.contains(new Point2D.Double(i, j))) {
             Village v = DataHolder.getSingleton().getVillages()[i][j];
             if (v != null && v.getTribe().equals(Barbarians.getSingleton())) {

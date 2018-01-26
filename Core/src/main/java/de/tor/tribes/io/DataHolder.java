@@ -390,7 +390,7 @@ public class DataHolder {
                     if (!GlobalOptions.isOfflineMode()) {
                         fireDataHolderEvents("Download der aktuellen Weltdaten von die-staemme.de gestartet");
                         logger.debug(" - Initiating full reload of live data");
-                        if (downloadLiveData()) {
+                        if (downloadData()) {
                             logger.debug(" - Download succeeded");
                             fireDataHolderEvents("Download erfolgreich");
                             recreateLocal = true;
@@ -554,7 +554,9 @@ public class DataHolder {
                 line = line.replaceAll(",,", ", ,");
                 Village v = Village.parseFromPlainData(line);
                 try {
-                    mVillages[v.getX()][v.getY()] = v;
+                    if(v != null) {
+                        mVillages[v.getX()][v.getY()] = v;
+                    }
                 } catch (Exception e) {
                     //ignore invalid village
                 }
@@ -647,184 +649,6 @@ public class DataHolder {
      * settings)
      */
     private boolean downloadData() {
-
-        return downloadLiveData();
-
-        /*
-     URL file = null;
-     String serverID = GlobalOptions.getSelectedServer();
-     String serverDir = getDataDirectory();
-     logger.info("Using server dir '" + serverDir + "'");
-     new File(serverDir).mkdirs();
-
-     try {
-     // <editor-fold defaultstate="collapsed" desc="Server settings check">
-     //download settings.xml
-     String sURL = ServerManager.getServerURL(GlobalOptions.getSelectedServer());
-     logger.debug("Download server settings");
-     fireDataHolderEvents("Lese Server Einstellungen");
-     File target = new File(serverDir + "/settings.xml");
-     if (target.exists()) {
-     target.delete();
-     }
-
-     file = new URL(sURL + "/interface.php?func=get_config");
-     downloadDataFile(file, "settings_tmp.xml");
-     //new File("settings_tmp.xml").renameTo(target);
-     copyFile(new File("settings_tmp.xml"), target);
-     if (!serverSupported()) {
-     return false;
-     }
-     //</editor-fold>
-     String downloadURL = ServerManager.getServerURL(serverID);
-     if (isDataAvailable()) {
-     //no update needed
-     logger.info("No update needed");
-     return true;
-     } else {
-     //full download if no download made yet or diff too large
-     //load villages
-     logger.info("Downloading new data version from " + downloadURL);
-     //clear all data structures
-     //initialize();
-     // <editor-fold defaultstate="collapsed" desc=" Load villages ">
-
-     fireDataHolderEvents("Lade Dörferliste");
-     file = new URL(downloadURL + "/map/village.txt.gz");
-
-     logger.debug(" + Start reading villages");
-     downloadDataFile(file, "village.tmp");
-     logger.debug(" - Finished reading villages");
-
-     BufferedReader r = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream("village.tmp"))));
-     String line = "";
-     logger.debug(" + Start parsing villages");
-     while ((line = r.readLine()) != null) {
-     line = line.replaceAll(",,", ", ,");
-     Village v = Village.parseFromPlainData(line);
-     try {
-     mVillages[v.getX()][v.getY()] = v;
-     } catch (Exception e) {
-     //ignore invalid village
-     }
-     }
-     r.close();
-     logger.debug(" - Finished parsing villages");
-     // </editor-fold>
-
-     // <editor-fold defaultstate="collapsed" desc=" Load tribes ">
-     fireDataHolderEvents("Lade Spielerliste");
-
-     file = new URL(downloadURL + "/map/tribe.txt.gz");
-     logger.debug(" + Start reading tribes");
-     downloadDataFile(file, "tribe.tmp");
-     logger.debug(" - Finished reading tribes");
-
-     r = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream("tribe.tmp"))));
-
-     line = "";
-     logger.debug(" + Start parsing tribes");
-
-     while ((line = r.readLine()) != null) {
-     line = line.replaceAll(",,", ", ,");
-     Tribe t = Tribe.parseFromPlainData(line);
-     if (t != null && t.getName() != null) {
-     mTribes.put(t.getId(), t);
-     mTribesByName.put(t.getName(), t);
-     }
-     }
-
-     r.close();
-     logger.debug(" - Finished parsing tribes");
-     // </editor-fold>
-
-     // <editor-fold defaultstate="collapsed" desc=" Load allies ">
-     fireDataHolderEvents("Lade Stämmeliste");
-     file = new URL(downloadURL + "/ally.txt.gz");
-     logger.debug(" + Start reading allies");
-     downloadDataFile(file, "ally.tmp");
-     logger.debug(" - Finished reading allies");
-
-     r = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream("ally.tmp"))));
-     line = "";
-     logger.debug(" + Start parsing allies");
-     while ((line = r.readLine()) != null) {
-     line = line.replaceAll(",,", ", ,");
-     Ally a = Ally.parseFromPlainData(line);
-     if (a != null && a.getName() != null && a.getTag() != null) {
-     mAllies.put(a.getId(), a);
-     mAlliesByName.put(a.getName(), a);
-     mAlliesByTagName.put(a.getTag(), a);
-     }
-     }
-     logger.debug(" - Finished parsing allies");
-     r.close();
-
-     // </editor-fold>
-     // <editor-fold defaultstate="collapsed" desc=" Load conquers off ">
-     fireDataHolderEvents("Lese besiegte Gegner (Angriff)...");
-     target = new File(serverDir + "/kill_att.txt.gz");
-     file = new URL(downloadURL + "/kill_att.txt.gz");
-     logger.debug(" + Downloading conquers (off)");
-     downloadDataFile(file, "kill_att.tmp");
-     if (target.exists()) {
-     target.delete();
-     }
-     // new File("kill_att.tmp").renameTo(target);
-     copyFile(new File("kill_att.tmp"), target);
-     logger.debug(" - Finished downloading conquers (off)");
-     // </editor-fold>
-
-     // <editor-fold defaultstate="collapsed" desc=" Load conquers def ">
-     fireDataHolderEvents("Lese besiegte Gegner (Verteidigung)...");
-     target = new File(serverDir + "/kill_def.txt.gz");
-     file = new URL(downloadURL + "/kill_def.txt.gz");
-     logger.debug(" + Downloading conquers (def)");
-     downloadDataFile(file, "kill_def.tmp");
-     if (target.exists()) {
-     target.delete();
-     }
-     // new File("kill_def.tmp").renameTo(target);
-     copyFile(new File("kill_def.tmp"), target);
-     logger.debug(" - Finished downloading conquers (def)");
-     // </editor-fold>
-     }
-
-     // <editor-fold defaultstate="collapsed" desc="Direct download from DS-Servers">
-     //download unit information, but only once
-     target = new File(serverDir + "/units.xml");
-     if (!target.exists()) {
-     logger.debug("Loading unit config file from server");
-     fireDataHolderEvents("Lade Information über Einheiten");
-     file = new URL(sURL + "/interface.php?func=get_unit_info");
-     downloadDataFile(file, "units_tmp.xml");
-
-     //  new File("units_tmp.xml").renameTo(target);
-     copyFile(new File("units_tmp.xml"), target);
-     }
-
-     //download building information, but only once
-     target = new File(serverDir + "/buildings.xml");
-     if (!target.exists()) {
-     logger.debug("Loading building config file from server");
-     fireDataHolderEvents("Lade Information über Gebäude");
-     file = new URL(sURL + "/interface.php?func=get_building_info");
-     downloadDataFile(file, "buildings_tmp.xml");
-     //  new File("buildings_tmp.xml").renameTo(target);
-     copyFile(new File("buildings_tmp.xml"), target);
-     }
-     //</editor-fold>
-
-     fireDataHolderEvents("Download erfolgreich beendet.");
-     } catch (Throwable t) {
-     fireDataHolderEvents("Download fehlgeschlagen.");
-     logger.error("Failed to download data", t);
-     return false;
-     }
-     return true;*/
-    }
-
-    private boolean downloadLiveData() {
         URL file = null;
         String serverDir = getDataDirectory();
         logger.info("Using server dir '" + serverDir + "'");

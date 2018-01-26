@@ -31,16 +31,32 @@ import org.apache.log4j.Logger;
 public class MinimapZoomFrame extends javax.swing.JFrame {
 
     private static Logger logger = Logger.getLogger("Minimap-Zoomframe");
+    //Image of the whole minimap
     protected BufferedImage mMap = null;
     private DrawThread mDrawThread;
     private BufferedImage mBorder = null;
 
+    private static MinimapZoomFrame SINGLETON = null;
+    public static synchronized MinimapZoomFrame getSingleton() {
+        if (SINGLETON == null) {
+            try {
+                SINGLETON = new MinimapZoomFrame();
+            } catch (Exception e) {
+                SINGLETON = null;
+            }
+        }
+
+        return SINGLETON;
+    }
+    
     /**
      * Creates new form MinimapZoomFrame
      */
-    public MinimapZoomFrame(BufferedImage pMap) {
+    public MinimapZoomFrame() {
         initComponents();
-        mMap = pMap;
+        
+        this.setSize(300, 300);
+        this.setLocation(0, 0);
         mDrawThread = new DrawThread(this);
         mDrawThread.start();
         try {
@@ -68,6 +84,8 @@ public class MinimapZoomFrame extends javax.swing.JFrame {
         }
 
     }
+    
+    //Actual Image Shown
     private int xp = 0;
     private int yp = 0;
     private Image pImage = null;
@@ -134,7 +152,7 @@ class DrawThread extends Thread {
     public void run() {
         while (true) {
             try {
-                if (mParent.isVisible()) {
+                if (mParent.isVisible() && mParent.mMap != null) {
                     int pWidth = mParent.getWidth() / 2;
                     int pHeight = mParent.getHeight() / 2;
                     int dx = 0;

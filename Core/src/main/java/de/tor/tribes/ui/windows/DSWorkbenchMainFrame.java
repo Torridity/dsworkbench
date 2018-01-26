@@ -65,6 +65,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.FileWriter;
@@ -374,8 +375,8 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
       jCenterX.setText(x);
       jCenterY.setText(y);
     } catch (Exception e) {
-      dCenterX = ServerSettings.getSingleton().getMapDimension().getWidth()/ 2;
-      dCenterY = ServerSettings.getSingleton().getMapDimension().getHeight() / 2;
+      dCenterX = ServerSettings.getSingleton().getMapDimension().getCenterX();
+      dCenterY = ServerSettings.getSingleton().getMapDimension().getCenterY();
       jCenterX.setText(Double.toString(dCenterX));
       jCenterY.setText(Double.toString(dCenterY));
     }

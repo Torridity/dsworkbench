@@ -122,8 +122,8 @@ public class TroopAmountFixed extends TroopAmount {
         StringBuilder xml = new StringBuilder();
         boolean first = true;
         for(UnitHolder unit: DataHolder.getSingleton().getUnits()) {
-            Integer elm = amounts.get(unit);
-            if(elm != null && elm >= 0) {
+            int elm = getAmountForUnit(unit);
+            if(elm >= 0) {
                 //Information stored in sub element
                 if(!first)
                     xml.append(" ");
@@ -132,7 +132,7 @@ public class TroopAmountFixed extends TroopAmount {
 
                 xml.append(unit.getPlainName()).append("=\"");
                 //base 64 encode to ensure everything can be saved
-                xml.append(elm.toString()).append("\"");
+                xml.append(elm).append("\"");
             }
         }
         return xml.toString();
@@ -145,7 +145,7 @@ public class TroopAmountFixed extends TroopAmount {
                     split.substring(0, split.indexOf('=')));
             if(unit != UnknownUnit.getSingleton()) {
                 //valid unit
-                amounts.put(unit, Integer.parseInt(split.substring(split.indexOf('=') + 1)));
+                setAmountForUnit(unit, Integer.parseInt(split.substring(split.indexOf('=') + 1)));
             }
         }
         return this;
@@ -161,7 +161,7 @@ public class TroopAmountFixed extends TroopAmount {
                 first = false;
             
             prop.append(unit.getPlainName()).append("=");
-            prop.append(amounts.get(unit).toString());
+            prop.append(getAmountForUnit(unit));
         }
         return prop.toString();
     }
@@ -197,7 +197,7 @@ public class TroopAmountFixed extends TroopAmount {
                 amountThis = Math.max(amountThis, 0);
                 amountAdd = Math.max(amountAdd, 0);
                 
-                amounts.put(unit, amountThis + amountAdd);
+                setAmountForUnit(unit, amountThis + amountAdd);
             }
         }
     }
@@ -228,7 +228,7 @@ public class TroopAmountFixed extends TroopAmount {
                 
                 //Limit to zero
                 amountThis = Math.max(amountThis - amountRemove, 0);
-                amounts.put(unit, amountThis);
+                setAmountForUnit(unit, amountThis);
             }
         }
     }

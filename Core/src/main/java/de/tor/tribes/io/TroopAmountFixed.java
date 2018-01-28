@@ -63,6 +63,7 @@ public class TroopAmountFixed extends TroopAmount {
     }
 
     public TroopAmountFixed(Element pElement) {
+        amounts = new HashMap<>();
         loadFromXml(pElement);
     }
 

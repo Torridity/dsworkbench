@@ -233,7 +233,8 @@ public class TroopsParser70 implements SilentParserInterface {
         int cnt = 0;
         while (t.hasMoreTokens()) {
             try {
-                units.setAmountForUnit(allUnits.get(cnt), Integer.parseInt(t.nextToken()));
+                String toParse = t.nextToken();
+                units.setAmountForUnit(allUnits.get(cnt), Integer.parseInt(toParse));
                 cnt++;
             } catch (Exception e) {
                 //token with no troops
@@ -241,6 +242,9 @@ public class TroopsParser70 implements SilentParserInterface {
         }
         if (cnt < uCount) {
             throw new RuntimeException("Unit count does not match");
+        }
+        if (cnt > uCount) {
+            debug("Too many units found " + cnt + "/" + uCount);
         }
         debug("Units: ");
         for (UnitHolder unit: allUnits) {

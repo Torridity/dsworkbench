@@ -546,7 +546,7 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
 
     public boolean wasLostEverything() {
         //defenders are set to -1 if no information on them could be achieved as result of a total loss
-        return defenders.containsInformation();
+        return !defenders.containsInformation();
     }
 
     public boolean isSimpleSnobAttack() {
@@ -608,7 +608,7 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
     }
 
     public boolean areAttackersHidden() {
-        return attackers.containsInformation();
+        return !attackers.containsInformation();
     }
 
     public boolean whereDefendersOnTheWay() {
@@ -772,8 +772,8 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
                     spySurvived = true;
                 }
             } else {
-                if (survivingAtt.getAmountForUnit(unit) > 0) {
-                    //something else survived too
+                if (survivingAtt == null || survivingAtt.getAmountForUnit(unit) > 0) {
+                    //something else survived too or the attackers are hidden
                     return false;
                 }
             }

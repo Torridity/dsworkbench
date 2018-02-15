@@ -38,6 +38,7 @@ public class ServerSettings {
     private int SNOB_RANGE = 70;
     private boolean church = false;
     private boolean watchtower = false;
+    private int fakeLimit = 1;
     private boolean millisArrival = true;
     private double speed = 1.0;
     private int resourceConstant = 30;
@@ -113,6 +114,14 @@ public class ServerSettings {
             } catch (Exception inner) {
                 logger.warn("Unable to read watchtower setting", inner);
                 watchtower = false;
+            }
+
+            logger.debug(" - reading fake limit settings");
+            try {
+                fakeLimit = Integer.parseInt(JaxenUtils.getNodeValue(d, "//game/fake_limit"));
+            } catch (Exception inner) {
+                logger.warn("Unable to read fake limit settings", inner);
+                fakeLimit = 1;
             }
             
             logger.debug(" - reading millis setting");
@@ -248,6 +257,10 @@ public class ServerSettings {
 
     public boolean isWatchtower() {
         return watchtower;
+    }
+    
+    public int getFakeLimitPercent() {
+        return fakeLimit;
     }
 
     public void setMillisArrival(boolean v) {

@@ -148,7 +148,6 @@ public class MinimapPanel extends javax.swing.JPanel implements GenericManagerLi
             MinimapRepaintThread.getSingleton().start();
         }
         addMouseListener(new MouseListener() {
-
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (!showControls && e.getButton() != MouseEvent.BUTTON1) {
@@ -160,7 +159,7 @@ public class MinimapPanel extends javax.swing.JPanel implements GenericManagerLi
                 }
                 if (!showControls && iCurrentView == ID_MINIMAP) {
                     Point p = mousePosToMapPosition(e.getX(), e.getY());
-                    DSWorkbenchMainFrame.getSingleton().centerPosition(p.x, p.y);
+                    DSWorkbenchMainFrame.getSingleton().centerPosition(p.getX(), p.getY());
                     MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.ALL_LAYERS);
                     if (MinimapZoomFrame.getSingleton().isVisible()) {
                         MinimapZoomFrame.getSingleton().toFront();

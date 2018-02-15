@@ -370,10 +370,10 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
     try {
       String x = GlobalOptions.getSelectedProfile().getProperty("last.x");
       String y = GlobalOptions.getSelectedProfile().getProperty("last.y");
-      centerPosition(Integer.parseInt(x), Integer.parseInt(y));
+      centerPosition(Double.parseDouble(x), Double.parseDouble(y));
     } catch (Exception e) {
-      centerPosition((int) ServerSettings.getSingleton().getMapDimension().getCenterX(),
-              (int) ServerSettings.getSingleton().getMapDimension().getCenterY());
+      centerPosition(ServerSettings.getSingleton().getMapDimension().getCenterX(),
+              ServerSettings.getSingleton().getMapDimension().getCenterY());
     }
 
 // </editor-fold>
@@ -676,7 +676,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
     
     checkZoomRange();
     
-    fireRefreshMapEvent(null);
+    refreshMap();
   }
   
   @Override
@@ -704,7 +704,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
           //start ClipboardWatch
           ClipboardWatch.getSingleton();
           //draw map the first time
-          fireRefreshMapEvent(null);
+          refreshMap();
           showReminder();
           if (!GlobalOptions.isMinimal() && !Boolean.parseBoolean(GlobalOptions.getProperty("no.welcome"))) {
             setGlassPane(new WelcomePanel());
@@ -1342,7 +1342,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         jRefreshButton.setPreferredSize(new java.awt.Dimension(30, 30));
         jRefreshButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireRefreshMapEvent(evt);
+                fireReloadMapKoordinatesEvent(evt);
             }
         });
 
@@ -1950,10 +1950,13 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
   /**
    * Update map position
    */
-private void fireRefreshMapEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireRefreshMapEvent
-  dCenterX = UIHelper.parseIntFromField(jCenterX, (int) dCenterX);
-  dCenterY = UIHelper.parseIntFromField(jCenterY, (int) dCenterY);
-  
+private void fireReloadMapKoordinatesEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireReloadMapKoordinatesEvent
+  int centerX = UIHelper.parseIntFromField(jCenterX, (int) dCenterX);
+  int centerY = UIHelper.parseIntFromField(jCenterY, (int) dCenterY);
+  centerPosition(centerX, centerY);    
+}//GEN-LAST:event_fireReloadMapKoordinatesEvent
+
+private void refreshMap() {
   //ensure that within map range
   Rectangle mapDim = ServerSettings.getSingleton().getMapDimension();
   if(dCenterX < mapDim.getMinX() || dCenterX > mapDim.getMaxX() || dCenterY < mapDim.getMinY() || dCenterY > mapDim.getMaxX()) {
@@ -1974,13 +1977,12 @@ private void fireRefreshMapEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:eve
       jCenterY.setText(Integer.toString((int) dCenterY));
     }
   }
-    
+  
   double w = (double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getBasicFieldWidth() * dZoomFactor;
   double h = (double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getBasicFieldHeight() * dZoomFactor;
   MinimapPanel.getSingleton().setSelection((int) Math.floor(dCenterX), (int) Math.floor(dCenterY), (int) Math.rint(w), (int) Math.rint(h));
   MapPanel.getSingleton().updateMapPosition(dCenterX, dCenterY, true);
-}//GEN-LAST:event_fireRefreshMapEvent
-
+}
   /**
    * Update map movement
    */
@@ -2014,7 +2016,7 @@ private void fireMoveMapEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
     cy -= mapFieldsH;
   }
 
-  centerPosition((int) Math.floor(cx), (int) Math.floor(cy));
+  centerPosition(cx, cy);
 }//GEN-LAST:event_fireMoveMapEvent
 
   /**
@@ -2356,7 +2358,7 @@ private void fireROISelectedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:eve
       String[] pos = item.trim().split("\\|");
       jCenterX.setText(pos[0]);
       jCenterY.setText(pos[1]);
-      fireRefreshMapEvent(null);
+      fireReloadMapKoordinatesEvent(null);
     } catch (Exception ignored) {
     }
   }
@@ -2681,7 +2683,7 @@ private void fireChangeClipboardWatchEvent(java.awt.event.MouseEvent evt) {//GEN
       String[] pos = item.trim().split("\\|");
       jCenterX.setText(pos[0]);
       jCenterY.setText(pos[1]);
-      fireRefreshMapEvent(null);
+      fireReloadMapKoordinatesEvent(null);
     } catch (Exception ignored) {
     }
   }
@@ -2707,7 +2709,7 @@ private void fireChangeClipboardWatchEvent(java.awt.event.MouseEvent evt) {//GEN
    * Scroll the map
    */
   public void scroll(double pXDir, double pYDir) {
-    centerPosition((int) (dCenterX + pXDir), (int) (dCenterY + pYDir));
+    centerPosition(dCenterX + pXDir, dCenterY + pYDir);
   }
 
   /**
@@ -2720,13 +2722,15 @@ private void fireChangeClipboardWatchEvent(java.awt.event.MouseEvent evt) {//GEN
 
     jCenterX.setText(Integer.toString(pVillage.getX()));
     jCenterY.setText(Integer.toString(pVillage.getY()));
-    fireRefreshMapEvent(null);
+    refreshMap();
   }
 
-  public void centerPosition(int xPos, int yPos) {
-    jCenterX.setText(Integer.toString(xPos));
-    jCenterY.setText(Integer.toString(yPos));
-    fireRefreshMapEvent(null);
+  public void centerPosition(double xPos, double yPos) {
+    dCenterX = xPos;
+    jCenterX.setText(Integer.toString((int) xPos));
+    dCenterY = yPos;
+    jCenterY.setText(Integer.toString((int) yPos));
+    refreshMap();
   }
 
   /**

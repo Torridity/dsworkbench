@@ -219,7 +219,6 @@ public class TroopAmountDynamic extends TroopAmount {
     @Override
     public void multiplyWith(double factor) {
         if(factor < 0) {
-            //throw exception also for 0 because fill should be used in that case
             logger.error("Tried to multiply with negative value " + factor);
             throw new RuntimeException("Tried to multiply with negative value " + factor);
         }

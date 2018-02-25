@@ -412,16 +412,6 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
     }
     //</editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc=" Init A*Star HelpSystem ">
-    if (!Constants.DEBUG) {
-      //Temporarily disable direct selection of simulator help when pressing F1 in simulator as this causes errors while using WebProxy
-      //The reason is, that DSWorkbenchSimulatorFrame.getSingleton() already performs a full intitialization which includes loading the
-      //server list and server settings. This is not possible at this point. -> Maybe take care of this issue in future.	    
-      //GlobalOptions.getHelpBroker().enableHelpKey(DSWorkbenchSimulatorFrame.getSingleton().getRootPane(), "pages.astar", GlobalOptions.getHelpBroker().getHelpSet());
-      GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "index", GlobalOptions.getHelpBroker().getHelpSet());
-    }
-        // </editor-fold>
-
     // <editor-fold defaultstate="collapsed" desc="Init mouse gesture listener">
     mMouseGestures.setMouseButton(MouseEvent.BUTTON3_MASK);
     mMouseGestures.addMouseGesturesListener(new MouseGestureHandler());

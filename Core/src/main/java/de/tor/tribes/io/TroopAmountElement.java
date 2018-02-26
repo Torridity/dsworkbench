@@ -16,6 +16,7 @@
 package de.tor.tribes.io;
 
 import de.tor.tribes.types.ext.Village;
+import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.io.UnsupportedEncodingException;
@@ -30,8 +31,9 @@ import org.apache.log4j.Logger;
 public class TroopAmountElement {
 
     private static final Logger logger = Logger.getLogger("TroopAmountElement");
-    public static final String ALL_TROOPS = "Alle";
+    public static final String ALL_TROOPS = "alle";
     public static final String RND_VALUE = "rnd";
+    public static final String FAKE_VALUE = "fake";
     private UnitHolder unit = null;
     private String dynamicAmount = "";
     //buffer to speed up
@@ -58,7 +60,7 @@ public class TroopAmountElement {
         //Try if we can parse this
         Object val;
         try {
-            val = parse(pAmount, 0);
+            val = parse(pAmount, 0, 0);
         } catch (Exception e) {
             logger.debug("Parser Crashed ", e);
             throw new IllegalArgumentException("Parser returned error ", e);
@@ -70,12 +72,13 @@ public class TroopAmountElement {
         //ok we can parse look if its fixed
         String pAmountLower = pAmount.toLowerCase();
         if (pAmountLower.contains(ALL_TROOPS.toLowerCase())
-                || pAmountLower.contains(RND_VALUE.toLowerCase())) {
+                || pAmountLower.contains(RND_VALUE.toLowerCase())
+                || pAmountLower.contains(FAKE_VALUE.toLowerCase())) {
             fixed = false;
             dynamicAmount = pAmount;
         } else {
             fixed = true;
-            val = parse(pAmount, -1);
+            val = parse(pAmount, -1, -1);
             if (val instanceof Double) {
                 dynamicAmount = Integer.toString(((Double) val).intValue());
             }
@@ -88,8 +91,14 @@ public class TroopAmountElement {
             throw new IllegalArgumentException("Tried to read fixed troops from Dynamic amount");
         }
         int availableAmount = getAvailable(pVillage);
+        
+        int fakeMinAmount = 0;
+        if(pVillage != null) {
+            //amount nedds to rounded down so we can simply use int Calculation
+            fakeMinAmount = pVillage.getPoints() * ServerSettings.getSingleton().getFakeLimitPercent() / 100;
+        }
 
-        Object val = parse(dynamicAmount, availableAmount);
+        Object val = parse(dynamicAmount, availableAmount, fakeMinAmount);
         if (val instanceof String) {
             logger.error("cant get Amount " + availableAmount + "/" + dynamicAmount);
             throw new RuntimeException("cant get Amount");
@@ -173,7 +182,7 @@ public class TroopAmountElement {
      * @return returns a double if able to parse returns a String if unable to
      * parse
      */
-    Object parse(String math, int pDynValue) {
+    Object parse(String math, int pDynValue, int pFakeValue) {
         if (math.length() == 0) {
             return (double) 0;
         }
@@ -194,7 +203,7 @@ public class TroopAmountElement {
 
             //append part in Front of bracket
             noBrackets.append(math.substring(currentIndex, opening));
-            Object inner = parse(math.substring(opening + 1, closing), pDynValue);
+            Object inner = parse(math.substring(opening + 1, closing), pDynValue, pFakeValue);
             if (inner instanceof Double) {
                 double innerVal = (Double) inner;
                 if (innerVal < 0) {
@@ -222,8 +231,7 @@ public class TroopAmountElement {
             return noBrackets.toString();
         }
 
-        return innerParse(noBrackets.toString(),
-                pDynValue, 0);
+        return innerParse(noBrackets.toString(), pDynValue, pFakeValue, 0);
     }
 
     /**
@@ -237,7 +245,7 @@ public class TroopAmountElement {
      */
     private final String[] mathChars = {"+", "-", "*", "/", "%", "^", "<", ">", "="};
 
-    private Object innerParse(String noBrackets, int pDynValue, int level) {
+    private Object innerParse(String noBrackets, int pDynValue, int pFakeValue, int level) {
         if (noBrackets.length() == 0) {
             return (double) 0;
         }
@@ -263,9 +271,9 @@ public class TroopAmountElement {
 
             Object innerResult;
             if (level + 1 < mathChars.length) {
-                innerResult = innerParse(inner, pDynValue, level + 1);
+                innerResult = innerParse(inner, pDynValue, pFakeValue, level + 1);
             } else {
-                innerResult = elementParse(inner, pDynValue);
+                innerResult = elementParse(inner, pDynValue, pFakeValue);
             }
 
             if (innerResult instanceof String) {
@@ -337,7 +345,7 @@ public class TroopAmountElement {
     private final String[] elementPostChars = {"%"};
     private final String[] elementPreChars = {"_"};
 
-    private Object elementParse(String element, int pDynValue) {
+    private Object elementParse(String element, int pDynValue, int pFakeValue) {
         if (element.length() == 0) {
             return (double) 0;
         }
@@ -356,12 +364,21 @@ public class TroopAmountElement {
             //element is random placeholder
             return (double) Math.random();
         }
+        if (element.equalsIgnoreCase(FAKE_VALUE)) {
+            //element is fake placeholder
+            if (pFakeValue >= 0) {
+                return (double) pFakeValue;
+            } else {
+                //no dynamic Value given
+                return element;
+            }
+        }
 
         //remove all operators that belong to a single Number
         for (String elementPostChar : elementPostChars) {
             if (element.endsWith(elementPostChar)) {
                 //element uses postfix
-                Object val = elementParse(element.substring(0, element.length() - elementPostChar.length()), pDynValue);
+                Object val = elementParse(element.substring(0, element.length() - elementPostChar.length()), pDynValue, pFakeValue);
                 if (val instanceof String) {
                     //unable to parse
                     return ((String) val) + elementPostChar;
@@ -382,7 +399,7 @@ public class TroopAmountElement {
         for (String elementPreChar : elementPreChars) {
             if (element.startsWith(elementPreChar)) {
                 //element uses postfix
-                Object val = elementParse(element.substring(elementPreChar.length()), pDynValue);
+                Object val = elementParse(element.substring(elementPreChar.length()), pDynValue, pFakeValue);
                 if (val instanceof String) {
                     //unable to parse
                     return elementPreChar + ((String) val);

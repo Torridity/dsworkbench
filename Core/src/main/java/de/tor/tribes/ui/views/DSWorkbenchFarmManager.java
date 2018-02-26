@@ -642,7 +642,7 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
      * Farm selection using type A
      */
     private void farmA() {
-        if (aTroops.getAmounts().hasUnits()) {
+        if (!aTroops.getAmounts().hasUnits()) {
             showInfo("Keine gültigen Farmtruppen für Konfiguration A gefunden");
             return;
         }
@@ -658,7 +658,7 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
      * Farm selection using type B
      */
     private void farmB() {
-        if (bTroops.getAmounts().hasUnits()) {
+        if (!bTroops.getAmounts().hasUnits()) {
             showInfo("Keine gültigen Farmtruppen für Konfiguration B gefunden");
             return;
         }
@@ -674,7 +674,7 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
      * Farm selection using type C
      */
     private void farmC() {
-        if (cTroops.getAmounts().hasUnits()) {
+        if (!cTroops.getAmounts().hasUnits()) {
             showInfo("Keine gültigen Farmtruppen für Konfiguration C gefunden");
             return;
         }

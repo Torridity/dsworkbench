@@ -39,7 +39,7 @@ public class TroopAmountDynamic extends TroopAmount {
     }
     
     public TroopAmountDynamic(int pAmount) {
-        this(new TroopAmountElement(DataHolder.getSingleton().getRandomUnit(), pAmount));
+        fill("" + pAmount);
     }
 
     /**
@@ -47,10 +47,7 @@ public class TroopAmountDynamic extends TroopAmount {
      * @param pAmount the Amount for !ALL! units to set
      */
     public TroopAmountDynamic(TroopAmountElement pAmount) {
-        amounts = new HashMap<>();
-        for(UnitHolder unit: DataHolder.getSingleton().getUnits()) {
-            amounts.put(unit, new TroopAmountElement(unit, pAmount.toString()));
-        }
+        fill(pAmount.toString());
     }
 
     public TroopAmountDynamic(TroopAmountElement[] pAmounts) {
@@ -65,7 +62,11 @@ public class TroopAmountDynamic extends TroopAmount {
     }
 
     public TroopAmountElement getElementForUnit(UnitHolder pUnit) {
-        return amounts.get(pUnit);
+        TroopAmountElement elm = amounts.get(pUnit);
+        if(elm == null) {
+            return new TroopAmountElement(pUnit, -1);
+        }
+        return elm;
     }
 
     public void setAmount(TroopAmountElement pAmount) {
@@ -102,7 +103,7 @@ public class TroopAmountDynamic extends TroopAmount {
         StringBuilder xml = new StringBuilder();
         boolean first = true;
         for(UnitHolder unit: DataHolder.getSingleton().getUnits()) {
-            TroopAmountElement elm = amounts.get(unit);
+            TroopAmountElement elm = getElementForUnit(unit);
             if(!elm.isFixed() || elm.getTroopsAmount(null) >=0) {
                 //Information stored in sub element
                 if(!first)
@@ -142,7 +143,7 @@ public class TroopAmountDynamic extends TroopAmount {
                 first = false;
             
             prop.append(unit.getPlainName()).append("=");
-            prop.append(amounts.get(unit).toBase64());
+            prop.append(getElementForUnit(unit).toBase64());
         }
         return prop.toString();
     }
@@ -171,8 +172,9 @@ public class TroopAmountDynamic extends TroopAmount {
             if(aElm.isFixed() && aElm.getTroopsAmount(null) < 0) {
                 aElmStr = "0";
             }
-            
+
             elm.setDynamicAmount(elmStr + "+" + aElmStr);
+            amounts.put(unit, elm);
         }
     }
 
@@ -195,14 +197,14 @@ public class TroopAmountDynamic extends TroopAmount {
                 //no information stored in sublement
                 if(!rElm.isFixed() || rElm.getTroopsAmount(null) < 0) {
                     //toRemove element contains information just set to zero
-                    amounts.put(unit, new TroopAmountElement(unit, "0"));
+                    elm = new TroopAmountElement(unit, "0");
                 }
             } else if(elm.isFixed()) {
                 if(rElm.isFixed() && rElm.getTroopsAmount(null) < 0) {
                     int amount = elm.getTroopsAmount(null) - rElm.getTroopsAmount(null);
                     //limit to zero
                     amount = Math.max(amount, 0);
-                    amounts.put(unit, new TroopAmountElement(unit, amount));
+                    elm = new TroopAmountElement(unit, amount);
                 } else if(!rElm.isFixed()) {
                     elm.setDynamicAmount(elm.toString() + "-" + rElm.toString());
                 }
@@ -210,21 +212,29 @@ public class TroopAmountDynamic extends TroopAmount {
                 //Dynamic information stored in sub element
                 elm.setDynamicAmount(elm.toString() + "-" + rElm.toString());
             }
+            amounts.put(unit, elm);
         }
     }
 
     @Override
     public void multiplyWith(double factor) {
-        if(factor <= 0) {
-            //throw exception also for 0 because fill should be used in that case
+        if(factor < 0) {
             logger.error("Tried to multiply with negative value " + factor);
             throw new RuntimeException("Tried to multiply with negative value " + factor);
         }
+        if(factor == 0) {
+            logger.info("multiplyed with 0, use fill instead");
+            fill("0");
+            return;
+        }
         
         for(UnitHolder unit: amounts.keySet()) {
-            if(!getElementForUnit(unit).isFixed()
-                    || getElementForUnit(unit).getTroopsAmount(null) > 0) {
-                amounts.get(unit).setDynamicAmount("(" + amounts.get(unit).toString() + ")*" + factor);
+            TroopAmountElement elm = getElementForUnit(unit);
+            
+            if(!elm.isFixed()
+                    || elm.getTroopsAmount(null) > 0) {
+                elm.setDynamicAmount("(" + amounts.get(unit).toString() + ")*" + factor);
+                amounts.put(unit, elm);
             }
         }
     }
@@ -235,7 +245,7 @@ public class TroopAmountDynamic extends TroopAmount {
             logger.error("Tried to read fixed troops from Dynamic amount");
             throw new IllegalArgumentException("Tried to read fixed troops from Dynamic amount");
         }
-        return amounts.get(pUnit).getTroopsAmount(pVillage);
+        return getElementForUnit(pUnit).getTroopsAmount(pVillage);
     }
     
     public TroopAmountFixed transformToFixed(Village pVillage) {
@@ -341,7 +351,14 @@ public class TroopAmountDynamic extends TroopAmount {
         for(UnitHolder unit: getContainedUnits()) {
             clone.setAmount(new TroopAmountElement(unit,
                     getElementForUnit(unit).toString()));
-        }
+    }
         return clone;
+    }
+
+    public void fill(String pAmount) {
+        amounts = new HashMap<>();
+        for(UnitHolder unit: DataHolder.getSingleton().getUnits()) {
+            amounts.put(unit, new TroopAmountElement(unit, pAmount));
+        }
     }
 }

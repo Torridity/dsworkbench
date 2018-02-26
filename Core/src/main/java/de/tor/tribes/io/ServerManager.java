@@ -16,6 +16,7 @@
 package de.tor.tribes.io;
 
 import de.tor.tribes.util.Constants;
+import de.tor.tribes.dssim.util.ConfigManager;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -137,5 +138,9 @@ public class ServerManager {
 
     public static String getServerURL(String pServerID) {
         return SERVERS.get(pServerID);
+    }
+    
+    public static void giveSimulatorServerList() {
+        ConfigManager.getSingleton().setServers(SERVERS);
     }
 }

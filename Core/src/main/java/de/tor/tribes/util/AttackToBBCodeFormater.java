@@ -102,15 +102,14 @@ public class AttackToBBCodeFormater {
         template = template.replaceAll("%SEND%", sendtime);
         template = template.replaceAll("%ARRIVE%", arrivetime);
         //replace place var
-        String baseURL = ServerManager.getServerURL(GlobalOptions.getSelectedServer()) + "/";
-        String placeURL = baseURL + "game.php?village=";
+        String placeURL = pServerURL + "game.php?village=";
         int uvID = -1;
         if (GlobalOptions.getSelectedProfile() != null) {
             uvID = GlobalOptions.getSelectedProfile().getUVId();
         }
 
         if (uvID >= 0) {
-            placeURL = baseURL + "game.php?t=" + uvID + "&village=";
+            placeURL = pServerURL + "game.php?t=" + uvID + "&village=";
         }
         placeURL += pAttack.getSource().getId() + "&screen=place&mode=command&target=" + pAttack.getTarget().getId();
 

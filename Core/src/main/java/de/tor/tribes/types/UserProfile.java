@@ -135,8 +135,8 @@ public class UserProfile {
 
     public void restoreProperties() {
         try {
-            int lastX = Integer.parseInt(getProperty("last.x"));
-            int lastY = Integer.parseInt(getProperty("last.y"));
+            double lastX = Double.parseDouble(getProperty("last.x"));
+            double lastY = Double.parseDouble(getProperty("last.y"));
             DSWorkbenchMainFrame.getSingleton().centerPosition(lastX, lastY);
         } catch (Exception e) {
             logger.warn("Failed to set last map position. Probably this is a new UserProfile with no properties set");

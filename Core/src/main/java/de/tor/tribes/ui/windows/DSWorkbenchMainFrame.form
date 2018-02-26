@@ -773,7 +773,7 @@
             </Property>
           </Properties>
           <Events>
-            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="fireRefreshMapEvent"/>
+            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="fireReloadMapKoordinatesEvent"/>
           </Events>
         </Component>
         <Component class="javax.swing.JButton" name="jMoveE1">

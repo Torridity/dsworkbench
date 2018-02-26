@@ -26,6 +26,7 @@ import de.tor.tribes.ui.wiz.FirstStartWizard;
 import de.tor.tribes.util.*;
 import de.tor.tribes.util.GithubVersionCheck.UpdateInfo;
 import de.tor.tribes.util.ThreadDeadlockDetector.DefaultDeadlockListener;
+import de.tor.tribes.dssim.ui.DSWorkbenchSimulatorFrame;
 import java.io.*;
 import java.util.Collections;
 import java.util.Comparator;
@@ -379,6 +380,18 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
             } catch (Exception e) {
                 logger.error("Failed to start report server", e);
             }
+            
+            // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
+            if (!Constants.DEBUG) {
+                GlobalOptions.getHelpBroker().enableHelpKey(DSWorkbenchSimulatorFrame.getSingleton().getRootPane(), "pages.astar", GlobalOptions.getHelpBroker().getHelpSet());
+                GlobalOptions.getHelpBroker().enableHelpKey(DSWorkbenchMainFrame.getSingleton().getRootPane(), "index", GlobalOptions.getHelpBroker().getHelpSet());
+            }
+            // </editor-fold>
+
+            // <editor-fold defaultstate="collapsed" desc=" Init A*Star Servers ">
+            ServerManager.giveSimulatorServerList();
+            // </editor-fold>
+            
             t.stopRunning();
             setVisible(false);
             GlobalOptions.removeDataHolderListener(this);

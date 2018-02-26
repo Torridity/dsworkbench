@@ -427,11 +427,10 @@ public class MapRenderer {
 
         int x = 0;
         int y = 0;
-        int mapW = ServerSettings.getSingleton().getMapDimension().width;
-        int mapH = ServerSettings.getSingleton().getMapDimension().height;
+        Rectangle mapDim = ServerSettings.getSingleton().getMapDimension();
         for (int i = xStartVillage; i <= xEndVillage; i++) {
             for (int j = yStartVillage; j <= yEndVillage; j++) {
-                if ((i < 0) || (i > mapW - 1) || (j < 0) || (j > mapH - 1)) {
+                if ((i < mapDim.getMinX()) || (i > mapDim.getMaxX()) || (j < mapDim.getMinY()) || (j > mapDim.getMaxY())) {
                     //handle villages outside map
                     mVisibleVillages[x][y] = null;
                 } else {

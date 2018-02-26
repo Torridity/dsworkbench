@@ -65,6 +65,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.FileWriter;
@@ -369,15 +370,10 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
     try {
       String x = GlobalOptions.getSelectedProfile().getProperty("last.x");
       String y = GlobalOptions.getSelectedProfile().getProperty("last.y");
-      dCenterX = Double.parseDouble(x);
-      dCenterY = Double.parseDouble(y);
-      jCenterX.setText(x);
-      jCenterY.setText(y);
+      centerPosition(Double.parseDouble(x), Double.parseDouble(y));
     } catch (Exception e) {
-      dCenterX = ServerSettings.getSingleton().getMapDimension().getWidth()/ 2;
-      dCenterY = ServerSettings.getSingleton().getMapDimension().getHeight() / 2;
-      jCenterX.setText(Double.toString(dCenterX));
-      jCenterY.setText(Double.toString(dCenterY));
+      centerPosition(ServerSettings.getSingleton().getMapDimension().getCenterX(),
+              ServerSettings.getSingleton().getMapDimension().getCenterY());
     }
 
 // </editor-fold>
@@ -415,16 +411,6 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
       jGraphicPacks.setSelectedItem("default");
     }
     //</editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc=" Init A*Star HelpSystem ">
-    if (!Constants.DEBUG) {
-      //Temporarily disable direct selection of simulator help when pressing F1 in simulator as this causes errors while using WebProxy
-      //The reason is, that DSWorkbenchSimulatorFrame.getSingleton() already performs a full intitialization which includes loading the
-      //server list and server settings. This is not possible at this point. -> Maybe take care of this issue in future.	    
-      //GlobalOptions.getHelpBroker().enableHelpKey(DSWorkbenchSimulatorFrame.getSingleton().getRootPane(), "pages.astar", GlobalOptions.getHelpBroker().getHelpSet());
-      GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "index", GlobalOptions.getHelpBroker().getHelpSet());
-    }
-        // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Init mouse gesture listener">
     mMouseGestures.setMouseButton(MouseEvent.BUTTON3_MASK);
@@ -606,10 +592,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
    */
   protected void init() {
     logger.info("Starting initialization");
-    /*
-     * logger.info(" * Setting up attack planner"); //setup frames mTribeTribeAttackFrame = new TribeTribeAttackFrame();
-     * mTribeTribeAttackFrame.pack();
-     */
+    
     logger.info(" * Updating server settings");
     //setup everything
 
@@ -683,36 +666,9 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
     
     checkZoomRange();
     
-    double w = (double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getBasicFieldWidth() * dZoomFactor;
-    double h = (double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getBasicFieldHeight() * dZoomFactor;
-    int xPos = UIHelper.parseIntFromField(jCenterX, (int) dCenterX);
-    int yPos = UIHelper.parseIntFromField(jCenterY, (int) dCenterY);
-
-    MinimapPanel.getSingleton().setSelection(xPos, yPos, (int) Math.rint(w), (int) Math.rint(h));
-    MapPanel.getSingleton().updateMapPosition(xPos, yPos, true);
+    refreshMap();
   }
-
-  /*
-   * public void setupAndShow() { DockController controller = new DockController(); controller.setRootWindow(this); SplitDockStation
-   * splitDockStation = new SplitDockStation();
-   *
-   * controller.add(splitDockStation); add(splitDockStation); MyDockable miniMap = new MyDockable("Minimap", jMinimapPanel); MyDockable
-   * map = new MyDockable("Hauptkarte", jMapPanelHolder); splitDockStation.drop(map); splitDockStation.drop(miniMap, new
-   * SplitDockProperty(1, 0, 1, 0.5)); MyDockable settings = new MyDockable("Einstellungen", jSettingsScrollPane);
-   * settings.installActions(controller); splitDockStation.drop(settings, new SplitDockProperty(1, 0.5, 1, 0.5)); ScreenDockStation
-   * screenDockStation = new ScreenDockStation(controller.getRootWindowProvider()); DefaultScreenDockWindowFactory fac = new
-   * DefaultScreenDockWindowFactory(); fac.setKind(DefaultScreenDockWindowFactory.Kind.FRAME); screenDockStation.setWindowFactory(fac);
-   * controller.add(screenDockStation); setVisible(true); screenDockStation.setShowing(true); }
-   */
-
-  /*
-   * public static class MyDockable extends DefaultDockable {
-   *
-   * public MyDockable(String title, JComponent pPanel) { setTitleText(title); add(pPanel); }
-   *
-   * public void installActions(DockController pController) { DefaultDockActionSource source = new DefaultDockActionSource(new
-   * CloseAction(pController)); setActionOffers(source); } }
-   */
+  
   @Override
   public void setVisible(boolean v) {
     logger.info("Setting MainWindow visible");
@@ -734,16 +690,11 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
 
         if (vis) {
           //only if set to visible
-          MapPanel.getSingleton().updateMapPosition(dCenterX, dCenterY);
-
-          double w = (double) MapPanel.getSingleton().getWidth() / (double) GlobalOptions.getSkin().getCurrentFieldWidth(dZoomFactor);
-          double h = (double) MapPanel.getSingleton().getHeight() / (double) GlobalOptions.getSkin().getCurrentFieldHeight(dZoomFactor);
-
-          MinimapPanel.getSingleton().setSelection((int) Math.floor(dCenterX), (int) Math.floor(dCenterY), (int) Math.rint(w), (int) Math.rint(h));
+          
           //start ClipboardWatch
           ClipboardWatch.getSingleton();
           //draw map the first time
-          fireRefreshMapEvent(null);
+          refreshMap();
           showReminder();
           if (!GlobalOptions.isMinimal() && !Boolean.parseBoolean(GlobalOptions.getProperty("no.welcome"))) {
             setGlassPane(new WelcomePanel());
@@ -1381,7 +1332,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         jRefreshButton.setPreferredSize(new java.awt.Dimension(30, 30));
         jRefreshButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireRefreshMapEvent(evt);
+                fireReloadMapKoordinatesEvent(evt);
             }
         });
 
@@ -1989,15 +1940,39 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
   /**
    * Update map position
    */
-private void fireRefreshMapEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireRefreshMapEvent
-  dCenterX = UIHelper.parseIntFromField(jCenterX, (int) dCenterX);
-  dCenterY = UIHelper.parseIntFromField(jCenterY, (int) dCenterY);
+private void fireReloadMapKoordinatesEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireReloadMapKoordinatesEvent
+  int centerX = UIHelper.parseIntFromField(jCenterX, (int) dCenterX);
+  int centerY = UIHelper.parseIntFromField(jCenterY, (int) dCenterY);
+  centerPosition(centerX, centerY);    
+}//GEN-LAST:event_fireReloadMapKoordinatesEvent
+
+private void refreshMap() {
+  //ensure that within map range
+  Rectangle mapDim = ServerSettings.getSingleton().getMapDimension();
+  if(dCenterX < mapDim.getMinX() || dCenterX > mapDim.getMaxX() || dCenterY < mapDim.getMinY() || dCenterY > mapDim.getMaxX()) {
+    //find out where we tried to leaf map and set these valuese to max / min
+    if(dCenterX < mapDim.getMinX()) {
+      dCenterX = (int) mapDim.getMinX();
+      jCenterX.setText(Integer.toString((int) dCenterX));
+    } else if(dCenterX > mapDim.getMaxX()) {
+      dCenterX = (int) mapDim.getMaxX();
+      jCenterX.setText(Integer.toString((int) dCenterX));
+    }
+    
+    if(dCenterY < mapDim.getMinY()) {
+      dCenterY = (int) mapDim.getMinY();
+      jCenterY.setText(Integer.toString((int) dCenterY));
+    } else if(dCenterY > mapDim.getMaxX()) {
+      dCenterY = (int) mapDim.getMaxX();
+      jCenterY.setText(Integer.toString((int) dCenterY));
+    }
+  }
+  
   double w = (double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getBasicFieldWidth() * dZoomFactor;
   double h = (double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getBasicFieldHeight() * dZoomFactor;
   MinimapPanel.getSingleton().setSelection((int) Math.floor(dCenterX), (int) Math.floor(dCenterY), (int) Math.rint(w), (int) Math.rint(h));
   MapPanel.getSingleton().updateMapPosition(dCenterX, dCenterY, true);
-}//GEN-LAST:event_fireRefreshMapEvent
-
+}
   /**
    * Update map movement
    */
@@ -2031,13 +2006,7 @@ private void fireMoveMapEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
     cy -= mapFieldsH;
   }
 
-  jCenterX.setText(Integer.toString((int) Math.floor(cx)));
-  jCenterY.setText(Integer.toString((int) Math.floor(cy)));
-  dCenterX = cx;
-  dCenterY = cy;
-  MapPanel.getSingleton().updateMapPosition(dCenterX, dCenterY);
-  MinimapPanel.getSingleton().setSelection((int) Math.floor(cx),
-      (int) Math.floor(cy), (int) Math.rint(mapFieldsW), (int) Math.rint(mapFieldsH));
+  centerPosition(cx, cy);
 }//GEN-LAST:event_fireMoveMapEvent
 
   /**
@@ -2094,9 +2063,7 @@ private void fireCenterCurrentPosInGameEvent(java.awt.event.MouseEvent evt) {//G
   if (!jCenterCoordinateIngame.isEnabled()) {
     return;
   }
-  BrowserCommandSender.centerCoordinate(
-          UIHelper.parseIntFromField(jCenterX, (int) dCenterX),
-          UIHelper.parseIntFromField(jCenterY, (int) dCenterY));
+  BrowserCommandSender.centerCoordinate((int) dCenterX, (int) dCenterY);
 }//GEN-LAST:event_fireCenterCurrentPosInGameEvent
 
 private void fireCurrentPlayerVillagePopupEvent(javax.swing.event.PopupMenuEvent evt) {//GEN-FIRST:event_fireCurrentPlayerVillagePopupEvent
@@ -2381,7 +2348,7 @@ private void fireROISelectedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:eve
       String[] pos = item.trim().split("\\|");
       jCenterX.setText(pos[0]);
       jCenterY.setText(pos[1]);
-      fireRefreshMapEvent(null);
+      fireReloadMapKoordinatesEvent(null);
     } catch (Exception ignored) {
     }
   }
@@ -2706,7 +2673,7 @@ private void fireChangeClipboardWatchEvent(java.awt.event.MouseEvent evt) {//GEN
       String[] pos = item.trim().split("\\|");
       jCenterX.setText(pos[0]);
       jCenterY.setText(pos[1]);
-      fireRefreshMapEvent(null);
+      fireReloadMapKoordinatesEvent(null);
     } catch (Exception ignored) {
     }
   }
@@ -2732,15 +2699,7 @@ private void fireChangeClipboardWatchEvent(java.awt.event.MouseEvent evt) {//GEN
    * Scroll the map
    */
   public void scroll(double pXDir, double pYDir) {
-    dCenterX += pXDir;
-    dCenterY += pYDir;
-    jCenterX.setText(Integer.toString((int) Math.floor(dCenterX)));
-    jCenterY.setText(Integer.toString((int) Math.floor(dCenterY)));
-
-    double w = (double) MapPanel.getSingleton().getWidth() / GlobalOptions.getSkin().getBasicFieldWidth() * dZoomFactor;
-    double h = (double) MapPanel.getSingleton().getHeight() / GlobalOptions.getSkin().getBasicFieldHeight() * dZoomFactor;
-    MinimapPanel.getSingleton().setSelection((int) Math.floor(dCenterX), (int) Math.floor(dCenterY), (int) Math.rint(w), (int) Math.rint(h));
-    MapPanel.getSingleton().updateMapPosition(dCenterX, dCenterY);
+    centerPosition(dCenterX + pXDir, dCenterY + pYDir);
   }
 
   /**
@@ -2753,13 +2712,15 @@ private void fireChangeClipboardWatchEvent(java.awt.event.MouseEvent evt) {//GEN
 
     jCenterX.setText(Integer.toString(pVillage.getX()));
     jCenterY.setText(Integer.toString(pVillage.getY()));
-    fireRefreshMapEvent(null);
+    refreshMap();
   }
 
-  public void centerPosition(int xPos, int yPos) {
-    jCenterX.setText(Integer.toString(xPos));
-    jCenterY.setText(Integer.toString(yPos));
-    fireRefreshMapEvent(null);
+  public void centerPosition(double xPos, double yPos) {
+    dCenterX = xPos;
+    jCenterX.setText(Integer.toString((int) xPos));
+    dCenterY = yPos;
+    jCenterY.setText(Integer.toString((int) yPos));
+    refreshMap();
   }
 
   /**

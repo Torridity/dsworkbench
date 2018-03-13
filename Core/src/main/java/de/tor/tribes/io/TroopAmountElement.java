@@ -81,6 +81,9 @@ public class TroopAmountElement {
             val = parse(pAmount, -1, -1);
             if (val instanceof Double) {
                 dynamicAmount = Integer.toString(((Double) val).intValue());
+            } else if(val instanceof String) {
+                //we can't parse without arguments; curently only needed for 50%
+                dynamicAmount = pAmount;
             }
         }
     }

@@ -285,6 +285,17 @@ public class TagManager extends GenericManager<Tag> {
             addManagedElement(nt);
         }
     }
+    
+    public String[] getAllTagNames() {
+    	String[] tags = new String[getAllElements().size()];
+    	int i = 0;
+    	for (ManageableType e : getAllElements()) {
+            Tag t = (Tag) e;
+            tags[i] = t.getName();
+            i++;
+            }
+		return tags;
+        }
 
     public synchronized void addTag(Village pVillage, String pTag) {
         addTag(pVillage, pTag, true);

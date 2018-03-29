@@ -125,7 +125,8 @@ public class TroopHelper {
 	public static TroopAmountFixed getTroopsForCarriage(DSWorkbenchFarmManager.FARM_CONFIGURATION pConfig,
 			VillageTroopsHolder pTroops, FarmInformation pInfo) {
 		TroopAmountFixed result = new TroopAmountFixed();
-		TroopAmountDynamic configTroops = DSWorkbenchFarmManager.getSingleton().getTroops(pConfig);
+		TroopAmountDynamic configTroops1 = DSWorkbenchFarmManager.getSingleton().getTroops(pConfig);
+		TroopAmountFixed configTroops = DSWorkbenchFarmManager.getSingleton().getMinUnits(pConfig, pTroops.getVillage());
 		TroopAmountFixed backupUnits = DSWorkbenchFarmManager.getSingleton().getBackupUnits(pTroops.getVillage());
 
 		UnitHolder[] allowed = DSWorkbenchFarmManager.getSingleton().getAllowedFarmUnits(pConfig, pTroops.getVillage());
@@ -147,19 +148,19 @@ public class TroopHelper {
 				if (pConfig.equals(DSWorkbenchFarmManager.FARM_CONFIGURATION.C)) {
 					amount = (int) Math.ceil((double) resources / unit.getCarry());
 				} else {
-					amount = configTroops.getAmountForUnit(unit, pTroops.getVillage());
+					amount = configTroops.getAmountForUnit(unit);
 				}
 
 				int usable = pTroops.getTroops().getAmountForUnit(unit) - backupUnits.getAmountForUnit(unit);
 				if (usable >= amount) {
-					if (amount < configTroops.getAmountForUnit(unit, pTroops.getVillage())) {
+					if (amount < configTroops.getAmountForUnit(unit)) {
 						// If amount < min set to zero and look for other units that fulfill the requirements
 						result.setAmountForUnit(unit, 0);						
 					} else {
 						result.setAmountForUnit(unit, amount);
 						break;
 					}					
-				} else if (usable < amount && usable > configTroops.getAmountForUnit(unit, pTroops.getVillage()) && DSWorkbenchFarmManager.getSingleton().allowPartlyFarming()) {
+				} else if (usable < amount && usable > configTroops.getAmountForUnit(unit) && DSWorkbenchFarmManager.getSingleton().allowPartlyFarming()) {
 					// note: amount is for A/B and K the same as the expression on the right
 					// usable cannot be > and < than amount --> A/B and K cannot get here
 					// C Only gets here if Partly farming is allowed
@@ -179,7 +180,7 @@ public class TroopHelper {
 		}
 		if (result != null && result.hasUnits()) { // Only add spies if there are farm units
 			UnitHolder spy = DataHolder.getSingleton().getUnitByPlainName("spy");
-			Integer neededSpies = configTroops.getAmountForUnit(spy, pTroops.getVillage());
+			Integer neededSpies = configTroops.getAmountForUnit(spy);
 			int availableSpies = Math.max(pTroops.getTroops().getAmountForUnit(spy) - backupUnits.getAmountForUnit(spy),
 					0);
 			result.setAmountForUnit(spy, (neededSpies >= availableSpies) ? availableSpies : neededSpies);

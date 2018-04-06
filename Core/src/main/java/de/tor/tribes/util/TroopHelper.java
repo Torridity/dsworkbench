@@ -75,8 +75,10 @@ public class TroopHelper {
 					logger.debug("The target is the main building and" + needed
 							+ "catapults are needed to destroy it completely." + using + "catapults will be used");
 					units.setAmountForUnit(catapult, using);
+					logger.debug("check amount" + units.getAmountForUnit("axe") + " / " + units.getAmountForUnit("catapult"));
 				} else { // Do not send attack if no Catas are needed
 					units.fill(0);
+					logger.debug("Kick units, because main is level 1");
 				}
 
 			} else {
@@ -86,14 +88,17 @@ public class TroopHelper {
 					logger.debug("The target is an other building and" + needed
 							+ "catapults are needed to destroy it completely." + using + "catapults will be used");
 					units.setAmountForUnit(catapult, using);
+					logger.debug("check amount: " + units.getAmountForUnit("axe") + " / " + units.getAmountForUnit("catapult"));
 				} else { // Do not send attack if no Catas are needed
 					units.fill(0);
+					logger.debug("Kick units, because pther buildings is level 0");
 				}
 
 			}
 
 		} else { // No attack if not enough catas to bring down the building by 1
 			units.fill(0);
+			logger.debug("Kick all units, because no katas are available");
 		}
 
 	}
@@ -125,15 +130,14 @@ public class TroopHelper {
 	public static TroopAmountFixed getTroopsForCarriage(DSWorkbenchFarmManager.FARM_CONFIGURATION pConfig,
 			VillageTroopsHolder pTroops, FarmInformation pInfo) {
 		TroopAmountFixed result = new TroopAmountFixed();
-		TroopAmountDynamic configTroops1 = DSWorkbenchFarmManager.getSingleton().getTroops(pConfig);
-		TroopAmountFixed configTroops = DSWorkbenchFarmManager.getSingleton().getMinUnits(pConfig, pTroops.getVillage());
+		TroopAmountDynamic configTroops = DSWorkbenchFarmManager.getSingleton().getTroops(pConfig);
 		TroopAmountFixed backupUnits = DSWorkbenchFarmManager.getSingleton().getBackupUnits(pTroops.getVillage());
 
 		UnitHolder[] allowed = DSWorkbenchFarmManager.getSingleton().getAllowedFarmUnits(pConfig, pTroops.getVillage());
 		Arrays.sort(allowed, UnitHolder.RUNTIME_COMPARATOR);
 
 		for (UnitHolder unit : allowed) {
-
+			logger.debug(unit + " can carry: " + unit.getCarry());
 			if (unit.getCarry() == 0) { // Skips the loop for Spies
 
 			} else {
@@ -147,26 +151,33 @@ public class TroopHelper {
 				int amount = 0;
 				if (pConfig.equals(DSWorkbenchFarmManager.FARM_CONFIGURATION.C)) {
 					amount = (int) Math.ceil((double) resources / unit.getCarry());
+					logger.debug("The needed amount to carry everything: " + amount);
 				} else {
-					amount = configTroops.getAmountForUnit(unit);
+					amount = configTroops.getAmountForUnit(unit, null);
+					logger.debug("the needed minimum amount: " + amount);
 				}
 
 				int usable = pTroops.getTroops().getAmountForUnit(unit) - backupUnits.getAmountForUnit(unit);
+				logger.debug("The available troops: " + usable);
 				if (usable >= amount) {
-					if (amount < configTroops.getAmountForUnit(unit)) {
+					if (amount < configTroops.getAmountForUnit(unit, null)) {
+						logger.debug("not enough troops available");
 						// If amount < min set to zero and look for other units that fulfill the requirements
 						result.setAmountForUnit(unit, 0);						
 					} else {
+						logger.debug("enough troops, use " + amount + " of " + unit);
 						result.setAmountForUnit(unit, amount);
 						break;
 					}					
-				} else if (usable < amount && usable > configTroops.getAmountForUnit(unit) && DSWorkbenchFarmManager.getSingleton().allowPartlyFarming()) {
+				} else if (usable < amount && usable > configTroops.getAmountForUnit(unit, null) && DSWorkbenchFarmManager.getSingleton().allowPartlyFarming()) {
+					logger.debug("Partly farming");
 					// note: amount is for A/B and K the same as the expression on the right
 					// usable cannot be > and < than amount --> A/B and K cannot get here
 					// C Only gets here if Partly farming is allowed
 					result.setAmountForUnit(unit, usable);
 					resources -= unit.getCarry() * usable;
 				} else {
+					logger.debug("not enough units available. clear units");
 					// No allowed solution found set units to zero and continue
 					result.setAmountForUnit(unit, 0);
 				}
@@ -180,7 +191,7 @@ public class TroopHelper {
 		}
 		if (result != null && result.hasUnits()) { // Only add spies if there are farm units
 			UnitHolder spy = DataHolder.getSingleton().getUnitByPlainName("spy");
-			Integer neededSpies = configTroops.getAmountForUnit(spy);
+			Integer neededSpies = configTroops.getAmountForUnit(spy, pTroops.getVillage());
 			int availableSpies = Math.max(pTroops.getTroops().getAmountForUnit(spy) - backupUnits.getAmountForUnit(spy),
 					0);
 			result.setAmountForUnit(spy, (neededSpies >= availableSpies) ? availableSpies : neededSpies);
@@ -190,7 +201,7 @@ public class TroopHelper {
 
 	public static Hashtable<Village, VillageTroopsHolder> getOwnTroopsForAllVillages(TroopAmountDynamic pMinAmounts) {
 		Hashtable<Village, VillageTroopsHolder> result = new Hashtable<>();
-		for (Village v : DSWorkbenchFarmManager.getSingleton().getActiveFarmGroup()) {
+		for (Village v : DSWorkbenchFarmManager.activeFarmGroup) {
 			VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(v,
 					TroopsManager.TROOP_TYPE.OWN);
 			if (holder != null && hasMinTroopAmounts(holder, pMinAmounts)) {
@@ -221,7 +232,7 @@ public class TroopHelper {
 		int currentResources = pInfo.getResourcesInStorage(System.currentTimeMillis());
 		Hashtable<Village, VillageTroopsHolder> result = new Hashtable<>();
 
-		for (Village v : DSWorkbenchFarmManager.getSingleton().getActiveFarmGroup()) {
+		for (Village v : DSWorkbenchFarmManager.activeFarmGroup) {
 			VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(v,
 					TroopsManager.TROOP_TYPE.OWN);
 			if (holder != null) {
@@ -237,7 +248,7 @@ public class TroopHelper {
 	}
 
 	public static Hashtable<Village, VillageTroopsHolder> getOwnTroopsForAllVillagesByMinHaul(int pMinHaul) {
-		Village[] villages = DSWorkbenchFarmManager.getSingleton().getActiveFarmGroup();
+		Village[] villages = DSWorkbenchFarmManager.activeFarmGroup;
 
 		Hashtable<Village, VillageTroopsHolder> result = new Hashtable<>();
 

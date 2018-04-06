@@ -22,6 +22,7 @@ import de.tor.tribes.types.Tag;
 import java.util.List;
 import org.apache.log4j.Logger;
 import de.tor.tribes.types.ext.Village;
+import de.tor.tribes.util.TagUtils;
 import de.tor.tribes.util.xml.JaxenUtils;
 import java.io.File;
 import java.io.FileWriter;
@@ -287,14 +288,14 @@ public class TagManager extends GenericManager<Tag> {
     }
     
     public String[] getAllTagNames() {
-    	String[] tags = new String[getAllElements().size()];
-    	int i = 0;
-    	for (ManageableType e : getAllElements()) {
-            Tag t = (Tag) e;
-            tags[i] = t.getName();
-            i++;
+    	List<String> tags = new LinkedList<>();
+    	
+    	for (Tag e : TagUtils.getTags(Tag.CASE_INSENSITIVE_ORDER)) {
+    		if(e.getVillageIDs().size() != 0)
+    		tags.add(e.getName());
             }
-		return tags;
+    	    	
+		return tags.toArray(new String[tags.size()]);
         }
 
     public synchronized void addTag(Village pVillage, String pTag) {

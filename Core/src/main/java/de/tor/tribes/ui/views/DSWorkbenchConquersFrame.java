@@ -594,7 +594,7 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
             showError("Keine Eroberung gewählt");
             return;
         }
-        BrowserCommandSender.centerVillage(selection.get(0).getVillage());
+        BrowserInterface.centerVillage(selection.get(0).getVillage());
     }
 
     @Override

@@ -18,6 +18,7 @@ package de.tor.tribes.ui.panels;
 import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.ServerManager;
+import de.tor.tribes.io.TroopAmountElement;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.UserProfile;
@@ -77,7 +78,6 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
     private static Logger logger = Logger.getLogger("AttackTableTab");
 
     public enum TRANSFER_TYPE {
-
         CLIPBOARD_PLAIN, CLIPBOARD_BB, FILE_HTML, FILE_TEXT, FILE_GM, DSWB_RETIME, SELECTION_TOOL, BROWSER_LINK, CUT_TO_INTERNAL_CLIPBOARD, COPY_TO_INTERNAL_CLIPBOARD, FROM_INTERNAL_CLIPBOARD
     }
     private String sAttackPlan = null;
@@ -91,18 +91,19 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
 
     static {
         jxAttackTable.setRowHeight(24);
-        HighlightPredicate.ColumnHighlightPredicate colu = new HighlightPredicate.ColumnHighlightPredicate(0, 1, 2, 3, 4, 5, 6, 7, 11, 12);
-
-        jxAttackTable.setHighlighters(new CompoundHighlighter(colu, HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B)));
+        jxAttackTable.setHighlighters(new CompoundHighlighter(HighlighterFactory.createSimpleStriping(), HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B)));
         jxAttackTable.setColumnControlVisible(true);
+        jxAttackTable.getTableHeader().setDefaultRenderer(new UnitTableHeaderRenderer());
         jxAttackTable.setDefaultEditor(Village.class, new VillageCellEditor());
         jxAttackTable.setDefaultEditor(UnitHolder.class, new UnitCellEditor());
         jxAttackTable.setDefaultRenderer(UnitHolder.class, new UnitCellRenderer());
-        jxAttackTable.setDefaultRenderer(Integer.class, new NoteIconCellRenderer(NoteIconCellRenderer.ICON_TYPE.NOTE));
         jxAttackTable.setDefaultRenderer(Long.class, new ColoredCoutdownCellRenderer());
         jxAttackTable.setDefaultRenderer(Date.class, new ColoredDateCellRenderer());
         jxAttackTable.setDefaultEditor(Date.class, new DateSpinEditor());
+        jxAttackTable.setDefaultRenderer(Integer.class, new NoteIconCellRenderer(NoteIconCellRenderer.ICON_TYPE.NOTE));
         jxAttackTable.setDefaultEditor(Integer.class, new NoteIconCellEditor(NoteIconCellEditor.ICON_TYPE.NOTE));
+        jxAttackTable.setDefaultRenderer(TroopAmountElement.class, new StandardAttackTypeCellRenderer());
+        jxAttackTable.setDefaultEditor(TroopAmountElement.class, new StandardAttackElementEditor());
 
         attackModel = new AttackTableModel(AttackManager.DEFAULT_GROUP);
 
@@ -113,7 +114,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         TableColumnExt transferCol = jxAttackTable.getColumnExt("Übertragen");
         transferCol.setCellRenderer(new SentNotSentCellRenderer());
         transferCol.setCellEditor(new SentNotSentEditor());
-
+        
         BufferedImage back = ImageUtils.createCompatibleBufferedImage(5, 5, BufferedImage.BITMASK);
         Graphics2D g = back.createGraphics();
         GeneralPath p = new GeneralPath();
@@ -124,7 +125,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         g.setColor(Color.GREEN.darker());
         g.fill(p);
         g.dispose();
-
+        
         jxAttackTable.addHighlighter(new PainterHighlighter(HighlightPredicate.EDITABLE, new ImagePainter(back, HorizontalAlignment.RIGHT, VerticalAlignment.TOP)));
     }
 
@@ -185,6 +186,12 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         jTimeChangeDialog.pack();
         jChangeAttackTypeDialog.pack();
         jScriptExportDialog.pack();
+    }
+
+    public void setup() {
+        attackModel = new AttackTableModel(AttackManager.DEFAULT_GROUP);
+
+        jxAttackTable.setModel(attackModel);
     }
 
     public void deregister() {
@@ -307,7 +314,6 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         UIHelper.initTableColums(jxAttackTable, "Einheit", "Typ", "Übertragen", "Einzeichnen");
 
         jScrollPane1.setViewportView(jxAttackTable);
-        jxAttackTable.getTableHeader().setDefaultRenderer(new DefaultTableHeaderRenderer());
         updateSortHighlighter();
     }
 
@@ -1200,6 +1206,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         for (Attack attack : getSelectedAttacks()) {
             if (newType != -2) {
                 attack.setType(newType);
+                attack.setTroopsByType();
             }
             if (newUnit != null) {
                 attack.setUnit(newUnit);
@@ -1241,8 +1248,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         List<Attack> toRemove = new LinkedList<>();
         for (ManageableType t : elements) {
             Attack a = (Attack) t;
-            long sendTime = a.getArriveTime().getTime() - ((long) DSCalculator.calculateMoveTimeInSeconds(a.getSource(), a.getTarget(), a.getUnit().getSpeed()) * 1000);
-            if (sendTime < System.currentTimeMillis()) {
+            if (a.getSendTime().getTime() < System.currentTimeMillis()) {
                 toRemove.add(a);
             }
         }
@@ -1559,7 +1565,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
                 GlobalOptions.addProperty("screen.dir", target.getParent());
                 showSuccess("Befehle erfolgreich gespeichert");
                 if (JOptionPaneHelper.showQuestionConfirmBox(this, "Möchtest du die erstellte Datei jetzt im Browser betrachten?", "Information", "Nein", "Ja") == JOptionPane.YES_OPTION) {
-                    BrowserCommandSender.openPage(target.toURI().toURL().toString());
+                    BrowserInterface.openPage(target.toURI().toURL().toString());
                 }
             } catch (Exception e) {
                 if (f != null) {
@@ -1579,20 +1585,6 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
             showInfo("Keine Befehle ausgewählt");
             return;
         }
-        /*
-         * String dir = GlobalOptions.getProperty("screen.dir"); if (dir == null) { dir = "."; } JFileChooser chooser = null; try { chooser
-         * = new JFileChooser(dir); } catch (Exception e) { JOptionPaneHelper.showErrorBox(this, "Konnte Dateiauswahldialog nicht
-         * öffnen.\nMöglicherweise verwendest du Windows Vista. Ist dies der Fall, beende DS Workbench, klicke mit der rechten Maustaste auf
-         * DSWorkbench.exe,\n" + "wähle 'Eigenschaften' und deaktiviere dort unter 'Kompatibilität' den Windows XP Kompatibilitätsmodus.",
-         * "Fehler"); return; }
-         *
-         * chooser.setDialogTitle("Zielverzeichnis auswählen"); chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-         *
-         * chooser.setSelectedFile(new File(dir)); int ret = chooser.showSaveDialog(this); if (ret == JFileChooser.APPROVE_OPTION) { try {
-         * File f = chooser.getSelectedFile(); AttackToTextWriter.writeAttacks(toExport, f, 10); //store current directory
-         * GlobalOptions.addProperty("screen.dir", f.getPath()); showSuccess("Befehle erfolgreich gespeichert"); } catch (Exception e) {
-         * logger.error("Failed to write attacks to textfile", e); showError("Fehler beim Speichern der Textdateien"); } }
-         */
 
         AttacksToTextExportDialog dia = new AttacksToTextExportDialog(DSWorkbenchAttackFrame.getSingleton(), true);
         dia.setLocationRelativeTo(this);
@@ -1624,7 +1616,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
                     }
                 }
 
-                if (BrowserCommandSender.sendAttack(a, profile)) {
+                if (BrowserInterface.sendAttack(a, profile)) {
                     a.setTransferredToBrowser(true);
                     sentAttacks++;
                 } else {//give click back in case of an error and for multiple attacks
@@ -1668,7 +1660,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         StringBuilder b = new StringBuilder();
         int cnt = 0;
         for (Attack a : selection) {
-            b.append(Attack.toInternalRepresentation(a)).append("\n");
+            b.append(a.toInternalRepresentation()).append("\n");
             cnt++;
         }
         try {
@@ -1755,5 +1747,15 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
             }
         }
         return selectedAttacks;
+    }
+
+    public void reloadAttacksFromStd() {
+        List<Attack> selectedAtts = getSelectedAttacks();
+        
+        for(Attack a: selectedAtts) {
+            a.setTroopsByType();
+        }
+        
+        attackModel.fireTableDataChanged();
     }
 }

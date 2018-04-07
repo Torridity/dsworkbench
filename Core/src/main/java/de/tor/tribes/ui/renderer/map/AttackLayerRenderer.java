@@ -112,9 +112,9 @@ public class AttackLayerRenderer extends AbstractDirectLayerRenderer {
                     if (showAttackMovement) {
                         unitIcon = ImageManager.getUnitIcon(attack.getUnit());
                         if (unitIcon != null) {
-                            long dur = (long) (DSCalculator.calculateMoveTimeInSeconds(attack.getSource(), attack.getTarget(), attack.getUnit().getSpeed()) * 1000);
                             long arrive = attack.getArriveTime().getTime();
-                            long start = arrive - dur;
+                            long start = attack.getSendTime().getTime();
+                            long dur = arrive - start;
                             long current = System.currentTimeMillis();
 
                             if ((start < current) && (arrive > current)) {
@@ -126,7 +126,7 @@ public class AttackLayerRenderer extends AbstractDirectLayerRenderer {
                                 double yTar = yStart + (yEnd - yStart) * perc;
                                 unitXPos = (int) xTar - unitIcon.getIconWidth() / 2;
                                 unitYPos = (int) yTar - unitIcon.getIconHeight() / 2;
-                            } else if ((start > System.currentTimeMillis()) && (arrive > current)) {
+                            } else if (start > current) {
                                 //attack not running, draw unit between source and target
                                 double perc = .5;
                                 double xTar = xStart + (xEnd - xStart) * perc;

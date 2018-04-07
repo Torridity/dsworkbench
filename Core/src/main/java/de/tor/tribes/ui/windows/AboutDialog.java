@@ -17,7 +17,7 @@ package de.tor.tribes.ui.windows;
 
 import de.tor.tribes.util.Constants;
 import java.awt.Cursor;
-import de.tor.tribes.util.BrowserCommandSender;
+import de.tor.tribes.util.BrowserInterface;
 
 /**
  *
@@ -166,7 +166,7 @@ public class AboutDialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
 private void fireOpenHomepageEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireOpenHomepageEvent
-    BrowserCommandSender.openPage("https://forum.die-staemme.de/showthread.php?80831-DS-Workbench");
+    BrowserInterface.openPage("https://forum.die-staemme.de/showthread.php?80831-DS-Workbench");
 }//GEN-LAST:event_fireOpenHomepageEvent
 
 private void fireDebugOnEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireDebugOnEvent

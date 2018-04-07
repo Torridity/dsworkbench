@@ -22,28 +22,29 @@ import de.tor.tribes.util.TroopHelper;
 import de.tor.tribes.util.algo.types.TimeFrame;
 
 import java.util.Comparator;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
  *
  * @author Charon
  */
-public abstract class AbstractTroopMovement {
-
+public class TroopMovement {
   private Village mTarget = null;
   private Hashtable<UnitHolder, List<Village>> mOffs = null;
-  private int iMinOffs = 0;
   private int iMaxOffs = 0;
   public final static AttackRuntimeSort RUNTIME_SORT = new AttackRuntimeSort();
   private List<Attack> finalizedAttacks = null;
+  private int type = -1;
 
-  public AbstractTroopMovement(Village pTarget, int pMinOffs, int pMaxOffs) {
-      mTarget = pTarget;
-      mOffs = new Hashtable<>();
-    iMinOffs = pMinOffs;
+  public TroopMovement(Village pTarget, int pMaxOffs, int pType) {
+    mTarget = pTarget;
+    mOffs = new Hashtable<>();
     iMaxOffs = pMaxOffs;
+    type = pType;
   }
 
   public void setTarget(Village pTarget) {
@@ -61,18 +62,11 @@ public abstract class AbstractTroopMovement {
   public Hashtable<UnitHolder, List<Village>> getOffs() {
     return mOffs;
   }
-
-  public boolean offValid() {
-    Enumeration<UnitHolder> unitKeys = mOffs.keys();
-    int offs = 0;
-    while (unitKeys.hasMoreElements()) {
-      UnitHolder unit = unitKeys.nextElement();
-      offs += mOffs.get(unit).size();
-    }
-
-    return (offs >= iMinOffs);
+  
+  public boolean offComplete() {
+    return (getOffCount() == iMaxOffs);
   }
-
+  
   public int getOffCount() {
     Enumeration<UnitHolder> unitKeys = mOffs.keys();
     int offs = 0;
@@ -83,26 +77,8 @@ public abstract class AbstractTroopMovement {
     return offs;
   }
 
-  public boolean offComplete() {
-    Enumeration<UnitHolder> unitKeys = mOffs.keys();
-    int offs = 0;
-    while (unitKeys.hasMoreElements()) {
-      UnitHolder unit = unitKeys.nextElement();
-      offs += mOffs.get(unit).size();
-    }
-    return (offs == iMaxOffs);
-  }
-
   public void setMaxOffs(int pValue) {
     iMaxOffs = pValue;
-  }
-
-  public void setMinOffs(int pValue) {
-    iMinOffs = pValue;
-  }
-
-  public int getMinOffs() {
-    return iMinOffs;
   }
 
   public int getMaxOffs() {
@@ -113,15 +89,39 @@ public abstract class AbstractTroopMovement {
    * Finalize a movement ignoring used send times. This is used for supports.
    */
   public void finalizeMovement(TimeFrame pTimeframe) {
-    finalizedAttacks = getAttacks(pTimeframe, null);
+    finalizeMovement(pTimeframe, null);
   }
 
   /**
    * Finalize a movement taking care of already used send times. This is used
    * for attacks.
    */
-  public void finalizeMovement(TimeFrame pTimeframe, List<Long> pUsedSendTimes) {
-    finalizedAttacks = getAttacks(pTimeframe, pUsedSendTimes);
+  public void finalizeMovement(TimeFrame pTimeFrame, List<Long> pUsedSendTimes) {
+    List<Attack> result = new LinkedList<>();
+    Enumeration<UnitHolder> unitKeys = getOffs().keys();
+    Village target = getTarget();
+
+    while (unitKeys.hasMoreElements()) {
+        UnitHolder unit = unitKeys.nextElement();
+
+        List<Village> sources = getOffs().get(unit);
+        for (Village offSource : sources) {
+            long runtime = Math.round(DSCalculator.calculateMoveTimeInSeconds(offSource, target, unit.getSpeed()) * 1000);
+            Date fittedTime = pTimeFrame.getFittedArriveTime(runtime, pUsedSendTimes);
+            if (fittedTime != null) {
+                Attack a = new Attack();
+                a.setTarget(target);
+                a.setSource(offSource);
+                a.setArriveTime(fittedTime);
+                a.setUnit(unit);
+                a.setType(type);
+                a.setTroopsByType();
+                result.add(a);
+            }
+        }
+    }
+
+    finalizedAttacks = result;
   }
 
   public Attack[] getFinalizedAttacks() {
@@ -131,15 +131,10 @@ public abstract class AbstractTroopMovement {
     return finalizedAttacks.toArray(new Attack[finalizedAttacks.size()]);
   }
 
-  public abstract List<Attack> getAttacks(TimeFrame pTimeframe, List<Long> pUsedSendTimes);
-
   protected static class AttackRuntimeSort implements Comparator<Attack>, java.io.Serializable {
-
     @Override
     public int compare(Attack a1, Attack a2) {
-      double d1 = a1.getArriveTime().getTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(a1.getSource(), a1.getTarget(), a1.getUnit().getSpeed()) * 1000);
-      double d2 = a2.getArriveTime().getTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(a2.getSource(), a2.getTarget(), a2.getUnit().getSpeed()) * 1000);
-      return Double.compare(d1, d2);
+      return Long.compare(a1.getSendTime().getTime(), a2.getSendTime().getTime());
     }
   }
 }

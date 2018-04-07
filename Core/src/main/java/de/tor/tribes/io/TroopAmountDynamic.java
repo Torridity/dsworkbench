@@ -69,6 +69,10 @@ public class TroopAmountDynamic extends TroopAmount {
         return elm;
     }
 
+    /**
+     * Sets the Amount for Unit contained within pAmount
+     * @param pAmount the Amount & Unit to set
+     */
     public void setAmount(TroopAmountElement pAmount) {
         amounts.put(pAmount.getUnit(), pAmount);
     }
@@ -78,7 +82,8 @@ public class TroopAmountDynamic extends TroopAmount {
     }
 
     @Override
-    public void loadFromXml(Element pElement) {
+    public final void loadFromXml(Element pElement) {
+        logger.debug("from XML");
         if(pElement == null) return;
         
         amounts = new HashMap<>();
@@ -86,6 +91,7 @@ public class TroopAmountDynamic extends TroopAmount {
         for(UnitHolder unit: DataHolder.getSingleton().getUnits()) {
             try {
                 String amount = pElement.getAttributeValue(unit.getPlainName());
+                logger.debug(unit.getPlainName() + " " + amount);
                 amounts.put(unit, new TroopAmountElement(unit, "-1").loadFromBase64(amount));
             } catch (Exception ignored) {
                 amounts.put(unit, new TroopAmountElement(unit, "-1"));
@@ -342,6 +348,18 @@ public class TroopAmountDynamic extends TroopAmount {
             }
         }
         return contained;
+    }
+
+    public UnitHolder getSlowestUnit() {
+        UnitHolder slowest = null;
+        for(UnitHolder unit: DataHolder.getSingleton().getUnits()) {
+            TroopAmountElement elm = getElementForUnit(unit);
+            if((!elm.isFixed() || elm.getTroopsAmount(null) > 0)
+                    && (slowest == null || slowest.getSpeed() < unit.getSpeed())) {
+                slowest = unit;
+            }
+        }
+        return slowest;
     }
     
     @Override

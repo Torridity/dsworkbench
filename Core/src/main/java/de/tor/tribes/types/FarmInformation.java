@@ -24,7 +24,7 @@ import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.ext.Barbarians;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.views.DSWorkbenchFarmManager;
-import de.tor.tribes.util.BrowserCommandSender;
+import de.tor.tribes.util.BrowserInterface;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.TroopHelper;
 import de.tor.tribes.util.conquer.ConquerManager;
@@ -779,7 +779,7 @@ public class FarmInformation extends ManageableType {
                                     append(minHaulCheckFailed).append(" Dorf/Dörfer würden nicht genügend Rohstoffe vorfinden, um die minimale Beute zu erzielen");
                         } else {
                             //send troops and update
-                            if (BrowserCommandSender.sendTroops(selection, getVillage(), farmers)) {
+                            if (BrowserInterface.sendTroops(selection, getVillage(), farmers)) {
                                 //  if (true) {
                                 TroopHelper.sendTroops(selection, farmers);
                                 double speed = farmers.getSpeed();

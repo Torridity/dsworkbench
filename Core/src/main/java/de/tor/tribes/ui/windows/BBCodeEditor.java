@@ -185,14 +185,16 @@ public class BBCodeEditor extends javax.swing.JDialog {
         sampleAttack.setSource(sampleVillage2);
         sampleAttack.setTarget(sampleVillage3);
         sampleAttack.setArriveTime(new Date());
-        sampleAttack.setType(Attack.CLEAN_TYPE);
+        sampleAttack.setType(Attack.CLEAN_TYPE);        
         sampleAttack.setUnit(new DummyUnit());
+        sampleAttack.setTroopsByType();
         Attack sampleAttack2 = new Attack();
         sampleAttack2.setSource(sampleVillage2);
         sampleAttack2.setTarget(sampleVillage3);
         sampleAttack2.setArriveTime(new Date());
         sampleAttack2.setType(Attack.CLEAN_TYPE);
         sampleAttack2.setUnit(new DummyUnit());
+        sampleAttack2.setTroopsByType();
         sampleAttacks.add(sampleAttack);
         sampleAttacks.add(sampleAttack2);
         //sample note

@@ -16,7 +16,7 @@
 package de.tor.tribes.ui.wiz.tap;
 
 import de.tor.tribes.io.UnitHolder;
-import de.tor.tribes.types.AbstractTroopMovement;
+import de.tor.tribes.types.TroopMovement;
 import de.tor.tribes.types.UserProfile;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.wiz.tap.types.TAPAttackSourceElement;
@@ -555,7 +555,7 @@ public class AttackCalculationPanel extends WizardPage {
         vp.setViewPosition(point);
     }
 
-    public List<AbstractTroopMovement> getResults() {
+    public List<TroopMovement> getResults() {
         return calculator.getResults();
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables

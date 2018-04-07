@@ -109,7 +109,7 @@ public class BBPanel extends javax.swing.JPanel {
                             if (v != null) {
                                 String url = ServerManager.getServerURL(GlobalOptions.getSelectedServer());
                                 url += "/game.php?village=" + v.getId() + "&screen=info_village&id=" + v.getId();
-                                BrowserCommandSender.openPage(url);
+                                BrowserInterface.openPage(url);
                             }
                         } catch (Exception ex) {
                             logger.error("Failed open village link", ex);
@@ -122,7 +122,7 @@ public class BBPanel extends javax.swing.JPanel {
                             if (a != null) {
                                 String url = ServerManager.getServerURL(GlobalOptions.getSelectedServer());
                                 url += "/game.php?village=" + GlobalOptions.getSelectedProfile().getTribe().getVillageList()[0].getId() + "&screen=info_ally&id=" + a.getId();
-                                BrowserCommandSender.openPage(url);
+                                BrowserInterface.openPage(url);
                             }
                         } catch (Exception ex) {
                             logger.error("Failed open ally link", ex);
@@ -135,14 +135,14 @@ public class BBPanel extends javax.swing.JPanel {
                             if (!t.equals(InvalidTribe.getSingleton())) {
                                 String url = ServerManager.getServerURL(GlobalOptions.getSelectedServer());
                                 url += "/game.php?village=" + GlobalOptions.getSelectedProfile().getTribe().getVillageList()[0].getId() + "&screen=info_player&id=" + t.getId();
-                                BrowserCommandSender.openPage(url);
+                                BrowserInterface.openPage(url);
                             }
                         } catch (Exception ex) {
                             logger.error("Failed open tribe link", ex);
                         }
                     } else {
                         //normal URL
-                        BrowserCommandSender.openPage(desc);
+                        BrowserInterface.openPage(desc);
                     }
                 }
             }

@@ -227,7 +227,7 @@ public class NoteTableTab extends javax.swing.JPanel implements ListSelectionLis
             return;
         }
 
-        BrowserCommandSender.centerVillage(v);
+        BrowserInterface.centerVillage(v);
     }
 
     public String getNoteSet() {

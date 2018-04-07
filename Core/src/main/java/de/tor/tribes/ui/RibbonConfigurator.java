@@ -1115,14 +1115,14 @@ public class RibbonConfigurator {
         facebookButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                BrowserCommandSender.openPage("http://www.facebook.com/pages/DS-Workbench/182068775185568");
+                BrowserInterface.openPage("http://www.facebook.com/pages/DS-Workbench/182068775185568");
             }
         });
         JCommandButton donateButton = factoryButton("Spenden", "/res/ui/paypal.gif", "Für DS Workbench spenden", "Natürlich ist DS Workbench komplett kostenlos und wird das auch weiterhin bleiben. Dennoch sind kleine Spenden als Dank für die Arbeit die seit mehreren Jahren in DS Workbench fließt immer gern gesehen. Für alle Spenden möchte ich mich an dieser Stelle herzlich bedanken.", true);
         donateButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                BrowserCommandSender.openPage("https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=4434173");
+                BrowserInterface.openPage("https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=4434173");
             }
         });
         JCommandButton aboutButton = factoryButton("About", "/res/ui/about.png", "Über DS Workbench", "Informationen über die Version von DS Workbench die ihr gerade verwendest.", true);

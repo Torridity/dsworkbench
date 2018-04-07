@@ -332,7 +332,7 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame implements Gen
             return;
         }
 
-        BrowserCommandSender.centerVillage((Village) villageSelection);
+        BrowserInterface.centerVillage((Village) villageSelection);
     }
 
     private void updateVillageList() {

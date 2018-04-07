@@ -29,7 +29,7 @@ import de.tor.tribes.ui.models.REDFinalDistributionTableModel;
 import de.tor.tribes.ui.models.REDFinalTransportsTableModel;
 import de.tor.tribes.ui.renderer.*;
 import de.tor.tribes.ui.wiz.red.types.ExtendedTransport;
-import de.tor.tribes.util.BrowserCommandSender;
+import de.tor.tribes.util.BrowserInterface;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
@@ -469,7 +469,7 @@ public class ResourceDistributorFinishPanel extends WizardPage {
                 boolean removeSelection = false;
                 if (!jIgnoreSubmitted.isSelected() || !transport.isTransferredToBrowser()) {
                     if (selectedRows.length == 1 || clickPanel.useClick()) {
-                        transport.setTransferredToBrowser(BrowserCommandSender.sendRes(transport.getSource(), transport.getTarget(), transport, quickProfilePanel.getSelectedProfile()));
+                        transport.setTransferredToBrowser(BrowserInterface.sendRes(transport.getSource(), transport.getTarget(), transport, quickProfilePanel.getSelectedProfile()));
                         if (!transport.isTransferredToBrowser()) {//if transfer failed, set browser access error flag and give click back
                             browserAccessFailed = (browserAccessFailed == false) ? true : browserAccessFailed;
                             if (selectedRows.length > 1) {

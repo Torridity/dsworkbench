@@ -16,7 +16,7 @@
 package de.tor.tribes.util.algo;
 
 import de.tor.tribes.io.UnitHolder;
-import de.tor.tribes.types.AbstractTroopMovement;
+import de.tor.tribes.types.TroopMovement;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.algo.AlgorithmLogPanel;
 import de.tor.tribes.util.ServerSettings;
@@ -35,7 +35,7 @@ import java.util.List;
 public abstract class AbstractAttackAlgorithm extends Thread {
     
     private static Logger logger = Logger.getLogger("AttackAlgorithm");
-    private List<AbstractTroopMovement> results = null;
+    private List<TroopMovement> results = null;
     private Hashtable<UnitHolder, List<Village>> sources = null;
     private Hashtable<UnitHolder, List<Village>> fakes = null;
     private List<Village> targets = null;
@@ -82,7 +82,7 @@ public abstract class AbstractAttackAlgorithm extends Thread {
         return listener;
     }
     
-    public abstract List<AbstractTroopMovement> calculateAttacks(
+    public abstract List<TroopMovement> calculateAttacks(
             Hashtable<UnitHolder, List<Village>> pSources,
             Hashtable<UnitHolder, List<Village>> pFakes,
             List<Village> pTargets,
@@ -142,7 +142,7 @@ public abstract class AbstractAttackAlgorithm extends Thread {
         return timeFrame;
     }
     
-    public List<AbstractTroopMovement> getResults() {
+    public List<TroopMovement> getResults() {
         return results;
     }
     
@@ -156,7 +156,7 @@ public abstract class AbstractAttackAlgorithm extends Thread {
      */
     public int getFullOffs() {
         int cnt = 0;
-        for (AbstractTroopMovement movement : results) {
+        for (TroopMovement movement : results) {
             cnt += (movement.offComplete()) ? 1 : 0;
         }
         return cnt;

@@ -329,7 +329,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
                 }
             }
         }));
-        editTaskPane.getContentPane().add(factoryButton("/res/ui/standard_attacks.png", "Einheit und Befehlstyp für markierte Befehle &auml;ndern. "
+        editTaskPane.getContentPane().add(factoryButton("/res/ui/attack_unit_unknown.png", "Einheit und Befehlstyp für markierte Befehle &auml;ndern. "
                 + "Bitte beachte, dass sich beim &Auml;ndern der Einheit auch die Startzeit der Befehle &auml;ndern kann", new MouseAdapter() {
 
             @Override
@@ -337,6 +337,17 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
                 AttackTableTab activeTab = getActiveTab();
                 if (activeTab != null) {
                     activeTab.changeSelectionType();
+                }
+            }
+        }));
+        editTaskPane.getContentPane().add(factoryButton("/res/ui/standard_attacks.png", "Truppen aus den Standardangriffen neu laden "
+                , new MouseAdapter() {
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                AttackTableTab activeTab = getActiveTab();
+                if (activeTab != null) {
+                    activeTab.reloadAttacksFromStd();
                 }
             }
         }));
@@ -851,8 +862,6 @@ private void fireCreateAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
     }
 
     public static void main(String[] args) {
-
-
         Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
         MouseGestures mMouseGestures = new MouseGestures();
         mMouseGestures.setMouseButton(MouseEvent.BUTTON3_MASK);

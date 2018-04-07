@@ -632,7 +632,7 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
     private void openVillageInfo() {
         FarmInformation v = getSelectedInformation();
         if (v != null) {
-            BrowserCommandSender.showVillageInfoInGame(v.getVillage());
+            BrowserInterface.showVillageInfoInGame(v.getVillage());
         } else {
             showInfo("Keine Farm gewählt");
         }

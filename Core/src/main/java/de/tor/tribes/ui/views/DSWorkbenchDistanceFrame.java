@@ -26,7 +26,7 @@ import de.tor.tribes.ui.models.DistanceTableModel;
 import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
 import de.tor.tribes.ui.renderer.DistanceTableCellRenderer;
 import de.tor.tribes.ui.renderer.UnitListCellRenderer;
-import de.tor.tribes.util.BrowserCommandSender;
+import de.tor.tribes.util.BrowserInterface;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.PluginManager;
@@ -315,7 +315,7 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
         }
         Village v = getSelectedOwnVillage();
         if (v != null) {
-            BrowserCommandSender.centerVillage(v);
+            BrowserInterface.centerVillage(v);
         } else {
             showInfo("Kein Dorf gewählt");
         }
@@ -329,7 +329,7 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
         }
         Village v = getSelectedOwnVillage();
         if (v != null) {
-            BrowserCommandSender.openPlaceTroopsView(v);
+            BrowserInterface.openPlaceTroopsView(v);
         } else {
             showInfo("Kein Dorf gewählt");
         }

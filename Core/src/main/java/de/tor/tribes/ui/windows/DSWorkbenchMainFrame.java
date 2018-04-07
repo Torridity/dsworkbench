@@ -2052,7 +2052,7 @@ private void fireCenterVillageIngameEvent(java.awt.event.MouseEvent evt) {//GEN-
 
   Village v = (Village) jCurrentPlayerVillages.getSelectedItem();
   if (v != null) {
-    BrowserCommandSender.centerVillage(v);
+    BrowserInterface.centerVillage(v);
   }
 }//GEN-LAST:event_fireCenterVillageIngameEvent
 
@@ -2063,7 +2063,7 @@ private void fireCenterCurrentPosInGameEvent(java.awt.event.MouseEvent evt) {//G
   if (!jCenterCoordinateIngame.isEnabled()) {
     return;
   }
-  BrowserCommandSender.centerCoordinate((int) dCenterX, (int) dCenterY);
+  BrowserInterface.centerCoordinate((int) dCenterX, (int) dCenterY);
 }//GEN-LAST:event_fireCenterCurrentPosInGameEvent
 
 private void fireCurrentPlayerVillagePopupEvent(javax.swing.event.PopupMenuEvent evt) {//GEN-FIRST:event_fireCurrentPlayerVillagePopupEvent

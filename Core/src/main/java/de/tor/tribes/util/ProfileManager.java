@@ -17,6 +17,7 @@ package de.tor.tribes.util;
 
 import de.tor.tribes.util.interfaces.ProfileManagerListener;
 import de.tor.tribes.types.UserProfile;
+import de.tor.tribes.types.ext.Tribe;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
@@ -60,42 +61,29 @@ public class ProfileManager {
     }
 
     public UserProfile[] getProfiles() {
-        Collections.sort(mProfiles, new Comparator<UserProfile>() {
-
-            @Override
-            public int compare(UserProfile o1, UserProfile o2) {
-                if (o1.getServerId().length() < o2.getServerId().length()) {
-                    return -1;
-                } else if (o1.getServerId().length() > o2.getServerId().length()) {
-                    return 1;
-                }
-                return o1.getServerId().compareTo(o2.getServerId());
-            }
-        });
+        Collections.sort(mProfiles, new UserProfileComperator());
         return mProfiles.toArray(new UserProfile[]{});
     }
 
     public UserProfile[] getProfiles(String pServer) {
         List<UserProfile> profilesForServer = new LinkedList<>();
-        for (UserProfile profile : mProfiles.toArray(new UserProfile[]{})) {
+        for (UserProfile profile : mProfiles) {
             if (profile.getServerId().equals(pServer)) {
                 profilesForServer.add(profile);
             }
         }
 
-        Collections.sort(profilesForServer, new Comparator<UserProfile>() {
-
-            @Override
-            public int compare(UserProfile o1, UserProfile o2) {
-                if (o1.getServerId().length() < o2.getServerId().length()) {
-                    return -1;
-                } else if (o1.getServerId().length() > o2.getServerId().length()) {
-                    return 1;
-                }
-                return o1.getServerId().compareTo(o2.getServerId());
-            }
-        });
+        Collections.sort(profilesForServer, new UserProfileComperator());
         return profilesForServer.toArray(new UserProfile[]{});
+    }
+
+    public Object getProfile(String pServer, Tribe pTribe) {
+        for (UserProfile profile : mProfiles) {
+            if (profile.getServerId().equals(pServer) && profile.getTribeName().equals(pTribe.getName())) {
+                return profile;
+            }
+        }
+        return null;
     }
 
     public void loadProfiles() {
@@ -160,5 +148,17 @@ public class ProfileManager {
 
     public static void main(String[] args) {
         ProfileManager.getSingleton().loadProfiles();
+    }
+
+    private class UserProfileComperator implements Comparator<UserProfile> {
+        @Override
+        public int compare(UserProfile o1, UserProfile o2) {
+            if (o1.getServerId().length() < o2.getServerId().length()) {
+                return -1;
+            } else if (o1.getServerId().length() > o2.getServerId().length()) {
+                return 1;
+            }
+            return o1.getServerId().compareTo(o2.getServerId());
+        }
     }
 }

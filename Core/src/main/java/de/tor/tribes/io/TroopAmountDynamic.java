@@ -83,7 +83,6 @@ public class TroopAmountDynamic extends TroopAmount {
 
     @Override
     public final void loadFromXml(Element pElement) {
-        logger.debug("from XML");
         if(pElement == null) return;
         
         amounts = new HashMap<>();
@@ -91,7 +90,6 @@ public class TroopAmountDynamic extends TroopAmount {
         for(UnitHolder unit: DataHolder.getSingleton().getUnits()) {
             try {
                 String amount = pElement.getAttributeValue(unit.getPlainName());
-                logger.debug(unit.getPlainName() + " " + amount);
                 amounts.put(unit, new TroopAmountElement(unit, "-1").loadFromBase64(amount));
             } catch (Exception ignored) {
                 amounts.put(unit, new TroopAmountElement(unit, "-1"));
@@ -369,11 +367,11 @@ public class TroopAmountDynamic extends TroopAmount {
         for(UnitHolder unit: getContainedUnits()) {
             clone.setAmount(new TroopAmountElement(unit,
                     getElementForUnit(unit).toString()));
-    }
+        }
         return clone;
     }
 
-    public void fill(String pAmount) {
+    public final void fill(String pAmount) {
         amounts = new HashMap<>();
         for(UnitHolder unit: DataHolder.getSingleton().getUnits()) {
             amounts.put(unit, new TroopAmountElement(unit, pAmount));

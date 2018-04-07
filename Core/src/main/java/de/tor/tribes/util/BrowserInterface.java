@@ -57,7 +57,11 @@ public class BrowserInterface {
     }
 
     public static boolean sendTroops(Village pSource, Village pTarget, TroopAmountFixed pTroops) {
-        return sendTroops(pSource, pTarget, null, pTroops, null);
+        return sendTroops(pSource, pTarget, pTroops, null);
+    }
+
+    public static boolean sendTroops(Village pSource, Village pTarget, TroopAmountFixed pTroops, UserProfile pProfile) {
+        return sendTroops(pSource, pTarget, null, pTroops, pProfile);
     }
 
     public static boolean sendTroops(Village pSource, Village pTarget, Date pSendTime, TroopAmountFixed pTroops, UserProfile pProfile) {

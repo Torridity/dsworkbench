@@ -105,7 +105,8 @@ public class AboutDialog extends javax.swing.JDialog {
         getContentPane().add(jLabel4, gridBagConstraints);
 
         jLabel5.setForeground(new java.awt.Color(0, 51, 255));
-        jLabel5.setText("https://forum.die-staemme.de/showthread.php?80831-DS-Workbench");
+        jLabel5.setText("https://forum.die-staemme.de/index.php?threads/ds-workbench.80831/");
+        jLabel5.setToolTipText("");
         jLabel5.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireOpenHomepageEvent(evt);
@@ -166,7 +167,7 @@ public class AboutDialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
 private void fireOpenHomepageEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireOpenHomepageEvent
-    BrowserInterface.openPage("https://forum.die-staemme.de/showthread.php?80831-DS-Workbench");
+    BrowserInterface.openPage("https://forum.die-staemme.de/index.php?threads/ds-workbench.80831/");
 }//GEN-LAST:event_fireOpenHomepageEvent
 
 private void fireDebugOnEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireDebugOnEvent

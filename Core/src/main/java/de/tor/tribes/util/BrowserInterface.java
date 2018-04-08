@@ -73,7 +73,7 @@ public class BrowserInterface {
             url.append("&screen=place&mode=command&target=").append(pTarget.getId());
             url.append("&type=0");
             
-            for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
+            for (UnitHolder unit : DataHolder.getSingleton().getSendableUnits()) {
                 int amount = pTroops.getAmountForUnit(unit);
                 if (amount < 0) {
                     amount = 0;

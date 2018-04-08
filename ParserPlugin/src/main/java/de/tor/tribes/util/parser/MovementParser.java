@@ -151,7 +151,7 @@ public class MovementParser implements SilentParserInterface {
 
                 logger.debug("getting units");                
                 //get units
-                List<UnitHolder> allUnits = DataHolder.getSingleton().getUnits();
+                List<UnitHolder> allUnits = DataHolder.getSingleton().getSendableUnits();
                 TroopAmountFixed units = new TroopAmountFixed(0);
                 int cnt = 0;
                 for(int i = 3; i < parts.length; i++) {
@@ -165,8 +165,7 @@ public class MovementParser implements SilentParserInterface {
                 if (cnt < allUnits.size()) {
                     continue;
                 }
-                //TODO for later
-                //parsed.setTroops(units);
+                parsed.setTroops(units.transformToDynamic());
                 
                 logger.debug("getting standard attack");
                 //set a default attack

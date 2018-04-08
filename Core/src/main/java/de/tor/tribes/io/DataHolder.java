@@ -1174,6 +1174,19 @@ public class DataHolder {
     public List<UnitHolder> getUnits() {
         return mUnits;
     }
+    
+    public List<UnitHolder> getSendableUnits() {
+        List<UnitHolder> sendUnits = new ArrayList<>();
+        sendUnits.addAll(mUnits);
+        
+        //remove milita
+        for(int i = sendUnits.size() - 1; i >= 0; i--) {
+            if(sendUnits.get(i).getPlainName().equals("militia")) {
+                sendUnits.remove(i);
+            }
+        }
+        return sendUnits;
+    }
 
     public UnitHolder getRandomUnit() {
         int id = (int) (Math.rint(mUnits.size() * Math.random()));

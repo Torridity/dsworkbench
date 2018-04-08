@@ -35,13 +35,15 @@ public class AttackTypeTableModel extends AbstractTableModel {
 
     private List<String> columnNames = new LinkedList<>();
     private List<Class> columnTypes = new LinkedList<>();
+    private final List<UnitHolder> units;
 
     public AttackTypeTableModel() {
         columnNames.add("Name");
         columnTypes.add(String.class);
         columnNames.add("Symbol");
         columnTypes.add(Integer.class);
-        for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
+        units = DataHolder.getSingleton().getSendableUnits();
+        for (UnitHolder unit : units) {
             columnNames.add(unit.getPlainName());
             columnTypes.add(TroopAmountElement.class);
         }
@@ -90,7 +92,7 @@ public class AttackTypeTableModel extends AbstractTableModel {
                 a.setIcon((Integer) aValue);
             }
         } else {
-            UnitHolder unit = DataHolder.getSingleton().getUnits().get(columnIndex - 2);
+            UnitHolder unit = units.get(columnIndex - 2);
             try {
                 a.getTroops().setAmount(new TroopAmountElement(unit, (String) aValue));
             } catch(IllegalArgumentException e) {
@@ -117,7 +119,7 @@ public class AttackTypeTableModel extends AbstractTableModel {
             case 1:
                 return a.getIcon();
             default:
-                UnitHolder unit = DataHolder.getSingleton().getUnits().get(columnIndex - 2);
+                UnitHolder unit = units.get(columnIndex - 2);
                 return a.getTroops().getElementForUnit(unit);
         }
     }

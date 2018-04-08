@@ -64,7 +64,7 @@ public abstract class TroopSelectionPanel<T extends TroopAmount> extends javax.s
      */
     public TroopSelectionPanel() {
         initComponents();
-        setup(DataHolder.getSingleton().getUnits());
+        setup(DataHolder.getSingleton().getSendableUnits());
         jXCollapsiblePane1.setLayout(new BorderLayout());
         jXCollapsiblePane1.add(jPanel2, BorderLayout.CENTER);
         StandardAttackManager.getSingleton().addManagerListener(TroopSelectionPanel.this);
@@ -132,7 +132,7 @@ public abstract class TroopSelectionPanel<T extends TroopAmount> extends javax.s
     
     public final void setupDefense(boolean pTypeSeparation) {
         List<UnitHolder> units = new LinkedList<>();
-        for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
+        for (UnitHolder unit : DataHolder.getSingleton().getSendableUnits()) {
             if (unit.isDefense()) {
                 units.add(unit);
             }
@@ -142,7 +142,7 @@ public abstract class TroopSelectionPanel<T extends TroopAmount> extends javax.s
     
     public final void setupOffense(boolean pTypeSeparation) {
         List<UnitHolder> units = new LinkedList<>();
-        for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
+        for (UnitHolder unit : DataHolder.getSingleton().getSendableUnits()) {
             if (unit.isOffense()) {
                 units.add(unit);
             }
@@ -152,7 +152,7 @@ public abstract class TroopSelectionPanel<T extends TroopAmount> extends javax.s
     
     public final void setupFarm(boolean pTypeSeparation) {
         List<UnitHolder> units = new LinkedList<>();
-        for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
+        for (UnitHolder unit : DataHolder.getSingleton().getSendableUnits()) {
             if (unit.isFarmUnit()) {
                 units.add(unit);
             }

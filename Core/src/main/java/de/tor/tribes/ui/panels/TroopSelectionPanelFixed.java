@@ -31,7 +31,7 @@ public class TroopSelectionPanelFixed extends TroopSelectionPanel<TroopAmountFix
     @Override
     public TroopAmountFixed getAmounts() {
         TroopAmountFixed values = new TroopAmountFixed(0);
-        for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
+        for (UnitHolder unit : DataHolder.getSingleton().getSendableUnits()) {
             values.setAmountForUnit(unit, this.getAmountForUnit(unit));
         }
         return values;
@@ -47,7 +47,7 @@ public class TroopSelectionPanelFixed extends TroopSelectionPanel<TroopAmountFix
 
     @Override
     public void setAmounts(TroopAmountFixed pAmounts) {
-        for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
+        for (UnitHolder unit : DataHolder.getSingleton().getSendableUnits()) {
             setAmountForUnit(unit, pAmounts.getAmountForUnit(unit));
         }
     }

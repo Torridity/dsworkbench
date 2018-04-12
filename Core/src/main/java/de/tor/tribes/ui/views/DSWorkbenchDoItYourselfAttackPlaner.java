@@ -701,7 +701,7 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
         } else if (unit.equals(DataHolder.getSingleton().getUnitByPlainName("ram"))) {
             type = Attack.CLEAN_TYPE;
         }
-        AttackManager.getSingleton().addDoItYourselfAttack(source, target, unit, arrive, type);
+        AttackManager.getSingleton().addAttack(source, target, unit, arrive, AttackManager.MANUAL_ATTACK_PLAN);
         showSuccess("Angriff hinzugefügt");
     }//GEN-LAST:event_fireAddAttackEvent
 
@@ -746,6 +746,7 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
                 int row = jAttackTable.convertRowIndexToModel(rows[r]);
                 Attack a = (Attack) AttackManager.getSingleton().getDoItYourselfAttacks().get(row);
                 a.setType(newType);
+                a.setTroopsByType();
             }
         }
         AttackManager.getSingleton().revalidate(true);
@@ -798,7 +799,7 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
         StringBuilder b = new StringBuilder();
         int cnt = 0;
         for (Attack a : selection) {
-            b.append(Attack.toInternalRepresentation(a)).append("\n");
+            b.append(a.toInternalRepresentation()).append("\n");
             cnt++;
         }
         try {
@@ -928,7 +929,9 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
         DSWorkbenchAttackFrame.getSingleton().pack();
         AttackManager.getSingleton().invalidate();
         for (int i = 0; i < 100; i++) {
-            AttackManager.getSingleton().addDoItYourselfAttack(DataHolder.getSingleton().getRandomVillage(), DataHolder.getSingleton().getRandomVillage(), DataHolder.getSingleton().getRandomUnit(), new Date(System.currentTimeMillis() + DateUtils.MILLIS_PER_DAY), Attack.CLEAN_TYPE);
+            AttackManager.getSingleton().addAttack(DataHolder.getSingleton().getRandomVillage(),
+                    DataHolder.getSingleton().getRandomVillage(), DataHolder.getSingleton().getRandomUnit(),
+                    new Date(System.currentTimeMillis() + DateUtils.MILLIS_PER_DAY), AttackManager.MANUAL_ATTACK_PLAN);
         }
 
         AttackManager.getSingleton().revalidate(AttackManager.MANUAL_ATTACK_PLAN, true);

@@ -17,15 +17,14 @@ package de.tor.tribes.util.algo;
 
 import de.tor.tribes.util.algo.types.TimeFrame;
 import de.tor.tribes.io.UnitHolder;
-import de.tor.tribes.types.AbstractTroopMovement;
+import de.tor.tribes.types.Attack;
+import de.tor.tribes.types.TroopMovement;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.DSCalculator;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
-import de.tor.tribes.types.Fake;
-import de.tor.tribes.types.Off;
 import de.tor.tribes.util.ServerSettings;
 import java.util.Arrays;
 import java.util.Collections;
@@ -42,7 +41,7 @@ public class BruteForce extends AbstractAttackAlgorithm {
     private static Logger logger = Logger.getLogger("Algorithm_BruteForce");
 
     @Override
-    public List<AbstractTroopMovement> calculateAttacks(
+    public List<TroopMovement> calculateAttacks(
             Hashtable<UnitHolder, List<Village>> pSources,
             Hashtable<UnitHolder, List<Village>> pFakes,
             List<Village> pTargets,
@@ -329,13 +328,14 @@ public class BruteForce extends AbstractAttackAlgorithm {
 
         logText(" - Erstelle Ergebnisliste");
         //convert to result list
-        List<AbstractTroopMovement> movements = new LinkedList<>();
+        List<TroopMovement> movements = new LinkedList<>();
         logger.debug(" - adding offs");
 
         logText(String.format(" %d Offs berechnet", attacks.size()));
         for (Village target : allTargets) {
             Hashtable<UnitHolder, List<Village>> sourcesForTarget = attacks.get(target);
-            Off f = new Off(target, pMaxAttacksTable.get(target));
+            TroopMovement f = new TroopMovement(target, pMaxAttacksTable.get(target), Attack.CLEAN_TYPE);
+            
             if (sourcesForTarget != null) {
                 Enumeration<UnitHolder> sourceKeys = sourcesForTarget.keys();
                 while (sourceKeys.hasMoreElements()) {
@@ -358,7 +358,7 @@ public class BruteForce extends AbstractAttackAlgorithm {
 
         for (Village target : (List<Village>)ListUtils.union(allFakeTargets, allTargets)) {
         	Hashtable<UnitHolder, List<Village>> sourcesForTarget = fakes.get(target);
-            Fake f = new Fake(target, pMaxAttacksTable.get(target));
+            TroopMovement f = new TroopMovement(target, pMaxAttacksTable.get(target), Attack.FAKE_TYPE);
             if (sourcesForTarget != null) {
                 Enumeration<UnitHolder> sourceKeys = sourcesForTarget.keys();
                 while (sourceKeys.hasMoreElements()) {

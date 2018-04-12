@@ -341,11 +341,9 @@ public class AttackPlanHTMLExporter {
 
             // <editor-fold defaultstate="collapsed" desc="Replace times and place URL">
             //replace arrive time
-            String arrive = f.format(a.getArriveTime());
-            b = b.replaceAll(ARRIVE_TIME, arrive);
+            b = b.replaceAll(ARRIVE_TIME, f.format(a.getArriveTime()));
             //replace send time
-            long send = a.getArriveTime().getTime() - ((long) DSCalculator.calculateMoveTimeInSeconds(a.getSource(), a.getTarget(), a.getUnit().getSpeed()) * 1000);
-            b = b.replaceAll(SEND_TIME, f.format(new Date(send)));
+            b = b.replaceAll(SEND_TIME, f.format(a.getSendTime()));
             //replace place link
             String placeURL = baseURL + "game.php?village=";
             int uvID = GlobalOptions.getSelectedProfile().getUVId();

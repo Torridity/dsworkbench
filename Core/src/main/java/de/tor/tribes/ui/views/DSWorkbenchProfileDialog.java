@@ -21,6 +21,7 @@ import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.UserProfile;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.JOptionPaneHelper;
+import de.tor.tribes.util.ProfileManager;
 import java.util.Arrays;
 import java.util.Collection;
 import javax.swing.DefaultComboBoxModel;
@@ -226,13 +227,17 @@ public class DSWorkbenchProfileDialog extends javax.swing.JDialog {
                 if (jIsUvAccount.isSelected()) {
                     uvId = tribe.getId();
                 }
+                
+                if(ProfileManager.getSingleton().getProfile(server, tribe) != null) {
+                    JOptionPaneHelper.showErrorBox(this, "Es existiert schon ein Profil.", "Fehler");
+                    return;
+                }
+                
                 UserProfile newProfile = UserProfile.create(server, tribe.getName(), uvId, true);
                 if (newProfile == null) {
                     JOptionPaneHelper.showErrorBox(this, "Fehler bei der Profilerstellung.", "Fehler");
                     return;
-                } /*else {
-                    GlobalOptions.setSelectedProfile(newProfile);
-                }*/
+                }
             } else {
                 //modify existing profile
                 Tribe tribe = (Tribe) jAccountTribeBox.getSelectedItem();

@@ -32,7 +32,7 @@ import de.tor.tribes.ui.tree.SelectionTreeRootNode;
 import de.tor.tribes.ui.tree.TagNode;
 import de.tor.tribes.ui.tree.TribeNode;
 import de.tor.tribes.ui.tree.VillageNode;
-import de.tor.tribes.util.BrowserCommandSender;
+import de.tor.tribes.util.BrowserInterface;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.JOptionPaneHelper;
@@ -622,7 +622,7 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
                 GlobalOptions.addProperty("screen.dir", target.getParent());
                 showSuccess("Auswahl erfolgreich gespeichert");
                 if (JOptionPaneHelper.showQuestionConfirmBox(this, "Willst du die erstellte Datei jetzt im Browser betrachten?", "Information", "Nein", "Ja") == JOptionPane.YES_OPTION) {
-                    BrowserCommandSender.openPage(target.toURI().toURL().toString());
+                    BrowserInterface.openPage(target.toURI().toURL().toString());
                 }
             } catch (Exception inner) {
                 logger.error("Failed to write selection to HTML", inner);

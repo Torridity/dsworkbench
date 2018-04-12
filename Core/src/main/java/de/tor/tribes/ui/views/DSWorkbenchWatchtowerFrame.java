@@ -312,7 +312,7 @@ public class DSWorkbenchWatchtowerFrame extends AbstractDSWorkbenchFrame impleme
     private void centerWatchtowerInGame() {
         KnownVillage v = getSelectedWatchtower();
         if (v != null) {
-            BrowserCommandSender.centerVillage(v.getVillage());
+            BrowserInterface.centerVillage(v.getVillage());
         } else {
             showInfo("Kein Wachturm gewählt");
         }

@@ -58,11 +58,6 @@ public class DoItYourselfAttackTableModel extends AbstractTableModel {
         return colNames[column];
     }
 
-    public void addAttack(Village pSource, Village pTarget, Date pArrive, UnitHolder pUnit, Integer pType) {
-        AttackManager.getSingleton().addDoItYourselfAttack(pSource, pTarget, pUnit, pArrive, pType);
-        fireTableDataChanged();
-    }
-
     public void removeRow(int pRow) {
         Attack a = (Attack) AttackManager.getSingleton().getDoItYourselfAttacks().get(pRow);
         AttackManager.getSingleton().removeElement(a);
@@ -87,23 +82,12 @@ public class DoItYourselfAttackTableModel extends AbstractTableModel {
                     return a.getSource();
                 case 3:
                     return a.getTarget();
-                case 4: {
-                    try {
-                        long sendTime = a.getArriveTime().getTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(a.getSource(), a.getTarget(), a.getUnit().getSpeed()) * 1000);
-                        return new Date(sendTime);
-                    } catch (Exception e) {
-                        return null;
-                    }
-                }
+                case 4:
+                    return a.getSendTime();
                 case 5:
-                    if (a.getArriveTime() != null) {
-                        return a.getArriveTime();
-                    } else {
-                        return null;
-                    }
+                    return a.getArriveTime();
                 default: {
-                    long sendTime = a.getArriveTime().getTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(a.getSource(), a.getTarget(), a.getUnit().getSpeed()) * 1000);
-                    long t = sendTime - System.currentTimeMillis();
+                    long t = a.getSendTime().getTime() - System.currentTimeMillis();
                     return (t <= 0) ? 0 : t;
                 }
             }
@@ -125,11 +109,16 @@ public class DoItYourselfAttackTableModel extends AbstractTableModel {
             Attack a = (Attack) AttackManager.getSingleton().getAllElements(AttackManager.MANUAL_ATTACK_PLAN).get(pRow);
             switch (pCol) {
                 case 0: {
-                    a.setType((Integer) pValue);
+                    if (pValue != null) {
+                        a.setType((Integer) pValue);
+                        a.setTroopsByType();
+                    }
                     break;
                 }
                 case 1: {
-                    a.setUnit((UnitHolder) pValue);
+                    if (pValue != null) {
+                        a.setUnit((UnitHolder) pValue);
+                    }
                     break;
                 }
                 case 2: {
@@ -145,19 +134,13 @@ public class DoItYourselfAttackTableModel extends AbstractTableModel {
                     break;
                 }
                 case 4: {
-                    if (pValue == null) {
-                        a.setArriveTime(null);
-                    } else {
-                        Date sendTime = (Date) pValue;
-                        long arriveTime = sendTime.getTime() + (long) (DSCalculator.calculateMoveTimeInSeconds(a.getSource(), a.getTarget(), a.getUnit().getSpeed()) * 1000);
-                        a.setArriveTime(new Date(arriveTime));
+                    if (pValue != null) {
+                        a.setSendTime((Date) pValue);
                     }
                     break;
                 }
                 case 5: {
-                    if (pValue == null) {
-                        a.setArriveTime(null);
-                    } else {
+                    if (pValue != null) {
                         a.setArriveTime((Date) pValue);
                     }
                     break;

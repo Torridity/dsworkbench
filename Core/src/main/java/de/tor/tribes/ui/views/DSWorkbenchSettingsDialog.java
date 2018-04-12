@@ -2669,7 +2669,7 @@ private void fireSelectBrowserEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
             }
             GlobalOptions.addProperty("default.browser", jBrowserPath.getText());
             if (JOptionPaneHelper.showQuestionConfirmBox(this, "Aktiver Browser geändert.\nWillst du die Einstellungen jetzt testen?", "Erfolg", "Nein", "Ja") == JOptionPane.YES_OPTION) {
-                if (!BrowserCommandSender.openTestPage("http://www.google.com")) {
+                if (!BrowserInterface.openPage("http://www.google.com")) {
                     JOptionPaneHelper.showErrorBox(this, "Browser konnte nicht geöffnet werden. Bitte überprüfe deine Einstellungen.", "Fehler");
                 }
             }

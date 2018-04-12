@@ -16,7 +16,7 @@
 package de.tor.tribes.ui.components;
 
 import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
-import de.tor.tribes.util.BrowserCommandSender;
+import de.tor.tribes.util.BrowserInterface;
 import de.tor.tribes.util.GlobalOptions;
 import java.awt.BorderLayout;
 import java.awt.TexturePaint;
@@ -233,11 +233,11 @@ public class WelcomePanel extends JXPanel {
         if (evt.getSource() == jxHelpLabel) {
             GlobalOptions.getHelpBroker().setDisplayed(true);
         } else if (evt.getSource() == jxCommunityLabel) {
-            BrowserCommandSender.openPage("https://forum.die-staemme.de/showthread.php?80831-DS-Workbench");
+            BrowserInterface.openPage("https://forum.die-staemme.de/index.php?threads/ds-workbench.80831/");
         } else if (evt.getSource() == jxIdeaLabel) {
-            BrowserCommandSender.openPage("https://forum.die-staemme.de/showthread.php?80831-DS-Workbench");
+            BrowserInterface.openPage("https://forum.die-staemme.de/index.php?threads/ds-workbench.80831/");
         } else if (evt.getSource() == jxFacebookLabel) {
-            BrowserCommandSender.openPage("http://www.facebook.com/pages/DS-Workbench/182068775185568");
+            BrowserInterface.openPage("http://www.facebook.com/pages/DS-Workbench/182068775185568");
         } else if (evt.getSource() == jxCloseLabel) {
             //hide welcome page
 

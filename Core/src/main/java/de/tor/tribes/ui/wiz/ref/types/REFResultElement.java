@@ -46,6 +46,7 @@ public class REFResultElement {
         a.setUnit(unit);
         a.setArriveTime(arriveTime);
         a.setType(Attack.SUPPORT_TYPE);
+        a.setTroopsByType();
         return a;
     }
 

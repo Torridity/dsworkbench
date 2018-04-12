@@ -28,7 +28,7 @@ import de.tor.tribes.ui.renderer.PercentCellRenderer;
 import de.tor.tribes.ui.renderer.TroopTableHeaderRenderer;
 import de.tor.tribes.ui.views.DSWorkbenchTroopsFrame;
 import de.tor.tribes.ui.windows.TroopDetailsDialog;
-import de.tor.tribes.util.BrowserCommandSender;
+import de.tor.tribes.util.BrowserInterface;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.ImageUtils;
 import de.tor.tribes.util.JOptionPaneHelper;
@@ -413,7 +413,7 @@ public class TroopTableTab extends javax.swing.JPanel implements ListSelectionLi
             return;
         }
 
-        BrowserCommandSender.centerVillage(selection.get(0).getVillage());
+        BrowserInterface.centerVillage(selection.get(0).getVillage());
     }
 
     @Override
@@ -424,7 +424,7 @@ public class TroopTableTab extends javax.swing.JPanel implements ListSelectionLi
             return;
         }
 
-        BrowserCommandSender.openPlaceTroopsView(selection.get(0).getVillage());
+        BrowserInterface.openPlaceTroopsView(selection.get(0).getVillage());
     }
 
     public boolean deleteSelection(boolean pAsk) {

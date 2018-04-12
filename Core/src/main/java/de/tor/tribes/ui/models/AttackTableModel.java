@@ -15,6 +15,8 @@
  */
 package de.tor.tribes.ui.models;
 
+import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.io.TroopAmountElement;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.ext.Ally;
 import de.tor.tribes.types.Attack;
@@ -26,7 +28,10 @@ import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.attack.AttackManager;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 import javax.swing.table.AbstractTableModel;
+import org.apache.log4j.Logger;
 
 /**
  *
@@ -34,13 +39,39 @@ import javax.swing.table.AbstractTableModel;
  */
 public class AttackTableModel extends AbstractTableModel {
 
+    private static Logger logger = Logger.getLogger("AttackTableModel");
+
     private String sPlan = null;
-    private Class[] types = new Class[]{Tribe.class, Ally.class, Village.class, Tribe.class, Ally.class, Village.class, UnitHolder.class, Integer.class, Date.class, Date.class, Long.class, Boolean.class, Boolean.class};
-    private String[] colNames = new String[]{"Angreifer", "Stamm (Angreifer)", "Herkunft", "Verteidiger", "Stamm (Verteidiger)", "Ziel", "Einheit", "Typ", "Abschickzeit", "Ankunftzeit", "Verbleibend", "Einzeichnen", "Übertragen"};
-    private boolean[] editableColumns = new boolean[]{false, false, true, false, false, true, true, true, true, true, false, true, true};
+    private final List<String> columnNames = new LinkedList<>();
+    private final List<Class> columnTypes = new LinkedList<>();
+    private final List<Boolean> editable = new LinkedList<>();
+    private final int unitAfter;
+    private final List<UnitHolder> units;
 
     public AttackTableModel(String pPlan) {
         sPlan = pPlan;
+        
+        columnNames.add("Angreifer"); columnTypes.add(Tribe.class); editable.add(false);
+        columnNames.add("Stamm (Angreifer)"); columnTypes.add(Ally.class); editable.add(false);
+        columnNames.add("Herkunft"); columnTypes.add(Village.class); editable.add(true);
+        columnNames.add("Verteidiger"); columnTypes.add(Tribe.class); editable.add(false);
+        columnNames.add("Stamm (Verteidiger)"); columnTypes.add(Ally.class); editable.add(false);
+        columnNames.add("Ziel"); columnTypes.add(Village.class); editable.add(true);
+        columnNames.add("Einheit"); columnTypes.add(UnitHolder.class); editable.add(true);
+        columnNames.add("Typ"); columnTypes.add(Integer.class); editable.add(true);
+        units = DataHolder.getSingleton().getSendableUnits();
+        for (UnitHolder unit : units) {
+            columnNames.add(unit.getPlainName());
+            columnTypes.add(TroopAmountElement.class);
+            editable.add(true);
+        }
+        unitAfter = columnNames.size();
+        columnNames.add("Abschickzeit"); columnTypes.add(Date.class); editable.add(true);
+        columnNames.add("Ankunftzeit"); columnTypes.add(Date.class); editable.add(true);
+        columnNames.add("Verbleibend"); columnTypes.add(Long.class); editable.add(false);
+        columnNames.add("Einzeichnen"); columnTypes.add(Boolean.class); editable.add(true);
+        columnNames.add("Übertragen"); columnTypes.add(Boolean.class); editable.add(true);
+        
     }
 
     public void setPlan(String pPlan) {
@@ -50,22 +81,22 @@ public class AttackTableModel extends AbstractTableModel {
 
     @Override
     public int getColumnCount() {
-        return colNames.length;
+        return columnNames.size();
     }
 
     @Override
     public Class<?> getColumnClass(int columnIndex) {
-        return types[columnIndex];
+        return columnTypes.get(columnIndex);
     }
 
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        return editableColumns[columnIndex];
+        return editable.get(columnIndex);
     }
 
     @Override
-    public String getColumnName(int column) {
-        return colNames[column];
+    public String getColumnName(int columnIndex) {
+        return columnNames.get(columnIndex);
     }
 
     @Override
@@ -83,72 +114,63 @@ public class AttackTableModel extends AbstractTableModel {
         }
         try {
             Attack a = (Attack) AttackManager.getSingleton().getAllElements(sPlan).get(rowIndex);
-            switch (columnIndex) {
-                case 0: {
-                    Tribe attacker = a.getSource().getTribe();
-                    if (attacker == null) {
-                        return Barbarians.getSingleton();
-                    }
-                    return attacker;
+            if(columnIndex == 0) {
+                Tribe attacker = a.getSource().getTribe();
+                if (attacker == null) {
+                    return Barbarians.getSingleton();
                 }
-                case 1: {
-                    Tribe attacker = a.getSource().getTribe();
-                    if (attacker == null) {
-                        return BarbarianAlly.getSingleton();
-                    }
-                    Ally ally = attacker.getAlly();
-                    if (ally == null) {
-                        return NoAlly.getSingleton();
-                    }
-                    return ally;
+                return attacker;
+            } else if(columnIndex == 1) {
+                Tribe attacker = a.getSource().getTribe();
+                if (attacker == null) {
+                    return BarbarianAlly.getSingleton();
                 }
-                case 2:
-                    return a.getSource();
-                case 3: {
-                    Tribe defender = a.getTarget().getTribe();
-                    if (defender == null) {
-                        return Barbarians.getSingleton();
-                    }
-                    return defender;
+                Ally ally = attacker.getAlly();
+                if (ally == null) {
+                    return NoAlly.getSingleton();
                 }
-                case 4: {
-                    Tribe defender = a.getTarget().getTribe();
-                    if (defender == null) {
-                        return Barbarians.getSingleton();
-                    }
-                    Ally ally = defender.getAlly();
-                    if (ally == null) {
-                        return NoAlly.getSingleton();
-                    }
-                    return ally;
+                return ally;
+            } else if(columnIndex == 2) {
+                return a.getSource();
+            } else if(columnIndex == 3) {
+                Tribe defender = a.getTarget().getTribe();
+                if (defender == null) {
+                    return Barbarians.getSingleton();
                 }
-                case 5:
-                    return a.getTarget();
-                case 6:
-                    return a.getUnit();
-                case 7:
-                    return a.getType();
-                case 8: {
-                    long sendTime = a.getArriveTime().getTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(a.getSource(), a.getTarget(), a.getUnit().getSpeed()) * 1000);
-                    return new Date(sendTime);
+                return defender;
+            } else if(columnIndex == 4) {
+                Tribe defender = a.getTarget().getTribe();
+                if (defender == null) {
+                    return Barbarians.getSingleton();
                 }
-                case 9:
-                    return a.getArriveTime();
-                case 10: {
-                    long sendTime = a.getArriveTime().getTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(a.getSource(), a.getTarget(), a.getUnit().getSpeed()) * 1000);
-                    long t = sendTime - System.currentTimeMillis();
-                    return (t <= 0) ? 0 : t;
+                Ally ally = defender.getAlly();
+                if (ally == null) {
+                    return NoAlly.getSingleton();
                 }
-                case 11: {
-                    return a.isShowOnMap();
-                }
-                default: {
-                    return a.isTransferredToBrowser();
-                }
+                return ally;
+            } else if(columnIndex == 5) {
+                return a.getTarget();
+            } else if(columnIndex == 6) {
+                return a.getUnit();
+            } else if(columnIndex == 7) {
+                return a.getType();
+            } else if(columnIndex > 7 && columnIndex < unitAfter) {
+                return a.getTroops().getElementForUnit(units.get(columnIndex - 8));
+            } else if(columnIndex == unitAfter) {
+                return a.getSendTime();
+            } else if(columnIndex == unitAfter + 1) {
+                return a.getArriveTime();
+            } else if(columnIndex == unitAfter + 2) {
+                long sendTime = a.getSendTime().getTime();
+                long t = sendTime - System.currentTimeMillis();
+                return (t <= 0) ? 0 : t;
+            } else if(columnIndex == unitAfter + 3) {
+                return a.isShowOnMap();
+            } else if(columnIndex == unitAfter + 4) {
+                return a.isTransferredToBrowser();
             }
-        } catch (Exception e) {
-            return null;
-        }
+        } catch (Exception ignored) {};
+        return null;
     }
 
     @Override
@@ -158,66 +180,46 @@ public class AttackTableModel extends AbstractTableModel {
         }
         try {
             Attack a = (Attack) AttackManager.getSingleton().getAllElements(sPlan).get(pRow);
-            switch (pCol) {
-                case 2: {
-                    if (pValue != null) {
-                        a.setSource((Village) pValue);
-                    }
-                    break;
+            if(pCol == 2) {
+                if (pValue != null) {
+                    a.setSource((Village) pValue);
                 }
-                case 5: {
-                    if (pValue != null) {
-                        a.setTarget((Village) pValue);
-                    }
-                    break;
+            } else if(pCol == 5) {
+                if (pValue != null) {
+                    a.setTarget((Village) pValue);
                 }
-                case 6: {
-                    if (pValue == null) {
-                        a.setUnit(null);
-                    } else {
-                        a.setUnit((UnitHolder) pValue);
-                    }
-                    break;
+            } else if(pCol == 6) {
+                if (pValue != null) {
+                    a.setUnit((UnitHolder) pValue);
                 }
-                case 7: {
-                    if (pValue == null) {
-                        a.setType(Attack.NO_TYPE);
-                    } else {
-                        a.setType((Integer) pValue);
-                    }
-                    break;
+            } else if(pCol == 7) {
+                if (pValue == null) {
+                    a.setType(Attack.NO_TYPE);
+                } else {
+                    a.setType((Integer) pValue);
                 }
-                case 8: {
-                    if (pValue == null) {
-                        a.setArriveTime(null);
-                    } else {
-                        Date sendTime = (Date) pValue;
-                        long arriveTime = sendTime.getTime() + (long) (DSCalculator.calculateMoveTimeInSeconds(a.getSource(), a.getTarget(), a.getUnit().getSpeed()) * 1000);
-                        a.setArriveTime(new Date(arriveTime));
-                    }
-                    break;
+            } else if(pCol > 7 && pCol < unitAfter) {
+                if (pValue == null) {
+                    a.getTroops().setAmount(new TroopAmountElement(units.get(pCol - 8), "0"));
+                } else {
+                    a.getTroops().setAmount(new TroopAmountElement(units.get(pCol - 8), (String) pValue));
                 }
-                case 9: {
-                    if (pValue == null) {
-                        a.setArriveTime(null);
-                    } else {
-                        a.setArriveTime((Date) pValue);
-                    }
-                    break;
+            } else if(pCol == unitAfter) {
+                if (pValue == null) {
+                    a.setArriveTime(null);
+                } else {
+                    a.setSendTime((Date) pValue);
                 }
-                case 11: {
-                    a.setShowOnMap((Boolean) pValue);
-                    break;
+            } else if(pCol == unitAfter + 1) {
+                if (pValue == null) {
+                    a.setArriveTime(null);
+                } else {
+                    a.setArriveTime((Date) pValue);
                 }
-                case 12: {
-                    a.setTransferredToBrowser((Boolean) pValue);
-                    break;
-                }
-
-                default: {
-                    //not editable
-                    break;
-                }
+            } else if(pCol == unitAfter + 3) {
+                a.setShowOnMap((Boolean) pValue);
+            } else if(pCol == unitAfter + 4) {
+                a.setTransferredToBrowser((Boolean) pValue);
             }
         } catch (Exception ignored) {
         }

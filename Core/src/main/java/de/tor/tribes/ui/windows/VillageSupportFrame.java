@@ -183,7 +183,7 @@ public class VillageSupportFrame extends javax.swing.JFrame implements ActionLis
         StringBuilder b = new StringBuilder();
         int cnt = 0;
         for (Attack a : selection) {
-            b.append(Attack.toInternalRepresentation(a)).append("\n");
+            b.append(a.toInternalRepresentation()).append("\n");
             cnt++;
         }
         try {
@@ -790,6 +790,7 @@ public class VillageSupportFrame extends javax.swing.JFrame implements ActionLis
             a.setUnit(unit);
             a.setArriveTime(new Date(sendTime.getTime() + (long) (DSCalculator.calculateMoveTimeInSeconds(source, mCurrentVillage, unit.getSpeed()) * 1000)));
             a.setType(Attack.SUPPORT_TYPE);
+            a.setTroopsByType();
             selectedSupports.add(a);
         }
         return selectedSupports;

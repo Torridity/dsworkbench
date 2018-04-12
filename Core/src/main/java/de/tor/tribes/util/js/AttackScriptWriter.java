@@ -98,16 +98,15 @@ public class AttackScriptWriter {
             //unit
             block += "'unit':'" + a.getUnit().getPlainName() + ".png',\n";
             //times
-            long sendTime = a.getArriveTime().getTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(a.getSource(), a.getTarget(), a.getUnit().getSpeed()) * 1000);
             SimpleDateFormat df = null;
             if (ServerSettings.getSingleton().isMillisArrival()) {
                 df = new SimpleDateFormat("dd.MM.yy HH:mm:ss.SSS");
             } else {
                 df = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
             }
-            block += "'send':'" + df.format(new Date(sendTime)) + "',\n";
+            block += "'send':'" + df.format(a.getSendTime()) + "',\n";
             block += "'arrive':'" + df.format(a.getArriveTime()) + "',\n";
-            block += "'expired':" + (long) Math.floor(sendTime / 1000) + "\n";
+            block += "'expired':" + (long) Math.floor(a.getSendTime().getTime() / 1000.0) + "\n";
             block += "},\n";
             data += block;
         }

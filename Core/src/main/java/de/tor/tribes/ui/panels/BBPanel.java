@@ -103,46 +103,19 @@ public class BBPanel extends javax.swing.JPanel {
                     String desc = e.getDescription();
                     if (desc.startsWith("###")) {
                         //village
-                        try {
-                            Village v = PluginManager.getSingleton().executeVillageParser(desc.substring(3)).get(0);
-                            //http://zz1.beta.tribalwars.net/game.php?village=11879&screen=info_village&id=11879
-                            if (v != null) {
-                                String url = ServerManager.getServerURL(GlobalOptions.getSelectedServer());
-                                url += "/game.php?village=" + v.getId() + "&screen=info_village&id=" + v.getId();
-                                BrowserCommandSender.openPage(url);
-                            }
-                        } catch (Exception ex) {
-                            logger.error("Failed open village link", ex);
-                        }
+                        Village v = PluginManager.getSingleton().executeVillageParser(desc.substring(3)).get(0);
+                        BrowserInterface.showVillageInfoInGame(v);
                     } else if (desc.startsWith("##")) {
                         //ally
-                        //http://zz1.beta.tribalwars.net/game.php?village=11879&screen=info_ally&id=1
-                        try {
-                            Ally a = DataHolder.getSingleton().getAllyByName(desc.substring(2));
-                            if (a != null) {
-                                String url = ServerManager.getServerURL(GlobalOptions.getSelectedServer());
-                                url += "/game.php?village=" + GlobalOptions.getSelectedProfile().getTribe().getVillageList()[0].getId() + "&screen=info_ally&id=" + a.getId();
-                                BrowserCommandSender.openPage(url);
-                            }
-                        } catch (Exception ex) {
-                            logger.error("Failed open ally link", ex);
-                        }
+                        Ally a = DataHolder.getSingleton().getAllyByName(desc.substring(2));
+                        BrowserInterface.showAllyInfoInGame(a);
                     } else if (desc.startsWith("#")) {
                         //tribe
-                        //http://zz1.beta.tribalwars.net/game.php?village=11879&screen=info_player&id=15186
-                        try {
-                            Tribe t = DataHolder.getSingleton().getTribeByName(desc.substring(1));
-                            if (!t.equals(InvalidTribe.getSingleton())) {
-                                String url = ServerManager.getServerURL(GlobalOptions.getSelectedServer());
-                                url += "/game.php?village=" + GlobalOptions.getSelectedProfile().getTribe().getVillageList()[0].getId() + "&screen=info_player&id=" + t.getId();
-                                BrowserCommandSender.openPage(url);
-                            }
-                        } catch (Exception ex) {
-                            logger.error("Failed open tribe link", ex);
-                        }
+                        Tribe t = DataHolder.getSingleton().getTribeByName(desc.substring(1));
+                        BrowserInterface.showTribeInfoInGame(t);
                     } else {
                         //normal URL
-                        BrowserCommandSender.openPage(desc);
+                        BrowserInterface.openPage(desc);
                     }
                 }
             }

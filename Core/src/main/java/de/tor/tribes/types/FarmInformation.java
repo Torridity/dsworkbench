@@ -22,7 +22,7 @@ import de.tor.tribes.io.TroopAmountFixed;
 import de.tor.tribes.types.ext.Barbarians;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.views.DSWorkbenchFarmManager;
-import de.tor.tribes.util.BrowserCommandSender;
+import de.tor.tribes.util.BrowserInterface;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.TroopHelper;
 import de.tor.tribes.util.conquer.ConquerManager;
@@ -43,7 +43,6 @@ import java.util.*;
  * @author Torridity
  */
 public class FarmInformation extends ManageableType {
-
 	private static Logger logger = Logger.getLogger("FarmInformation");
 
 	public enum FARM_RESULT {
@@ -869,7 +868,7 @@ public class FarmInformation extends ManageableType {
 								.append(" Dorf/Dörfer würden nicht genügend Rohstoffe vorfinden, um die minimale Beute zu erzielen");
 					} else {
 						// send troops and update
-						if (BrowserCommandSender.sendTroops(selection, getVillage(), farmers)) {
+						if (BrowserInterface.sendTroops(selection, getVillage(), farmers)) {
 							// if (true) {
 							TroopHelper.sendTroops(selection, farmers);
 							if (pConfig.equals(DSWorkbenchFarmManager.FARM_CONFIGURATION.K)) {

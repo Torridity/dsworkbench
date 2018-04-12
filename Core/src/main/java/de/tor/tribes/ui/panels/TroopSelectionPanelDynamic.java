@@ -30,7 +30,7 @@ public class TroopSelectionPanelDynamic extends TroopSelectionPanel<TroopAmountD
     @Override
     public TroopAmountDynamic getAmounts() {
         TroopAmountDynamic values = new TroopAmountDynamic(0);
-        for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
+        for (UnitHolder unit : DataHolder.getSingleton().getSendableUnits()) {
             values.setAmount(this.getAmountForUnit(unit));
         }
         return values;
@@ -46,7 +46,7 @@ public class TroopSelectionPanelDynamic extends TroopSelectionPanel<TroopAmountD
 
     @Override
     public void setAmounts(TroopAmountDynamic pAmounts) {
-        for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
+        for (UnitHolder unit : DataHolder.getSingleton().getSendableUnits()) {
             setAmountForUnit(unit, pAmounts.getElementForUnit(unit).toString());
         }
     }

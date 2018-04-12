@@ -56,7 +56,7 @@ public class TroopAmountElement {
         return unit;
     }
 
-    public void setDynamicAmount(String pAmount) {
+    public final void setDynamicAmount(String pAmount) {
         //Try if we can parse this
         Object val;
         try {

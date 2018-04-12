@@ -469,7 +469,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                             Village u = DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage();
                             if ((u != null) && (v != null)) {
                                 if (Desktop.isDesktopSupported()) {
-                                    BrowserCommandSender.sendTroops(u, v);
+                                    BrowserInterface.sendTroops(u, v);
                                 }
                             }
                         }
@@ -480,7 +480,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                             Village u = DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage();
                             if ((u != null) && (v != null)) {
                                 if (Desktop.isDesktopSupported()) {
-                                    BrowserCommandSender.sendRes(u, v);
+                                    BrowserInterface.sendRes(u, v);
                                 }
                             }
                         }
@@ -1406,12 +1406,12 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
         } else if (evt.getSource() == jVillageInfoIngame) {
             //center village ingame
             if (actionMenuVillage != null) {
-                BrowserCommandSender.centerVillage(actionMenuVillage);
+                BrowserInterface.centerVillage(actionMenuVillage);
             }
         } else if (evt.getSource() == jVillagePlaceIngame) {
             //open place ingame
             if (actionMenuVillage != null) {
-                BrowserCommandSender.openPlaceTroopsView(actionMenuVillage);
+                BrowserInterface.openPlaceTroopsView(actionMenuVillage);
             }
         } else if (evt.getSource() == jAllCoordToClipboardItem) {
             //copy selected villages coordinates to clipboard
@@ -1481,7 +1481,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
             int cnt = 0;
             for (Village v : markedVillages) {
                 if (v != null) {
-                    BrowserCommandSender.centerVillage(v);
+                    BrowserInterface.centerVillage(v);
                     cnt++;
                 }
                 if (cnt == 10) {

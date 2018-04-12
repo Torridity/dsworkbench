@@ -23,7 +23,6 @@ import de.tor.tribes.io.TroopAmountFixed;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.FarmInformation;
 import de.tor.tribes.types.StorageStatus;
-import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.components.ClickAccountPanel;
@@ -82,8 +81,8 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
 	private TroopSelectionPanelDynamic cTroops = null;
 	private TroopSelectionPanelDynamic rTroops = null;
 	private CoordinateSpinner coordSpinner = null;
-	private String[] TargetID = { "main", "barracks", "stable", "workshop", "smithy", "market" };
-	private String[] TargetsNAME = { "Hauptgebäude", "Kaserne", "Stall", "Werkstatt", "Schmiede", "Marktplatz" };
+	private String[] TargetID = { "main", "barracks", "stable", "workshop", "smithy", "market", "none" };
+	private String[] TargetsNAME = { "Hauptgebäude", "Kaserne", "Stall", "Werkstatt", "Schmiede", "Marktplatz", "Kein Ziel" };
 	public static Village[] activeFarmGroup = GlobalOptions.getSelectedProfile().getTribe().getVillageList();
 
 	public static synchronized DSWorkbenchFarmManager getSingleton() {
@@ -253,11 +252,11 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
 	public boolean isConsiderSuccessRate() {
 		return jConsiderSucessRateC.isSelected();
 	}
-	
+
 	public boolean isBlockFarmWithWall() {
 		return jBlockFarmWithWall.isSelected();
 	}
-	
+
 	public boolean isUseFarmLimit() {
 		return jUseFarmLimit.isSelected();
 	}
@@ -382,7 +381,7 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
 			@Override
 			public void mouseReleased(MouseEvent e) {
 
-				DefaultComboBoxModel model = new DefaultComboBoxModel();
+				DefaultComboBoxModel<String> model = new DefaultComboBoxModel<String>();
 				model.addElement("Alle");
 				for (String set : ReportManager.getSingleton().getGroups()) {
 					if (!set.equals(ReportManager.FARM_SET)) {
@@ -494,7 +493,7 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
 		});
 
 		miscPane.getContentPane().add(clearStatus);
-		
+
 		JXButton clearSiegeStatus = new JXButton(
 				new ImageIcon(DSWorkbenchFarmManager.class.getResource("/res/ui/clear_fs.png")));
 
@@ -552,19 +551,20 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
 
 		miscPane.getContentPane().add(resetLockedStatus);
 		// Work in progress: implement farming by groups
-		JXButton farmByGroups = new JXButton(new ImageIcon(DSWorkbenchFarmManager.class.getResource("/res/ui/Advanced_options.png")));
+		JXButton farmByGroups = new JXButton(
+				new ImageIcon(DSWorkbenchFarmManager.class.getResource("/res/ui/Advanced_options.png")));
 
 		farmByGroups.setToolTipText("Gruppe zum farmen auswählen");
 		farmByGroups.addMouseListener(new MouseAdapter() {
 
 			@Override
 			public void mouseReleased(MouseEvent e) {
-				
-				DefaultComboBoxModel model = new DefaultComboBoxModel();
+
+				DefaultComboBoxModel<String> model = new DefaultComboBoxModel<String>();
 				model.addElement("Alle");
 				for (String g : TagManager.getSingleton().getAllTagNames()) {
 					model.addElement(g);
-				}				
+				}
 
 				jFarmGroup.setModel(model);
 				jAdvancedSettingsDialog.pack();
@@ -572,7 +572,6 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
 				jAdvancedSettingsDialog.setVisible(true);
 			}
 
-			
 		});
 
 		miscPane.getContentPane().add(farmByGroups);
@@ -852,7 +851,7 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
 			showInfo("Keine Einträge gewählt");
 			return;
 		}
-				
+
 		// Sorts the farms by min dist to minimize inefficiencies
 		final HashMap<FarmInformation, Double> MinFarmDistAllFarms = new HashMap<FarmInformation, Double>();
 		List<FarmInformation> farmListcomplete = new LinkedList<>();
@@ -911,10 +910,11 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
 				return new Double(Dist1).compareTo(Dist2);
 			}
 		});
-		
-		// Hotfix for a bug due to incompatability old and new code (allowing multiple attacks)
+
+		// Hotfix for a bug due to incompatability old and new code (allowing multiple
+		// attacks)
 		rowIndex.add(rows.length + 1);
-		
+
 		int impossible = 0;
 		int farmInactive = 0;
 		int alreadyFarming = 0;
@@ -929,36 +929,42 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
 		for (FarmInformation f : farmListcomplete) {
 			int row = rowIndex.get(i);
 			int modelRow = jFarmTable.convertRowIndexToModel(row);
-			
-			 if(f.getSiegeStatus().equals(FarmInformation.Siege_STATUS.onWay) && pConfig.equals(DSWorkbenchFarmManager.FARM_CONFIGURATION.K)) {
-					siegeOnWay++;
-					jFarmTable.getSelectionModel().removeSelectionInterval(row, row);
-					if (rowIndex.get(i + 1) < jFarmTable.getRowCount()) {
-						jFarmTable.getSelectionModel().addSelectionInterval(rowIndex.get(i + 1), rowIndex.get(i + 1));
-						jFarmTable.requestFocus();
-					}
-				} else if (f.getSiegeStatus().equals(FarmInformation.Siege_STATUS.final_farm) && pConfig.equals(DSWorkbenchFarmManager.FARM_CONFIGURATION.K)) {
-					farmFinal++;
-					jFarmTable.getSelectionModel().removeSelectionInterval(row, row);
-					if (rowIndex.get(i + 1) < jFarmTable.getRowCount()) {
-						jFarmTable.getSelectionModel().addSelectionInterval(rowIndex.get(i + 1), rowIndex.get(i + 1));
-						jFarmTable.requestFocus();
-					}
-				} else if (pConfig.equals(DSWorkbenchFarmManager.FARM_CONFIGURATION.K) && f.getVillage().getPoints() > 600) {
-					bigFarm++;
-					jFarmTable.getSelectionModel().removeSelectionInterval(row, row);
-					if (rowIndex.get(i + 1) < jFarmTable.getRowCount()) {
-						jFarmTable.getSelectionModel().addSelectionInterval(rowIndex.get(i + 1), rowIndex.get(i + 1));
-						jFarmTable.requestFocus();
-					}
-				} else if (!this.isUseRams(pConfig) && isBlockFarmWithWall() && f.getWallLevel() > 1) {
-					wallTooHigh++;
-					jFarmTable.getSelectionModel().removeSelectionInterval(row, row);
-					if (rowIndex.get(i + 1) < jFarmTable.getRowCount()) {
-						jFarmTable.getSelectionModel().addSelectionInterval(rowIndex.get(i + 1), rowIndex.get(i + 1));
-						jFarmTable.requestFocus();
-					}
-				}else if (!f.getStatus().equals(FarmInformation.FARM_STATUS.FARMING) && !f.getStatus().equals(FarmInformation.FARM_STATUS.REPORT_EXPECTED) 
+
+			if (f.getSiegeStatus().equals(FarmInformation.Siege_STATUS.BOTH_onWay)
+					|| f.getSiegeStatus().equals(FarmInformation.Siege_STATUS.CATA_onWay)
+					|| f.getSiegeStatus().equals(FarmInformation.Siege_STATUS.RAM_onWay)
+					&& pConfig.equals(DSWorkbenchFarmManager.FARM_CONFIGURATION.K)) {
+				siegeOnWay++;
+				jFarmTable.getSelectionModel().removeSelectionInterval(row, row);
+				if (rowIndex.get(i + 1) < jFarmTable.getRowCount()) {
+					jFarmTable.getSelectionModel().addSelectionInterval(rowIndex.get(i + 1), rowIndex.get(i + 1));
+					jFarmTable.requestFocus();
+				}
+			} else if (f.getSiegeStatus().equals(FarmInformation.Siege_STATUS.final_farm)
+					&& pConfig.equals(DSWorkbenchFarmManager.FARM_CONFIGURATION.K)) {
+				farmFinal++;
+				jFarmTable.getSelectionModel().removeSelectionInterval(row, row);
+				if (rowIndex.get(i + 1) < jFarmTable.getRowCount()) {
+					jFarmTable.getSelectionModel().addSelectionInterval(rowIndex.get(i + 1), rowIndex.get(i + 1));
+					jFarmTable.requestFocus();
+				}
+			} else if (pConfig.equals(DSWorkbenchFarmManager.FARM_CONFIGURATION.K)
+					&& f.getVillage().getPoints() > 600) {
+				bigFarm++;
+				jFarmTable.getSelectionModel().removeSelectionInterval(row, row);
+				if (rowIndex.get(i + 1) < jFarmTable.getRowCount()) {
+					jFarmTable.getSelectionModel().addSelectionInterval(rowIndex.get(i + 1), rowIndex.get(i + 1));
+					jFarmTable.requestFocus();
+				}
+			} else if (!this.isUseRams(pConfig) && isBlockFarmWithWall() && f.getWallLevel() > 1) {
+				wallTooHigh++;
+				jFarmTable.getSelectionModel().removeSelectionInterval(row, row);
+				if (rowIndex.get(i + 1) < jFarmTable.getRowCount()) {
+					jFarmTable.getSelectionModel().addSelectionInterval(rowIndex.get(i + 1), rowIndex.get(i + 1));
+					jFarmTable.requestFocus();
+				}
+			} else if (!f.getStatus().equals(FarmInformation.FARM_STATUS.FARMING)
+					&& !f.getStatus().equals(FarmInformation.FARM_STATUS.REPORT_EXPECTED)
 					|| pConfig.equals(DSWorkbenchFarmManager.FARM_CONFIGURATION.K)) {
 				boolean clickUsed = rows.length == 1 || clickAccount.useClick();
 				if (clickUsed || rows.length == 1) {
@@ -981,12 +987,15 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
 						send = true;
 						opened++;
 						break;
+					default:
+						break;
 					}
 					getModel().fireTableRowsUpdated(modelRow, modelRow);
 					jFarmTable.getSelectionModel().removeSelectionInterval(row, row);
 					if (success || !fatal) {
 						if (rowIndex.get(i + 1) < jFarmTable.getRowCount()) {
-							jFarmTable.getSelectionModel().addSelectionInterval(rowIndex.get(i + 1), rowIndex.get(i + 1));
+							jFarmTable.getSelectionModel().addSelectionInterval(rowIndex.get(i + 1),
+									rowIndex.get(i + 1));
 							jFarmTable.requestFocus();
 						}
 						if (!send && clickUsed && rows.length > 1) {
@@ -1014,42 +1023,38 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
 				}
 			}
 			i++;
-			logger.debug("Not possible: " + impossible + " inactive: " + farmInactive + " already farming: " + alreadyFarming 
-					+ "\n Catas on the way" + siegeOnWay + " No catas needed: " + farmFinal + " farm too big: " + bigFarm + " opened: " + opened);
+			logger.debug("Not possible: " + impossible + " inactive: " + farmInactive + " already farming: "
+					+ alreadyFarming + "\n Catas on the way" + siegeOnWay + " No catas needed: " + farmFinal
+					+ " farm too big: " + bigFarm + " opened: " + opened);
 		}
 
 		if (miscMessage == null) {
 			if (!pConfig.equals(DSWorkbenchFarmManager.FARM_CONFIGURATION.K)) {
-				showInfo("Geöffnete Tabs: " + opened + "/" + rows.length + "\n" + " - " 
-						+ impossible + " Mal keine passenden Dörfer gefunden\n" + " - " 
-						+ farmInactive + " Farmen deaktiviert\n" + " - "
-						+ alreadyFarming + " Mal Truppen bereits unterwegs oder Bericht erwartet\n" + " - "
+				showInfo("Geöffnete Tabs: " + opened + "/" + rows.length + "\n" + " - " + impossible
+						+ " Mal keine passenden Dörfer gefunden\n" + " - " + farmInactive + " Farmen deaktiviert\n"
+						+ " - " + alreadyFarming + " Mal Truppen bereits unterwegs oder Bericht erwartet\n" + " - "
 						+ wallTooHigh + " Mal Wall höher als Stufe 1");
 			} else {
-				showInfo("Geöffnete Tabs: " + opened + "/" + rows.length + "\n" + " - " 
-						+ impossible + " Mal keine passenden Dörfer gefunden\n" + " - " 
-						+ farmInactive + " Farmen deaktiviert\n" + " - "
-						+ siegeOnWay + " Mal Kataulte bereits unterwegs\n" + " - "
-						+ farmFinal + " Mal keine Kattas nötig (optimale Farm)\n" + " - "
-						+ bigFarm + " Farm zu groß für Kataangriff\n" + " - "
-						+ wallTooHigh + " Mal Wall höher als Stufe 1");
-			}			
+				showInfo("Geöffnete Tabs: " + opened + "/" + rows.length + "\n" + " - " + impossible
+						+ " Mal keine passenden Dörfer gefunden\n" + " - " + farmInactive + " Farmen deaktiviert\n"
+						+ " - " + siegeOnWay + " Mal Kataulte bereits unterwegs\n" + " - " + farmFinal
+						+ " Mal keine Kattas nötig (optimale Farm)\n" + " - " + bigFarm
+						+ " Farm zu groß für Kataangriff\n" + " - " + wallTooHigh + " Mal Wall höher als Stufe 1");
+			}
 		} else {
 			if (!pConfig.equals(DSWorkbenchFarmManager.FARM_CONFIGURATION.K)) {
-				showInfo("FEHLER: '" + miscMessage + "'\n" + "Geöffnete Tabs: " + opened + "/" + rows.length + "\n" + " - "
-						+ impossible + " Mal keine passenden Dörfer gefunden\n" + " - " 
-						+ farmInactive + " Farmen deaktiviert\n" + " - " 
-						+ alreadyFarming + " Mal Truppen bereits unterwegs oder Bericht erwartet\n" + " - "
-						+ wallTooHigh + " Mal Wall höher als Stufe 1");
+				showInfo("FEHLER: '" + miscMessage + "'\n" + "Geöffnete Tabs: " + opened + "/" + rows.length + "\n"
+						+ " - " + impossible + " Mal keine passenden Dörfer gefunden\n" + " - " + farmInactive
+						+ " Farmen deaktiviert\n" + " - " + alreadyFarming
+						+ " Mal Truppen bereits unterwegs oder Bericht erwartet\n" + " - " + wallTooHigh
+						+ " Mal Wall höher als Stufe 1");
 			} else {
-				showInfo("FEHLER: '" + miscMessage + "'\n" + "Geöffnete Tabs: " + opened + "/" + rows.length + "\n" + " - "
-						+ impossible + " Mal keine passenden Dörfer gefunden\n" + " - " 
-						+ farmInactive + " Farmen deaktiviert\n" + " - "
-						+ siegeOnWay + " Mal Kataulte bereits unterwegs\n" + " - "
-						+ farmFinal + " Mal keine Kattas nötig (optimale Farm)\n" + " - "
-						+ bigFarm + " Farm zu groß für Kataangriff\n"+ " - "
-						+ wallTooHigh + " Mal Wall höher als Stufe 1");
-			}			
+				showInfo("FEHLER: '" + miscMessage + "'\n" + "Geöffnete Tabs: " + opened + "/" + rows.length + "\n"
+						+ " - " + impossible + " Mal keine passenden Dörfer gefunden\n" + " - " + farmInactive
+						+ " Farmen deaktiviert\n" + " - " + siegeOnWay + " Mal Kataulte bereits unterwegs\n" + " - "
+						+ farmFinal + " Mal keine Kattas nötig (optimale Farm)\n" + " - " + bigFarm
+						+ " Farm zu groß für Kataangriff\n" + " - " + wallTooHigh + " Mal Wall höher als Stufe 1");
+			}
 		}
 	}
 
@@ -1068,7 +1073,7 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
 		showInfo(
 				"Status zurückgesetzt. Es wird empfohlen, bei Gelegenheit die DS Workbench Truppeninformationen zu aktualisieren.");
 	}
-	
+
 	private void resetSiegeStatus() {
 		int rows[] = jFarmTable.getSelectedRows();
 		if (rows == null || rows.length == 0) {
@@ -1176,7 +1181,7 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
 		jAdvancedSettingsDialog = new javax.swing.JDialog();
 		jLabel15 = new javax.swing.JLabel();
 		jLabel1015 = new javax.swing.JLabel();
-		jReportSetBox = new javax.swing.JComboBox();
+		jReportSetBox = new JComboBox<String>();
 		jAllowAloneTribes = new javax.swing.JCheckBox();
 		jAllowAllyTribes = new javax.swing.JCheckBox();
 		jAllowTribesInOwnAlly = new javax.swing.JCheckBox();
@@ -1187,8 +1192,8 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
 		jCenterPanel = new org.jdesktop.swingx.JXPanel();
 		capabilityInfoPanel1 = new de.tor.tribes.ui.components.CapabilityInfoPanel();
 		jAlwaysOnTop = new javax.swing.JCheckBox();
-		JCataTarget = new JComboBox(TargetsNAME);
-		jFarmGroup = new JComboBox();
+		JCataTarget = new JComboBox<Object>(TargetsNAME);
+		jFarmGroup = new JComboBox<String>();
 
 		jFarmPanel.setLayout(new java.awt.GridBagLayout());
 
@@ -1799,7 +1804,7 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
 		jAdvancedSettingsDialog.setTitle("Erweiterte Einstellungen");
 		jAdvancedSettingsDialog.setModal(true);
 		jAdvancedSettingsDialog.getContentPane().setLayout(new java.awt.GridBagLayout());
-		
+
 		jLabel13.setText("Max Produktion farmen [min]");
 		jLabel13.setMaximumSize(new java.awt.Dimension(92, 14));
 		jLabel13.setMinimumSize(new java.awt.Dimension(92, 14));
@@ -1832,7 +1837,7 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
 		gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
 		gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
 		jAdvancedSettingsDialog.add(jConsiderSucessRateC, gridBagConstraints);
-		
+
 		jUseFarmLimit.setText("Farmlimit für Produktion verwenden");
 		jUseFarmLimit.setMinimumSize(new java.awt.Dimension(100, 23));
 		jUseFarmLimit.setPreferredSize(new java.awt.Dimension(100, 23));
@@ -1843,7 +1848,7 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
 		gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
 		gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
 		jAdvancedSettingsDialog.add(jUseFarmLimit, gridBagConstraints);
-		
+
 		jBlockFarmWithWall.setText("Farmangriffe auf Wall verbieten");
 		jBlockFarmWithWall.setMinimumSize(new java.awt.Dimension(100, 23));
 		jBlockFarmWithWall.setPreferredSize(new java.awt.Dimension(100, 23));
@@ -2069,7 +2074,7 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
 			String tag = (String) jFarmGroup.getSelectedItem();
 
 			if (tag == "Alle") {
-				
+
 				Collections.addAll(pactiveFarmGroup, GlobalOptions.getSelectedProfile().getTribe().getVillageList());
 			} else {
 				for (Integer id : TagManager.getSingleton().getTagByName(tag).getVillageIDs()) {
@@ -2243,8 +2248,8 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
 	private javax.swing.JPanel jPanel1;
 	private javax.swing.JPanel jRSettingsTab;
 	private javax.swing.JTextField jRangeField;
-	private javax.swing.JComboBox jReportSetBox;
-	private javax.swing.JComboBox jFarmGroup;
+	private javax.swing.JComboBox<String> jReportSetBox;
+	private javax.swing.JComboBox<String> jFarmGroup;
 	private javax.swing.JComboBox JCataTarget;
 	private javax.swing.JScrollPane jScrollPane1;
 	private javax.swing.JButton jSearchButton;
@@ -2310,12 +2315,12 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
 			jConsiderSucessRateC.setSelected(pConfig.getBoolean(getPropertyPrefix() + ".use.success.rate"));
 		} catch (Exception ignored) {
 		}
-		
+
 		try {
 			jBlockFarmWithWall.setSelected(pConfig.getBoolean(getPropertyPrefix() + ".block.farm.wall"));
 		} catch (Exception ignored) {
 		}
-		
+
 		try {
 			jUseFarmLimit.setSelected(pConfig.getBoolean(getPropertyPrefix() + ".use.farm.limit"));
 		} catch (Exception ignored) {

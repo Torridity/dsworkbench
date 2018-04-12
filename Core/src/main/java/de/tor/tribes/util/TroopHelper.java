@@ -25,7 +25,6 @@ import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.views.DSWorkbenchFarmManager;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
-import de.tor.tribes.util.village.KnownVillage;
 
 import org.apache.log4j.Logger;
 
@@ -38,75 +37,65 @@ import java.util.*;
 public class TroopHelper {
 
 	private final static Logger logger = Logger.getLogger("TroopHelper");
+	final static int[] KatasNeededOther = new int[] { 0, 2, 6, 10, 15, 21, 28, 36, 45, 56, 68, 82, 98, 115, 136, 159,
+			185, 215, 248, 286, 328, 376, 430, 490, 558, 634, 720, 815, 922, 1041, 1175 };
+	final static int[] cataMinDmg = new int[] { 0, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4, 5, 5, 6, 6, 6, 7, 8, 8, 9, 10, 10,
+			11, 12, 13, 15, 16, 17, 19, 20 };
+	final static int[] KatasNeededHG = new int[] { 0, 0, 2, 6, 11, 17, 23, 31, 39, 49, 61, 74, 89, 106, 126, 148, 173,
+			202, 234, 270, 312, 358, 410, 469, 534, 608, 691, 784, 888, 1005, 1135 };
+	final static int[] ramsNeeded = new int[] { 0, 2, 4, 7, 10, 14, 19, 24, 30, 37, 46, 55, 65, 77, 91, 106, 124, 143,
+			166, 191, 219 };
+	final static int[] minDmgWall = new int[] { 0, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6 };
 
-	public static void addNeededCatas(TroopAmountFixed units, DSWorkbenchFarmManager.FARM_CONFIGURATION pConfig,
-			VillageTroopsHolder pTroops, FarmInformation pInfo) { // Not yet in use or finished
-
-		// public static final String[] buildingNames = {"main", "barracks", "stable",
-		// "workshop",
-		// "church", "watchtower", "academy", "smithy", "rally", "statue", "market",
-		// "timber",
-		// "clay", "iron", "farm", "storage", "hide", "wall"};
-
-		final int[] KatasNeededOther = new int[] { 0, 2, 6, 10, 15, 21, 28, 36, 45, 56, 68, 82, 98, 115, 136, 159, 185,
-				215, 248, 286, 328, 376, 430, 490, 558, 634, 720, 815, 922, 1041, 1175 };
-		final int[] cataMinDmg = new int[] { 0, 0, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4, 5, 5, 6, 6, 6, 7, 8, 8, 9, 10, 10, 11,
-				12, 13, 15, 16, 17, 19, 20 };
-		final int[] KatasNeededHG = new int[] { 0, 0, 2, 6, 11, 17, 23, 31, 39, 49, 61, 74, 89, 106, 126, 148, 173, 202,
-				234, 270, 312, 358, 410, 469, 534, 608, 691, 784, 888, 1005, 1135 };
-
+	public static void addNeededCatas(TroopAmountFixed units, VillageTroopsHolder pTroops, FarmInformation pInfo) {
 		Village source = pTroops.getVillage();
 		TroopAmountFixed backupUnits = DSWorkbenchFarmManager.getSingleton().getBackupUnits(source);
-		String buildingname = DSWorkbenchFarmManager.getSingleton().getCataTarget(); // getTarget not yet
-		logger.debug("The building target is " + buildingname); // implemented should give a
-		// text of the target.
+		String buildingname = DSWorkbenchFarmManager.getSingleton().getCataTarget();
 		int BuildingLevel = pInfo.getCataTargetBuildingLevel(buildingname);
-		logger.debug("The target building is level " + BuildingLevel);
-		UnitHolder catapult = DataHolder.getSingleton().getUnitByPlainName("catapult");
-		int catapults = pTroops.getTroops().getAmountForUnit(catapult) - backupUnits.getAmountForUnit(catapult);
-		
-		if (catapults >= cataMinDmg[BuildingLevel]) { // If enough catas to down building by at least one .. Do it
-			logger.debug(cataMinDmg[BuildingLevel]
-					+ "catapults are needed to destroy at least one level, and the requirement is met");
-			if (buildingname == "main") {
+		logger.debug("The building target is " + buildingname + " with level " + BuildingLevel);
+		int catapults = pTroops.getTroops().getAmountForUnit("catapult") - backupUnits.getAmountForUnit("catapult");
+
+		if (catapults >= cataMinDmg[BuildingLevel]) { // If enough catas to down building by at least one ... Do it
+			switch (buildingname) {
+			case "main":
 				if (BuildingLevel > 1) {
 					int needed = KatasNeededHG[BuildingLevel];
 					int using = Math.min(needed, catapults);
-					logger.debug("The target is the main building and" + needed
-							+ "catapults are needed to destroy it completely." + using + "catapults will be used");
-					units.setAmountForUnit(catapult, using);
-					logger.debug("check amount" + units.getAmountForUnit("axe") + " / " + units.getAmountForUnit("catapult"));
+					units.setAmountForUnit("catapult", using);
+					logger.debug("Check amount: " + units.getAmountForUnit("axe") + " / "
+							+ units.getAmountForUnit("catapult"));
 				} else { // Do not send attack if no Catas are needed
 					units.fill(0);
 					logger.debug("Kick units, because main is level 1");
 				}
-
-			} else {
+				break;
+			case "none":
+				if (pInfo.getWallLevel() > 0) {
+					units.setAmountForUnit("catapult", 0);
+				} else {
+					units.fill(0);
+				}				
+				break;
+			default:
 				if (BuildingLevel > 0) {
 					int needed = KatasNeededOther[BuildingLevel];
 					int using = Math.min(needed, catapults);
-					logger.debug("The target is an other building and" + needed
-							+ "catapults are needed to destroy it completely." + using + "catapults will be used");
-					units.setAmountForUnit(catapult, using);
-					logger.debug("check amount: " + units.getAmountForUnit("axe") + " / " + units.getAmountForUnit("catapult"));
+					units.setAmountForUnit("catapult", using);
+					logger.debug("Check amount: " + units.getAmountForUnit("axe") + " / "
+							+ units.getAmountForUnit("catapult"));
 				} else { // Do not send attack if no Catas are needed
 					units.fill(0);
-					logger.debug("Kick units, because pther buildings is level 0");
+					logger.debug("Kick units, because building is level 0");
 				}
-
+				break;
 			}
-
 		} else { // No attack if not enough catas to bring down the building by 1
 			units.fill(0);
 			logger.debug("Kick all units, because no katas are available");
 		}
-
 	}
 
 	public static void addNeededRams(TroopAmountFixed units, VillageTroopsHolder pTroops, FarmInformation pInfo) {
-		final int[] ramsNeeded = new int[] { 0, 2, 4, 7, 10, 14, 19, 24, 30, 37, 46, 55, 65, 77, 91, 106, 124, 143, 166,
-				191, 219 };
-		final int[] minDmgWall = new int[] { 0, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6 };
 		Village source = pTroops.getVillage();
 		TroopAmountFixed backupUnits = DSWorkbenchFarmManager.getSingleton().getBackupUnits(source);
 
@@ -118,17 +107,16 @@ public class TroopHelper {
 				int using = Math.min(needed, rams);
 				units.setAmountForUnit(ram, using);
 			}
-			// Check result
+			// If enough rams to lower wall by 1 ... send attack
+			// else ... clear attack
 			if (rams < minDmgWall[pInfo.getWallLevel()]) {
-				units.fill(0); // If the rams are not enough to lower the wall by at least one, no attack will
-								// be send
+				units.fill(0); 
 			}
 		}
-
 	}
 
 	public static TroopAmountFixed getTroopsForCarriage(DSWorkbenchFarmManager.FARM_CONFIGURATION pConfig,
-			VillageTroopsHolder pTroops, FarmInformation pInfo) {
+		VillageTroopsHolder pTroops, FarmInformation pInfo) {
 		TroopAmountFixed result = new TroopAmountFixed();
 		TroopAmountDynamic configTroops = DSWorkbenchFarmManager.getSingleton().getTroops(pConfig);
 		TroopAmountFixed backupUnits = DSWorkbenchFarmManager.getSingleton().getBackupUnits(pTroops.getVillage());
@@ -142,9 +130,6 @@ public class TroopHelper {
 
 			} else {
 				double speed = unit.getSpeed();
-				// correct speed by used units (not necessary as they are sorted by runtime!?
-				// ... but won't hurt anyway) -- Actually caused a bug... lol
-				// speed = Math.max(speed, units.getSpeed());
 				int resources = pInfo.getResourcesInStorage(System.currentTimeMillis()
 						+ DSCalculator.calculateMoveTimeInMillis(pTroops.getVillage(), pInfo.getVillage(), speed));
 				resources -= result.getFarmCapacity();
@@ -162,14 +147,16 @@ public class TroopHelper {
 				if (usable >= amount) {
 					if (amount < configTroops.getAmountForUnit(unit, null)) {
 						logger.debug("not enough troops available");
-						// If amount < min set to zero and look for other units that fulfill the requirements
-						result.setAmountForUnit(unit, 0);						
+						// If amount < min set to zero and look for other units that fulfill the
+						// requirements
+						result.setAmountForUnit(unit, 0);
 					} else {
 						logger.debug("enough troops, use " + amount + " of " + unit);
 						result.setAmountForUnit(unit, amount);
 						break;
-					}					
-				} else if (usable < amount && usable > configTroops.getAmountForUnit(unit, null) && DSWorkbenchFarmManager.getSingleton().allowPartlyFarming()) {
+					}
+				} else if (usable < amount && usable > configTroops.getAmountForUnit(unit, null)
+						&& DSWorkbenchFarmManager.getSingleton().allowPartlyFarming()) {
 					logger.debug("Partly farming");
 					// note: amount is for A/B and K the same as the expression on the right
 					// usable cannot be > and < than amount --> A/B and K cannot get here
@@ -191,79 +178,9 @@ public class TroopHelper {
 		}
 		if (result != null && result.hasUnits()) { // Only add spies if there are farm units
 			UnitHolder spy = DataHolder.getSingleton().getUnitByPlainName("spy");
-			Integer neededSpies = configTroops.getAmountForUnit(spy, pTroops.getVillage());
-			int availableSpies = Math.max(pTroops.getTroops().getAmountForUnit(spy) - backupUnits.getAmountForUnit(spy),
-					0);
-			result.setAmountForUnit(spy, (neededSpies >= availableSpies) ? availableSpies : neededSpies);
+			Integer amountSpies = configTroops.getAmountForUnit(spy, pTroops.getVillage());
+			result.setAmountForUnit(spy, amountSpies);
 		}
-		return result;
-	}
-
-	public static Hashtable<Village, VillageTroopsHolder> getOwnTroopsForAllVillages(TroopAmountDynamic pMinAmounts) {
-		Hashtable<Village, VillageTroopsHolder> result = new Hashtable<>();
-		for (Village v : DSWorkbenchFarmManager.activeFarmGroup) {
-			VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(v,
-					TroopsManager.TROOP_TYPE.OWN);
-			if (holder != null && hasMinTroopAmounts(holder, pMinAmounts)) {
-				result.put(holder.getVillage(), holder);
-			}
-		}
-		return result;
-	}
-
-	public static boolean hasMinTroopAmounts(VillageTroopsHolder pHolder, TroopAmountDynamic pMinAmounts) {
-		if (pMinAmounts == null) {
-			return true;
-		}
-
-		for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
-			// check for all units amount and backup
-			int amount = pHolder.getTroops().getAmountForUnit(unit);
-			if ((amount - DSWorkbenchFarmManager.getSingleton().getBackupUnits(pHolder.getVillage())
-					.getAmountForUnit(unit)) < pMinAmounts.getAmountForUnit(unit, pHolder.getVillage())) {
-				// no troops of type or not enough units or backup met
-				return false;
-			}
-		}
-		return true;
-	}
-
-	public static Hashtable<Village, VillageTroopsHolder> getOwnTroopsForAllVillagesByCapacity(FarmInformation pInfo) {
-		int currentResources = pInfo.getResourcesInStorage(System.currentTimeMillis());
-		Hashtable<Village, VillageTroopsHolder> result = new Hashtable<>();
-
-		for (Village v : DSWorkbenchFarmManager.activeFarmGroup) {
-			VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(v,
-					TroopsManager.TROOP_TYPE.OWN);
-			if (holder != null) {
-				if (holder.getTroops().getFarmCapacity(v) >= currentResources
-						&& holder.getTroops().getFarmCapacity(v) <= Integer.MAX_VALUE) {
-					// village is valid
-					result.put(holder.getVillage(), holder);
-				}
-			}
-		}
-
-		return result;
-	}
-
-	public static Hashtable<Village, VillageTroopsHolder> getOwnTroopsForAllVillagesByMinHaul(int pMinHaul) {
-		Village[] villages = DSWorkbenchFarmManager.activeFarmGroup;
-
-		Hashtable<Village, VillageTroopsHolder> result = new Hashtable<>();
-
-		for (Village v : villages) {
-			VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(v,
-					TroopsManager.TROOP_TYPE.OWN);
-			if (holder != null) {
-				if (holder.getTroops().getFarmCapacity(v) >= pMinHaul
-						&& holder.getTroops().getFarmCapacity(v) <= Integer.MAX_VALUE) {
-					// village is valid
-					result.put(holder.getVillage(), holder);
-				}
-			}
-		}
-
 		return result;
 	}
 

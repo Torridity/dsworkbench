@@ -22,9 +22,9 @@ public class SiegeWeaponsOnWayRenderer extends DefaultTableRenderer{
     public SiegeWeaponsOnWayRenderer() {
         super();
         try {
-        	BOTH_onWay = new ImageIcon(FarmStatusCellRenderer.class.getResource("/res/ui/both.png"));
+        	BOTH_onWay = new ImageIcon(FarmStatusCellRenderer.class.getResource("/res/ui/both_siege.png"));
         	CATA_onWay = new ImageIcon(FarmStatusCellRenderer.class.getResource("/res/unit_catapult.png"));
-            RAM_onWay = new ImageIcon(FarmStatusCellRenderer.class.getResource("/res/ui/ram.png"));
+            RAM_onWay = new ImageIcon(FarmStatusCellRenderer.class.getResource("/res/ui/rams.png"));
             atHome = new ImageIcon(FarmStatusCellRenderer.class.getResource("/res/checkbox.png"));
             Not_initiated = new ImageIcon(FarmStatusCellRenderer.class.getResource("/res/ui/spy_needed.png"));
             final_farm = new ImageIcon(FarmStatusCellRenderer.class.getResource("/res/final_farm.png"));

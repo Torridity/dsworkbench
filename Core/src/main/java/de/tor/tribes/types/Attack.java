@@ -105,7 +105,10 @@ public class Attack extends ManageableType implements Serializable, Comparable<A
     }
 
     public UnitHolder getRealUnit() {
-        UnitHolder slowest = amounts.getSlowestUnit();
+        UnitHolder slowest = null;
+        if(amounts != null) {
+            slowest = amounts.getSlowestUnit();
+        }
         if(slowest != null) {
             return slowest; 
         }

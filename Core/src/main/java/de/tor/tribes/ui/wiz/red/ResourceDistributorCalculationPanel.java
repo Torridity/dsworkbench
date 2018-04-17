@@ -1232,7 +1232,7 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
     }
 
     private int getFillAmountByResourceId(int pResourceId) {
-    	/*
+        /*
         switch (pResourceId) {
             case 0:
                 return Math.min(UIHelper.parseIntFromField(jTargetWood, 400000), 400000);
@@ -1253,7 +1253,7 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
     }
 
     private int getRemainAmountByResourceId(int pResourceId) {
-    	/*
+        /*
         switch (pResourceId) {
         case 0:
             return Math.min(UIHelper.parseIntFromField(jRemainWood, 400000), 400000);
@@ -1262,14 +1262,14 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
         default:
             return Math.min(UIHelper.parseIntFromField(jRemainIron, 400000), 400000);
     }*/
-	     switch (pResourceId) {
-	        case 0:
-	            return UIHelper.parseIntFromField(jRemainWood, 400000);
-	        case 1:
-	            return UIHelper.parseIntFromField(jRemainClay, 400000);
-	        default:
-	            return UIHelper.parseIntFromField(jRemainIron, 400000);
-	    }
+         switch (pResourceId) {
+            case 0:
+                return UIHelper.parseIntFromField(jRemainWood, 400000);
+            case 1:
+                return UIHelper.parseIntFromField(jRemainClay, 400000);
+            default:
+                return UIHelper.parseIntFromField(jRemainIron, 400000);
+        }
     }
 
     private int getMeanValueByResourceId(int pResourceId, int pWood, int pClay, int pIron, int pAmount) {

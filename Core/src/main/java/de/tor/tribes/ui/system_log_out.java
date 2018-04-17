@@ -41,16 +41,16 @@ import java.awt.geom.RoundRectangle2D;
  * @author Torridity
  */
 public class system_log_out implements
-		org.pushingpixels.flamingo.api.common.icon.ResizableIcon {
-	/**
-	 * Paints the transcoded SVG image on the specified graphics context. You
-	 * can install a custom transformation on the graphics context to scale the
-	 * image.
-	 * 
-	 * @param g
-	 *            Graphics context.
-	 */
-	public static void paint(Graphics2D g) {
+        org.pushingpixels.flamingo.api.common.icon.ResizableIcon {
+    /**
+     * Paints the transcoded SVG image on the specified graphics context. You
+     * can install a custom transformation on the graphics context to scale the
+     * image.
+     * 
+     * @param g
+     *            Graphics context.
+     */
+    public static void paint(Graphics2D g) {
         Shape shape = null;
         Paint paint = null;
         Stroke stroke = null;
@@ -65,7 +65,7 @@ public class system_log_out implements
             }
         }
         
-	    AffineTransform defaultTransform_ = g.getTransform();
+        AffineTransform defaultTransform_ = g.getTransform();
 // 
 g.setComposite(AlphaComposite.getInstance(3, 1.0f * origAlpha));
 AffineTransform defaultTransform__0 = g.getTransform();
@@ -305,96 +305,96 @@ g.setTransform(defaultTransform__0_0);
 g.setTransform(defaultTransform__0);
 g.setTransform(defaultTransform_);
 
-	}
+    }
 
-	/**
-	 * Returns the width of the bounding box of the original SVG image.
-	 * 
-	 * @return The width of the bounding box of the original SVG image.
-	 */
-	public static int getOrigWidth() {
-		return 48;
-	}
+    /**
+     * Returns the width of the bounding box of the original SVG image.
+     * 
+     * @return The width of the bounding box of the original SVG image.
+     */
+    public static int getOrigWidth() {
+        return 48;
+    }
 
-	/**
-	 * Returns the height of the bounding box of the original SVG image.
-	 * 
-	 * @return The height of the bounding box of the original SVG image.
-	 */
-	public static int getOrigHeight() {
-		return 48;
-	}
+    /**
+     * Returns the height of the bounding box of the original SVG image.
+     * 
+     * @return The height of the bounding box of the original SVG image.
+     */
+    public static int getOrigHeight() {
+        return 48;
+    }
 
-	/**
-	 * The current width of this resizable icon.
-	 */
-	int width;
+    /**
+     * The current width of this resizable icon.
+     */
+    int width;
 
-	/**
-	 * The current height of this resizable icon.
-	 */
-	int height;
+    /**
+     * The current height of this resizable icon.
+     */
+    int height;
 
-	/**
-	 * Creates a new transcoded SVG image.
-	 */
-	public system_log_out() {
+    /**
+     * Creates a new transcoded SVG image.
+     */
+    public system_log_out() {
         this.width = getOrigWidth();
         this.height = getOrigHeight();
-	}
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see javax.swing.Icon#getIconHeight()
-	 */
+    /*
+     * (non-Javadoc)
+     * 
+     * @see javax.swing.Icon#getIconHeight()
+     */
     @Override
-	public int getIconHeight() {
-		return height;
-	}
+    public int getIconHeight() {
+        return height;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see javax.swing.Icon#getIconWidth()
-	 */
+    /*
+     * (non-Javadoc)
+     * 
+     * @see javax.swing.Icon#getIconWidth()
+     */
     @Override
-	public int getIconWidth() {
-		return width;
-	}
+    public int getIconWidth() {
+        return width;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.jvnet.flamingo.common.icon.ResizableIcon#setDimension(java.awt.Dimension
-	 * )
-	 */
-	@Override
-	public void setDimension(Dimension newDimension) {
-		this.width = newDimension.width;
-		this.height = newDimension.height;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see javax.swing.Icon#paintIcon(java.awt.Component, java.awt.Graphics,
-	 * int, int)
-	 */
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.jvnet.flamingo.common.icon.ResizableIcon#setDimension(java.awt.Dimension
+     * )
+     */
     @Override
-	public void paintIcon(Component c, Graphics g, int x, int y) {
-		Graphics2D g2d = (Graphics2D) g.create();
-		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-				RenderingHints.VALUE_ANTIALIAS_ON);
-		g2d.translate(x, y);
+    public void setDimension(Dimension newDimension) {
+        this.width = newDimension.width;
+        this.height = newDimension.height;
+    }
 
-		double coef1 = (double) this.width / (double) getOrigWidth();
-		double coef2 = (double) this.height / (double) getOrigHeight();
-		double coef = Math.min(coef1, coef2);
-		g2d.scale(coef, coef);
-		paint(g2d);
-		g2d.dispose();
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see javax.swing.Icon#paintIcon(java.awt.Component, java.awt.Graphics,
+     * int, int)
+     */
+    @Override
+    public void paintIcon(Component c, Graphics g, int x, int y) {
+        Graphics2D g2d = (Graphics2D) g.create();
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                RenderingHints.VALUE_ANTIALIAS_ON);
+        g2d.translate(x, y);
+
+        double coef1 = (double) this.width / (double) getOrigWidth();
+        double coef2 = (double) this.height / (double) getOrigHeight();
+        double coef = Math.min(coef1, coef2);
+        g2d.scale(coef, coef);
+        paint(g2d);
+        g2d.dispose();
+    }
 }
 

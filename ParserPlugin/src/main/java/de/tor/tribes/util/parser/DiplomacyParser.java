@@ -91,9 +91,9 @@ public class DiplomacyParser implements SilentParserInterface {
 
         if(markers.isEmpty())return false;
         
-		for(Marker mark : markers) MarkerManager.getSingleton().addManagedElement(mark);
-		
-		return true;
+        for(Marker mark : markers) MarkerManager.getSingleton().addManagedElement(mark);
+        
+        return true;
         
     }
 

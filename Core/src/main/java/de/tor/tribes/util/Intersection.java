@@ -31,7 +31,7 @@ import java.awt.geom.PathIterator;
  * the intersection point of two lines and the intersection
  * point of a line and a GeneralPath object.
  *
- * @author		Jesus M. Salvo Jr.
+ * @author        Jesus M. Salvo Jr.
  */
 public class Intersection {
 

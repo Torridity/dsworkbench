@@ -63,9 +63,9 @@ public class FarmStatusCellRenderer extends DefaultTableRenderer {
             label.setHorizontalAlignment(SwingConstants.CENTER);
             FarmInformation.FARM_STATUS status = (FarmInformation.FARM_STATUS) value;
             switch (status) {
-            	case NOT_INITIATED:
-            		label.setIcon(notInitiatedIcon);
-            		break;
+                case NOT_INITIATED:
+                    label.setIcon(notInitiatedIcon);
+                    break;
                 case NOT_SPYED:
                     label.setIcon(notSpyedIcon);
                     break;

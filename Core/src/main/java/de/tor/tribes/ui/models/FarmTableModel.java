@@ -72,7 +72,7 @@ public class FarmTableModel extends AbstractTableModel {
             case 3:
                 return elem.getVillage().getShortName();
             case 4:
-            	return elem.getSiegeStatus();
+                return elem.getSiegeStatus();
             case 5:
                 return elem.getWallLevel();
             case 6:

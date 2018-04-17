@@ -238,15 +238,15 @@ public class NonPAPlaceParser implements SilentParserInterface {
         Transferable t = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
         try {
             /*String s = " 003 | Spitfire (471|482) K44\n" +
-            "eigene	2500	1500	0	1964	500	0	0	1396	0	0	0	0	Befehle\n" +
-            "im Dorf	2500	1500	0	1964	500	0	0	1396	0	0	0	0	Truppen\n" +
-            "auswärts	0	0	0	0	0	0	0	0	0	0	0	0\n" +
-            "unterwegs	0	0	0	0	0	0	0	0	0	0	0	0	Befehle\n" +
+            "eigene    2500    1500    0    1964    500    0    0    1396    0    0    0    0    Befehle\n" +
+            "im Dorf    2500    1500    0    1964    500    0    0    1396    0    0    0    0    Truppen\n" +
+            "auswärts    0    0    0    0    0    0    0    0    0    0    0    0\n" +
+            "unterwegs    0    0    0    0    0    0    0    0    0    0    0    0    Befehle\n" +
             "2Fast4You (475|480) K44\n" +
-            "eigene	600	500	0	0	134	0	0	354	0	0	0	1	Befehle\n" +
-            "im Dorf	600	500	0	0	134	0	0	354	0	0	0	1	Truppen\n" +
-            "auswärts	4400	3000	0	3000	66	0	0	1046	0	0	0	0\n" +
-            "unterwegs	0	0	0	0	0	0	0	0	0	0	0	0	Befehle\n";
+            "eigene    600    500    0    0    134    0    0    354    0    0    0    1    Befehle\n" +
+            "im Dorf    600    500    0    0    134    0    0    354    0    0    0    1    Truppen\n" +
+            "auswärts    4400    3000    0    3000    66    0    0    1046    0    0    0    0\n" +
+            "unterwegs    0    0    0    0    0    0    0    0    0    0    0    0    Befehle\n";
              */
 
             String data = (String) t.getTransferData(DataFlavor.stringFlavor);

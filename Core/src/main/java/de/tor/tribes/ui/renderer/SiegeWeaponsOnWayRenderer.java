@@ -12,9 +12,9 @@ import org.jdesktop.swingx.renderer.DefaultTableRenderer;
 import de.tor.tribes.types.FarmInformation;
 
 public class SiegeWeaponsOnWayRenderer extends DefaultTableRenderer{
-	private ImageIcon BOTH_onWay = null;
-	private ImageIcon CATA_onWay = null;
-	private ImageIcon RAM_onWay = null;
+    private ImageIcon BOTH_onWay = null;
+    private ImageIcon CATA_onWay = null;
+    private ImageIcon RAM_onWay = null;
     private ImageIcon atHome = null;
     private ImageIcon Not_initiated = null;
     private ImageIcon final_farm = null;
@@ -22,8 +22,8 @@ public class SiegeWeaponsOnWayRenderer extends DefaultTableRenderer{
     public SiegeWeaponsOnWayRenderer() {
         super();
         try {
-        	BOTH_onWay = new ImageIcon(FarmStatusCellRenderer.class.getResource("/res/ui/both_siege.png"));
-        	CATA_onWay = new ImageIcon(FarmStatusCellRenderer.class.getResource("/res/unit_catapult.png"));
+            BOTH_onWay = new ImageIcon(FarmStatusCellRenderer.class.getResource("/res/ui/both_siege.png"));
+            CATA_onWay = new ImageIcon(FarmStatusCellRenderer.class.getResource("/res/unit_catapult.png"));
             RAM_onWay = new ImageIcon(FarmStatusCellRenderer.class.getResource("/res/ui/rams.png"));
             atHome = new ImageIcon(FarmStatusCellRenderer.class.getResource("/res/checkbox.png"));
             Not_initiated = new ImageIcon(FarmStatusCellRenderer.class.getResource("/res/ui/spy_needed.png"));
@@ -54,11 +54,11 @@ public class SiegeWeaponsOnWayRenderer extends DefaultTableRenderer{
                     label.setIcon(RAM_onWay);
                     break;  
                 case Not_initiated:
-                	label.setIcon(Not_initiated);
-                	break;
+                    label.setIcon(Not_initiated);
+                    break;
                 case final_farm:
-                	label.setIcon(final_farm);
-                	break;
+                    label.setIcon(final_farm);
+                    break;
                 default:
                     label.setIcon(atHome);
             }

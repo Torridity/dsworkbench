@@ -1545,11 +1545,13 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jFarmKSettings.add(jSendRamsK, gridBagConstraints);
 
-        JCataTarget.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        JCataTarget.setModel(new javax.swing.DefaultComboBoxModel<>(TargetsNAME));
+        JCataTarget.setFocusCycleRoot(true);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jFarmKSettings.add(JCataTarget, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();

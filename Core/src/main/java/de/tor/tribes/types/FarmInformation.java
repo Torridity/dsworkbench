@@ -46,17 +46,14 @@ public class FarmInformation extends ManageableType {
     private static Logger logger = Logger.getLogger("FarmInformation");
 
     public enum FARM_RESULT {
-
         UNKNOWN, OK, IMPOSSIBLE, FAILED, FARM_INACTIVE
     }
 
     public enum FARM_STATUS {
-
         READY, NOT_SPYED, FARMING, REPORT_EXPECTED, TROOPS_FOUND, CONQUERED, LOCKED, NOT_INITIATED
     }
 
     public enum Siege_STATUS {
-
         final_farm, BOTH_onWay, RAM_onWay, CATA_onWay, atHome, Not_initiated
     }
 
@@ -222,13 +219,7 @@ public class FarmInformation extends ManageableType {
         if (farmTroopArrive == -1 || farmTroop == null) {
             return -1;
         }
-        // Hashtable<UnitHolder, Integer> units =
-        // TroopHelper.unitTableFromSerializableFormat(farmTroop);
-        // double speed = TroopHelper.getTroopSpeed(units);
-        long arriveTimeRelativeToNow = farmTroopArrive - System.currentTimeMillis();// farmTroopArrive -
-                                                                                    // DSCalculator.calculateMoveTimeInMillis(getVillage(),
-                                                                                    // DataHolder.getSingleton().getVillagesById().get(farmSourceId),
-                                                                                    // speed) - lastRuntimeUpdate;
+        long arriveTimeRelativeToNow = farmTroopArrive - System.currentTimeMillis();
 
         if (arriveTimeRelativeToNow <= 0) {// farm was reached...return time until return
             if (status.equals(FARM_STATUS.FARMING)) {
@@ -375,8 +366,8 @@ public class FarmInformation extends ManageableType {
                     // get second report
                     FightReport report2 = reportIterator.next();
                     // check if haul information is available
-                    if (report1.getHaul() != null && report2.getHaul() != null) {// haul information available, perform
-                                                                                    // guess
+                    if (report1.getHaul() != null && report2.getHaul() != null) {
+                        // haul information available, perform guess
                         guessResourceBuildings(report1, report2);
                         // guess storage from report2
                         guessStorage(report2);
@@ -438,11 +429,7 @@ public class FarmInformation extends ManageableType {
         int clay = pReport.getHaul()[1];
         int iron = pReport.getHaul()[2];
 
-        double dt = (pReport.getTimestamp() - lastReport) / (double) DateUtils.MILLIS_PER_HOUR;// DSCalculator.calculateMoveTimeInMillis(pReport.getSourceVillage(),
-                                                                                                // pReport.getTargetVillage(),
-                                                                                                // TroopHelper.getSlowestUnit(pReport.getAttackers()).getSpeed())
-                                                                                                // / (double)
-                                                                                                // DateUtils.MILLIS_PER_HOUR;
+        double dt = (pReport.getTimestamp() - lastReport) / (double) DateUtils.MILLIS_PER_HOUR;
         int woodBuildingLevel = DSCalculator.calculateEstimatedResourceBuildingLevel(wood, dt);
         int clayBuildingLevel = DSCalculator.calculateEstimatedResourceBuildingLevel(clay, dt);
         int ironBuildingLevel = DSCalculator.calculateEstimatedResourceBuildingLevel(iron, dt);
@@ -475,6 +462,7 @@ public class FarmInformation extends ManageableType {
     }
 
     private void guessWallLevel(FightReport pReport) {
+        //TODO do real guessing with sim here
         if (pReport == null || pReport.getDiedAttackers() == null
                 || pReport.getSpyLevel() >= pReport.SPY_LEVEL_BUILDINGS || pReport.getSurvivingAttackers() == null
                 || pReport.getDestroyedWallLevels() != 0) {
@@ -761,13 +749,18 @@ public class FarmInformation extends ManageableType {
                 final HashMap<Village, TroopAmountFixed> carriageMap = new HashMap<>();
                 List<Village> villages = new LinkedList<>();
 
-                for (Village selectedVillage : DSWorkbenchFarmManager.activeFarmGroup) { // Goes through all the
-                                                                                            // villages that can farm
-                                                                                            // this village
+                for (Village selectedVillage : DSWorkbenchFarmManager.activeFarmGroup) {
+                    // Goes through all the villages that can farm this village
                     TroopAmountFixed units;
                     units = new TroopAmountFixed();
                     VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(selectedVillage,
                             TroopsManager.TROOP_TYPE.OWN);
+                    if(holder == null) {
+                        //troops not read
+                        info.append("Truppen noch nicht eingelesen");
+                        lastSendInformation = info.toString();
+                        return FARM_RESULT.FAILED;
+                    }
                     // Defines the Troops to be farmed with for A/B/C/K
                     units = TroopHelper.getTroopsForCarriage(pConfig, holder, this);
                     // Adds rams if check box is marked and contains already units

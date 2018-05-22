@@ -41,7 +41,7 @@ public class AttackToBBCodeFormater {
         template = template.replaceAll("green", getRandomGreen());
 
         Date aTime = pAttack.getArriveTime();
-        Date sTime = new Date(aTime.getTime() - (long) (DSCalculator.calculateMoveTimeInSeconds(pAttack.getSource(), pAttack.getTarget(), pAttack.getUnit().getSpeed()) * 1000));
+        Date sTime = pAttack.getSendTime();
         if (pExtended) {
             if (ServerSettings.getSingleton().isMillisArrival()) {
                 sendtime = new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss.'[size=8]'SSS'[/size]'").format(sTime);

@@ -28,12 +28,14 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.*;
 import java.util.zip.GZIPInputStream;
+import org.apache.log4j.Logger;
 
 /**
  *
  * @author Torridity
  */
 public class ServerSettings extends javax.swing.JPanel implements WizardPanel {
+    private static Logger logger = Logger.getLogger("ServerSettings");
 
   private WizardController wizCtrl;
   private Map currentSettings = null;
@@ -47,7 +49,7 @@ public class ServerSettings extends javax.swing.JPanel implements WizardPanel {
     wizCtrl = pWizCtrl;
     currentSettings = map;
     try {
-          //  List<DatabaseServerEntry> entries = DatabaseInterface.getServerInfo(ProxyHelper.getProxyFromProperties(currentSettings));
+      //List<DatabaseServerEntry> entries = DatabaseInterface.getServerInfo(ProxyHelper.getProxyFromProperties(currentSettings));
       ServerManager.loadServerList(ProxyHelper.getProxyFromProperties(currentSettings));
       String[] serverIds = ServerManager.getServerIDs();
       if (serverIds == null || serverIds.length == 0) {
@@ -65,6 +67,7 @@ public class ServerSettings extends javax.swing.JPanel implements WizardPanel {
         jTribeBox.setModel(tribeModel);
       }
     } catch (Exception e) {
+      logger.warn("Fehler bei der Server suche", e);
       wizCtrl.setProblem("Keine Server gefunden. Bitte versuch es später noch einmal.");
       isError = true;
     }
@@ -224,6 +227,7 @@ private void fireSelectServerEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
           }
 
           if (tribes.isEmpty()) {
+              logger.warn("Keine Spieler gefunden");
               wizCtrl.setProblem("Keine Spieler gefunden. Versuch es bitte später noch einmal.");
               return;
           }
@@ -237,6 +241,7 @@ private void fireSelectServerEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
           currentSettings.put("server", selection);
           wizCtrl.setProblem("Bitte einen Spielernamen wählen");
       } catch (Throwable t) {
+          logger.warn("Fehler beim download der Spielerdaten", t);
           wizCtrl.setProblem("Fehler beim Download der Spielerdaten");
       }
 

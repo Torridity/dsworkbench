@@ -352,8 +352,6 @@ public class RetimerCalculationPanel extends WizardPage {
                         }
                     }
                     if (allowFromSame) {
-                        //TODO correctly set Troops (ignore Units that are too slow)
-                        //TODO also check all other usages of Attack and things like that
                         notifyStatusUpdate(" - Einheit für Retime geeignet");
                         Attack a = new Attack();
                         a.setSource(source);
@@ -361,6 +359,7 @@ public class RetimerCalculationPanel extends WizardPage {
                         a.setUnit(unit);
                         a.setSendTime(new Date(sendTime));
                         a.setType(Attack.CLEAN_TYPE);
+                        a.setTroopsByType();
                         results.add(a);
                     }
                 }

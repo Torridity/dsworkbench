@@ -21,7 +21,7 @@ import de.tor.tribes.ui.models.SupportTableModel;
 import de.tor.tribes.ui.renderer.NumberFormatCellRenderer;
 import de.tor.tribes.ui.renderer.SupportDirectionRenderer;
 import de.tor.tribes.ui.renderer.SupportTableHeaderRenderer;
-import de.tor.tribes.util.BrowserCommandSender;
+import de.tor.tribes.util.BrowserInterface;
 import de.tor.tribes.util.Constants;
 import java.util.List;
 import org.apache.log4j.Logger;
@@ -157,7 +157,7 @@ public class SupportDetailsDialog extends javax.swing.JDialog {
             logger.error("Failed to center village in game", e);
             return;
         }
-        BrowserCommandSender.centerVillage(v);
+        BrowserInterface.centerVillage(v);
     }//GEN-LAST:event_fireCenterInGameEvent
 
     private void fireCenterOnMapEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCenterOnMapEvent

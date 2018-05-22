@@ -108,10 +108,9 @@ public class AttackManager extends GenericManager<Attack> {
                     for (Element e1 : (List<Element>) JaxenUtils.getNodes(e, "attacks/attack")) {
                         Attack a = new Attack();
                         a.loadFromXml(e1);
-                        if (a != null && a.getSource() != null && a.getTarget() != null) {
-                            Village source = DataHolder.getSingleton().getVillages()[a.getSource().getX()][a.getSource().getY()];
-                            Village target = DataHolder.getSingleton().getVillages()[a.getTarget().getX()][a.getTarget().getY()];
-                            addAttack(source, target, a.getUnit(), a.getArriveTime(), a.isShowOnMap(), planKey, a.getType(), a.isTransferredToBrowser());
+                        
+                        if (a.getSource() != null && a.getTarget() != null) {
+                            addManagedElement(planKey, a);
                         }
                     }
                 }
@@ -150,10 +149,8 @@ public class AttackManager extends GenericManager<Attack> {
                         Attack a = new Attack();
                         a.loadFromXml(e1);
 
-                        if (a != null) {
-                            Village source = DataHolder.getSingleton().getVillages()[a.getSource().getX()][a.getSource().getY()];
-                            Village target = DataHolder.getSingleton().getVillages()[a.getTarget().getX()][a.getTarget().getY()];
-                            addAttack(source, target, a.getUnit(), a.getArriveTime(), a.isShowOnMap(), planKey, a.getType(), false);
+                        if (a.getSource() != null && a.getTarget() != null) {
+                            addManagedElement(planKey, a);
                         }
                     }
                 }
@@ -235,22 +232,20 @@ public class AttackManager extends GenericManager<Attack> {
 
     }
 
+    /**
+     * Add an attack to a plan
+     *
+     * type is automatically determined through unit
+     */
     public void addAttack(Village pSource, Village pTarget, UnitHolder pUnit, Date pArriveTime, String pPlan) {
         boolean showOnMap = GlobalOptions.getProperties().getBoolean("draw.attacks.by.default");
-        addAttack(pSource, pTarget, pUnit, pArriveTime, showOnMap, pPlan, -1, false);
+        addAttack(pSource, pTarget, pUnit, pArriveTime, showOnMap, pPlan, Attack.NO_TYPE, false);
     }
 
     /**
      * Add an attack to a plan
      *
-     * @param pSource
-     * @param pTarget
-     * @param pUnit
-     * @param pShowOnMap
-     * @param pArriveTime
-     * @param pPlan
-     * @param pTransferredToBrowser
-     * @param pType
+     * type is automatically determined through unit
      */
     public void addAttack(Village pSource, Village pTarget, UnitHolder pUnit, Date pArriveTime, boolean pShowOnMap, String pPlan, Integer pType, boolean pTransferredToBrowser) {
         if (pSource == null || pTarget == null || pUnit == null || pArriveTime == null) {
@@ -266,12 +261,15 @@ public class AttackManager extends GenericManager<Attack> {
         a.setTransferredToBrowser(pTransferredToBrowser);
         if (pType == -1) {
             switch (pUnit.getPlainName()) {
+                case "catapult":
                 case "ram":
+                case "axe":
                     a.setType(Attack.CLEAN_TYPE);
                     break;
                 case "snob":
                     a.setType(Attack.SNOB_TYPE);
                     break;
+                case "spear":
                 case "sword":
                 case "heavy":
                     a.setType(Attack.SUPPORT_TYPE);
@@ -280,22 +278,12 @@ public class AttackManager extends GenericManager<Attack> {
                     a.setType(Attack.NO_TYPE);
                     break;
             }
-
         } else {
             a.setType(pType);
         }
-
+        a.setTroopsByType();
+        
         addManagedElement(pPlan, a);
-    }
-
-    public void addDoItYourselfAttack(Village pSource, Village pTarget, UnitHolder pUnit, Date pArriveTime, int pType) {
-        Attack a = new Attack();
-        a.setSource(pSource);
-        a.setTarget(pTarget);
-        a.setArriveTime(pArriveTime);
-        a.setUnit(pUnit);
-        a.setType(pType);
-        addManagedElement(MANUAL_ATTACK_PLAN, a);
     }
 
     public void clearDoItYourselfAttacks() {

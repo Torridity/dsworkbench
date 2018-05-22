@@ -21,7 +21,7 @@ import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
 import de.tor.tribes.ui.windows.MarkerAddFrame;
-import de.tor.tribes.util.BrowserCommandSender;
+import de.tor.tribes.util.BrowserInterface;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import java.awt.Desktop;
@@ -417,7 +417,7 @@ private void fireCenterMapInGameEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
     }
     Village v = (Village) jVillageList.getSelectedItem();
     if (v != null) {
-        BrowserCommandSender.centerVillage(v);
+        BrowserInterface.centerVillage(v);
     }
 }//GEN-LAST:event_fireCenterMapInGameEvent
     
@@ -428,7 +428,7 @@ private void fireSendDefEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
     Village target = (Village) jVillageList.getSelectedItem();
     Village source = DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage();
     if ((source != null) && (target != null)) {
-        BrowserCommandSender.sendTroops(source, target);
+        BrowserInterface.sendTroops(source, target);
     }
 }//GEN-LAST:event_fireSendDefEvent
     
@@ -439,7 +439,7 @@ private void fireSendResEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_
     Village target = (Village) jVillageList.getSelectedItem();
     Village source = DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage();
     if ((source != null) && (target != null)) {
-        BrowserCommandSender.sendRes(source, target);
+        BrowserInterface.sendRes(source, target);
     }
 }//GEN-LAST:event_fireSendResEvent
     

@@ -58,15 +58,22 @@ public class PercentCellRenderer extends DefaultTableRenderer {
         p.setBackground(c.getBackground());
         p.setStringPainted(true);
         if (!fromString) {
+            if(value == null) {
+                value = 100.0f;
+            }
             Float val = (Float) value * 100;
             p.setForeground(ColorGradientHelper.getGradientColor(val, Color.RED, c.getBackground()));
             p.setValue(Math.round(val));
         } else {
-            String val = (String) value;
-            String[] values = val.split("/");
-            int first = Integer.parseInt(values[0]);
-            int second = Integer.parseInt(values[1]);
-            float perc = (float) first / (float) second * 100;
+            float perc = 100.0f;
+            String val = "-/-";
+            if(value != null) {
+                val = (String) value;
+                String[] values = val.split("/");
+                int first = Integer.parseInt(values[0]);
+                int second = Integer.parseInt(values[1]);
+                perc = (float) first / (float) second * 100;
+            }
             p.setForeground(ColorGradientHelper.getGradientColor(perc, Color.RED, c.getBackground()));
             p.setValue(Math.round(perc));
             p.setString(val);

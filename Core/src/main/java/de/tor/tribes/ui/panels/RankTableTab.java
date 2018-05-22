@@ -21,7 +21,7 @@ import de.tor.tribes.types.ext.NoAlly;
 import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
 import de.tor.tribes.ui.renderer.NumberFormatCellRenderer;
-import de.tor.tribes.util.BrowserCommandSender;
+import de.tor.tribes.util.BrowserInterface;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.dsreal.DSRealManager;
@@ -323,7 +323,7 @@ public class RankTableTab extends javax.swing.JPanel implements ListSelectionLis
                 break;
             }
         }
-        BrowserCommandSender.openPage(url);
+        BrowserInterface.openPage(url);
     }
 
     public void showDSRealChart() {

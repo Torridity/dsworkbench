@@ -308,7 +308,7 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
     private void centerChurchInGame() {
         KnownVillage v = getSelectedCurch();
         if (v != null) {
-            BrowserCommandSender.centerVillage(v.getVillage());
+            BrowserInterface.centerVillage(v.getVillage());
         } else {
             showInfo("Keine Kirche gewählt");
         }

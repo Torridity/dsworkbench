@@ -36,17 +36,19 @@ public class FarmStatusCellRenderer extends DefaultTableRenderer {
     private ImageIcon farmingIcon = null;
     private ImageIcon reportIcon = null;
     private ImageIcon lockedIcon = null;
+    private ImageIcon notInitiatedIcon = null;
 
     public FarmStatusCellRenderer() {
         super();
         try {
             readyIcon = new ImageIcon(FarmStatusCellRenderer.class.getResource("/res/checkbox.png"));
-            notSpyedIcon = new ImageIcon(FarmStatusCellRenderer.class.getResource("/res/ui/spy_needed.png"));
+            notSpyedIcon = new ImageIcon(FarmStatusCellRenderer.class.getResource("/res/checkbox_disabled.png"));
             troopsFoundIcon = new ImageIcon(FarmStatusCellRenderer.class.getResource("/res/ui/red_report_lock.png"));
             conqueredIcon = new ImageIcon(FarmStatusCellRenderer.class.getResource("/res/ui/snob_lock.png"));
             farmingIcon = new ImageIcon(FarmStatusCellRenderer.class.getResource("/res/ui/trade_in.png"));
             reportIcon = new ImageIcon(FarmStatusCellRenderer.class.getResource("/res/ui/report.png"));
             lockedIcon = new ImageIcon(FarmStatusCellRenderer.class.getResource("/res/ui/lock.png"));
+            notInitiatedIcon = new ImageIcon(FarmStatusCellRenderer.class.getResource("/res/ui/spy_needed.png"));
         } catch (Exception ignored) {
         }
     }
@@ -61,6 +63,9 @@ public class FarmStatusCellRenderer extends DefaultTableRenderer {
             label.setHorizontalAlignment(SwingConstants.CENTER);
             FarmInformation.FARM_STATUS status = (FarmInformation.FARM_STATUS) value;
             switch (status) {
+                case NOT_INITIATED:
+                    label.setIcon(notInitiatedIcon);
+                    break;
                 case NOT_SPYED:
                     label.setIcon(notSpyedIcon);
                     break;

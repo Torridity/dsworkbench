@@ -69,6 +69,10 @@ public class TroopAmountDynamic extends TroopAmount {
         return elm;
     }
 
+    /**
+     * Sets the Amount for Unit contained within pAmount
+     * @param pAmount the Amount & Unit to set
+     */
     public void setAmount(TroopAmountElement pAmount) {
         amounts.put(pAmount.getUnit(), pAmount);
     }
@@ -78,7 +82,7 @@ public class TroopAmountDynamic extends TroopAmount {
     }
 
     @Override
-    public void loadFromXml(Element pElement) {
+    public final void loadFromXml(Element pElement) {
         if(pElement == null) return;
         
         amounts = new HashMap<>();
@@ -343,6 +347,18 @@ public class TroopAmountDynamic extends TroopAmount {
         }
         return contained;
     }
+
+    public UnitHolder getSlowestUnit() {
+        UnitHolder slowest = null;
+        for(UnitHolder unit: DataHolder.getSingleton().getUnits()) {
+            TroopAmountElement elm = getElementForUnit(unit);
+            if((!elm.isFixed() || elm.getTroopsAmount(null) > 0)
+                    && (slowest == null || slowest.getSpeed() < unit.getSpeed())) {
+                slowest = unit;
+            }
+        }
+        return slowest;
+    }
     
     @Override
     public TroopAmountDynamic clone() {
@@ -351,11 +367,11 @@ public class TroopAmountDynamic extends TroopAmount {
         for(UnitHolder unit: getContainedUnits()) {
             clone.setAmount(new TroopAmountElement(unit,
                     getElementForUnit(unit).toString()));
-    }
+        }
         return clone;
     }
 
-    public void fill(String pAmount) {
+    public final void fill(String pAmount) {
         amounts = new HashMap<>();
         for(UnitHolder unit: DataHolder.getSingleton().getUnits()) {
             amounts.put(unit, new TroopAmountElement(unit, pAmount));

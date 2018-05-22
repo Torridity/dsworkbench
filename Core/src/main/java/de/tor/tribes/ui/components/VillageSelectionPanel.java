@@ -549,14 +549,14 @@ public class VillageSelectionPanel extends javax.swing.JPanel{
     private void jXButton2fireTransferClipboardVillagesEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jXButton2fireTransferClipboardVillagesEvent
         Transferable t = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
         String clipboard;
-		try {
-			clipboard = (String) t.getTransferData(DataFlavor.stringFlavor);
-		} catch (UnsupportedFlavorException | IOException e) {
-			return;
-		}
+        try {
+            clipboard = (String) t.getTransferData(DataFlavor.stringFlavor);
+        } catch (UnsupportedFlavorException | IOException e) {
+            return;
+        }
         List<Village> villages = PluginManager.getSingleton().executeVillageParser(clipboard);
         if(!villages.isEmpty())
-        	listener.fireVillageSelectionEvent(villages.toArray(new Village[villages.size()]));
+            listener.fireVillageSelectionEvent(villages.toArray(new Village[villages.size()]));
     }//GEN-LAST:event_jXButton2fireTransferClipboardVillagesEvent
 
     public boolean isExpertSelection() {

@@ -18,7 +18,7 @@ package de.tor.tribes.ui.wiz.tap;
 import de.tor.tribes.control.GenericManagerListener;
 import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.UnitHolder;
-import de.tor.tribes.types.AbstractTroopMovement;
+import de.tor.tribes.types.TroopMovement;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.StandardAttack;
 import de.tor.tribes.types.UserProfile;
@@ -638,7 +638,7 @@ public class AttackFinishPanel extends WizardPage {
         List<Attack> attacks = new LinkedList<>();
         for (int row = 0; row < jxResultsTable.getRowCount(); row++) {
             int modelRow = jxResultsTable.convertRowIndexToModel(row);
-            AbstractTroopMovement move = getModel().getRow(modelRow);
+            TroopMovement move = getModel().getRow(modelRow);
             attacks.addAll(Arrays.asList(move.getFinalizedAttacks()));
         }
         transferToAttackView(attacks);
@@ -648,7 +648,7 @@ public class AttackFinishPanel extends WizardPage {
         List<Attack> attacks = new LinkedList<>();
         for (int row = 0; row < jxResultsTable.getRowCount(); row++) {
             int modelRow = jxResultsTable.convertRowIndexToModel(row);
-            AbstractTroopMovement move = getModel().getRow(modelRow);
+            TroopMovement move = getModel().getRow(modelRow);
             if (move.offComplete()) {
                 attacks.addAll(Arrays.asList(move.getFinalizedAttacks()));
             }
@@ -662,7 +662,7 @@ public class AttackFinishPanel extends WizardPage {
             List<Attack> attacks = new LinkedList<>();
             for (int row : selection) {
                 int modelRow = jxResultsTable.convertRowIndexToModel(row);
-                AbstractTroopMovement move = getModel().getRow(modelRow);
+                TroopMovement move = getModel().getRow(modelRow);
                 attacks.addAll(Arrays.asList(move.getFinalizedAttacks()));
             }
             transferToAttackView(attacks);
@@ -718,6 +718,8 @@ public class AttackFinishPanel extends WizardPage {
             } else if (a.getType() == Attack.CLEAN_TYPE) {
                 newAttack.setType(StandardAttackManager.getSingleton().getElementByName(stdOff).getIcon());
             }
+            newAttack.setUnit(a.getUnit());
+            newAttack.setTroopsByType();
             modifiedTransfer.add(newAttack);
         }
 
@@ -733,7 +735,7 @@ public class AttackFinishPanel extends WizardPage {
     }
 
     public void update() {
-        List<AbstractTroopMovement> results = AttackCalculationPanel.getSingleton().getResults();
+        List<TroopMovement> results = AttackCalculationPanel.getSingleton().getResults();
         TimeFrame timeFrame = TimeSettingsPanel.getSingleton().getTimeFrame();
         List<Long> used = new LinkedList<>();
         TAPResultTableModel model = new TAPResultTableModel();
@@ -752,7 +754,7 @@ public class AttackFinishPanel extends WizardPage {
             overviewPanel.addVillage(new Point(elem.getVillage().getX(), elem.getVillage().getY()), Color.BLACK);
         }
 
-        for (AbstractTroopMovement result : results) {
+        for (TroopMovement result : results) {
             result.finalizeMovement(timeFrame, used);
             if (result.offComplete()) {
                 perfectOffs++;
@@ -793,7 +795,7 @@ public class AttackFinishPanel extends WizardPage {
 
         for (int row = 0; row < jxResultsTable.getRowCount(); row++) {
             int modelRow = jxResultsTable.convertRowIndexToModel(row);
-            AbstractTroopMovement move = getModel().getRow(modelRow);
+            TroopMovement move = getModel().getRow(modelRow);
             for (Attack a : move.getFinalizedAttacks()) {
                 model.addRow(a);
             }

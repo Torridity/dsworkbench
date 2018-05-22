@@ -138,35 +138,45 @@ public class FarmManager extends GenericManager<FarmInformation> {
         if (!group.equals(ReportManager.FARM_SET)) {
           searchInGroups.add(group);
         }
+        logger.debug(searchInGroups.size() + "groups are used");
       }
     } else {
-      searchInGroups.add(pReportSet);
+        searchInGroups.add(pReportSet);
+        logger.debug(searchInGroups.size() + "groups are used");
     }
-
+    logger.debug(ReportManager.getSingleton().getAllElements(searchInGroups).size() + " Elements are found");
     for (ManageableType t : ReportManager.getSingleton().getAllElements(searchInGroups)) {
+    	
       FightReport report = (FightReport) t;
       Village target = report.getTargetVillage();
       if (report.isWon() && !(target.getTribe().getId() == yourTribe.getId())) {
         boolean allowed;
         if (report.getTargetVillage().getTribe().getAlly() != null && report.getTargetVillage().getTribe().getAlly().equals(yourTribe.getAlly())) {
+        	logger.debug("Village counts as ally");
           //own ally
           allowed = pAllowTribesInOwnAlly;
         } else {//target is not in own ally
+        	logger.debug("Not an ally");
           if (!report.getTargetVillage().getTribe().equals(Barbarians.getSingleton())) {
+        	  logger.debug("Village tribe is not barbarian");
             //village has owner
             if ((report.getTargetVillage().getTribe().getAlly() == null || report.getTargetVillage().getTribe().getAlly().equals(NoAlly.getSingleton()))) {
               //owner has no ally
+            	logger.debug("Village is not Barbarian and is not an ally ally");
               allowed = pAllowAloneTribes;
             } else {
+            	logger.debug("Village is not Barbarian and is an ally ally");
               //tribe is in ally
               allowed = pAllowTribesInAllies;
             }
           } else {
             //Barbarians
             allowed = true;
+            logger.debug("Report is about Barbarian");
           }
         }
         
+        logger.debug("Start adding the farms");
         if (allowed) {
           if (!handled.contains(target)) {//add farm
             FarmInformation info = addFarm(target);
@@ -189,6 +199,7 @@ public class FarmManager extends GenericManager<FarmInformation> {
         }
       }
     }
+    logger.debug(addCount + " farms are found");
     revalidate(true);
     return addCount;
   }

@@ -369,7 +369,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
                         showError("Fehlerhafte Einstellungen für die unterstützenden Einheiten");
                         break;
                     }
-                    if (!BrowserCommandSender.sendTroops(source, target, units, profileQuickchangePanel.getSelectedProfile())) {
+                    if (!BrowserInterface.sendTroops(source, target, units, profileQuickchangePanel.getSelectedProfile())) {
                         if (rows.length > 1) {
                             clickAccount.giveClickBack();
                             showError("Fehler beim Öffnen des Browsers");

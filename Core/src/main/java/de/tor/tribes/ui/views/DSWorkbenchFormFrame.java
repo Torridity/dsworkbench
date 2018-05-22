@@ -415,7 +415,7 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame implements Li
         Rectangle r = selection.get(0).getBounds();
         
         if (r != null) {
-            BrowserCommandSender.centerCoordinate((int) Math.rint(r.getCenterX()), (int) Math.rint(r.getCenterY()));
+            BrowserInterface.centerCoordinate((int) Math.rint(r.getCenterX()), (int) Math.rint(r.getCenterY()));
         } else {
             showInfo("Ein Mittelpunkt kann für diese Zeichnung nicht bestimmt werden");
         }

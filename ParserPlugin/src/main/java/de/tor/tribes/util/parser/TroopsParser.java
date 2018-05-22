@@ -37,8 +37,8 @@ import org.apache.commons.lang.StringUtils;
 public class TroopsParser implements SilentParserInterface {
 
     /*
-     * 003 | Spitfire (471|482) K44 eigene	2500	1500	0	1964	500	0	0	1396	0	0	0	0	Befehle im Dorf	2500	1500	0	1964	500	0	0	1396	0	0	0	0
-     * Truppen auswärts	0	0	0	0	0	0	0	0	0	0	0	0 unterwegs	0	0	0	0	0	0	0	0	0	0	0	0	Befehle
+     * 003 | Spitfire (471|482) K44 eigene    2500    1500    0    1964    500    0    0    1396    0    0    0    0    Befehle im Dorf    2500    1500    0    1964    500    0    0    1396    0    0    0    0
+     * Truppen auswärts    0    0    0    0    0    0    0    0    0    0    0    0 unterwegs    0    0    0    0    0    0    0    0    0    0    0    0    Befehle
      */
     public boolean parse(String pTroopsString) {
         StringTokenizer lineTok = new StringTokenizer(pTroopsString, "\n\r");
@@ -86,27 +86,27 @@ public class TroopsParser implements SilentParserInterface {
                         // we are not searching for further group names
                         groupLines = false;
                         // add village to list of villages in selected group
-                    	if(groupName != null)villages.add(v);                    	
+                        if(groupName != null)villages.add(v);                        
                     } else {
                         // Check if current line is first group line. In case it is, store selected group
                         if(line.trim().startsWith(getVariable("overview.groups")))
-                        	groupLines = true;                    
+                            groupLines = true;                    
                         // Check if current line contains active group. In case it does, store group name and stop searching
                         if(groupLines && line.matches(".*>.*?<.*")){
-                        	groupLines = false;
-                        	groupName = StringUtils.substringBetween(line, ">", "<"); // = line.replaceAll(".*>|<.*",""); if we stop using Apache Commons        	
-                        }                    	
+                            groupLines = false;
+                            groupName = StringUtils.substringBetween(line, ">", "<"); // = line.replaceAll(".*>|<.*",""); if we stop using Apache Commons            
+                        }                        
                     }
                 } catch (Exception e) {
                     v = null;
                     villageLines = 0;
                     // Check if current line is first group line. In case it is, store selected group
                     if(line.trim().startsWith(getVariable("overview.groups")))
-                    	groupLines = true;                    
+                        groupLines = true;                    
                     // Check if current line contains active group. In case it does, store group name and stop searching
                     if(groupLines && line.matches(".*>.*?<.*")){
-                    	groupLines = false;
-                    	groupName = StringUtils.substringBetween(line, ">", "<"); // = line.replaceAll(".*>|<.*",""); if we stop using Apache Commons        	
+                        groupLines = false;
+                        groupName = StringUtils.substringBetween(line, ">", "<"); // = line.replaceAll(".*>|<.*",""); if we stop using Apache Commons            
                     }
                 }
             }
@@ -151,9 +151,9 @@ public class TroopsParser implements SilentParserInterface {
         
         //update selected group, if any
         if(groupName != null && !groupName.equals(getVariable("groups.all"))){
-        	Hashtable<String, List<Village>> groupTable = new Hashtable<>();
-        	groupTable.put(groupName, villages);
-        	DSWorkbenchMainFrame.getSingleton().fireGroupParserEvent(groupTable);
+            Hashtable<String, List<Village>> groupTable = new Hashtable<>();
+            groupTable.put(groupName, villages);
+            DSWorkbenchMainFrame.getSingleton().fireGroupParserEvent(groupTable);
         }
         
         TroopsManager.getSingleton().revalidate(retValue);
@@ -187,10 +187,10 @@ public class TroopsParser implements SilentParserInterface {
 
         /*
          * Transferable t = (Transferable) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null); try { String s = " 003 |
-         * Spitfire (471|482) K44\n" + "eigene	2500	1500	0	1964	500	0	0	1396	0	0	0	0	Befehle\n" + "im Dorf	2500	1500	0	1964	500	0	0	1396	0	0
-         * 0	0	Truppen\n" + "auswärts	0	0	0	0	0	0	0	0	0	0	0	0\n" + "unterwegs	0	0	0	0	0	0	0	0	0	0	0	0	Befehle\n" + "2Fast4You (475|480)
-         * K44\n" + "eigene	600	500	0	0	134	0	0	354	0	0	0	1	Befehle\n" + "im Dorf	600	500	0	0	134	0	0	354	0	0	0	1	Truppen\n" + "auswärts
-         * 4400	3000	0	3000	66	0	0	1046	0	0	0	0\n" + "unterwegs	0	0	0	0	0	0	0	0	0	0	0	0	Befehle\n";
+         * Spitfire (471|482) K44\n" + "eigene    2500    1500    0    1964    500    0    0    1396    0    0    0    0    Befehle\n" + "im Dorf    2500    1500    0    1964    500    0    0    1396    0    0
+         * 0    0    Truppen\n" + "auswärts    0    0    0    0    0    0    0    0    0    0    0    0\n" + "unterwegs    0    0    0    0    0    0    0    0    0    0    0    0    Befehle\n" + "2Fast4You (475|480)
+         * K44\n" + "eigene    600    500    0    0    134    0    0    354    0    0    0    1    Befehle\n" + "im Dorf    600    500    0    0    134    0    0    354    0    0    0    1    Truppen\n" + "auswärts
+         * 4400    3000    0    3000    66    0    0    1046    0    0    0    0\n" + "unterwegs    0    0    0    0    0    0    0    0    0    0    0    0    Befehle\n";
          *
          *
          * String data = (String) t.getTransferData(DataFlavor.stringFlavor); TroopsParser.parse(data); } catch (Exception e) {
@@ -207,14 +207,14 @@ public class TroopsParser implements SilentParserInterface {
         // TroopsParser.parse(pTroopsString);
     }
     /*
-     * kirscheye3	435|447 FaNtAsY wOrLd ... <3	Schwere Kavallerie	Torridity	436|444 FaNtAsY wOrLd ... 12	02.10.08 23:06:46 02.10.08 23:41:33
-     * Torridity	437|445 FaNtAsY wOrLd ... 10	Schwere Kavallerie	Torridity	436|444 FaNtAsY wOrLd ... 12	02.10.08 23:26:00 02.10.08 23:41:33
-     * Torridity	438|445 Barbarendorf (12)	Schwere Kavallerie	Torridity	436|444 FaNtAsY wOrLd ... 12	02.10.08 23:16:57 02.10.08 23:41:33
-     * Torridity	439|445 Barbarendorf (13)	Schwere Kavallerie	Torridity	436|444 FaNtAsY wOrLd ... 12	02.10.08 23:06:46 02.10.08 23:41:33
+     * kirscheye3    435|447 FaNtAsY wOrLd ... <3    Schwere Kavallerie    Torridity    436|444 FaNtAsY wOrLd ... 12    02.10.08 23:06:46 02.10.08 23:41:33
+     * Torridity    437|445 FaNtAsY wOrLd ... 10    Schwere Kavallerie    Torridity    436|444 FaNtAsY wOrLd ... 12    02.10.08 23:26:00 02.10.08 23:41:33
+     * Torridity    438|445 Barbarendorf (12)    Schwere Kavallerie    Torridity    436|444 FaNtAsY wOrLd ... 12    02.10.08 23:16:57 02.10.08 23:41:33
+     * Torridity    439|445 Barbarendorf (13)    Schwere Kavallerie    Torridity    436|444 FaNtAsY wOrLd ... 12    02.10.08 23:06:46 02.10.08 23:41:33
      *
      */
     /*
-     * LGK88 (1) (458|465) K44 eigene	0	0	6000	0	2300	0	300	50	0	Befehle im Dorf	0	0	6000	0	2300	0	300	50	0	0	Truppen auswärts	0	0	0	0	0	0	0
-     * 0	0	0	0	0 unterwegs	0	0	0	0	0	0	0	0	0	0	0	0	Befehle
+     * LGK88 (1) (458|465) K44 eigene    0    0    6000    0    2300    0    300    50    0    Befehle im Dorf    0    0    6000    0    2300    0    300    50    0    0    Truppen auswärts    0    0    0    0    0    0    0
+     * 0    0    0    0    0 unterwegs    0    0    0    0    0    0    0    0    0    0    0    0    Befehle
      */
 }

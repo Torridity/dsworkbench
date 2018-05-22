@@ -402,7 +402,7 @@ public class TroopAmountFixed extends TroopAmount {
         return !getContainedUnits().isEmpty();
     }
 
-    TroopAmountDynamic transformToDynamic() {
+    public TroopAmountDynamic transformToDynamic() {
         TroopAmountDynamic dynamic = new TroopAmountDynamic(-1);
         
         for(UnitHolder unit: getContainedUnits()) {

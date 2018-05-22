@@ -17,9 +17,8 @@ package de.tor.tribes.util.algo;
 
 import de.tor.tribes.util.algo.types.TimeFrame;
 import de.tor.tribes.io.UnitHolder;
-import de.tor.tribes.types.AbstractTroopMovement;
-import de.tor.tribes.types.Fake;
-import de.tor.tribes.types.Off;
+import de.tor.tribes.types.Attack;
+import de.tor.tribes.types.TroopMovement;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.ServerSettings;
@@ -54,7 +53,7 @@ public class Iterix extends AbstractAttackAlgorithm {
     int round = 0;
 
     @Override
-    public List<AbstractTroopMovement> calculateAttacks(
+    public List<TroopMovement> calculateAttacks(
             Hashtable<UnitHolder, List<Village>> pSources,
             Hashtable<UnitHolder, List<Village>> pFakes,
             List<Village> pTargets,
@@ -71,8 +70,8 @@ public class Iterix extends AbstractAttackAlgorithm {
             if(!troops.contains(unit)) troops.add(unit);
         }
         
-        Hashtable<Village, Off> movements = new Hashtable<>();
-        List<AbstractTroopMovement> movementList = new LinkedList<>();
+        Hashtable<Village, TroopMovement> movements = new Hashtable<>();
+        List<TroopMovement> movementList = new LinkedList<>();
         Enumeration<UnitHolder> unitKeys = pSources.keys();
         sourceAmounts = new int[troops.size()][];
         
@@ -160,9 +159,9 @@ public class Iterix extends AbstractAttackAlgorithm {
             for (int i = 0; i < mappings.length; i++) {
                 for (int j = 0; j < pTargets.size(); j++) {
                     Village target = pTargets.get(j);
-                    Off movementForTarget = movements.get(target);
+                    TroopMovement movementForTarget = movements.get(target);
                     if (movementForTarget == null) {
-                        movementForTarget = new Off(target, pMaxAttacksTable.get(target));
+                        movementForTarget = new TroopMovement(target, pMaxAttacksTable.get(target), Attack.CLEAN_TYPE);
                         movements.put(target, movementForTarget);
                     }
                     
@@ -273,7 +272,7 @@ public class Iterix extends AbstractAttackAlgorithm {
             for (int j = 0; j < mappings[0].length; j++) {
                 Village target = pTargets.get(j);
                 if (!movements.isEmpty()) {
-                    Off movement = movements.get(target);
+                    TroopMovement movement = movements.get(target);
                     if (movement != null && mappings[i][j] != 0) {
                         int remainingCount = pMaxAttacksTable.get(target) - movement.getOffCount();
                         //  System.out.println("Remain for " + target + ": " + remainingCount);
@@ -314,13 +313,13 @@ public class Iterix extends AbstractAttackAlgorithm {
         }//end of fake assignment
         // </editor-fold>
         
-        Hashtable<Village, Fake> fakeMovements = new Hashtable<>();
+        Hashtable<Village, TroopMovement> fakeMovements = new Hashtable<>();
         for (int i = 0; i < mappings.length; i++) {
             for (int j = 0; j < pTargets.size(); j++) {
                 Village target = pTargets.get(j);
-                Fake movementForTarget = fakeMovements.get(target);
+                TroopMovement movementForTarget = fakeMovements.get(target);
                 if (movementForTarget == null) {
-                    movementForTarget = new Fake(target, pMaxAttacksTable.get(target));
+                    movementForTarget = new TroopMovement(target, pMaxAttacksTable.get(target), Attack.FAKE_TYPE);
                     fakeMovements.put(target, movementForTarget);
                 }
                 

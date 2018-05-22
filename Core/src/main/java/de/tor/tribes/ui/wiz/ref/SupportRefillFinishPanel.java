@@ -19,7 +19,7 @@ import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.TroopAmountFixed;
 import de.tor.tribes.ui.wiz.tap.*;
 import de.tor.tribes.io.UnitHolder;
-import de.tor.tribes.types.AbstractTroopMovement;
+import de.tor.tribes.types.TroopMovement;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.StandardAttack;
 import de.tor.tribes.types.ext.Village;
@@ -417,13 +417,13 @@ public class SupportRefillFinishPanel extends WizardPage {
         }
       }
       
-      //TODO set real Troop Amount
       for (int row = 0; row < jxResultsTable.getRowCount(); row++) {
         int modelRow = jxResultsTable.convertRowIndexToModel(row);
         REFResultElement move = getModel().getRow(modelRow);
         Attack a = move.asAttack();
         if (standardAttackType != null) {
           a.setType(standardAttackType.getIcon());
+          a.setTroops(split.transformToDynamic());
         }
         attacks.add(a);
       }
@@ -443,13 +443,13 @@ public class SupportRefillFinishPanel extends WizardPage {
         }
       }
       
-      //TODO set real Troop Amount
       for (int row : selection) {
         int modelRow = jxResultsTable.convertRowIndexToModel(row);
         REFResultElement move = getModel().getRow(modelRow);
         Attack a = move.asAttack();
         if (used != null) {
           a.setType(used.getIcon());
+          a.setTroops(split.transformToDynamic());
         }
         attacks.add(a);
       }
@@ -469,11 +469,11 @@ public class SupportRefillFinishPanel extends WizardPage {
   }
 
   public void update() {
-    List<AbstractTroopMovement> results = SupportRefillCalculationPanel.getSingleton().getResults();
+    List<TroopMovement> results = SupportRefillCalculationPanel.getSingleton().getResults();
     TimeFrame timeFrame = SupportRefillCalculationPanel.getSingleton().getTimeFrame();
     if(logger.isDebugEnabled()) {
         StringBuilder log = new StringBuilder();
-        for(AbstractTroopMovement movement: results) {
+        for(TroopMovement movement: results) {
             log.append(System.lineSeparator());
             log.append(movement.getTarget().getCoordAsString()).append("/");
             log.append(movement.getOffCount());
@@ -498,7 +498,7 @@ public class SupportRefillFinishPanel extends WizardPage {
       overviewPanel.addVillage(new Point(elem.getVillage().getX(), elem.getVillage().getY()), Color.BLACK);
     }
 
-    for (AbstractTroopMovement result : results) {
+    for (TroopMovement result : results) {
       result.finalizeMovement(timeFrame, used);
       if (result.offComplete()) {
         perfectTargets++;

@@ -86,7 +86,8 @@
         <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="ff" green="33" red="0" type="rgb"/>
         </Property>
-        <Property name="text" type="java.lang.String" value="https://forum.die-staemme.de/showthread.php?80831-DS-Workbench"/>
+        <Property name="text" type="java.lang.String" value="https://forum.die-staemme.de/index.php?threads/ds-workbench.80831/"/>
+        <Property name="toolTipText" type="java.lang.String" value=""/>
       </Properties>
       <Events>
         <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="fireOpenHomepageEvent"/>

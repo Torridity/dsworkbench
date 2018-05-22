@@ -16,7 +16,7 @@
 package de.tor.tribes.ui.models;
 
 import de.tor.tribes.io.UnitHolder;
-import de.tor.tribes.types.AbstractTroopMovement;
+import de.tor.tribes.types.TroopMovement;
 import de.tor.tribes.types.ext.Village;
 import java.util.LinkedList;
 import java.util.List;
@@ -34,7 +34,7 @@ public class TAPResultTableModel extends AbstractTableModel {
     private Class[] types = new Class[]{
         Village.class, UnitHolder.class, String.class
     };
-    private final List<AbstractTroopMovement> elements = new LinkedList<>();
+    private final List<TroopMovement> elements = new LinkedList<>();
 
     public TAPResultTableModel() {
         super();
@@ -45,7 +45,7 @@ public class TAPResultTableModel extends AbstractTableModel {
         fireTableDataChanged();
     }
 
-    public void addRow(AbstractTroopMovement pMovement) {
+    public void addRow(TroopMovement pMovement) {
         elements.add(pMovement);
         fireTableDataChanged();
     }
@@ -78,7 +78,7 @@ public class TAPResultTableModel extends AbstractTableModel {
         fireTableDataChanged();
     }
 
-    public AbstractTroopMovement getRow(int row) {
+    public TroopMovement getRow(int row) {
         return elements.get(row);
     }
 
@@ -87,7 +87,7 @@ public class TAPResultTableModel extends AbstractTableModel {
         if (elements == null || elements.size() - 1 < row) {
             return null;
         }
-        AbstractTroopMovement element = elements.get(row);
+        TroopMovement element = elements.get(row);
         switch (column) {
             case 0:
                 return element.getTarget().getTribe();

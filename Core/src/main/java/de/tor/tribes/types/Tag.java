@@ -37,7 +37,7 @@ import java.util.List;
  */
 public class Tag extends ManageableType implements Comparable<Tag>, BBSupport {
 
-    /**<tags>
+    /* <tags>
      * <tag name="TagName" shownOnMap="true">
      * <village>4711</village>
      * <village>4712</village>

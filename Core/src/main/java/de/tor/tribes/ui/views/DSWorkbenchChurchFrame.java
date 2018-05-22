@@ -18,8 +18,6 @@ package de.tor.tribes.ui.views;
 import de.tor.tribes.control.GenericManagerListener;
 import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Village;
-import de.tor.tribes.types.test.DummyVillage;
-import de.tor.tribes.ui.editors.ChurchLevelCellEditor;
 import de.tor.tribes.ui.models.ChurchTableModel;
 import de.tor.tribes.ui.panels.GenericTestPanel;
 import de.tor.tribes.ui.renderer.ColorCellRenderer;
@@ -31,7 +29,6 @@ import de.tor.tribes.util.village.KnownVillageManager;
 import de.tor.tribes.util.mark.MarkerManager;
 import de.tor.tribes.util.village.KnownVillage;
 import org.apache.commons.configuration.Configuration;
-import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
 import org.jdesktop.swingx.JXButton;
 import org.jdesktop.swingx.JXTaskPane;
@@ -450,26 +447,7 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
     @Override
     public void fireVillagesDraggedEvent(List<Village> pVillages, Point pDropLocation) {
     }
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
-        try {
-            //  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-        } catch (Exception ignored) {
-        }
-        DSWorkbenchChurchFrame.getSingleton().resetView();
-        for (int i = 0; i < 50; i++) {
-            KnownVillageManager.getSingleton().addChurchLevel(new DummyVillage((short) i, (short) i), 2);
-        }
-
-        DSWorkbenchChurchFrame.getSingleton().setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        DSWorkbenchChurchFrame.getSingleton().setVisible(true);
-
-    }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private de.tor.tribes.ui.components.CapabilityInfoPanel capabilityInfoPanel1;
     private org.jdesktop.swingx.JXCollapsiblePane infoPanel;
@@ -487,7 +465,11 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
 
         jChurchTable.setColumnControlVisible(true);
         jChurchTable.setDefaultRenderer(Color.class, new ColorCellRenderer());
-        jChurchTable.setDefaultEditor(Integer.class, new ChurchLevelCellEditor());
+        
+        DefaultComboBoxModel model = new DefaultComboBoxModel();
+        for(int i = 1; i <= KnownVillage.getMaxBuildingLevel("church"); i++)
+            model.addElement(i);
+        jChurchTable.setDefaultEditor(Integer.class, new DefaultCellEditor(new JComboBox(model)));
         BufferedImage back = ImageUtils.createCompatibleBufferedImage(5, 5, BufferedImage.BITMASK);
         Graphics2D g = back.createGraphics();
         GeneralPath p = new GeneralPath();

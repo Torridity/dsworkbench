@@ -17,7 +17,6 @@ package de.tor.tribes.io;
 
 import de.tor.tribes.types.UnknownUnit;
 import de.tor.tribes.types.ext.*;
-import de.tor.tribes.types.test.DummyUnit;
 import de.tor.tribes.ui.views.DSWorkbenchSettingsDialog;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalDefaults;
@@ -41,7 +40,6 @@ import java.util.zip.GZIPInputStream;
  * @author Charon
  */
 public class DataHolder {
-
     private static Logger logger = Logger.getLogger("DataManager");
     private static final int ID_OFF = 0;
     private static final int ID_DEF = 1;
@@ -978,78 +976,30 @@ public class DataHolder {
         System.gc();
     }
 
+    /**
+     * Should not be used to often because it is not optimized therefor
+     * @return random Village with owner
+     */
     public Village getRandomVillageWithOwner() {
-        Iterator<Integer> it = mVillagesTable.keySet().iterator();
-        while (it.hasNext()) {
-            Integer id = it.next();
-            if ((int) Math.rint(Math.random() * 20) == 10) {
-                Village v = mVillagesTable.get(id);
-                if (v != null && !v.getTribe().equals(Barbarians.getSingleton())) {
-                    return v;
-                }
+        List<Tribe> tribeList = new ArrayList<>(mTribes.values());
+        Collections.shuffle(tribeList);
+        
+        for(Tribe t: tribeList) {
+            if(t.getVillages() > 0) {
+                int rnd = (int) (Math.random() * t.getVillages());
+                return t.getVillageList()[rnd];
             }
         }
-        it = mVillagesTable.keySet().iterator();
-        while (it.hasNext()) {
-            Integer id = it.next();
-            if ((int) Math.rint(Math.random() * 10) == 5) {
-                Village v = mVillagesTable.get(id);
-                if (v != null && !v.getTribe().equals(Barbarians.getSingleton())) {
-                    return v;
-                }
-            }
-        }
-        it = mVillagesTable.keySet().iterator();
-        while (it.hasNext()) {
-            Integer id = it.next();
-            if ((int) Math.rint(Math.random() * 5) == 2) {
-                Village v = mVillagesTable.get(id);
-                if (v != null && !v.getTribe().equals(Barbarians.getSingleton())) {
-                    return v;
-                }
-            }
-        }
-        it = mVillagesTable.keySet().iterator();
-        Integer id = it.next();
-        return mVillagesTable.get(id);
+        return null;
     }
 
     public Village getRandomVillage() {
         try {
-            Iterator<Integer> it = mVillagesTable.keySet().iterator();
-            while (it.hasNext()) {
-                Integer id = it.next();
-                if ((int) Math.rint(Math.random() * 20) == 10) {
-                    return mVillagesTable.get(id);
-                }
-            }
-            it = mVillagesTable.keySet().iterator();
-            while (it.hasNext()) {
-                Integer id = it.next();
-                if ((int) Math.rint(Math.random() * 10) == 5) {
-                    return mVillagesTable.get(id);
-                }
-            }
-            it = mVillagesTable.keySet().iterator();
-            while (it.hasNext()) {
-                Integer id = it.next();
-                if ((int) Math.rint(Math.random() * 5) == 2) {
-                    return mVillagesTable.get(id);
-                }
-            }
-            it = mVillagesTable.keySet().iterator();
-            Integer id = it.next();
-            return mVillagesTable.get(id);
+            List<Village> villageList = new ArrayList<>(mVillagesTable.values());
+            return villageList.get((int) (Math.random() * villageList.size()));
         } catch (Exception e) {
             return null;
         }
-        /*
-     * Iterator<Integer> it = mVillagesTable.keySet().iterator(); int id = -1; int cnt = (int) Math.rint(100.0 * Math.random()); while
-     * (cnt >= 0 && it.hasNext()) { id = it.next(); cnt--; }
-     *
-     * if (id != -1) { return mVillagesTable.get(id); } else { DummyVillage v = new DummyVillage(); v.setId(-cnt);
-     * v.setName("Beispieldorf" + cnt); v.setX((short) cnt); v.setY((short) cnt); v.setPoints(cnt * 100); return v; }
-         */
     }
 
     public int countVisibleVillages(Point pStart, Point pEnd) {
@@ -1191,7 +1141,11 @@ public class DataHolder {
     public UnitHolder getRandomUnit() {
         int id = (int) (Math.rint(mUnits.size() * Math.random()));
         if (id >= mUnits.size()) {
-            return new DummyUnit();
+            if(mUnits.isEmpty()) {
+                return new UnitHolder();
+            } else {
+                id = 0;
+            }
         }
         return mUnits.get(id);
     }

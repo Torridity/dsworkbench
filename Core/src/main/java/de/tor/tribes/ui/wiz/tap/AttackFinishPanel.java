@@ -113,6 +113,9 @@ public class AttackFinishPanel extends WizardPage {
                 dataChangedEvent();
             }
         });
+        
+        jStandardFake.setRenderer(new StandardAttackListCellRenderer());
+        jStandardOff.setRenderer(new StandardAttackListCellRenderer());
     }
 
     public void storeProperties() {
@@ -133,16 +136,14 @@ public class AttackFinishPanel extends WizardPage {
 
     private void updateStandardAttacks() {
         UserProfile profile = GlobalOptions.getSelectedProfile();
-        DefaultComboBoxModel offModel = new DefaultComboBoxModel();
-        DefaultComboBoxModel fakeModel = new DefaultComboBoxModel();
+        DefaultComboBoxModel typeModel = new DefaultComboBoxModel();
 
         for (ManageableType t : StandardAttackManager.getSingleton().getAllElements()) {
             StandardAttack a = (StandardAttack) t;
-            offModel.addElement(a.getName());
-            fakeModel.addElement(a.getName());
+            typeModel.addElement(a);
         }
-        jStandardOff.setModel(offModel);
-        jStandardFake.setModel(fakeModel);
+        jStandardOff.setModel(typeModel);
+        jStandardFake.setModel(typeModel);
 
         String val = profile.getProperty("tap.finish.std.off");
         if (val == null || StandardAttackManager.getSingleton().isAllowedName(val)) {//no value set or std attack not used

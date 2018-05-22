@@ -53,6 +53,7 @@ import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.dnd.*;
 import java.awt.event.*;
 import java.awt.geom.AffineTransform;
@@ -61,6 +62,7 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.util.*;
 import java.util.List;
 import java.util.Timer;
@@ -1832,7 +1834,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                 return;
             }
             attackAddFrame.setupAttack(v, target, DataHolder.getSingleton().getUnitID("Ramme"), null);
-        } catch (Exception ex) {
+        } catch (UnsupportedFlavorException | IOException ex) {
             logger.error("Failed to drop villages", ex);
         }
     }

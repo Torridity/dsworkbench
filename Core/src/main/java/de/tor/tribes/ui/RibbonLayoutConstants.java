@@ -20,7 +20,7 @@ import java.awt.Font;
 import javax.swing.JButton;
 
 /**
- *
+ * used at RibbonConfigurator
  * @author Torridity
  */
 public class RibbonLayoutConstants {

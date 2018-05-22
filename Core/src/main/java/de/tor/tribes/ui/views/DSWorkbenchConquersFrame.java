@@ -20,7 +20,6 @@ import de.tor.tribes.types.Conquer;
 import de.tor.tribes.types.ext.Ally;
 import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Village;
-import de.tor.tribes.types.test.DummyVillage;
 import de.tor.tribes.ui.models.ConquerTableModel;
 import de.tor.tribes.ui.panels.GenericTestPanel;
 import de.tor.tribes.ui.renderer.DateCellRenderer;
@@ -626,42 +625,7 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
         }
         return elements;
     }
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-
-        Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
-        try {
-            //  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-            //  UIManager.setLookAndFeel(new SubstanceBusinessBlackSteelLookAndFeel());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        DSWorkbenchConquersFrame.getSingleton().setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        for (int i = 0; i < 50; i++) {
-            Conquer c = new Conquer();
-            c.setTimestamp((int) System.currentTimeMillis());
-            DummyVillage v = new DummyVillage((short) (i * Math.random()), (short) i);
-            Ally a = new Ally();
-            a.setName("Los Locos");
-            a.setTag("L~L");
-            Tribe t = new Tribe();
-            t.setName("Someone");
-            t.setAlly(a);
-            v.setTribe(t);
-            c.setVillage(v);
-            c.setWinner(v.getTribe());
-            c.setLoser(v.getTribe());
-            ConquerManager.getSingleton().addConquer(c);
-        }
-        DSWorkbenchConquersFrame.getSingleton().resetView();
-        DSWorkbenchConquersFrame.getSingleton().dataChangedEvent();
-        DSWorkbenchConquersFrame.getSingleton().setVisible(true);
-
-    }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private de.tor.tribes.ui.components.CapabilityInfoPanel capabilityInfoPanel1;
     private org.jdesktop.swingx.JXCollapsiblePane infoPanel;

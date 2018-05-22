@@ -19,11 +19,7 @@ import com.jidesoft.swing.JideTabbedPane;
 import com.jidesoft.swing.TabEditingEvent;
 import com.jidesoft.swing.TabEditingListener;
 import com.jidesoft.swing.TabEditingValidator;
-import com.smardec.mousegestures.MouseGestures;
 import de.tor.tribes.control.GenericManagerListener;
-import de.tor.tribes.io.DataHolder;
-import de.tor.tribes.types.Attack;
-import de.tor.tribes.types.test.DummyUnit;
 import de.tor.tribes.types.UserProfile;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.components.ClickAccountPanel;
@@ -36,8 +32,6 @@ import de.tor.tribes.util.attack.AttackManager;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.ImageUtils;
 import de.tor.tribes.util.JOptionPaneHelper;
-import de.tor.tribes.util.MouseGestureHandler;
-import de.tor.tribes.util.ProfileManager;
 import de.tor.tribes.util.PropertyHelper;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -52,7 +46,6 @@ import java.awt.event.MouseListener;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.Serializable;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.*;
@@ -62,7 +55,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.plaf.UIResource;
 import org.apache.commons.configuration.Configuration;
-import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
 import org.jdesktop.swingx.JXButton;
 import org.jdesktop.swingx.JXTaskPane;
@@ -860,53 +852,7 @@ private void fireCreateAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
         });
 
     }
-
-    public static void main(String[] args) {
-        Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
-        MouseGestures mMouseGestures = new MouseGestures();
-        mMouseGestures.setMouseButton(MouseEvent.BUTTON3_MASK);
-        mMouseGestures.addMouseGesturesListener(new MouseGestureHandler());
-        mMouseGestures.start();
-        GlobalOptions.setSelectedServer("de43");
-        ProfileManager.getSingleton().loadProfiles();
-        GlobalOptions.setSelectedProfile(ProfileManager.getSingleton().getProfiles("de43")[0]);
-
-        DataHolder.getSingleton().loadData(false);
-        try {
-            //  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-        } catch (Exception ignored) {
-        }
-
-        //  DSWorkbenchAttackFrame.getSingleton().setSize(800, 600);
-        DSWorkbenchAttackFrame.getSingleton().pack();
-        AttackManager.getSingleton().addGroup("test1");
-        AttackManager.getSingleton().addGroup("asd2");
-        AttackManager.getSingleton().addGroup("awe3");
-        for (int i = 0; i < 100; i++) {
-            Attack a = new Attack();
-            a.setSource(DataHolder.getSingleton().getRandomVillage());
-            a.setTarget(DataHolder.getSingleton().getRandomVillage());
-            a.setArriveTime(new Date(Math.round(Math.random() * System.currentTimeMillis())));
-            a.setUnit(new DummyUnit());
-            Attack a1 = new Attack();
-            a1.setSource(DataHolder.getSingleton().getRandomVillage());
-            a1.setTarget(DataHolder.getSingleton().getRandomVillage());
-            a1.setArriveTime(new Date(Math.round(Math.random() * System.currentTimeMillis())));
-            a1.setUnit(new DummyUnit());
-            Attack a2 = new Attack();
-            a2.setSource(DataHolder.getSingleton().getRandomVillage());
-            a2.setTarget(DataHolder.getSingleton().getRandomVillage());
-            a2.setArriveTime(new Date(Math.round(Math.random() * System.currentTimeMillis())));
-            a2.setUnit(new DummyUnit());
-            AttackManager.getSingleton().addManagedElement(a);
-            AttackManager.getSingleton().addManagedElement("test1", a1);
-            AttackManager.getSingleton().addManagedElement("asd2", a2);
-        }
-        DSWorkbenchAttackFrame.getSingleton().resetView();
-        DSWorkbenchAttackFrame.getSingleton().setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        DSWorkbenchAttackFrame.getSingleton().setVisible(true);
-    }
+    
     // <editor-fold defaultstate="collapsed" desc="Gesture Handling">
 
     @Override

@@ -24,7 +24,6 @@ import java.util.Hashtable;
  * @author Torridity
  */
 public class Constants {
-
     public final static double VERSION = 3.62;
     public final static String VERSION_ADDITION = "";
     public final static Color DS_BACK = new Color(225, 213, 190);

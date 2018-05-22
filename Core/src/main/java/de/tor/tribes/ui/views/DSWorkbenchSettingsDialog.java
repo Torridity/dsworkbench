@@ -24,7 +24,6 @@ import de.tor.tribes.types.UserProfile;
 import de.tor.tribes.types.ext.InvalidTribe;
 import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Village;
-import de.tor.tribes.types.test.DummyUserProfile;
 import de.tor.tribes.ui.editors.ColorChooserCellEditor;
 import de.tor.tribes.ui.panels.MapPanel;
 import de.tor.tribes.ui.panels.MinimapPanel;
@@ -2493,7 +2492,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                     GlobalOptions.addProperty("selected.profile", Long.toString(selectedProfile.getProfileId()));
                     GlobalOptions.setSelectedProfile(selectedProfile);
                 }
-            } else if (GlobalOptions.getSelectedProfile() == null || GlobalOptions.getSelectedProfile().equals(DummyUserProfile.getSingleton())) {
+            } else if (GlobalOptions.getSelectedProfile() == null) {
                 JOptionPaneHelper.showWarningBox(DSWorkbenchSettingsDialog.this, "Du musst ein Profil auswählen um fortzufahren", "Warnung");
                 return;
             }
@@ -3115,10 +3114,10 @@ private void fireProfileActionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
                 } else {
                     model = new DefaultComboBoxModel(new Object[]{"Kein Profil vorhanden"});
                     jProfileBox.setModel(model);
-                    GlobalOptions.setSelectedProfile(DummyUserProfile.getSingleton());
+                    GlobalOptions.setSelectedProfile(null);
                     jLabelServer.setText("kein Server");
                 }
-                //if (DSWorkbenchMainFrame.getSingleton().isInitialized()) {
+                
                 if (GlobalOptions.isStarted()) {
                     DSWorkbenchMainFrame.getSingleton().serverSettingsChangedEvent();
                 }

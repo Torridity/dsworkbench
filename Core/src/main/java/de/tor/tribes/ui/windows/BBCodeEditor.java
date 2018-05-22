@@ -21,7 +21,6 @@ import de.tor.tribes.types.drawing.AbstractForm;
 import de.tor.tribes.types.AllyStatResult;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.ext.Barbarians;
-import de.tor.tribes.types.test.DummyUnit;
 import de.tor.tribes.types.FightReport;
 import de.tor.tribes.types.Marker;
 import de.tor.tribes.types.ext.NoAlly;
@@ -35,7 +34,6 @@ import de.tor.tribes.types.TribeStatResult;
 import de.tor.tribes.types.TribeStatsElement;
 import de.tor.tribes.types.TribeStatsElement.Stats;
 import de.tor.tribes.types.ext.Village;
-import de.tor.tribes.types.test.DummyVillage;
 import de.tor.tribes.ui.ImageManager;
 import de.tor.tribes.util.interfaces.BBChangeListener;
 import de.tor.tribes.util.BBCodeFormatter;
@@ -163,19 +161,19 @@ public class BBCodeEditor extends javax.swing.JDialog {
         Village sampleVillage4 = DataHolder.getSingleton().getRandomVillageWithOwner();
         Village sampleVillage5 = DataHolder.getSingleton().getRandomVillageWithOwner();
         if (sampleVillage1 == null) {
-            sampleVillage1 = new DummyVillage((short) 500, (short) 500);
+            sampleVillage1 = new Village((int) (Math.random() * 1000), (int) (Math.random() * 1000));
         }
         if (sampleVillage2 == null) {
-            sampleVillage2 = new DummyVillage((short) 500, (short) 500);
+            sampleVillage2 = new Village((int) (Math.random() * 1000), (int) (Math.random() * 1000));
         }
         if (sampleVillage3 == null) {
-            sampleVillage3 = new DummyVillage((short) 500, (short) 500);
+            sampleVillage3 = new Village((int) (Math.random() * 1000), (int) (Math.random() * 1000));
         }
         if (sampleVillage4 == null) {
-            sampleVillage4 = new DummyVillage((short) 500, (short) 500);
+            sampleVillage4 = new Village((int) (Math.random() * 1000), (int) (Math.random() * 1000));
         }
         if (sampleVillage5 == null) {
-            sampleVillage5 = new DummyVillage((short) 500, (short) 500);
+            sampleVillage5 = new Village((int) (Math.random() * 1000), (int) (Math.random() * 1000));
         }
         sampleVillages.add(sampleVillage2);
         sampleVillages.add(sampleVillage3);
@@ -186,14 +184,14 @@ public class BBCodeEditor extends javax.swing.JDialog {
         sampleAttack.setTarget(sampleVillage3);
         sampleAttack.setArriveTime(new Date());
         sampleAttack.setType(Attack.CLEAN_TYPE);        
-        sampleAttack.setUnit(new DummyUnit());
+        sampleAttack.setUnit(DataHolder.getSingleton().getRandomUnit());
         sampleAttack.setTroopsByType();
         Attack sampleAttack2 = new Attack();
         sampleAttack2.setSource(sampleVillage2);
         sampleAttack2.setTarget(sampleVillage3);
         sampleAttack2.setArriveTime(new Date());
         sampleAttack2.setType(Attack.CLEAN_TYPE);
-        sampleAttack2.setUnit(new DummyUnit());
+        sampleAttack2.setUnit(DataHolder.getSingleton().getRandomUnit());
         sampleAttack2.setTroopsByType();
         sampleAttacks.add(sampleAttack);
         sampleAttacks.add(sampleAttack2);

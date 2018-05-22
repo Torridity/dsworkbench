@@ -16,7 +16,6 @@
 package de.tor.tribes.util.parser;
 
 import de.tor.tribes.io.DataHolder;
-import de.tor.tribes.php.json.JSONObject;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
 import de.tor.tribes.util.SilentParserInterface;
@@ -32,6 +31,7 @@ import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.log4j.Logger;
+import org.json.JSONObject;
 
 /**
  *

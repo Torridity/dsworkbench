@@ -246,8 +246,8 @@ private void fireSelectServerEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
       }
 
   } catch (Throwable t) {
+    logger.warn("Fehler beim download der Spielerdaten", t);
     wizCtrl.setProblem("Fehler beim Herunterladen der Serverinformationen.\nBitte versuch es später nochmal.");
-    t.printStackTrace();
   }
 
 }//GEN-LAST:event_fireSelectServerEvent

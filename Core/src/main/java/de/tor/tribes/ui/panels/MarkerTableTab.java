@@ -18,7 +18,7 @@ package de.tor.tribes.ui.panels;
 import de.tor.tribes.types.Marker;
 import de.tor.tribes.ui.MarkerCell;
 import de.tor.tribes.ui.editors.ColorChooserCellEditor;
-import de.tor.tribes.ui.editors.VisibleInvisibleEditor;
+import de.tor.tribes.ui.editors.CustomCheckBoxEditor;
 import de.tor.tribes.ui.models.MarkerTableModel;
 import de.tor.tribes.ui.renderer.ColorCellRenderer;
 import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
@@ -72,7 +72,7 @@ public class MarkerTableTab extends javax.swing.JPanel implements ListSelectionL
 
     public enum TRANSFER_TYPE {
 
-        CLIPBOARD_PLAIN, CLIPBOARD_BB, CUT_TO_INTERNAL_CLIPBOARD, COPY_TO_INTERNAL_CLIPBOARD, FROM_EXTERNAL_CLIPBOARD
+        CLIPBOARD_BB, CUT_TO_INTERNAL_CLIPBOARD, COPY_TO_INTERNAL_CLIPBOARD, FROM_INTERNAL_CLIPBOARD
     }
     private String sMarkerSet = null;
     private final static JXTable jxMarkerTable = new JXTable();
@@ -97,8 +97,7 @@ public class MarkerTableTab extends javax.swing.JPanel implements ListSelectionL
         jxMarkerTable.setModel(markerModel);
         TableColumnExt visibilityCol = jxMarkerTable.getColumnExt("Sichtbar");
         visibilityCol.setCellRenderer(new VisibilityCellRenderer());
-        visibilityCol.setCellEditor(new VisibleInvisibleEditor());
-
+        visibilityCol.setCellEditor(new CustomCheckBoxEditor(CustomCheckBoxEditor.LayoutStyle.VISIBLE_INVISIBLE));
 
         BufferedImage back = ImageUtils.createCompatibleBufferedImage(5, 5, BufferedImage.BITMASK);
         Graphics2D g = back.createGraphics();
@@ -127,7 +126,7 @@ public class MarkerTableTab extends javax.swing.JPanel implements ListSelectionL
             KeyStroke cut = KeyStroke.getKeyStroke(KeyEvent.VK_X, ActionEvent.CTRL_MASK, false);
             KeyStroke paste = KeyStroke.getKeyStroke(KeyEvent.VK_V, ActionEvent.CTRL_MASK, false);
             KeyStroke delete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, false);
-            jxMarkerTable.registerKeyboardAction(pActionListener, "Cut", copy, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+            jxMarkerTable.registerKeyboardAction(pActionListener, "Copy", copy, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
             jxMarkerTable.registerKeyboardAction(pActionListener, "Cut", cut, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
             jxMarkerTable.registerKeyboardAction(pActionListener, "BBCopy", bbCopy, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
             jxMarkerTable.registerKeyboardAction(pActionListener, "Paste", paste, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
@@ -311,11 +310,12 @@ public class MarkerTableTab extends javax.swing.JPanel implements ListSelectionL
             case CUT_TO_INTERNAL_CLIPBOARD:
                 cutToClipboard();
                 break;
-                /*
-            case FROM_EXTERNAL_CLIPBOARD:
-                pasteFromExternalClipboard();
+            case COPY_TO_INTERNAL_CLIPBOARD:
+                copyToInternalClipboard();
                 break;
-                */
+            case FROM_INTERNAL_CLIPBOARD:
+                copyFromInternalClipboard();
+                break;
             case CLIPBOARD_BB:
                 copyBBToExternalClipboardEvent();
                 break;
@@ -356,38 +356,6 @@ public class MarkerTableTab extends javax.swing.JPanel implements ListSelectionL
             showError("Fehler beim Ausschneiden der Markierungen");
         }
     }
-
-    /*
-     * Changed DiplomacyParser from GenericParserInterface to SilentParserInterface, causing errors in this method.
-     * This kind of stuff ist done via ClipboardWatch, PluginManager, DiplomacyParser, MarkerManager now (importing nap/enemy/bnd marker)
-     * Perhaps this whole class is not needed anymore, but i'll leave it in case i'm wrong. 
-     * 
-    private void pasteFromExternalClipboard() {
-        try {
-            String data = (String) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null).getTransferData(DataFlavor.stringFlavor);
-            List<Marker> markers = PluginManager.getSingleton().executeDiplomacyParser(data);
-            
-            if (markers.isEmpty()) {
-                //do internal paste
-                copyFromInternalClipboard();
-                return;
-            }
-            for (Marker m : markers) {
-                MarkerManager.getSingleton().addManagedElement(getMarkerSet(), m);
-            }
-
-            showSuccess(markers.size() + ((markers.size() == 1) ? " Markierung eingefügt" : " Markierungen eingefügt"));
-        } catch (UnsupportedFlavorException ufe) {
-            logger.error("Failed to paste markers from external clipboard", ufe);
-            showError("Fehler beim Lesen der Markierungen aus der Zwischenablage");
-        } catch (IOException ioe) {
-            logger.error("Failed to paste markers from external clipboard", ioe);
-            showError("Fehler beim Lesen der Markierungen aus der Zwischenablage");
-        }
-        markerModel.fireTableDataChanged();
-        MarkerManager.getSingleton().revalidate(getMarkerSet(), true);
-    }
-    */
 
     private void copyFromInternalClipboard() {
         try {

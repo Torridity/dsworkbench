@@ -26,6 +26,7 @@ import de.tor.tribes.ui.views.*;
 import de.tor.tribes.ui.wiz.red.ResourceDistributorWizard;
 import de.tor.tribes.ui.wiz.tap.TacticsPlanerWizard;
 import de.tor.tribes.util.*;
+
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -189,7 +190,7 @@ public class RibbonConfigurator {
         appmen.addMenuEntry(settingsEntry);
 
         appmen.addMenuSeparator();
-        RibbonApplicationMenuEntryPrimary exitEntry = new RibbonApplicationMenuEntryPrimary(new system_log_out(), "Beenden", new ActionListener() {
+        RibbonApplicationMenuEntryPrimary exitEntry = new RibbonApplicationMenuEntryPrimary(getResizableIconFromFile("graphics/icons/logout.png"), "Beenden", new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 DSWorkbenchMainFrame.getSingleton().doExit();
@@ -207,7 +208,7 @@ public class RibbonConfigurator {
             }
         });
         appmen.addMenuEntry(exitEntry);
-        appmen.addFooterEntry(new RibbonApplicationMenuEntryFooter(new system_log_out(), "Beenden", new ActionListener() {
+        appmen.addFooterEntry(new RibbonApplicationMenuEntryFooter(getResizableIconFromFile("graphics/icons/logout.png"), "Beenden", new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 DSWorkbenchMainFrame.getSingleton().doExit();

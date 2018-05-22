@@ -17,9 +17,11 @@ package de.tor.tribes.ui.views;
 
 import com.smardec.mousegestures.MouseGestures;
 import de.tor.tribes.control.GenericManagerListener;
+import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Attack;
+import de.tor.tribes.types.StandardAttack;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.windows.AbstractDSWorkbenchFrame;
 import de.tor.tribes.ui.editors.DateSpinEditor;
@@ -36,6 +38,7 @@ import de.tor.tribes.util.MouseGestureHandler;
 import de.tor.tribes.util.ProfileManager;
 import de.tor.tribes.util.PropertyHelper;
 import de.tor.tribes.util.attack.AttackManager;
+import de.tor.tribes.util.attack.StandardAttackManager;
 import de.tor.tribes.util.bb.AttackListFormatter;
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -245,14 +248,14 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
         jUnitBox.setSelectedItem(DataHolder.getSingleton().getUnitByPlainName("ram"));
         jUnitComboBox.setSelectedItem(DataHolder.getSingleton().getUnitByPlainName("ram"));
         jUnitBox.setRenderer(new UnitListCellRenderer());
+        jAttackTypeComboBox.setRenderer(new StandardAttackListCellRenderer());
+        
         DefaultComboBoxModel typeModel = new DefaultComboBoxModel();
-        jAttackTypeComboBox.setRenderer(new AttackTypeListCellRenderer());
-        typeModel.addElement(Attack.NO_TYPE);
-        typeModel.addElement(Attack.CLEAN_TYPE);
-        typeModel.addElement(Attack.SNOB_TYPE);
-        typeModel.addElement(Attack.FAKE_TYPE);
-        typeModel.addElement(Attack.FAKE_DEFF_TYPE);
-        typeModel.addElement(Attack.SUPPORT_TYPE);
+
+        for (ManageableType t : StandardAttackManager.getSingleton().getAllElements()) {
+            StandardAttack a = (StandardAttack) t;
+            typeModel.addElement(a);
+        }
         jAttackTypeComboBox.setModel(typeModel);
 
         jUnitComboBox.setRenderer(new UnitListCellRenderer());

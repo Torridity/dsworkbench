@@ -42,7 +42,7 @@ public class VisibilityCellRenderer extends DefaultTableRenderer {
         JLabel label = (JLabel) c;
         label.setText("");
         label.setHorizontalAlignment(SwingConstants.CENTER);
-        if ((Boolean) value) {
+        if (value != null && (Boolean) value) {
             label.setIcon(visible);
         } else {
             label.setIcon(invisible);

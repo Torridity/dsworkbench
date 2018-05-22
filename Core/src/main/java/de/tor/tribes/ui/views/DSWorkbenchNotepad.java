@@ -22,7 +22,6 @@ import com.jidesoft.swing.TabEditingValidator;
 import com.smardec.mousegestures.MouseGestures;
 import de.tor.tribes.control.GenericManagerListener;
 import de.tor.tribes.io.DataHolder;
-import de.tor.tribes.types.test.DummyVillage;
 import de.tor.tribes.types.Note;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.windows.AbstractDSWorkbenchFrame;
@@ -670,126 +669,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
     @Override
     public void fireVillagesDraggedEvent(List<Village> pVillages, Point pDropLocation) {
     }
-    /* if (currentNote == null) {
-    return;ji
-    }
-    try {
-    Rectangle bounds = jVillageList.getBounds();
-    Point locationWithinNotepad = jVillageList.getLocationOnScreen();
-    Point notepadLocation = this.getLocationOnScreen();
-    locationWithinNotepad.translate(-notepadLocation.x, -notepadLocation.y);
-    bounds.setLocation(locationWithinNotepad);
-    if (bounds.contains(pDropLocation)) {
-    for (Village v : pVillages) {
-    currentNote.addVillage(v);
-    }
-    }
-    showCurrentNote();
-    try {
-    MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.NOTE_LAYER);
-    } catch (Exception e) {
-    }
-    } catch (Exception e) {
-    logger.error("Failed to insert dropped villages", e);
-    }*/
-    //  }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
-            
-            public void run() {
-                Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
-                GlobalOptions.setSelectedServer("de43");
-                DataHolder.getSingleton().loadData(false);
-                ProfileManager.getSingleton().loadProfiles();
-                GlobalOptions.setSelectedProfile(ProfileManager.getSingleton().getProfiles("de43")[0]);
-                MouseGestures mMouseGestures = new MouseGestures();
-                mMouseGestures.setMouseButton(MouseEvent.BUTTON3_MASK);
-                mMouseGestures.addMouseGesturesListener(new MouseGestureHandler());
-                mMouseGestures.start();
-                try {
-                    //  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-                    UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-                    //JFrame.setDefaultLookAndFeelDecorated(true);
-
-                    // SubstanceLookAndFeel.setSkin(SubstanceLookAndFeel.getAllSkins().get("Twilight").getClassName());
-                    //  UIManager.put(SubstanceLookAndFeel.FOCUS_KIND, FocusKind.NONE);
-                } catch (Exception ignored) {
-                }
-                
-                DSWorkbenchNotepad.getSingleton().setSize(600, 400);
-                
-                NoteManager.getSingleton().addGroup("test1");
-                NoteManager.getSingleton().addGroup("asd2");
-                NoteManager.getSingleton().addGroup("awe3");
-                for (int i = 0; i < 5; i++) {
-                    Note n = new Note();
-                    n.setNoteText("Test");
-                    n.setTimestamp(System.currentTimeMillis());
-                    n.setMapMarker(ImageManager.ID_NOTE_ICON_0);
-                    n.setNoteSymbol(ImageManager.NOTE_SYMBOL_AXE);
-                    n.addVillage(new DummyVillage());
-                    n.addVillage(new DummyVillage());
-                    n.addVillage(new DummyVillage());
-                    Note n2 = new Note();
-                    n2.setNoteText("Test2");
-                    n2.setTimestamp(System.currentTimeMillis());
-                    n2.setMapMarker(ImageManager.ID_NOTE_ICON_1);
-                    n2.setNoteSymbol(ImageManager.NOTE_SYMBOL_SNOB);
-                    n2.addVillage(new DummyVillage());
-                    n2.addVillage(new DummyVillage());
-                    Note n3 = new Note();
-                    n3.setNoteText("Test3");
-                    n3.setTimestamp(System.currentTimeMillis());
-                    n3.setMapMarker(ImageManager.ID_NOTE_ICON_1);
-                    n3.setNoteSymbol(ImageManager.NOTE_SYMBOL_SPEAR);
-                    n3.addVillage(new DummyVillage());
-                    n3.addVillage(new DummyVillage());
-                    n3.addVillage(new DummyVillage());
-                    n3.addVillage(new DummyVillage());
-                    
-                    NoteManager.getSingleton().addManagedElement(n);
-                    NoteManager.getSingleton().addManagedElement("test1", n2);
-                    NoteManager.getSingleton().addManagedElement("asd2", n3);
-                }
-                DSWorkbenchNotepad.getSingleton().resetView();
-                DSWorkbenchNotepad.getSingleton().setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-                DSWorkbenchNotepad.getSingleton().setVisible(true);
-            }
-        });
-    }
-
-    /*   @Override
-    public void dragGestureRecognized(DragGestureEvent dge) {
-    Note selectedNote = (Note) jNotesList.getSelectedValue();
     
-    List<Village> villageList = new LinkedList<Village>();
-    for (Integer villageId : selectedNote.getVillageIds()) {
-    Village v = DataHolder.getSingleton().getVillagesById().get(villageId);
-    if (!villageList.contains(v)) {
-    villageList.add(v);
-    }
-    }
-    if (villageList.isEmpty()) {
-    return;
-    }
-    Cursor c = ImageManager.createVillageDragCursor(villageList.size());
-    setCursor(c);
-    dge.startDrag(c, new VillageTransferable(villageList), this);
-    }
-    
-    @Override
-    public void dragEnter(DragSourceDragEvent dsde) {
-    }
-    
-    @Override
-    public void dragOver(DragSourceDragEvent dsde) {
-    }
-    
-    @Override
-    public void dragDropEnd(DragSourceDropEvent dsde) {
-    setCursor(Cursor.getDefaultCursor());
-    }*/
     // <editor-fold defaultstate="collapsed" desc="Gesture handling">
     @Override
     public void fireExportAsBBGestureEvent() {

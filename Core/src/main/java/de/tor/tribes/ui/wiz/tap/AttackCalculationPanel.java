@@ -469,7 +469,7 @@ public class AttackCalculationPanel extends WizardPage {
         }
 
         TimeFrame timeFrame = TimeSettingsPanel.getSingleton().getTimeFrame();
-        calculator.initialize(sources, fakeSources, targets, fakeTargets, maxAttacks, timeFrame, jAllowFakeOffs.isSelected(), null);
+        calculator.initialize(sources, fakeSources, targets, fakeTargets, maxAttacks, timeFrame, jAllowFakeOffs.isSelected());
         jProgressBar1.setValue(0);
         calculator.setLogListener(new AbstractAttackAlgorithm.LogListener() {
 

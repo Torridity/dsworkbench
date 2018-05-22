@@ -41,6 +41,8 @@ public class UnitHolder implements Serializable {
     private double buildTime = 0;
 
     public UnitHolder() {
+        name = "";
+        plainName = null;
     }
 
     public UnitHolder(Element pElement) throws Exception {

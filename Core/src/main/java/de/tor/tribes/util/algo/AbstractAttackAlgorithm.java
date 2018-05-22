@@ -18,7 +18,6 @@ package de.tor.tribes.util.algo;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.TroopMovement;
 import de.tor.tribes.types.ext.Village;
-import de.tor.tribes.ui.algo.AlgorithmLogPanel;
 import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.algo.types.DistanceMapping;
 import de.tor.tribes.util.algo.types.TimeFrame;
@@ -44,7 +43,6 @@ public abstract class AbstractAttackAlgorithm extends Thread {
     private TimeFrame timeFrame = null;
     boolean fakeOffTargets = false;
     private AlgorithmListener mListener = null;
-    private AlgorithmLogPanel mLogPanel = null;
     private boolean running = false;
     private boolean aborted = false;
     private LogListener listener = null;
@@ -62,8 +60,7 @@ public abstract class AbstractAttackAlgorithm extends Thread {
             List<Village> pFakedTargets,
             Hashtable<Village, Integer> pMaxAttacksTable,
             TimeFrame pTimeFrame,
-            boolean pFakeOffTargets,
-            AlgorithmLogPanel pLogPanel) {
+            boolean pFakeOffTargets) {
         sources = pSources;
         fakes = pFakes;
         targets = pTargets;
@@ -71,7 +68,6 @@ public abstract class AbstractAttackAlgorithm extends Thread {
         maxAttacksTable = pMaxAttacksTable;
         timeFrame = pTimeFrame;
         fakeOffTargets = pFakeOffTargets;
-        mLogPanel = pLogPanel;
     }
     
     public void setLogListener(LogListener pListener) {
@@ -92,38 +88,24 @@ public abstract class AbstractAttackAlgorithm extends Thread {
             boolean pFakeOffTargets);
     
     public void logText(String pText) {
-        if (mLogPanel != null) {
-            mLogPanel.addText(pText);
-        }
         if (listener != null) {
             listener.logMessage(pText);
         }
     }
     
     public void logInfo(String pText) {
-        if (mLogPanel != null) {
-            mLogPanel.addInfo(pText);
-        }
         if (listener != null) {
             listener.logMessage(pText);
         }
     }
     
     public void logError(String pText) {
-        if (mLogPanel != null) {
-            mLogPanel.addError(pText);
-        }
-        
         if (listener != null) {
             listener.logMessage(pText);
         }
     }
     
     public void updateStatus(int pCurrentStatus, int pMaxStatus) {
-        if (mLogPanel != null) {
-            mLogPanel.updateStatus(pCurrentStatus, pMaxStatus);
-        }
-        
         if (listener != null) {
             listener.updateProgress(100.0 * (double) pCurrentStatus / (double) pMaxStatus);
         }

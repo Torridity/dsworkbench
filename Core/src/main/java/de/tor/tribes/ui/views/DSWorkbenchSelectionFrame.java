@@ -23,7 +23,6 @@ import de.tor.tribes.types.ext.NoAlly;
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Village;
-import de.tor.tribes.types.test.DummyProfile;
 import de.tor.tribes.ui.windows.AbstractDSWorkbenchFrame;
 import de.tor.tribes.ui.panels.GenericTestPanel;
 import de.tor.tribes.ui.tree.AllyNode;
@@ -968,30 +967,7 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
     public void fireVillagesDraggedEvent(List<Village> pVillages, Point pDropLocation) {
         addVillages(pVillages);
     }
-
-    public static void main(String[] args) {
-
-        Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
-        GlobalOptions.setSelectedServer("de43");
-        GlobalOptions.setSelectedProfile(new DummyProfile());
-        DataHolder.getSingleton().loadData(false);
-        try {
-            //  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-        } catch (Exception ignored) {
-        }
-        List<Village> selection = new LinkedList<>();
-        for (int i = 0; i < 100; i++) {
-            selection.add(DataHolder.getSingleton().getRandomVillage());
-        }
-
-        DSWorkbenchSelectionFrame.getSingleton().resetView();
-        DSWorkbenchSelectionFrame.getSingleton().addVillages(selection);
-
-        DSWorkbenchSelectionFrame.getSingleton().setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        DSWorkbenchSelectionFrame.getSingleton().setVisible(true);
-
-    }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private de.tor.tribes.ui.components.CapabilityInfoPanel capabilityInfoPanel1;
     private org.jdesktop.swingx.JXCollapsiblePane infoPanel;

@@ -421,7 +421,7 @@ public abstract class GenericManager<C extends ManageableType> {
             theGroup = DEFAULT_GROUP;
         }
 
-        for (GenericManagerListener listener : listeners.toArray(new GenericManagerListener[listeners.size()])) {
+        for (GenericManagerListener listener : listeners) {
             if (theGroup == null) {
                 listener.dataChangedEvent();
             } else {

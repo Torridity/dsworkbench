@@ -64,14 +64,24 @@ public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements 
     public void actionPerformed(ActionEvent e) {
         MarkerTableTab activeTab = getActiveTab();
         if (e.getActionCommand() != null && activeTab != null) {
-            if (e.getActionCommand().equals("BBCopy")) {
-                activeTab.transferSelection(MarkerTableTab.TRANSFER_TYPE.CLIPBOARD_BB);
-            } else if (e.getActionCommand().equals("Cut")) {
-                activeTab.transferSelection(MarkerTableTab.TRANSFER_TYPE.CUT_TO_INTERNAL_CLIPBOARD);
-            } else if (e.getActionCommand().equals("Paste")) {
-                activeTab.transferSelection(MarkerTableTab.TRANSFER_TYPE.FROM_EXTERNAL_CLIPBOARD);
-            } else if (e.getActionCommand().equals("Delete")) {
-                activeTab.deleteSelection(true);
+            switch (e.getActionCommand()) {
+                case "BBCopy":
+                    activeTab.transferSelection(MarkerTableTab.TRANSFER_TYPE.CLIPBOARD_BB);
+                    break;
+                case "Cut":
+                    activeTab.transferSelection(MarkerTableTab.TRANSFER_TYPE.CUT_TO_INTERNAL_CLIPBOARD);
+                    break;
+                case "Copy":
+                    activeTab.transferSelection(MarkerTableTab.TRANSFER_TYPE.COPY_TO_INTERNAL_CLIPBOARD);
+                    break;
+                case "Paste":
+                    activeTab.transferSelection(MarkerTableTab.TRANSFER_TYPE.FROM_INTERNAL_CLIPBOARD);
+                    break;
+                case "Delete":
+                    activeTab.deleteSelection(true);
+                    break;
+                default:
+                    break;
             }
         }
     }

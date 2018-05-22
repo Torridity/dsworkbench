@@ -21,7 +21,6 @@ import de.tor.tribes.types.LinkedTag;
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.ui.editors.LinkGroupColorCellEditor;
 import de.tor.tribes.ui.models.TagLinkMatrixModel;
-import de.tor.tribes.ui.renderer.AlternatingColorCellRenderer;
 import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
 import de.tor.tribes.ui.renderer.MultiColorCellRenderer;
 import de.tor.tribes.util.Constants;
@@ -62,7 +61,6 @@ public class LinkTagsDialog extends javax.swing.JDialog {
         jXTable1.setHighlighters(new CompoundHighlighter(colu, HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B)));
         jXTable1.setColumnControlVisible(false);
         jXTable1.setDefaultRenderer(Integer.class, new MultiColorCellRenderer());
-        jXTable1.setDefaultRenderer(Tag.class, new AlternatingColorCellRenderer());
         jXTable1.setDefaultEditor(Integer.class, new LinkGroupColorCellEditor());
         jXTable1.setRowHeight(21);
         jXTable1.getTableHeader().setDefaultRenderer(new DefaultTableHeaderRenderer());

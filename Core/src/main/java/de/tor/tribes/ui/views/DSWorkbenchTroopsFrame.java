@@ -28,7 +28,6 @@ import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.windows.AbstractDSWorkbenchFrame;
 import de.tor.tribes.ui.panels.GenericTestPanel;
-import de.tor.tribes.ui.TabInterface;
 import de.tor.tribes.ui.panels.TroopTableTab;
 import de.tor.tribes.ui.models.TroopsTableModel;
 import de.tor.tribes.util.Constants;
@@ -91,7 +90,7 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
 
   @Override
   public void actionPerformed(ActionEvent e) {
-    TabInterface activeTab = getActiveTab();
+    TroopTableTab activeTab = getActiveTab();
     if (e.getActionCommand().equals("Delete")) {
       if (activeTab != null) {
         activeTab.deleteSelection();
@@ -147,7 +146,7 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
     jTroopsTabPane.getModel().addChangeListener(new ChangeListener() {
       @Override
       public void stateChanged(ChangeEvent e) {
-        TabInterface activeTab = getActiveTab();
+        TroopTableTab activeTab = getActiveTab();
         if (activeTab != null) {
           activeTab.updateSet();
         }
@@ -268,7 +267,7 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
     transferVillageList.addMouseListener(new MouseAdapter() {
       @Override
       public void mouseReleased(MouseEvent e) {
-        TabInterface tab = getActiveTab();
+        TroopTableTab tab = getActiveTab();
         if (tab != null) {
           tab.centerVillageInGame();
         }
@@ -282,7 +281,7 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
     openPlace.addMouseListener(new MouseAdapter() {
       @Override
       public void mouseReleased(MouseEvent e) {
-        TabInterface tab = getActiveTab();
+        TroopTableTab tab = getActiveTab();
         if (tab != null) {
           tab.openPlaceInGame();
         }
@@ -299,7 +298,7 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
       centerVillage.addMouseListener(new MouseAdapter() {
         @Override
         public void mouseReleased(MouseEvent e) {
-          TabInterface tab = getActiveTab();
+          TroopTableTab tab = getActiveTab();
           if (tab != null) {
             tab.centerVillage();
           }
@@ -336,12 +335,12 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
   /**
    * Get the currently selected tab
    */
-  private TabInterface getActiveTab() {
+  private TroopTableTab getActiveTab() {
     try {
       if (jTroopsTabPane.getModel().getSelectedIndex() < 0) {
         return null;
       }
-      return ((TabInterface) jTroopsTabPane.getComponentAt(jTroopsTabPane.getModel().getSelectedIndex()));
+      return ((TroopTableTab) jTroopsTabPane.getComponentAt(jTroopsTabPane.getModel().getSelectedIndex()));
     } catch (ClassCastException cce) {
       return null;
     }
@@ -379,7 +378,7 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
 
       jTroopsTabPane.revalidate();
     }
-    TabInterface tab = getActiveTab();
+    TroopTableTab tab = getActiveTab();
     if (tab != null) {
       tab.updateSet();
     }
@@ -690,7 +689,7 @@ private void fireApplyTroopAddEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
    * Update the troop set filter
    */
   private void updateFilter() {
-    TabInterface tab = getActiveTab();
+    TroopTableTab tab = getActiveTab();
     if (tab != null) {
       final List<Tag> selection = new LinkedList<>();
       for (Object o : jXGroupsList.getSelectedValues()) {
@@ -719,7 +718,7 @@ private void fireApplyTroopAddEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
   // <editor-fold defaultstate="collapsed" desc="Gesture handling">
   @Override
   public void fireExportAsBBGestureEvent() {
-    TabInterface tab = getActiveTab();
+    TroopTableTab tab = getActiveTab();
     if (tab != null) {
       tab.transferSelection(TroopTableTab.TRANSFER_TYPE.CLIPBOARD_BB);
     }
@@ -838,7 +837,7 @@ private void fireApplyTroopAddEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
 
   @Override
   public void dataChangedEvent(String pGroup) {
-    TabInterface tab = getActiveTab();
+    TroopTableTab tab = getActiveTab();
     if (tab != null) {
       tab.updateSet();
     }

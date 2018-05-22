@@ -19,7 +19,6 @@ import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
 import de.tor.tribes.ui.windows.SupportDetailsDialog;
-import de.tor.tribes.ui.TabInterface;
 import de.tor.tribes.ui.decorator.GroupPredicate;
 import de.tor.tribes.ui.models.TroopsTableModel;
 import de.tor.tribes.ui.renderer.DateCellRenderer;
@@ -72,7 +71,7 @@ import org.jdesktop.swingx.painter.MattePainter;
  *
  * @author Torridity
  */
-public class TroopTableTab extends javax.swing.JPanel implements ListSelectionListener, TabInterface {
+public class TroopTableTab extends javax.swing.JPanel implements ListSelectionListener {
 
     private static Logger logger = Logger.getLogger("TroopTableTab");
 
@@ -142,12 +141,10 @@ public class TroopTableTab extends javax.swing.JPanel implements ListSelectionLi
         //   jTroopAmountList.setCellRenderer(new TroopAmountListCellRenderer());
     }
 
-    @Override
     public void deregister() {
         jxTroopTable.getSelectionModel().removeListSelectionListener(this);
     }
 
-    @Override
     public void valueChanged(ListSelectionEvent e) {
         if (e.getValueIsAdjusting()) {
             int selectionCount = jxTroopTable.getSelectedRowCount();
@@ -159,7 +156,6 @@ public class TroopTableTab extends javax.swing.JPanel implements ListSelectionLi
         }
     }
 
-    @Override
     public void updateSelectionInfo() {
         /*
          * List<VillageTroopsHolder> selection = getSelectedTroopHolders(); HashMap<UnitHolder, Integer> amounts = new HashMap<UnitHolder,
@@ -217,14 +213,12 @@ public class TroopTableTab extends javax.swing.JPanel implements ListSelectionLi
         return jxTroopTable;
     }
 
-    @Override
     public void updateSet() {
         troopModel.setTroopSet(sTroopSet);
         jScrollPane1.setViewportView(jxTroopTable);
         jxTroopTable.getTableHeader().setDefaultRenderer(new TroopTableHeaderRenderer());
     }
 
-    @Override
     public void updateFilter(final List<Tag> groups, final boolean pRelation, final boolean pFilterRows) {
         if (highlighter != null) {
             jxTroopTable.removeHighlighter(highlighter);
@@ -395,7 +389,6 @@ public class TroopTableTab extends javax.swing.JPanel implements ListSelectionLi
         }
     }
 
-    @Override
     public void centerVillage() {
         List<VillageTroopsHolder> selection = getSelectedTroopHolders();
         if (selection.isEmpty()) {
@@ -405,7 +398,6 @@ public class TroopTableTab extends javax.swing.JPanel implements ListSelectionLi
         DSWorkbenchMainFrame.getSingleton().centerVillage(selection.get(0).getVillage());
     }
 
-    @Override
     public void centerVillageInGame() {
         List<VillageTroopsHolder> selection = getSelectedTroopHolders();
         if (selection.isEmpty()) {
@@ -416,7 +408,6 @@ public class TroopTableTab extends javax.swing.JPanel implements ListSelectionLi
         BrowserInterface.centerVillage(selection.get(0).getVillage());
     }
 
-    @Override
     public void openPlaceInGame() {
         List<VillageTroopsHolder> selection = getSelectedTroopHolders();
         if (selection.isEmpty()) {
@@ -466,7 +457,6 @@ public class TroopTableTab extends javax.swing.JPanel implements ListSelectionLi
         return true;
     }
 
-    @Override
     public void deleteSelection() {
         deleteSelection(true);
     }

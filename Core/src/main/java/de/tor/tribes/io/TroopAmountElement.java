@@ -77,12 +77,13 @@ public class TroopAmountElement {
             fixed = false;
             dynamicAmount = pAmount;
         } else {
-            fixed = true;
             val = parse(pAmount, -1, -1);
             if (val instanceof Double) {
+                fixed = true;
                 dynamicAmount = Integer.toString(((Double) val).intValue());
             } else if(val instanceof String) {
                 //we can't parse without arguments; curently only needed for 50%
+                fixed = false;
                 dynamicAmount = pAmount;
             }
         }

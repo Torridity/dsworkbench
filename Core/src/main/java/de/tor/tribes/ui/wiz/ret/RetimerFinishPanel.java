@@ -15,7 +15,6 @@
  */
 package de.tor.tribes.ui.wiz.ret;
 
-import de.tor.tribes.ui.wiz.tap.*;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.UserProfile;
@@ -24,6 +23,7 @@ import de.tor.tribes.ui.models.RETResultTableModel;
 import de.tor.tribes.ui.renderer.*;
 import de.tor.tribes.ui.windows.AttackTransferDialog;
 import de.tor.tribes.ui.wiz.ret.types.RETSourceElement;
+import de.tor.tribes.ui.wiz.tap.*;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.JOptionPaneHelper;
@@ -266,6 +266,7 @@ public class RetimerFinishPanel extends WizardPage {
             jScrollPane1.setViewportView(jxResultsTable);
             SwingUtilities.invokeLater(new Runnable() {
 
+                @Override
                 public void run() {
                     jPanel5.updateUI();
                 }

@@ -18,11 +18,10 @@ package de.tor.tribes.util.bb;
 import de.tor.tribes.util.BBSupport;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.interfaces.BBFormatterInterface;
-import org.apache.commons.lang.StringUtils;
-
 import java.text.NumberFormat;
 import java.util.Collection;
 import java.util.List;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * @author Torridity

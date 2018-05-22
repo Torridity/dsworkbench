@@ -26,14 +26,11 @@ import de.tor.tribes.types.NoTag;
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Village;
-import de.tor.tribes.ui.windows.AbstractDSWorkbenchFrame;
+import de.tor.tribes.ui.models.TroopsTableModel;
 import de.tor.tribes.ui.panels.GenericTestPanel;
 import de.tor.tribes.ui.panels.TroopTableTab;
-import de.tor.tribes.ui.models.TroopsTableModel;
+import de.tor.tribes.ui.windows.AbstractDSWorkbenchFrame;
 import de.tor.tribes.util.Constants;
-import java.awt.event.ActionEvent;
-import java.awt.event.ItemEvent;
-import org.apache.log4j.Logger;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ImageUtils;
 import de.tor.tribes.util.MouseGestureHandler;
@@ -41,9 +38,6 @@ import de.tor.tribes.util.ProfileManager;
 import de.tor.tribes.util.PropertyHelper;
 import de.tor.tribes.util.tag.TagManager;
 import de.tor.tribes.util.troops.SupportVillageTroopsHolder;
-import java.util.List;
-import javax.swing.*;
-import javax.swing.event.ChangeEvent;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.awt.BorderLayout;
@@ -51,7 +45,9 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.TexturePaint;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -63,11 +59,15 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.LinkedList;
+import java.util.List;
+import javax.swing.*;
+import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import org.apache.commons.configuration.Configuration;
 import org.apache.log4j.ConsoleAppender;
+import org.apache.log4j.Logger;
 import org.jdesktop.swingx.JXButton;
 import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.painter.MattePainter;
@@ -189,6 +189,7 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
     super.toBack();
   }
 
+  @Override
   public void storeCustomProperties(Configuration pConfig) {
     pConfig.setProperty(getPropertyPrefix() + ".menu.visible", centerPanel.isMenuVisible());
     pConfig.setProperty(getPropertyPrefix() + ".alwaysOnTop", jTroopsInformationAlwaysOnTop.isSelected());
@@ -203,6 +204,7 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
     PropertyHelper.storeTableProperties(tab.getTroopTable(), pConfig, getPropertyPrefix());
   }
 
+  @Override
   public void restoreCustomProperties(Configuration pConfig) {
     centerPanel.setMenuVisible(pConfig.getBoolean(getPropertyPrefix() + ".menu.visible", true));
     try {

@@ -15,13 +15,13 @@
  */
 package de.tor.tribes.util.algo;
 
-import de.tor.tribes.util.algo.types.TimeFrame;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.TroopMovement;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.ServerSettings;
+import de.tor.tribes.util.algo.types.TimeFrame;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.LinkedList;

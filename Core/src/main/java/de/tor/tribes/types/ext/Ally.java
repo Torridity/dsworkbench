@@ -16,7 +16,6 @@
 package de.tor.tribes.types.ext;
 
 import de.tor.tribes.util.StringHelper;
-
 import java.io.Serializable;
 import java.net.URLDecoder;
 import java.net.URLEncoder;

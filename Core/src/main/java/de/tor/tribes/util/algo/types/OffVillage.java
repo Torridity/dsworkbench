@@ -37,10 +37,12 @@ public class OffVillage extends Village implements Source {
         this.ordered = 0;
     }
 
+    @Override
     public String toString() {
         return this.c.toString();
     }
 
+    @Override
     public boolean mappingExists(Destination dest) {
         Iterator<Order> i = this.orders.iterator();
         boolean contains = false;
@@ -52,6 +54,7 @@ public class OffVillage extends Village implements Source {
         return contains;
     }
 
+    @Override
     public void addOrder(Destination d, int amount) {
         if (amount == 0) {
             return;
@@ -71,6 +74,7 @@ public class OffVillage extends Village implements Source {
         //	System.out.println("Added order (amount: " + Integer.toString(amount) + ") at " + this.c.toString() + " to " + ((TargetVillage) d).getC().toString());
     }
 
+    @Override
     public void removeOrder(Destination d, int amount) {
         for (Order o : this.orders) {
             if (o.getDestination() == d) {
@@ -82,20 +86,24 @@ public class OffVillage extends Village implements Source {
         }
     }
 
+    @Override
     public int removeEmptyOrders() {
         return 0;
     }
 
+    @Override
     public void removeOrder(Order o) {
         //	System.out.println("Removed order at " + this.c.toString() + " to " + ((TargetVillage)o.getDestination()).getC().toString());
         this.ordered -= o.getAmount();
         this.orders.remove(o);
     }
 
+    @Override
     public int waresAvailable() {
         return this.wares - this.ordered;
     }
 
+    @Override
     public int waresAvailable(Destination d) {
         for (Order o : this.orders) {
             if (o.getDestination().equals(d)) {
@@ -105,10 +113,12 @@ public class OffVillage extends Village implements Source {
         return 1;
     }
 
+    @Override
     public int getOrdered() {
         return ordered;
     }
 
+    @Override
     public ArrayList<Order> getOrders() {
         return this.orders;
     }

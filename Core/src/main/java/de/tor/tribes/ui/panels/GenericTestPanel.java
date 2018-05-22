@@ -16,12 +16,11 @@
 package de.tor.tribes.ui.panels;
 
 import de.tor.tribes.ui.components.CollapseExpandTrigger;
-import org.jdesktop.swingx.JXTaskPaneContainer;
-
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import javax.swing.*;
+import org.jdesktop.swingx.JXTaskPaneContainer;
 
 /**
  *

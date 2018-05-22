@@ -15,9 +15,9 @@
  */
 package de.tor.tribes.util.algo;
 
-import de.tor.tribes.util.algo.types.Source;
 import de.tor.tribes.util.algo.types.Destination;
 import de.tor.tribes.util.algo.types.Order;
+import de.tor.tribes.util.algo.types.Source;
 import java.util.ArrayList;
 import java.util.Hashtable;
 

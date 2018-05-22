@@ -95,6 +95,7 @@ public class DefenseAnalyzer extends Thread {
         aborted = true;
     }
 
+    @Override
     public void run() {
         running = true;
         try {

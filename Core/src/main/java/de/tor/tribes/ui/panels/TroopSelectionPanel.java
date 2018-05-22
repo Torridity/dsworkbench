@@ -34,7 +34,6 @@ import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.*;
-
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
 

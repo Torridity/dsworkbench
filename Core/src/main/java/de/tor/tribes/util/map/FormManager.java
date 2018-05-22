@@ -20,14 +20,13 @@ import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.types.drawing.AbstractForm;
 import de.tor.tribes.ui.panels.MapPanel;
 import de.tor.tribes.util.xml.JaxenUtils;
-import org.apache.log4j.Logger;
-import org.jdom.Document;
-import org.jdom.Element;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.util.LinkedList;
 import java.util.List;
+import org.apache.log4j.Logger;
+import org.jdom.Document;
+import org.jdom.Element;
 
 /**
  *

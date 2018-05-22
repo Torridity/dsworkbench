@@ -16,14 +16,13 @@
 package de.tor.tribes.ui.views;
 
 import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.ext.Ally;
 import de.tor.tribes.types.ext.BarbarianAlly;
 import de.tor.tribes.types.ext.Barbarians;
 import de.tor.tribes.types.ext.NoAlly;
-import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Village;
-import de.tor.tribes.ui.windows.AbstractDSWorkbenchFrame;
 import de.tor.tribes.ui.panels.GenericTestPanel;
 import de.tor.tribes.ui.tree.AllyNode;
 import de.tor.tribes.ui.tree.NodeCellRenderer;
@@ -31,6 +30,7 @@ import de.tor.tribes.ui.tree.SelectionTreeRootNode;
 import de.tor.tribes.ui.tree.TagNode;
 import de.tor.tribes.ui.tree.TribeNode;
 import de.tor.tribes.ui.tree.VillageNode;
+import de.tor.tribes.ui.windows.AbstractDSWorkbenchFrame;
 import de.tor.tribes.util.BrowserInterface;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
@@ -38,9 +38,9 @@ import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.PluginManager;
 import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.UIHelper;
-import de.tor.tribes.util.interfaces.VillageSelectionListener;
 import de.tor.tribes.util.bb.VillageListFormatter;
 import de.tor.tribes.util.html.SelectionHTMLExporter;
+import de.tor.tribes.util.interfaces.VillageSelectionListener;
 import de.tor.tribes.util.tag.TagManager;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -73,7 +73,6 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import org.apache.commons.configuration.Configuration;
-import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
 import org.jdesktop.swingx.JXButton;
 import org.jdesktop.swingx.JXTaskPane;
@@ -169,12 +168,14 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
         super.toBack();
     }
 
+    @Override
     public void storeCustomProperties(Configuration pConfig) {
         pConfig.setProperty(getPropertyPrefix() + ".menu.visible", centerPanel.isMenuVisible());
         pConfig.setProperty(getPropertyPrefix() + ".alwaysOnTop", jAlwaysOnTopBox.isSelected());
 
     }
 
+    @Override
     public void restoreCustomProperties(Configuration pConfig) {
         centerPanel.setMenuVisible(pConfig.getBoolean(getPropertyPrefix() + ".menu.visible", true));
         try {
@@ -185,6 +186,7 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
         setAlwaysOnTop(jAlwaysOnTopBox.isSelected());
     }
 
+    @Override
     public String getPropertyPrefix() {
         return "selection.view";
     }

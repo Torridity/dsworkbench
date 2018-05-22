@@ -17,11 +17,10 @@ package de.tor.tribes.ui.wiz.ref;
 
 import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.TroopAmountFixed;
-import de.tor.tribes.ui.wiz.tap.*;
 import de.tor.tribes.io.UnitHolder;
-import de.tor.tribes.types.TroopMovement;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.StandardAttack;
+import de.tor.tribes.types.TroopMovement;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.components.VillageOverviewMapPanel;
 import de.tor.tribes.ui.models.REFResultTableModel;
@@ -29,6 +28,7 @@ import de.tor.tribes.ui.renderer.*;
 import de.tor.tribes.ui.util.ColorGradientHelper;
 import de.tor.tribes.ui.windows.AttackTransferDialog;
 import de.tor.tribes.ui.wiz.ref.types.REFResultElement;
+import de.tor.tribes.ui.wiz.tap.*;
 import de.tor.tribes.ui.wiz.tap.types.TAPAttackSourceElement;
 import de.tor.tribes.ui.wiz.tap.types.TAPAttackTargetElement;
 import de.tor.tribes.util.Constants;
@@ -394,6 +394,7 @@ public class SupportRefillFinishPanel extends WizardPage {
         jPanel5.add(overviewPanel, BorderLayout.CENTER);
 
         SwingUtilities.invokeLater(new Runnable() {
+          @Override
           public void run() {
             jPanel5.updateUI();
           }

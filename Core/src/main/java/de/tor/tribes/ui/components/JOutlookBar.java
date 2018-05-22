@@ -20,13 +20,13 @@ package de.tor.tribes.ui.components;
   @author Torridity
  */
 // Import the GUI classes
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import javax.swing.*;
 
 // Import the Java classes
 
@@ -192,6 +192,7 @@ public class JOutlookBar extends JPanel implements ActionListener {
     /**
      * Invoked when one of our bars is selected
      */
+    @Override
     public void actionPerformed(ActionEvent e) {
         int currentBar = 0;
         for (Object o : this.bars.keySet()) {

@@ -20,10 +20,10 @@ import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.TroopAmountFixed;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.ext.Village;
-import java.util.Date;
-import org.jdom.Element;
 import de.tor.tribes.util.BBSupport;
 import de.tor.tribes.util.GlobalOptions;
+import java.util.Date;
+import org.jdom.Element;
 
 /**
  * @author Torridity

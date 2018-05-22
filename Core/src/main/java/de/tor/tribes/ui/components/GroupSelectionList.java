@@ -39,7 +39,6 @@ import java.util.regex.Pattern;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.swing.*;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;

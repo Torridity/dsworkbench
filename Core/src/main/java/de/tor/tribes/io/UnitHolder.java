@@ -15,11 +15,10 @@
  */
 package de.tor.tribes.io;
 
-import org.jdom.Element;
-
 import java.io.Serializable;
 import java.util.Comparator;
 import java.util.Objects;
+import org.jdom.Element;
 
 /**
  *

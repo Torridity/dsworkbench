@@ -230,6 +230,7 @@ public class LayerOrderConfigurationFrame extends javax.swing.JFrame implements 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
 
+            @Override
             public void run() {
                 LayerOrderConfigurationFrame.getSingleton().setVisible(true);
             }

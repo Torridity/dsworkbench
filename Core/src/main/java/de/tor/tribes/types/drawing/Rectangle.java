@@ -19,14 +19,13 @@ import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.panels.MapPanel;
 import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
 import de.tor.tribes.util.bb.VillageListFormatter;
-import org.jdom.Element;
-
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
 import java.net.URLDecoder;
 import java.util.List;
+import org.jdom.Element;
 
 /**
  *
@@ -43,6 +42,7 @@ public class Rectangle extends AbstractForm {
     private Color drawColor = Color.WHITE;
     private float drawAlpha = 1.0f;
 
+    @Override
     public void loadFromXml(Element e) {
         try {
             Element elem = e.getChild("name");
@@ -71,6 +71,7 @@ public class Rectangle extends AbstractForm {
         }
     }
 
+    @Override
     public boolean allowsBBExport() {
         return true;
     }

@@ -550,6 +550,7 @@ private void fireTestSoundEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:even
     public static void main(String args[]) {
 
         java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 ClockFrame cf = new ClockFrame();
                 cf.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);

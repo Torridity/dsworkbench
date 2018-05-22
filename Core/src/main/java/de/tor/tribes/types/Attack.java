@@ -27,16 +27,15 @@ import de.tor.tribes.ui.ImageManager;
 import de.tor.tribes.util.*;
 import de.tor.tribes.util.attack.StandardAttackManager;
 import de.tor.tribes.util.xml.JaxenUtils;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
-import org.jdom.Element;
-
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
 import org.apache.log4j.Logger;
+import org.jdom.Element;
 
 /**
  *

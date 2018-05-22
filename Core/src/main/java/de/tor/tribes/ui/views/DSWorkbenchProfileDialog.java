@@ -17,8 +17,8 @@ package de.tor.tribes.ui.views;
 
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.ServerManager;
-import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.UserProfile;
+import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.ProfileManager;
@@ -322,6 +322,7 @@ public class DSWorkbenchProfileDialog extends javax.swing.JDialog {
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
 
+            @Override
             public void run() {
                 DSWorkbenchProfileDialog.getSingleton().setVisible(true);
             }

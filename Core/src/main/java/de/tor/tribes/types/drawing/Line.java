@@ -19,14 +19,13 @@ import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.panels.MapPanel;
 import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
 import de.tor.tribes.util.bb.VillageListFormatter;
-import org.jdom.Element;
-
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.net.URLDecoder;
 import java.util.List;
+import org.jdom.Element;
 
 /**
  *

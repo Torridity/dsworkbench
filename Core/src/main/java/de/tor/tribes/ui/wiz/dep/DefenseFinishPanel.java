@@ -340,6 +340,7 @@ public class DefenseFinishPanel extends WizardPage {
             jPanel4.add(overviewPanel, BorderLayout.CENTER);
             SwingUtilities.invokeLater(new Runnable() {
 
+                @Override
                 public void run() {
                     jPanel4.updateUI();
                 }

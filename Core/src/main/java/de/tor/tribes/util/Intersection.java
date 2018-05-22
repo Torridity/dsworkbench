@@ -18,13 +18,12 @@ package de.tor.tribes.util;
 /*Source: http://www.koders.com/java/fid1182C9330FDC66A60312A33932E82F09B5C4CA9F.aspx?s=graph
   @author OpenJGraph
  */
-import org.apache.log4j.Logger;
-
 import java.awt.*;
 import java.awt.geom.FlatteningPathIterator;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
 import java.awt.geom.PathIterator;
+import org.apache.log4j.Logger;
 
 /**
  * The Intersection class provides methods for determining

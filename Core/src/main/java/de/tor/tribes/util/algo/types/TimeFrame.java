@@ -16,11 +16,10 @@
 package de.tor.tribes.util.algo.types;
 
 import de.tor.tribes.types.TimeSpan;
-import org.apache.commons.lang.math.LongRange;
-import org.apache.commons.lang.time.DateUtils;
-
 import java.text.SimpleDateFormat;
 import java.util.*;
+import org.apache.commons.lang.math.LongRange;
+import org.apache.commons.lang.time.DateUtils;
 
 /**
  *

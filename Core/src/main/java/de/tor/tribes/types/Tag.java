@@ -15,14 +15,13 @@
  */
 package de.tor.tribes.types;
 
-import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.ImageManager;
 import de.tor.tribes.util.BBSupport;
 import de.tor.tribes.util.StringHelper;
 import de.tor.tribes.util.bb.VillageListFormatter;
-import org.jdom.Element;
 import de.tor.tribes.util.xml.JaxenUtils;
 import java.awt.Color;
 import java.net.URLDecoder;
@@ -30,6 +29,7 @@ import java.net.URLEncoder;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+import org.jdom.Element;
 
 /**
  *

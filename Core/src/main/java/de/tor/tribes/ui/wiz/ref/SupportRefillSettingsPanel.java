@@ -522,6 +522,7 @@ public class SupportRefillSettingsPanel extends WizardPage implements ActionList
             jTableScrollPane.setViewportView(jVillageTable);
             jPanel2.add(overviewPanel, BorderLayout.CENTER);
             SwingUtilities.invokeLater(new Runnable() {
+                @Override
                 public void run() {
                     jPanel2.updateUI();
                 }

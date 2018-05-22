@@ -380,7 +380,7 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
             @Override
             public void mouseReleased(MouseEvent e) {
 
-                DefaultComboBoxModel<String> model = new DefaultComboBoxModel<String>();
+                DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>();
                 model.addElement("Alle");
                 for (String set : ReportManager.getSingleton().getGroups()) {
                     if (!set.equals(ReportManager.FARM_SET)) {
@@ -559,7 +559,7 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
             @Override
             public void mouseReleased(MouseEvent e) {
 
-                DefaultComboBoxModel<String> model = new DefaultComboBoxModel<String>();
+                DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>();
                 model.addElement("Alle");
                 for (String g : TagManager.getSingleton().getAllTagNames()) {
                     model.addElement(g);
@@ -852,18 +852,18 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
         }
 
         // Sorts the farms by min dist to minimize inefficiencies
-        final HashMap<FarmInformation, Double> MinFarmDistAllFarms = new HashMap<FarmInformation, Double>();
+        final HashMap<FarmInformation, Double> MinFarmDistAllFarms = new HashMap<>();
         List<FarmInformation> farmListcomplete = new LinkedList<>();
         // (Row Code) auxilliary to make new code compatable with old code.
         // Re-coding would clean up the code
         List<Integer> rowIndex = new LinkedList<>();
-        final HashMap<Integer, Double> rowMap = new HashMap<Integer, Double>();
+        final HashMap<Integer, Double> rowMap = new HashMap<>();
 
         for (int row : rows) {
             int modelRow = jFarmTable.convertRowIndexToModel(row);
             FarmInformation farm = (FarmInformation) FarmManager.getSingleton().getAllElements().get(modelRow);
 
-            final HashMap<Village, Double> SingleFarmDistance = new HashMap<Village, Double>();
+            final HashMap<Village, Double> SingleFarmDistance = new HashMap<>();
 
             for (Village v : DSWorkbenchFarmManager.activeFarmGroup) {
                 SingleFarmDistance.put(v, DSCalculator.calculateDistance(v, farm.getVillage()));
@@ -2097,6 +2097,7 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
          */
         java.awt.EventQueue.invokeLater(new Runnable() {
 
+            @Override
             public void run() {
                 DSWorkbenchFarmManager.getSingleton().resetView();
                 /*

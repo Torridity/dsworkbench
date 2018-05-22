@@ -31,7 +31,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
  */
 import java.awt.*;
-
 import java.awt.geom.*;
 
 public class ShapeStroke implements Stroke {
@@ -57,6 +56,7 @@ public class ShapeStroke implements Stroke {
         }
     }
 
+    @Override
     public Shape createStrokedShape(Shape shape) {
         GeneralPath result = new GeneralPath();
         PathIterator it = new FlatteningPathIterator(shape.getPathIterator(null), FLATNESS);

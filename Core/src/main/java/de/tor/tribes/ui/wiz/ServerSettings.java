@@ -17,18 +17,17 @@ package de.tor.tribes.ui.wiz;
 
 import de.tor.tribes.io.ServerManager;
 import de.tor.tribes.types.ext.Tribe;
-import org.netbeans.spi.wizard.Wizard;
-import org.netbeans.spi.wizard.WizardController;
-import org.netbeans.spi.wizard.WizardPanel;
-import org.netbeans.spi.wizard.WizardPanelNavResult;
-
-import javax.swing.*;
 import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.*;
 import java.util.zip.GZIPInputStream;
+import javax.swing.*;
 import org.apache.log4j.Logger;
+import org.netbeans.spi.wizard.Wizard;
+import org.netbeans.spi.wizard.WizardController;
+import org.netbeans.spi.wizard.WizardPanel;
+import org.netbeans.spi.wizard.WizardPanelNavResult;
 
 /**
  *

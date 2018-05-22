@@ -17,10 +17,9 @@ package de.tor.tribes.ui.windows;
 
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.util.attack.AttackManager;
-
-import javax.swing.*;
 import java.util.Arrays;
 import java.util.List;
+import javax.swing.*;
 
 /**
  *
@@ -222,6 +221,7 @@ public class AttackTransferDialog extends javax.swing.JDialog {
          */
         java.awt.EventQueue.invokeLater(new Runnable() {
 
+            @Override
             public void run() {
                 AttackTransferDialog dialog = new AttackTransferDialog(new javax.swing.JFrame(), true);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {

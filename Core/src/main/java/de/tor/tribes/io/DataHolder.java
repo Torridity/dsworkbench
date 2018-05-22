@@ -23,11 +23,6 @@ import de.tor.tribes.util.GlobalDefaults;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.xml.JaxenUtils;
-import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
-import org.jdom.Document;
-import org.jdom.Element;
-
 import java.awt.*;
 import java.io.*;
 import java.net.URL;
@@ -35,6 +30,10 @@ import java.net.URLConnection;
 import java.util.*;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
+import org.apache.commons.io.FileUtils;
+import org.apache.log4j.Logger;
+import org.jdom.Document;
+import org.jdom.Element;
 
 /**
  * @author Charon

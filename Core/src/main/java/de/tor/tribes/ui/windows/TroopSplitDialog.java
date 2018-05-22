@@ -29,16 +29,15 @@ import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.ProfileManager;
 import de.tor.tribes.util.SplitSetHelper;
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.Logger;
-
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
+import javax.swing.*;
+import org.apache.log4j.ConsoleAppender;
+import org.apache.log4j.Logger;
 
 /**
  * @author Torridity
@@ -605,6 +604,7 @@ public class TroopSplitDialog extends javax.swing.JDialog {
 
         java.awt.EventQueue.invokeLater(new Runnable() {
 
+            @Override
             public void run() {
                 dialog.setupAndShow(new LinkedList<Village>());
             }

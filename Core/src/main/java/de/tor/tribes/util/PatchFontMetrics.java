@@ -70,26 +70,39 @@ public class PatchFontMetrics extends FontMetrics {
     height = ascent + descent + leading;
   }
 
+  @Override
   public int getAscent() {  return ascent; }
+  @Override
   public int getDescent() { return descent; }
+  @Override
   public int getHeight() {  return height; }
+  @Override
   public int getLeading() { return leading; }
 
   /* The rest of these appear more or less reasonable. */
 
+  @Override
   public int bytesWidth(byte data[], int off, int len) {
     return fm.bytesWidth(data,off,len); }
 
+  @Override
   public int charsWidth(char data[], int off, int len) {
     return fm.charsWidth(data,off,len); }
 
+  @Override
   public int charWidth(char ch) {  return fm.charWidth(ch); }
+  @Override
   public int charWidth(int ch) {   return fm.charWidth(ch); }
+  @Override
   public Font getFont() {      return fm.getFont(); }
+  @Override
   public int getMaxAdvance() { return fm.getMaxAdvance(); }
+  @Override
   public int getMaxDescent() { return fm.getMaxDescent(); }
+  @Override
   public int[] getWidths() {   return fm.getWidths(); }
 
+  @Override
   public int stringWidth(String str) {
     return fm.stringWidth(str); }
 

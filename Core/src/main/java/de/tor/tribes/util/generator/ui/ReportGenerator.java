@@ -27,9 +27,8 @@ import de.tor.tribes.util.UIHelper;
 import de.tor.tribes.util.farm.FarmManager;
 import de.tor.tribes.util.report.ReportManager;
 import de.tor.tribes.util.village.KnownVillage;
-import org.apache.log4j.Logger;
-
 import java.util.List;
+import org.apache.log4j.Logger;
 
 /**
  *
@@ -615,6 +614,7 @@ public class ReportGenerator extends javax.swing.JFrame {
          */
         java.awt.EventQueue.invokeLater(new Runnable() {
 
+            @Override
             public void run() {
                 new ReportGenerator().setVisible(true);
             }

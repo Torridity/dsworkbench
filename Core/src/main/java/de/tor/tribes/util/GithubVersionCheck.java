@@ -16,18 +16,15 @@
 package de.tor.tribes.util;
 
 import de.tor.tribes.ui.views.DSWorkbenchSettingsDialog;
-
-import org.apache.log4j.Logger;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  *

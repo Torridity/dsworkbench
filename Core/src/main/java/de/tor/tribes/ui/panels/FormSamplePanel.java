@@ -15,10 +15,10 @@
  */
 package de.tor.tribes.ui.panels;
 
+import de.tor.tribes.types.drawing.Arrow;
 import de.tor.tribes.types.drawing.Circle;
 import de.tor.tribes.types.drawing.FreeForm;
 import de.tor.tribes.types.drawing.Line;
-import de.tor.tribes.types.drawing.Arrow;
 import de.tor.tribes.types.drawing.Rectangle;
 import de.tor.tribes.types.drawing.Text;
 import de.tor.tribes.util.Constants;

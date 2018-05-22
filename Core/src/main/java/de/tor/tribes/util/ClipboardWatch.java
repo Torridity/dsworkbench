@@ -22,7 +22,6 @@ import java.applet.AudioClip;
 import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
-import java.security.MessageDigest;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.zip.CRC32;

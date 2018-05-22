@@ -17,21 +17,19 @@ package de.tor.tribes.util.attack;
 
 import de.tor.tribes.control.GenericManager;
 import de.tor.tribes.control.ManageableType;
-import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.xml.JaxenUtils;
-import org.apache.log4j.Logger;
-import org.jdom.Document;
-import org.jdom.Element;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.*;
+import org.apache.log4j.Logger;
+import org.jdom.Document;
+import org.jdom.Element;
 
 /**
  *

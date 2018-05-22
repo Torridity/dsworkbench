@@ -20,7 +20,6 @@ import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.TroopHelper;
 import de.tor.tribes.util.algo.types.TimeFrame;
-
 import java.util.Comparator;
 import java.util.Date;
 import java.util.Enumeration;

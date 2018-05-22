@@ -18,8 +18,6 @@ package de.tor.tribes.ui.renderer;
 import de.tor.tribes.types.StandardAttack;
 import de.tor.tribes.ui.ImageManager;
 import java.awt.Component;
-import java.util.LinkedList;
-import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JList;

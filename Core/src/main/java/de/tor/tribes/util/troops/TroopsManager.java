@@ -20,11 +20,6 @@ import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.xml.JaxenUtils;
-import org.apache.log4j.Logger;
-import org.jdom.Document;
-import org.jdom.Element;
-
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.io.File;
 import java.io.FileWriter;
@@ -32,6 +27,10 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.*;
 import java.util.List;
+import javax.imageio.ImageIO;
+import org.apache.log4j.Logger;
+import org.jdom.Document;
+import org.jdom.Element;
 
 /**
  * @author Charon
@@ -150,6 +149,7 @@ public class TroopsManager extends GenericManager<VillageTroopsHolder> {
         return info != null && !info.isEmpty();
     }
 
+    @Override
     public boolean groupExists(String pGroup) {
         return managedElementGroups.containsKey(pGroup);
     }

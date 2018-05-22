@@ -16,8 +16,8 @@
 package de.tor.tribes.ui.models;
 
 import de.tor.tribes.types.ext.Tribe;
-import de.tor.tribes.util.village.KnownVillageManager;
 import de.tor.tribes.util.village.KnownVillage;
+import de.tor.tribes.util.village.KnownVillageManager;
 import java.awt.Color;
 import javax.swing.table.AbstractTableModel;
 import org.apache.log4j.Logger;

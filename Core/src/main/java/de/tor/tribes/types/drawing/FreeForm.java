@@ -16,8 +16,8 @@
 package de.tor.tribes.types.drawing;
 
 import de.tor.tribes.types.ext.Village;
-import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
 import de.tor.tribes.ui.panels.MapPanel;
+import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
 import de.tor.tribes.util.bb.VillageListFormatter;
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;

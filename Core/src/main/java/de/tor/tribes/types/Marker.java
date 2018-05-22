@@ -15,10 +15,10 @@
  */
 package de.tor.tribes.types;
 
-import de.tor.tribes.types.ext.Tribe;
-import de.tor.tribes.types.ext.Ally;
 import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.types.ext.Ally;
+import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.ui.MarkerCell;
 import de.tor.tribes.util.BBSupport;
 import java.awt.Color;

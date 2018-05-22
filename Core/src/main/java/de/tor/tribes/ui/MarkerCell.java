@@ -16,8 +16,8 @@
 package de.tor.tribes.ui;
 
 import de.tor.tribes.io.DataHolder;
-import de.tor.tribes.types.ext.Ally;
 import de.tor.tribes.types.Marker;
+import de.tor.tribes.types.ext.Ally;
 import de.tor.tribes.types.ext.Tribe;
 import javax.swing.ImageIcon;
 

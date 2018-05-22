@@ -15,12 +15,12 @@
  */
 package de.tor.tribes.util.algo;
 
+import de.tor.tribes.types.VillageMerchantInfo;
+import de.tor.tribes.util.algo.types.Coordinate;
+import de.tor.tribes.util.algo.types.Destination;
+import de.tor.tribes.util.algo.types.MerchantDestination;
 import de.tor.tribes.util.algo.types.MerchantSource;
 import de.tor.tribes.util.algo.types.Order;
-import de.tor.tribes.util.algo.types.MerchantDestination;
-import de.tor.tribes.util.algo.types.Destination;
-import de.tor.tribes.util.algo.types.Coordinate;
-import de.tor.tribes.types.VillageMerchantInfo;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.LinkedList;
@@ -63,6 +63,7 @@ public class MerchantDistributor extends Thread {
         listener = pListener;
     }
 
+    @Override
     public void run() {
         running = true;
         results = calculate(infos, incomingOnly, outgoingOnly, targetRes, remainRes, limitMerchants);

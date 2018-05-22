@@ -15,8 +15,8 @@
  */
 package de.tor.tribes.util;
 
-import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.types.ext.Tribe;
+import de.tor.tribes.types.ext.Village;
 import java.awt.Point;
 import java.util.List;
 

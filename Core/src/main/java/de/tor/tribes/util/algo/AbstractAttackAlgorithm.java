@@ -21,12 +21,11 @@ import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.algo.types.DistanceMapping;
 import de.tor.tribes.util.algo.types.TimeFrame;
-import org.apache.log4j.Logger;
-
 import java.util.Collections;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
+import org.apache.log4j.Logger;
 
 /**
  * @author Torridity

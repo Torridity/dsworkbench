@@ -16,7 +16,6 @@
 package de.tor.tribes.util.js;
 
 import de.tor.tribes.types.Attack;
-import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.ServerSettings;
 import java.awt.Color;
 import java.io.BufferedReader;
@@ -24,7 +23,6 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import org.apache.log4j.Logger;
 

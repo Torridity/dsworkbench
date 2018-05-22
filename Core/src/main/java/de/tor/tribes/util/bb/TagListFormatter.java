@@ -16,7 +16,6 @@
 package de.tor.tribes.util.bb;
 
 import de.tor.tribes.types.Tag;
-
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;

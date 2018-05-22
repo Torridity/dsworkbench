@@ -92,11 +92,13 @@ public class CoordinateFormatter extends DefaultFormatter {
 
 class DoNothingFilter extends DocumentFilter {
 
+    @Override
     public void insertString(DocumentFilter.FilterBypass fb, int offset, String text,
             AttributeSet attr) throws BadLocationException {
         fb.insertString(offset, text, attr);
     }
 
+    @Override
     public void replace(DocumentFilter.FilterBypass fb, int offset, int length, String text,
             AttributeSet attrs) throws BadLocationException {
         fb.replace(offset, length, text, attrs);

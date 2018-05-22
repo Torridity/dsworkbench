@@ -15,14 +15,14 @@
  */
 package de.tor.tribes.ui.windows;
 
-import de.tor.tribes.ui.panels.FormSamplePanel;
 import de.tor.tribes.types.drawing.AbstractForm;
+import de.tor.tribes.types.drawing.Arrow;
 import de.tor.tribes.types.drawing.Circle;
 import de.tor.tribes.types.drawing.FreeForm;
 import de.tor.tribes.types.drawing.Line;
-import de.tor.tribes.types.drawing.Arrow;
 import de.tor.tribes.types.drawing.Rectangle;
 import de.tor.tribes.types.drawing.Text;
+import de.tor.tribes.ui.panels.FormSamplePanel;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.map.FormManager;
@@ -30,7 +30,6 @@ import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.*;
-
 import net.java.dev.colorchooser.ColorChooser;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;

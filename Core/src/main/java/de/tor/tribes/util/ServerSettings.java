@@ -16,7 +16,6 @@
 package de.tor.tribes.util;
 
 import de.tor.tribes.util.xml.JaxenUtils;
-import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.io.File;
 import java.util.ArrayList;

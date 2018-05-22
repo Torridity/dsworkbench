@@ -19,7 +19,6 @@ import java.text.ParseException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
-
 import javax.swing.text.DefaultFormatter;
 
 /**
@@ -96,6 +95,7 @@ public class RegExFormatter extends DefaultFormatter {
      *          String to convert
      * @return Object representation of text
      */
+    @Override
     public Object stringToValue(String text) throws ParseException {
         Pattern pattern = this.pattern;
 

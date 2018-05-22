@@ -16,11 +16,10 @@
 package de.tor.tribes.util;
 
 import com.jidesoft.swing.LabeledTextField;
+import java.awt.*;
+import javax.swing.*;
 import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.table.TableColumnExt;
-
-import javax.swing.*;
-import java.awt.*;
 
 /**
  *

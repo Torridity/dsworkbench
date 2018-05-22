@@ -17,8 +17,6 @@ package de.tor.tribes.ui.panels;
 
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.ext.Village;
-import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
-import de.tor.tribes.ui.windows.SupportDetailsDialog;
 import de.tor.tribes.ui.decorator.GroupPredicate;
 import de.tor.tribes.ui.models.TroopsTableModel;
 import de.tor.tribes.ui.renderer.DateCellRenderer;
@@ -26,6 +24,8 @@ import de.tor.tribes.ui.renderer.NumberFormatCellRenderer;
 import de.tor.tribes.ui.renderer.PercentCellRenderer;
 import de.tor.tribes.ui.renderer.TroopTableHeaderRenderer;
 import de.tor.tribes.ui.views.DSWorkbenchTroopsFrame;
+import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
+import de.tor.tribes.ui.windows.SupportDetailsDialog;
 import de.tor.tribes.ui.windows.TroopDetailsDialog;
 import de.tor.tribes.util.BrowserInterface;
 import de.tor.tribes.util.Constants;
@@ -145,6 +145,7 @@ public class TroopTableTab extends javax.swing.JPanel implements ListSelectionLi
         jxTroopTable.getSelectionModel().removeListSelectionListener(this);
     }
 
+    @Override
     public void valueChanged(ListSelectionEvent e) {
         if (e.getValueIsAdjusting()) {
             int selectionCount = jxTroopTable.getSelectedRowCount();

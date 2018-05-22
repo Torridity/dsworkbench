@@ -1,15 +1,12 @@
 package de.tor.tribes.ui.renderer;
 
+import de.tor.tribes.types.FarmInformation;
 import java.awt.Component;
-
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
-
 import org.jdesktop.swingx.renderer.DefaultTableRenderer;
-
-import de.tor.tribes.types.FarmInformation;
 
 public class SiegeWeaponsOnWayRenderer extends DefaultTableRenderer{
     private ImageIcon BOTH_onWay = null;

@@ -15,10 +15,10 @@
  */
 package de.tor.tribes.types;
 
-import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.io.DataHolder;
-import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.io.TroopAmountFixed;
+import de.tor.tribes.io.UnitHolder;
+import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.xml.JaxenUtils;
 import java.text.SimpleDateFormat;
@@ -28,9 +28,9 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
-import org.apache.log4j.Logger;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
+import org.apache.log4j.Logger;
 import org.jdom.Element;
 
 /**

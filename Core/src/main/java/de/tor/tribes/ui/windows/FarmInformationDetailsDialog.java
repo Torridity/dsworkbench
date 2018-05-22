@@ -427,6 +427,7 @@ public class FarmInformationDetailsDialog extends javax.swing.JDialog {
          */
         java.awt.EventQueue.invokeLater(new Runnable() {
 
+            @Override
             public void run() {
                 FarmInformationDetailsDialog dialog = new FarmInformationDetailsDialog(new javax.swing.JFrame(), true);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {

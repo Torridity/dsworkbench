@@ -49,6 +49,7 @@ public class Order {
         this.amount = amount;
     }
 
+    @Override
     public String toString() {
         return "(" + amount + ") -> " + destination;
     }

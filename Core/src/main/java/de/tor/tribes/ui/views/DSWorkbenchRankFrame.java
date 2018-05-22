@@ -19,9 +19,9 @@ import com.jidesoft.swing.JideTabbedPane;
 import com.smardec.mousegestures.MouseGestures;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.ext.Village;
-import de.tor.tribes.ui.windows.AbstractDSWorkbenchFrame;
 import de.tor.tribes.ui.panels.GenericTestPanel;
 import de.tor.tribes.ui.panels.RankTableTab;
+import de.tor.tribes.ui.windows.AbstractDSWorkbenchFrame;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ImageUtils;
@@ -178,6 +178,7 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame implements Ac
         PropertyHelper.restoreTableProperties(tab.getRankTable(), pConfig, getPropertyPrefix());
     }
     
+    @Override
     public String getPropertyPrefix() {
         return "rank.view";
     }
@@ -215,6 +216,7 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame implements Ac
         centerPanel.setupTaskPane(statsTaskPane);
     }
     
+    @Override
     public void resetView() {
         generateTabs();
     }

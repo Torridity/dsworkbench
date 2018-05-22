@@ -15,18 +15,17 @@
  */
 package de.tor.tribes.ui.windows;
 
-import de.tor.tribes.ui.views.DSWorkbenchSettingsDialog;
+import de.tor.tribes.dssim.ui.DSWorkbenchSimulatorFrame;
 import de.tor.tribes.io.DataHolder;
-import org.apache.log4j.Logger;
 import de.tor.tribes.io.DataHolderListener;
 import de.tor.tribes.io.ServerManager;
 import de.tor.tribes.types.UserProfile;
 import de.tor.tribes.ui.renderer.ProfileTreeNodeRenderer;
+import de.tor.tribes.ui.views.DSWorkbenchSettingsDialog;
 import de.tor.tribes.ui.wiz.FirstStartWizard;
 import de.tor.tribes.util.*;
 import de.tor.tribes.util.GithubVersionCheck.UpdateInfo;
 import de.tor.tribes.util.ThreadDeadlockDetector.DefaultDeadlockListener;
-import de.tor.tribes.dssim.ui.DSWorkbenchSimulatorFrame;
 import java.io.*;
 import java.util.Collections;
 import java.util.Comparator;
@@ -44,6 +43,7 @@ import javax.swing.tree.TreePath;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Appender;
 import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.netbeans.api.wizard.WizardDisplayer;
 import org.netbeans.spi.wizard.Wizard;
 import org.netbeans.spi.wizard.WizardPanelProvider;
@@ -115,6 +115,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
         jButton1.setBackground(new java.awt.Color(239, 235, 223));
         jButton1.setText("Profil auswählen");
         jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireSelectAccountEvent(evt);
             }
@@ -418,6 +419,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
             handleException(Thread.currentThread().getName(), thrown);
         }
 
+        @Override
         public void uncaughtException(Thread thread, Throwable thrown) {
             // for other uncaught exceptions
             handleException(thread.getName(), thrown);
@@ -582,6 +584,7 @@ class HideSplashTask extends TimerTask {
         super();
     }
 
+    @Override
     public void run() {
         try {
             switch (DSWorkbenchSplashScreen.getSingleton().hideSplash()) {
@@ -615,6 +618,7 @@ class SplashRepaintThread extends Thread {
         setDaemon(true);
     }
 
+    @Override
     public void run() {
         while (running) {
             DSWorkbenchSplashScreen.getSingleton().updateStatus();

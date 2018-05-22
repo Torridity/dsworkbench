@@ -35,11 +35,6 @@ import de.tor.tribes.ui.wiz.red.ResourceDistributorWizard;
 import de.tor.tribes.ui.wiz.tap.TacticsPlanerWizard;
 import de.tor.tribes.util.*;
 import de.tor.tribes.util.html.AttackPlanHTMLExporter;
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.Logger;
-
-import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -48,6 +43,10 @@ import java.io.File;
 import java.net.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import org.apache.log4j.ConsoleAppender;
+import org.apache.log4j.Logger;
 
 /**
  * @author Torridity

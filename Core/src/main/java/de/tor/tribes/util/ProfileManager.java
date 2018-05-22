@@ -15,9 +15,9 @@
  */
 package de.tor.tribes.util;
 
-import de.tor.tribes.util.interfaces.ProfileManagerListener;
 import de.tor.tribes.types.UserProfile;
 import de.tor.tribes.types.ext.Tribe;
+import de.tor.tribes.util.interfaces.ProfileManagerListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;

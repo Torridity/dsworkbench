@@ -25,10 +25,8 @@ import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.views.DSWorkbenchFarmManager;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
-
-import org.apache.log4j.Logger;
-
 import java.util.*;
+import org.apache.log4j.Logger;
 
 /**
  *

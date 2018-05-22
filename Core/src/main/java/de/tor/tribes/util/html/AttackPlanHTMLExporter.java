@@ -16,13 +16,13 @@
 package de.tor.tribes.util.html;
 
 import de.tor.tribes.io.DataHolder;
-import de.tor.tribes.util.*;
 import de.tor.tribes.io.ServerManager;
 import de.tor.tribes.io.UnitHolder;
-import de.tor.tribes.types.ext.Ally;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.StandardAttack;
+import de.tor.tribes.types.ext.Ally;
 import de.tor.tribes.types.ext.Tribe;
+import de.tor.tribes.util.*;
 import de.tor.tribes.util.attack.StandardAttackManager;
 import java.io.BufferedReader;
 import java.io.File;

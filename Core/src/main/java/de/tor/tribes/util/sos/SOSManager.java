@@ -23,16 +23,15 @@ import de.tor.tribes.types.SOSRequest;
 import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.xml.JaxenUtils;
+import java.io.File;
+import java.io.FileWriter;
+import java.util.Enumeration;
+import java.util.List;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.log4j.Logger;
 import org.jdom.Document;
 import org.jdom.Element;
-
-import java.io.File;
-import java.io.FileWriter;
-import java.util.Enumeration;
-import java.util.List;
 
 /**
  *

@@ -369,6 +369,7 @@ public class TroopSetupConfigurationFrame extends javax.swing.JDialog implements
         GlobalOptions.loadUserData();
         java.awt.EventQueue.invokeLater(new Runnable() {
             
+            @Override
             public void run() {
                 TroopSetupConfigurationFrame.getSingleton().setup();
                 TroopSetupConfigurationFrame.getSingleton().setVisible(true);

@@ -46,9 +46,6 @@ import de.tor.tribes.util.tag.TagManager;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
 import de.tor.tribes.util.village.KnownVillageManager;
-import org.apache.log4j.Logger;
-
-import javax.swing.*;
 import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
@@ -66,6 +63,8 @@ import java.io.IOException;
 import java.util.*;
 import java.util.List;
 import java.util.Timer;
+import javax.swing.*;
+import org.apache.log4j.Logger;
 
 /**
  * @author Charon

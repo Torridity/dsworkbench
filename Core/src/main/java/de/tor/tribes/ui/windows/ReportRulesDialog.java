@@ -689,6 +689,7 @@ public class ReportRulesDialog extends javax.swing.JDialog implements GenericMan
          */
         java.awt.EventQueue.invokeLater(new Runnable() {
 
+            @Override
             public void run() {
                 ReportRulesDialog dialog = new ReportRulesDialog(new javax.swing.JFrame(), true);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {

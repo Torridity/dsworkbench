@@ -23,10 +23,6 @@ import de.tor.tribes.ui.renderer.TimeFrameListCellRenderer;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.algo.types.TimeFrame;
-import org.apache.commons.lang.math.IntRange;
-import org.apache.commons.lang.time.DateUtils;
-
-import javax.swing.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.UnsupportedFlavorException;
@@ -38,6 +34,9 @@ import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.*;
+import javax.swing.*;
+import org.apache.commons.lang.math.IntRange;
+import org.apache.commons.lang.time.DateUtils;
 
 /**
  *

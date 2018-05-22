@@ -17,11 +17,10 @@ package de.tor.tribes.types.drawing;
 
 import de.tor.tribes.ui.panels.MapPanel;
 import de.tor.tribes.util.GlobalOptions;
-import org.jdom.Element;
-
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.net.URLDecoder;
+import org.jdom.Element;
 
 /**
  *

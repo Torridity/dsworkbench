@@ -152,10 +152,12 @@ public class TimePicker extends javax.swing.JPanel {
                     pHour = Integer.parseInt(selectedHour.getText());
                 }
 
+                @Override
                 public void mouseEntered(MouseEvent e) {
                     ((CrossedLabel) e.getSource()).setBackground(highlight);
                 }
 
+                @Override
                 public void mouseExited(MouseEvent e) {
                     ((CrossedLabel) e.getSource()).setBackground(Constants.DS_BACK_LIGHT);
                 }
@@ -218,6 +220,7 @@ public class TimePicker extends javax.swing.JPanel {
 
             label.addMouseListener(new MouseListener() {
 
+                @Override
                 public void mouseClicked(MouseEvent e) {
                     if (selectedMinute != null) {
                         selectedMinute.uncross();
@@ -228,16 +231,20 @@ public class TimePicker extends javax.swing.JPanel {
                     selectedMinute.cross();
                 }
 
+                @Override
                 public void mousePressed(MouseEvent e) {
                 }
 
+                @Override
                 public void mouseReleased(MouseEvent e) {
                 }
 
+                @Override
                 public void mouseEntered(MouseEvent e) {
                     ((CrossedLabel) e.getSource()).setBackground(highlight);
                 }
 
+                @Override
                 public void mouseExited(MouseEvent e) {
                     ((CrossedLabel) e.getSource()).setBackground(Color.WHITE);
                 }
@@ -300,18 +307,21 @@ public class TimePicker extends javax.swing.JPanel {
         nowButton.setFont(largeFont);
         okButton.addActionListener(new ActionListener() {
 
+            @Override
             public void actionPerformed(ActionEvent actionevent) {
                 setVisible(false);
             }
         });
         nowButton.addActionListener(new ActionListener() {
 
+            @Override
             public void actionPerformed(ActionEvent actionevent) {
             }
         });
         minutePanel.add(okButton, new AbsoluteConstraints(100, rowHeight * (max / elemsPerRow) + rowHeight + 10, 50, 20));
         SwingUtilities.invokeLater(new Runnable() {
 
+            @Override
             public void run() {
                 minutePanel.updateUI();
             }

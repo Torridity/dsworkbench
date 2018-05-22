@@ -15,12 +15,12 @@
  */
 package de.tor.tribes.util.village;
 
-import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.FightReport;
-import de.tor.tribes.util.ServerSettings;
+import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.Constants;
+import de.tor.tribes.util.ServerSettings;
 import java.awt.Color;
 import java.util.Arrays;
 import org.apache.log4j.Logger;

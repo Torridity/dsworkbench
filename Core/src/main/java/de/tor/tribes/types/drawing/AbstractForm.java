@@ -19,13 +19,12 @@ import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.BBSupport;
-import org.apache.log4j.Logger;
-import org.jdom.Element;
-
 import java.awt.*;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.log4j.Logger;
+import org.jdom.Element;
 
 /**
  *

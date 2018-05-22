@@ -297,6 +297,7 @@ public class RetimerCalculationPanel extends WizardPage {
         setBusy(true);
         new Thread(new Runnable() {
 
+            @Override
             public void run() {
                 try {
                     RETSourceElement[] filtered = RetimerSourceFilterPanel.getSingleton().getFilteredElements();
@@ -392,6 +393,7 @@ public class RetimerCalculationPanel extends WizardPage {
             doc.insertString(doc.getLength(), "(" + dateFormat.format(new Date(System.currentTimeMillis())) + ") " + pMessage + "\n", doc.getStyle("Info"));
             SwingUtilities.invokeLater(new Runnable() {
 
+                @Override
                 public void run() {
                     scroll();
                 }

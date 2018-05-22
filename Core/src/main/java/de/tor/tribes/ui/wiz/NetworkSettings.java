@@ -15,9 +15,9 @@
  */
 package de.tor.tribes.ui.wiz;
 
+import java.net.HttpURLConnection;
 import java.net.Proxy;
 import java.net.URL;
-import java.net.HttpURLConnection;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.log4j.Logger;

@@ -16,8 +16,8 @@
 package de.tor.tribes.ui.wiz.ref;
 
 import de.tor.tribes.io.UnitHolder;
-import de.tor.tribes.types.TroopMovement;
 import de.tor.tribes.types.TimeSpan;
+import de.tor.tribes.types.TroopMovement;
 import de.tor.tribes.types.UserProfile;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.wiz.ref.types.REFSourceElement;
@@ -30,7 +30,6 @@ import de.tor.tribes.util.algo.Iterix;
 import de.tor.tribes.util.algo.types.TimeFrame;
 import java.awt.BorderLayout;
 import java.awt.Point;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Hashtable;
@@ -46,7 +45,6 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 import org.apache.commons.lang.math.IntRange;
 import org.apache.commons.lang.math.LongRange;
-import org.apache.commons.lang.time.DateUtils;
 import org.netbeans.spi.wizard.*;
 
 /**

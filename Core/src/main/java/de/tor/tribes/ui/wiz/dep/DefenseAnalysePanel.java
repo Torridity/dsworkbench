@@ -328,6 +328,7 @@ public class DefenseAnalysePanel extends WizardPage {
             jPanel6.add(overviewPanel, BorderLayout.CENTER);
             SwingUtilities.invokeLater(new Runnable() {
 
+                @Override
                 public void run() {
                     jPanel6.updateUI();
                 }

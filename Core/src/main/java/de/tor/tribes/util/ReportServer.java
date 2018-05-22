@@ -24,7 +24,6 @@ import java.net.Socket;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.util.Locale;
-
 import org.apache.http.ConnectionClosedException;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpEntityEnclosingRequest;
@@ -41,11 +40,11 @@ import org.apache.http.impl.DefaultConnectionReuseStrategy;
 import org.apache.http.impl.DefaultHttpResponseFactory;
 import org.apache.http.impl.DefaultHttpServerConnection;
 import org.apache.http.params.CoreConnectionPNames;
-import org.apache.http.params.HttpParams;
 import org.apache.http.params.CoreProtocolPNames;
+import org.apache.http.params.HttpParams;
 import org.apache.http.params.SyncBasicHttpParams;
-import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.BasicHttpContext;
+import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.HttpProcessor;
 import org.apache.http.protocol.HttpRequestHandler;
 import org.apache.http.protocol.HttpRequestHandlerRegistry;
@@ -95,6 +94,7 @@ public class ReportServer {
             super();
         }
 
+        @Override
         public void handle(
                 final HttpRequest request,
                 final HttpResponse response,
@@ -135,6 +135,7 @@ public class ReportServer {
 
                 if (PluginManager.getSingleton().executeObstReportParser(data)) {
                     body = new EntityTemplate(new ContentProducer() {
+                        @Override
                         public void writeTo(final OutputStream outstream) throws IOException {
                             OutputStreamWriter writer = new OutputStreamWriter(outstream, "UTF-8");
                             writer.write("obstCallback(\"<response>"
@@ -149,6 +150,7 @@ public class ReportServer {
 
                 } else {
                     body = new EntityTemplate(new ContentProducer() {
+                        @Override
                         public void writeTo(final OutputStream outstream) throws IOException {
                             OutputStreamWriter writer = new OutputStreamWriter(outstream, "UTF-8");
                             writer.write("obstCallback(\"<response>"
@@ -221,6 +223,7 @@ public class ReportServer {
             }
         }
 
+        @Override
         public void run() {
             logger.debug("Listening on port " + this.serversocket.getLocalPort());
             while (!Thread.interrupted()) {
@@ -257,6 +260,7 @@ public class ReportServer {
             this.conn = conn;
         }
 
+        @Override
         public void run() {
             logger.debug("New connection thread");
             HttpContext context = new BasicHttpContext(null);

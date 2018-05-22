@@ -118,6 +118,7 @@ public class DatePicker extends JPanel {
         backButton.setDefaultCapable(false);
         backButton.addActionListener(new ActionListener() {
 
+            @Override
             public void actionPerformed(ActionEvent actionevent) {
                 onBackClicked(actionevent);
             }
@@ -133,6 +134,7 @@ public class DatePicker extends JPanel {
         forwardButton.setDefaultCapable(false);
         forwardButton.addActionListener(new ActionListener() {
 
+            @Override
             public void actionPerformed(ActionEvent actionevent) {
                 onForwardClicked(actionevent);
             }
@@ -161,6 +163,7 @@ public class DatePicker extends JPanel {
                 anADaysInMonth.setFocusable(false);
                 anADaysInMonth.addMouseListener(new MouseAdapter() {
 
+                    @Override
                     public void mouseClicked(MouseEvent mouseevent) {
                         onDayClicked(mouseevent);
                     }
@@ -190,6 +193,7 @@ public class DatePicker extends JPanel {
             todayButton.setSelected(true);
             todayButton.addActionListener(new ActionListener() {
 
+                @Override
                 public void actionPerformed(ActionEvent actionevent) {
                     onToday(actionevent);
                 }
@@ -202,6 +206,7 @@ public class DatePicker extends JPanel {
             cancelButton.setPreferredSize(dimension);
             cancelButton.addActionListener(new ActionListener() {
 
+                @Override
                 public void actionPerformed(ActionEvent actionevent) {
                     setVisible(false);
                 }

@@ -16,11 +16,11 @@
 package de.tor.tribes.ui.windows;
 
 import de.tor.tribes.types.Marker;
-import java.awt.Color;
-import net.java.dev.colorchooser.ColorChooser;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.mark.MarkerManager;
+import java.awt.Color;
+import net.java.dev.colorchooser.ColorChooser;
 
 /**
  * @author  Torridity

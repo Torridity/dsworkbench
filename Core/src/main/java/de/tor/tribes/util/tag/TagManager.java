@@ -19,14 +19,14 @@ import de.tor.tribes.control.GenericManager;
 import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.types.LinkedTag;
 import de.tor.tribes.types.Tag;
-import java.util.List;
-import org.apache.log4j.Logger;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.TagUtils;
 import de.tor.tribes.util.xml.JaxenUtils;
 import java.io.File;
 import java.io.FileWriter;
 import java.util.LinkedList;
+import java.util.List;
+import org.apache.log4j.Logger;
 import org.jdom.Document;
 import org.jdom.Element;
 

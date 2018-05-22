@@ -32,6 +32,16 @@ import de.tor.tribes.util.bb.KillStatsFormatter;
 import de.tor.tribes.util.bb.PointStatsFormatter;
 import de.tor.tribes.util.bb.WinnerLoserStatsFormatter;
 import de.tor.tribes.util.stat.StatManager;
+import java.awt.*;
+import java.awt.datatransfer.StringSelection;
+import java.awt.event.*;
+import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.List;
+import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.log4j.ConsoleAppender;
@@ -53,17 +63,6 @@ import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.ui.RectangleInsets;
-
-import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import java.awt.*;
-import java.awt.datatransfer.StringSelection;
-import java.awt.event.*;
-import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.List;
 
 /**
  * @author Torridity
@@ -167,11 +166,13 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
         super.toBack();
     }
     
+    @Override
     public void storeCustomProperties(Configuration pConfig) {
         pConfig.setProperty(getPropertyPrefix() + ".menu.visible", centerPanel.isMenuVisible());
         pConfig.setProperty(getPropertyPrefix() + ".alwaysOnTop", jAlwaysOnTopBox.isSelected());
     }
     
+    @Override
     public void restoreCustomProperties(Configuration pConfig) {
         centerPanel.setMenuVisible(pConfig.getBoolean(getPropertyPrefix() + ".menu.visible", true));
         
@@ -184,6 +185,7 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
         
     }
     
+    @Override
     public String getPropertyPrefix() {
         return "stats.view";
     }
@@ -388,6 +390,7 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
         
         SwingUtilities.invokeLater(new Runnable() {
             
+            @Override
             public void run() {
                 jChartPanel.updateUI();
             }
@@ -878,6 +881,7 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
                 jChartPanel.removeAll();
                 SwingUtilities.invokeLater(new Runnable() {
                     
+                    @Override
                     public void run() {
                         jChartPanel.updateUI();
                     }
@@ -904,6 +908,7 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
                 jChartPanel.removeAll();
                 SwingUtilities.invokeLater(new Runnable() {
                     
+                    @Override
                     public void run() {
                         jChartPanel.updateUI();
                     }

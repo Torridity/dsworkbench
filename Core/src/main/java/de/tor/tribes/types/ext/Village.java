@@ -548,6 +548,7 @@ public class Village implements Comparable<Village>, Serializable, BBSupport {
         private T str1, str2;
         private int pos1, pos2, len1, len2;
 
+        @Override
         public int compare(T s1, T s2) {
             str1 = s1;
             str2 = s2;

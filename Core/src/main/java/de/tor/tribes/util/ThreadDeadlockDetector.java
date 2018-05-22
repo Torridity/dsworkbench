@@ -41,6 +41,7 @@ public class ThreadDeadlockDetector {
     public ThreadDeadlockDetector(int deadlockCheckPeriod) {
         threadCheck.schedule(new TimerTask() {
             
+            @Override
             public void run() {
                 checkForDeadlocks();
             }
@@ -106,6 +107,7 @@ public class ThreadDeadlockDetector {
         
         private static Logger logger = Logger.getLogger("DefaultDeadlockListener");
         
+        @Override
         public void deadlockDetected(Thread[] threads) {
             logger.error("Deadlocked Threads:");
             logger.error("-------------------");

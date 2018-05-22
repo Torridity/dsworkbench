@@ -15,59 +15,54 @@
  */
 package de.tor.tribes.ui.windows;
 
-import de.tor.tribes.ui.panels.MapPanel;
-import de.tor.tribes.ui.panels.MinimapPanel;
 import com.smardec.mousegestures.MouseGestures;
 import de.tor.tribes.dssim.ui.DSWorkbenchSimulatorFrame;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.Tag;
-import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.UserProfile;
+import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.*;
 import de.tor.tribes.ui.components.JOutlookBar;
 import de.tor.tribes.ui.components.WelcomePanel;
-import de.tor.tribes.util.interfaces.DSWorkbenchFrameListener;
-import de.tor.tribes.util.interfaces.ToolChangeListener;
-import de.tor.tribes.util.tag.TagManager;
-import java.awt.AWTEvent;
-import java.awt.Desktop;
-import java.awt.Toolkit;
-import java.awt.event.AWTEventListener;
-import java.awt.event.KeyEvent;
-import java.util.LinkedList;
-import java.util.List;
-
-import org.apache.log4j.Logger;
+import de.tor.tribes.ui.panels.MapPanel;
+import de.tor.tribes.ui.panels.MinimapPanel;
 import de.tor.tribes.ui.renderer.map.MapRenderer;
 import de.tor.tribes.ui.views.*;
 import de.tor.tribes.ui.wiz.red.ResourceDistributorWizard;
 import de.tor.tribes.ui.wiz.tap.TacticsPlanerWizard;
 import de.tor.tribes.util.*;
 import de.tor.tribes.util.ServerSettings.ServerSettingsListener;
-import de.tor.tribes.util.interfaces.MapShotListener;
 import de.tor.tribes.util.attack.AttackManager;
-import de.tor.tribes.util.village.KnownVillageManager;
 import de.tor.tribes.util.conquer.ConquerManager;
 import de.tor.tribes.util.dist.DistanceManager;
 import de.tor.tribes.util.dsreal.DSRealManager;
 import de.tor.tribes.util.farm.FarmManager;
+import de.tor.tribes.util.interfaces.DSWorkbenchFrameListener;
+import de.tor.tribes.util.interfaces.MapShotListener;
+import de.tor.tribes.util.interfaces.ToolChangeListener;
 import de.tor.tribes.util.map.FormManager;
 import de.tor.tribes.util.mark.MarkerManager;
 import de.tor.tribes.util.note.NoteManager;
 import de.tor.tribes.util.report.ReportManager;
 import de.tor.tribes.util.roi.ROIManager;
 import de.tor.tribes.util.stat.StatManager;
-import java.io.File;
-
+import de.tor.tribes.util.tag.TagManager;
 import de.tor.tribes.util.troops.TroopsManager;
+import de.tor.tribes.util.village.KnownVillageManager;
+import java.awt.AWTEvent;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
+import java.awt.event.AWTEventListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -75,11 +70,14 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import org.apache.commons.io.FileUtils;
+import org.apache.log4j.Logger;
 import org.jdesktop.swingx.painter.MattePainter;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonFrame;
 
@@ -2948,6 +2946,7 @@ class NotificationHideThread extends Thread {
     setDaemon(true);
   }
 
+  @Override
   public void run() {
     boolean interrupted = false;
     while (true) {

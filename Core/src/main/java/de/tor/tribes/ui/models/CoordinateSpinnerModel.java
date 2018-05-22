@@ -57,6 +57,7 @@ public class CoordinateSpinnerModel extends AbstractSpinnerModel {
      *
      * @see #setValue
      */
+    @Override
     public Object getValue() {
         return point;
     }
@@ -75,6 +76,7 @@ public class CoordinateSpinnerModel extends AbstractSpinnerModel {
      * <code>value</code> isn't allowed
      * @see #getValue
      */
+    @Override
     public void setValue(Object value) {
         if (value instanceof Point) {
             setPoint((Point) value);
@@ -129,6 +131,7 @@ public class CoordinateSpinnerModel extends AbstractSpinnerModel {
      * @see #getValue
      * @see #getPreviousValue
      */
+    @Override
     public Object getNextValue() {
         Point p = (Point) point.clone();
         if (field == FIELD_X) {
@@ -149,6 +152,7 @@ public class CoordinateSpinnerModel extends AbstractSpinnerModel {
      * @see #getValue
      * @see #getNextValue
      */
+    @Override
     public Object getPreviousValue() {
         Point p = (Point) point.clone();
         if (field == FIELD_X) {

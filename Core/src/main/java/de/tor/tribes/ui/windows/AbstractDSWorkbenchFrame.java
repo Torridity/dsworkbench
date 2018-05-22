@@ -15,10 +15,10 @@
  */
 package de.tor.tribes.ui.windows;
 
-import de.tor.tribes.ui.panels.MapPanel;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.dnd.VillageTransferable;
+import de.tor.tribes.ui.panels.MapPanel;
 import de.tor.tribes.util.interfaces.DSWorkbenchFrameListener;
 import java.awt.Dimension;
 import java.awt.Point;

@@ -29,9 +29,6 @@ import de.tor.tribes.util.BBSupport;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.village.KnownVillage;
 import de.tor.tribes.util.xml.JaxenUtils;
-import org.jdom.Document;
-import org.jdom.Element;
-
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -40,6 +37,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import org.apache.log4j.Logger;
+import org.jdom.Document;
+import org.jdom.Element;
 
 /**
  *

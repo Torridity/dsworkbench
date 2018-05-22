@@ -25,7 +25,6 @@ import java.awt.image.BufferedImage;
 import java.util.Hashtable;
 import javax.imageio.ImageIO;
 import javax.swing.*;
-
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
 import org.jdesktop.swingx.JXLabel;

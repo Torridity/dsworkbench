@@ -16,8 +16,8 @@
 package de.tor.tribes.util;
 
 import de.tor.tribes.types.SOSRequest;
-import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.types.VillageMerchantInfo;
+import de.tor.tribes.types.ext.Village;
 import java.io.*;
 import java.util.LinkedList;
 import java.util.List;

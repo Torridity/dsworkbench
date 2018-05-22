@@ -17,13 +17,12 @@ package de.tor.tribes.util.bb;
 
 import de.tor.tribes.types.SOSRequest;
 import de.tor.tribes.types.ext.Village;
-import org.apache.commons.lang.StringUtils;
-
 import java.text.NumberFormat;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * @author Torridity

@@ -775,6 +775,7 @@ public class TroopFilterDialog extends javax.swing.JDialog {
 
         java.awt.EventQueue.invokeLater(new Runnable() {
 
+            @Override
             public void run() {
                 dialog.show(new LinkedList<Village>());
             }

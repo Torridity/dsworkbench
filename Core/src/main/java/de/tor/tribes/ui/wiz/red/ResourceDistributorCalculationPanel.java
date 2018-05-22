@@ -15,25 +15,6 @@
  */
 package de.tor.tribes.ui.wiz.red;
 
-import java.awt.BorderLayout;
-import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Hashtable;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
-import javax.swing.Icon;
-import javax.swing.JOptionPane;
-
-import org.apache.log4j.Logger;
-import org.netbeans.spi.wizard.Wizard;
-import org.netbeans.spi.wizard.WizardPage;
-import org.netbeans.spi.wizard.WizardPanelNavResult;
-
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.Resource;
 import de.tor.tribes.types.UserProfile;
@@ -47,6 +28,22 @@ import de.tor.tribes.util.algo.MerchantDistributor;
 import de.tor.tribes.util.algo.types.MerchantDestination;
 import de.tor.tribes.util.algo.types.MerchantSource;
 import de.tor.tribes.util.algo.types.Order;
+import java.awt.BorderLayout;
+import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Hashtable;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import javax.swing.Icon;
+import javax.swing.JOptionPane;
+import org.apache.log4j.Logger;
+import org.netbeans.spi.wizard.Wizard;
+import org.netbeans.spi.wizard.WizardPage;
+import org.netbeans.spi.wizard.WizardPanelNavResult;
 
 /**
  *

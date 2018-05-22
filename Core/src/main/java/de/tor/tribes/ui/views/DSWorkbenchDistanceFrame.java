@@ -19,13 +19,13 @@ import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.UnknownUnit;
 import de.tor.tribes.types.ext.Village;
-import de.tor.tribes.ui.windows.AbstractDSWorkbenchFrame;
-import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
-import de.tor.tribes.ui.panels.GenericTestPanel;
 import de.tor.tribes.ui.models.DistanceTableModel;
+import de.tor.tribes.ui.panels.GenericTestPanel;
 import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
 import de.tor.tribes.ui.renderer.DistanceTableCellRenderer;
 import de.tor.tribes.ui.renderer.UnitListCellRenderer;
+import de.tor.tribes.ui.windows.AbstractDSWorkbenchFrame;
+import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
 import de.tor.tribes.util.BrowserInterface;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
@@ -191,6 +191,7 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
         slider.setMaximumColoredValue(20);
         slider.addMouseListener(new java.awt.event.MouseAdapter() {
             
+            @Override
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 cellRenderer.setMarkerMin(slider.getMinimumColoredValue());
                 cellRenderer.setMarkerMax(slider.getMaximumColoredValue());

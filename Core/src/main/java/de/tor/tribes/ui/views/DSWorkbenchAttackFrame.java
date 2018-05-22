@@ -24,15 +24,15 @@ import de.tor.tribes.types.UserProfile;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.components.ClickAccountPanel;
 import de.tor.tribes.ui.components.ProfileQuickChangePanel;
-import de.tor.tribes.ui.windows.AbstractDSWorkbenchFrame;
 import de.tor.tribes.ui.panels.AttackTableTab;
 import de.tor.tribes.ui.panels.GenericTestPanel;
-import de.tor.tribes.util.GlobalOptions;
-import de.tor.tribes.util.attack.AttackManager;
+import de.tor.tribes.ui.windows.AbstractDSWorkbenchFrame;
 import de.tor.tribes.util.Constants;
+import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ImageUtils;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.PropertyHelper;
+import de.tor.tribes.util.attack.AttackManager;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Graphics;
@@ -145,6 +145,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         capabilityInfoPanel1.addActionListener(this);
         jAttackTabPane.setCloseAction(new AbstractAction("closeAction") {
 
+            @Override
             public void actionPerformed(ActionEvent e) {
                 AttackTableTab tab = (AttackTableTab) e.getSource();
                 if (JOptionPaneHelper.showQuestionConfirmBox(jAttackTabPane, "Befehlsplan '" + tab.getAttackPlan() + "' und alle darin enthaltenen Befehle wirklich löschen? ", "Löschen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
@@ -932,6 +933,7 @@ class ColorUpdateThread extends Thread {
         setDaemon(true);
     }
 
+    @Override
     public void run() {
         while (true) {
             try {

@@ -314,6 +314,7 @@ public class ValidationPanel extends WizardPage implements SettingsChangedListen
                 jPanel2.add(sourceOverviewPanel, BorderLayout.CENTER);
                 SwingUtilities.invokeLater(new Runnable() {
 
+                    @Override
                     public void run() {
                         jPanel2.updateUI();
                     }
@@ -329,6 +330,7 @@ public class ValidationPanel extends WizardPage implements SettingsChangedListen
                 jPanel3.add(targetOverviewPanel, BorderLayout.CENTER);
                 SwingUtilities.invokeLater(new Runnable() {
 
+                    @Override
                     public void run() {
                         jPanel3.updateUI();
                     }

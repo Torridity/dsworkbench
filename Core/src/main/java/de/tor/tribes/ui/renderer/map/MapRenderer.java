@@ -28,9 +28,6 @@ import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ImageUtils;
 import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.village.KnownVillage;
-import org.apache.log4j.Logger;
-
-import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.*;
 import java.awt.image.BufferedImage;
@@ -39,6 +36,8 @@ import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
 import java.util.*;
 import java.util.List;
+import javax.swing.*;
+import org.apache.log4j.Logger;
 
 /**
  * Map Renderer which supports "dirty layers" defining which layer has to be

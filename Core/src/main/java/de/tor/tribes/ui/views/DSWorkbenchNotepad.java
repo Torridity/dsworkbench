@@ -19,42 +19,35 @@ import com.jidesoft.swing.JideTabbedPane;
 import com.jidesoft.swing.TabEditingEvent;
 import com.jidesoft.swing.TabEditingListener;
 import com.jidesoft.swing.TabEditingValidator;
-import com.smardec.mousegestures.MouseGestures;
 import de.tor.tribes.control.GenericManagerListener;
-import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.Note;
 import de.tor.tribes.types.ext.Village;
-import de.tor.tribes.ui.windows.AbstractDSWorkbenchFrame;
 import de.tor.tribes.ui.panels.GenericTestPanel;
-import de.tor.tribes.ui.ImageManager;
 import de.tor.tribes.ui.panels.NoteTableTab;
+import de.tor.tribes.ui.windows.AbstractDSWorkbenchFrame;
 import de.tor.tribes.util.Constants;
-import de.tor.tribes.util.JOptionPaneHelper;
-import de.tor.tribes.util.note.NoteManager;
-import java.awt.event.ActionEvent;
-import java.awt.image.BufferedImage;
-import java.util.List;
-import javax.swing.*;
-
-import org.apache.log4j.Logger;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ImageUtils;
-import de.tor.tribes.util.MouseGestureHandler;
-import de.tor.tribes.util.ProfileManager;
+import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.PropertyHelper;
+import de.tor.tribes.util.note.NoteManager;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.TexturePaint;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
+import java.util.List;
+import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import org.apache.commons.configuration.Configuration;
-import org.apache.log4j.ConsoleAppender;
+import org.apache.log4j.Logger;
 import org.jdesktop.swingx.JXButton;
 import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.painter.MattePainter;
@@ -176,6 +169,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
         });
         jNoteTabbedPane.setCloseAction(new AbstractAction("closeAction") {
             
+            @Override
             public void actionPerformed(ActionEvent e) {
                 NoteTableTab tab = (NoteTableTab) e.getSource();
                 if (JOptionPaneHelper.showQuestionConfirmBox(jNoteTabbedPane, "Das Notizset '" + tab.getNoteSet() + "' und alle darin enthaltenen Notizen wirklich löschen? ", "Löschen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
@@ -245,6 +239,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
         PropertyHelper.restoreTableProperties(tab.getNoteTable(), pConfig, getPropertyPrefix());
     }
     
+    @Override
     public String getPropertyPrefix() {
         return "notes.view";
     }

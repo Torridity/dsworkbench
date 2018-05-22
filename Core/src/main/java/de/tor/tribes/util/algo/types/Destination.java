@@ -27,6 +27,7 @@ package de.tor.tribes.util.algo.types;
  */
 public interface Destination {
 
+    @Override
     String toString();
 
     /**

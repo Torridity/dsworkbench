@@ -16,11 +16,11 @@
 package de.tor.tribes.util;
 
 import de.tor.tribes.io.DataHolder;
-import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
 import de.tor.tribes.ui.LayerOrderConfigurationFrame;
+import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
 import java.io.File;
-import org.apache.log4j.Logger;
 import org.apache.commons.io.FileUtils;
+import org.apache.log4j.Logger;
 
 /**
  * @author Charon

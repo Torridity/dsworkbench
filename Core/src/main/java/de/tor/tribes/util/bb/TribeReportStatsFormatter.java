@@ -16,7 +16,6 @@
 package de.tor.tribes.util.bb;
 
 import de.tor.tribes.types.TribeStatResult;
-
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;

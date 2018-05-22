@@ -32,6 +32,17 @@ import de.tor.tribes.ui.windows.FormConfigFrame;
 import de.tor.tribes.util.*;
 import de.tor.tribes.util.bb.FormListFormatter;
 import de.tor.tribes.util.map.FormManager;
+import java.awt.*;
+import java.awt.datatransfer.StringSelection;
+import java.awt.event.*;
+import java.awt.geom.GeneralPath;
+import java.awt.image.BufferedImage;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.List;
+import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import org.apache.commons.configuration.Configuration;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
@@ -44,18 +55,6 @@ import org.jdesktop.swingx.painter.AbstractLayoutPainter.HorizontalAlignment;
 import org.jdesktop.swingx.painter.AbstractLayoutPainter.VerticalAlignment;
 import org.jdesktop.swingx.painter.ImagePainter;
 import org.jdesktop.swingx.painter.MattePainter;
-
-import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import java.awt.*;
-import java.awt.datatransfer.StringSelection;
-import java.awt.event.*;
-import java.awt.geom.GeneralPath;
-import java.awt.image.BufferedImage;
-import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.List;
 
 /**
  * @author Charon
@@ -217,6 +216,7 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame implements Li
         }
     }
     
+    @Override
     public void storeCustomProperties(Configuration pConfig) {
         pConfig.setProperty(getPropertyPrefix() + ".menu.visible", centerPanel.isMenuVisible());
         pConfig.setProperty(getPropertyPrefix() + ".alwaysOnTop", jAlwaysOnTop.isSelected());
@@ -224,6 +224,7 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame implements Li
         PropertyHelper.storeTableProperties(jFormsTable, pConfig, getPropertyPrefix());
     }
     
+    @Override
     public void restoreCustomProperties(Configuration pConfig) {
         centerPanel.setMenuVisible(pConfig.getBoolean(getPropertyPrefix() + ".menu.visible", true));
         
@@ -237,6 +238,7 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame implements Li
         PropertyHelper.restoreTableProperties(jFormsTable, pConfig, getPropertyPrefix());
     }
     
+    @Override
     public String getPropertyPrefix() {
         return "forms.view";
     }

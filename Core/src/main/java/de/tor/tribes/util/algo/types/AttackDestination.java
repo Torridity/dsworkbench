@@ -32,18 +32,22 @@ public class AttackDestination extends Village implements Destination {
         this.needs = needs;
     }
 
+    @Override
     public String toString() {
         return this.c.toString();
     }
 
+    @Override
     public int remainingNeeds() {
         return this.needs - this.ordered;
     }
 
+    @Override
     public void addOrdered(int amount) {
         this.ordered += amount;
     }
 
+    @Override
     public int getNeeded() {
         return needs;
     }

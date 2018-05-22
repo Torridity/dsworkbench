@@ -15,10 +15,10 @@
  */
 package de.tor.tribes.types;
 
-import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Ally;
-import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.types.ext.NoAlly;
+import de.tor.tribes.types.ext.Tribe;
+import de.tor.tribes.types.ext.Village;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Enumeration;

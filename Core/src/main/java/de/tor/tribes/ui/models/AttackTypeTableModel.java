@@ -16,8 +16,8 @@
 package de.tor.tribes.ui.models;
 
 import de.tor.tribes.io.DataHolder;
-import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.io.TroopAmountElement;
+import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.StandardAttack;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.attack.StandardAttackManager;

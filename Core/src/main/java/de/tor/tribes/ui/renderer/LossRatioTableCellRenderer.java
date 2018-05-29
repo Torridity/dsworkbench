@@ -46,6 +46,7 @@ public class LossRatioTableCellRenderer extends DefaultTableRenderer {
         ColoredProgressBar p = new ColoredProgressBar(0, 100);
 
         Double val = (Double) value;
+        if (val == null) val = 0.0;
         if (val > 75.0) {
             p.setForeground(Color.RED);
         } else if (val > 25.0) {

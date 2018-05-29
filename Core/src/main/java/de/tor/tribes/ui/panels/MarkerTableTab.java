@@ -16,14 +16,13 @@
 package de.tor.tribes.ui.panels;
 
 import de.tor.tribes.types.Marker;
-import de.tor.tribes.ui.MarkerCell;
 import de.tor.tribes.ui.editors.ColorChooserCellEditor;
 import de.tor.tribes.ui.editors.CustomCheckBoxEditor;
 import de.tor.tribes.ui.models.MarkerTableModel;
 import de.tor.tribes.ui.renderer.ColorCellRenderer;
 import de.tor.tribes.ui.renderer.CustomBooleanRenderer;
 import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
-import de.tor.tribes.ui.renderer.MarkerPanelCellRenderer;
+import de.tor.tribes.ui.renderer.MarkerCellRenderer;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.ImageUtils;
 import de.tor.tribes.util.JOptionPaneHelper;
@@ -84,7 +83,7 @@ public class MarkerTableTab extends javax.swing.JPanel implements ListSelectionL
         jxMarkerTable.setHighlighters(new CompoundHighlighter(colu, HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B)));
         jxMarkerTable.setColumnControlVisible(true);
         jxMarkerTable.setDefaultRenderer(Color.class, new ColorCellRenderer());
-        jxMarkerTable.setDefaultRenderer(MarkerCell.class, new MarkerPanelCellRenderer());
+        jxMarkerTable.setDefaultRenderer(Marker.class, new MarkerCellRenderer());
         ColorChooserCellEditor editor = new ColorChooserCellEditor(new ActionListener() {
 
             @Override

@@ -213,17 +213,21 @@ public class Ally implements Comparable<Ally>, Serializable {
         return stringRepresentation;
     }
 
+    private String toolTip = null;
     public String getToolTipText() {
-        NumberFormat nf = NumberFormat.getInstance();
-        nf.setMinimumFractionDigits(0);
-        nf.setMaximumFractionDigits(0);
-        StringBuilder b = new StringBuilder();
-        b.append("<html><table style='border: solid 1px black; cellspacing:0px;cellpadding: 0px;background-color:#EFEBDF;'>");
-        b.append("<tr><td><b>Stamm:</b> </td><td>").append(toString()).append("</td></tr>");
-        b.append("<tr><td>&nbsp;&nbsp;&nbsp;Mitglieder: </td><td>").append(nf.format(getMembers())).append("</td></tr>");
-        b.append("<tr><td>&nbsp;&nbsp;&nbsp;Punkte: </td><td>").append(nf.format(getPoints())).append("(").append(nf.format(getRank())).append(")</td></tr>");
-        b.append("</table></html>");
-        return b.toString();
+        if(toolTip == null) {
+            NumberFormat nf = NumberFormat.getInstance();
+            nf.setMinimumFractionDigits(0);
+            nf.setMaximumFractionDigits(0);
+            StringBuilder b = new StringBuilder();
+            b.append("<html><table style='border: solid 1px black; cellspacing:0px;cellpadding: 0px;background-color:#EFEBDF;'>");
+            b.append("<tr><td><b>Stamm:</b> </td><td>").append(toString()).append("</td></tr>");
+            b.append("<tr><td>&nbsp;&nbsp;&nbsp;Mitglieder: </td><td>").append(nf.format(getMembers())).append("</td></tr>");
+            b.append("<tr><td>&nbsp;&nbsp;&nbsp;Punkte: </td><td>").append(nf.format(getPoints())).append("(").append(nf.format(getRank())).append(")</td></tr>");
+            b.append("</table></html>");
+            return b.toString();
+        }
+        return toolTip;
     }
 
     public String toBBCode() {

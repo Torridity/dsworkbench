@@ -347,11 +347,11 @@ public class BBCodeEditor extends javax.swing.JDialog {
         sampleAllyResult.add(allyStat2);
         sampleOverallResult.add(overallResult);
         Marker m1 = new Marker();
-        m1.setMarkerType(Marker.TRIBE_MARKER_TYPE);
+        m1.setMarkerType(Marker.MarkerType.TRIBE);
         m1.setMarkerID(sampleVillage1.getTribeID());
         m1.setMarkerColor(Constants.ENEMY_MARKER);
         Marker m2 = new Marker();
-        m2.setMarkerType(Marker.TRIBE_MARKER_TYPE);
+        m2.setMarkerType(Marker.MarkerType.TRIBE);
         m2.setMarkerID(sampleVillage2.getTribeID());
         m2.setMarkerColor(Constants.NAP_MARKER);
         sampleMarker.add(m1);

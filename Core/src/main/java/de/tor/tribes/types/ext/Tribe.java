@@ -51,8 +51,8 @@ public class Tribe implements Comparable<Tribe>, Serializable {
     public Tribe() {
         villageList = new LinkedList<>();
     }
+    
     //$id, $name, $ally, $villages, $points, $rank
-
     public static Tribe parseFromPlainData(String pLine) {
         //$id, $name, $ally, $villages, $points, $rank
         StringTokenizer tokenizer = new StringTokenizer(pLine, ",");
@@ -74,26 +74,6 @@ public class Tribe implements Comparable<Tribe>, Serializable {
             //tribe entry invalid
         }
         return null;
-    }
-
-    public String toPlainData() {
-        StringBuilder b = new StringBuilder();
-        b.append(getId());
-        b.append(",");
-        try {
-            b.append(URLEncoder.encode(getName(), "UTF-8"));
-        } catch (Exception e) {
-            b.append(getName());
-        }
-        b.append(",");
-        b.append(getAllyID());
-        b.append(",");
-        b.append(getVillages());
-        b.append(",");
-        b.append(getPoints());
-        b.append(",");
-        b.append(getRank());
-        return b.toString();
     }
 
     public int getId() {
@@ -194,61 +174,32 @@ public class Tribe implements Comparable<Tribe>, Serializable {
         return villageList.toArray(new Village[villageList.size()]);
     }
 
-    public String getHTMLInfo() {
-        StringBuilder b = new StringBuilder();
-        NumberFormat nf = NumberFormat.getInstance();
-        b.append("<html><b>Spieler:</b> ");
-        b.append(getName());
-        b.append(" <b>Punkte (Rang):</b> ");
-        b.append(nf.format(getPoints()));
-        b.append(" (");
-        b.append(nf.format(getRank()));
-        b.append(")");
-        b.append(" <b>Dörfer:</b> ");
-        b.append(nf.format(getVillages()));
-        b.append(" <b>Kills Off (Rang):</b> ");
-        b.append(nf.format(killsAtt));
-        b.append(" (");
-        b.append(nf.format(rankAtt));
-        b.append(") ");
-        b.append(" <b>Kills Deff (Rang):</b> ");
-        b.append(nf.format(killsDef));
-        b.append(" (");
-        b.append(nf.format(rankDef));
-        b.append(") ");
-        b.append("</html>");
-        return b.toString();
-    }
-
     @Override
     public String toString() {
         return getName();
     }
 
+    private String toolTip = null;
     public String getToolTipText() {
-        NumberFormat nf = NumberFormat.getInstance();
-        nf.setMinimumFractionDigits(0);
-        nf.setMaximumFractionDigits(0);
-        String res = "<html><table style='border: solid 1px black; cellspacing:0px;cellpadding: 0px;background-color:#EFEBDF;'>";
-        res += "<tr><td><b>Name:</b> </td><td>" + getName() + "</td></tr>";
-        res += "<tr><td>&nbsp;&nbsp;&nbsp;Punkte:</td><td>" + nf.format(getPoints()) + " (" + nf.format(getRank()) + ")</td></tr>";
-        res += "<tr><td>&nbsp;&nbsp;&nbsp;Besiegte Gegner (Off):</td><td>" + nf.format(killsAtt) + " (" + nf.format(rankAtt) + ")</td></tr>";
-        res += "<tr><td>&nbsp;&nbsp;&nbsp;Besiegte Gegner (Deff):</td><td>" + nf.format(killsDef) + " (" + nf.format(rankDef) + ")</td></tr>";
-        if (getAlly() != null) {
-            res += "<tr><td><b>Stamm:</b> </td><td>" + getAlly().toString() + "</td></tr>";
-            res += "<tr><td>&nbsp;&nbsp;&nbsp;Mitglieder: </td><td>" + nf.format(getAlly().getMembers()) + "</td></tr>";
-            res += "<tr><td>&nbsp;&nbsp;&nbsp;Punkte: </td><td>" + nf.format(getAlly().getPoints()) + "(" + nf.format(getAlly().getRank()) + ")</td></tr>";
-        }
-        Tribe current = GlobalOptions.getSelectedProfile().getTribe();
-        if (current != null) {
-            if (current.getId() != getId()) {
-                double moral = ((getPoints() / current.getPoints()) * 3 + 0.3) * 100;
-                moral = (moral > 100) ? 100 : moral;
-                res += "<tr><td><b>Moral:</b> </td><td>" + nf.format(moral) + "</td></tr>";
+        if(toolTip == null) {
+            StringBuilder toolTipBuilder = new StringBuilder();
+            NumberFormat nf = NumberFormat.getInstance();
+            nf.setMinimumFractionDigits(0);
+            nf.setMaximumFractionDigits(0);
+            toolTipBuilder.append("<html><table style='border: solid 1px black; cellspacing:0px;cellpadding: 0px;background-color:#EFEBDF;'>");
+            toolTipBuilder.append("<tr><td><b>Name:</b> </td><td>").append(getName()).append("</td></tr>");
+            toolTipBuilder.append("<tr><td>&nbsp;&nbsp;&nbsp;Punkte:</td><td>").append(nf.format(getPoints())).append(" (").append(nf.format(getRank())).append(")</td></tr>");
+            toolTipBuilder.append("<tr><td>&nbsp;&nbsp;&nbsp;Besiegte Gegner (Off):</td><td>").append(nf.format(killsAtt)).append(" (").append(nf.format(rankAtt)).append(")</td></tr>");
+            toolTipBuilder.append("<tr><td>&nbsp;&nbsp;&nbsp;Besiegte Gegner (Deff):</td><td>").append(nf.format(killsDef)).append(" (").append(nf.format(rankDef)).append(")</td></tr>");
+            if (getAlly() != null) {
+                toolTipBuilder.append("<tr><td><b>Stamm:</b> </td><td>").append(getAlly().toString()).append("</td></tr>");
+                toolTipBuilder.append("<tr><td>&nbsp;&nbsp;&nbsp;Mitglieder: </td><td>").append(nf.format(getAlly().getMembers())).append("</td></tr>");
+                toolTipBuilder.append("<tr><td>&nbsp;&nbsp;&nbsp;Punkte: </td><td>").append(nf.format(getAlly().getPoints())).append("(").append(nf.format(getAlly().getRank())).append(")</td></tr>");
             }
+            toolTipBuilder.append("</table></html>");
+            toolTip = toolTipBuilder.toString();
         }
-        res += "</table></html>";
-        return res;
+        return toolTip;
     }
 
     public String toBBCode() {

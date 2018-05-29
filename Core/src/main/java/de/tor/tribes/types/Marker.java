@@ -19,9 +19,9 @@ import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.ext.Ally;
 import de.tor.tribes.types.ext.Tribe;
-import de.tor.tribes.ui.MarkerCell;
 import de.tor.tribes.util.BBSupport;
 import java.awt.Color;
+import org.apache.log4j.Logger;
 import org.jdom.Element;
 
 /**
@@ -29,6 +29,7 @@ import org.jdom.Element;
  * @author Charon
  */
 public class Marker extends ManageableType implements BBSupport {
+    private final static Logger logger = Logger.getLogger("Marker");
 
     private final static String[] VARIABLES = new String[]{"%NAME%", "%BB_CODE%", "%MARKER_COLOR%"};
     private final static String STANDARD_TEMPLATE = "Anzahl der Markierungen: %ELEMENT_COUNT%\n\n"
@@ -43,7 +44,7 @@ public class Marker extends ManageableType implements BBSupport {
     public String[] getReplacements(boolean pExtended) {
         String nameVal = null;
         String bbCodeVal = null;
-        if (markerType == Marker.ALLY_MARKER_TYPE) {
+        if (type == MarkerType.ALLY) {
             Ally a = DataHolder.getSingleton().getAllies().get(markerID);
             if (a != null) {
                 bbCodeVal = a.toBBCode();
@@ -72,24 +73,29 @@ public class Marker extends ManageableType implements BBSupport {
     public String getStandardTemplate() {
         return STANDARD_TEMPLATE;
     }
-    public final static int TRIBE_MARKER_TYPE = 0;
-    public final static int ALLY_MARKER_TYPE = 1;
-    private int markerType = 0;
-    private int markerID = 0;
+    
+    public enum MarkerType {
+        TRIBE,
+        ALLY
+    }
+    
+    private MarkerType type;
+    private int markerID;
     private Color markerColor = null;
     private boolean shownOnMap = true;
-    private transient MarkerCell mView = null;
+    private Tribe mTribe = null;
+    private Ally mAlly = null;
 
     public Marker() {
     }
 
-    public int getMarkerType() {
-        return markerType;
+    public MarkerType getMarkerType() {
+        return type;
     }
 
-    public void setMarkerType(int markerType) {
-        this.markerType = markerType;
-        mView = null;
+    public void setMarkerType(MarkerType markerType) {
+        this.type = markerType;
+        checkAllyTribe();
     }
 
     public int getMarkerID() {
@@ -98,45 +104,56 @@ public class Marker extends ManageableType implements BBSupport {
 
     public void setMarkerID(int pMarkerID) {
         this.markerID = pMarkerID;
-        mView = null;
+        checkAllyTribe();
+    }
+    
+    private void checkAllyTribe() {
+        if(type == MarkerType.ALLY) {
+            mAlly = DataHolder.getSingleton().getAllies().get(markerID);
+            mTribe = null;
+        } else if(type == MarkerType.TRIBE) {
+            mTribe = DataHolder.getSingleton().getTribes().get(markerID);
+            mAlly = null;
+        }
+    }
+    
+    public Ally getAlly() {
+        return mAlly;
+    }
+
+    public Tribe getTribe() {
+        return mTribe;
     }
 
     public Color getMarkerColor() {
         return markerColor;
     }
-
+    
     public void setMarkerColor(Color markerColor) {
         this.markerColor = markerColor;
     }
 
-    public MarkerCell getView() {
-        if (mView == null) {
-            try {
-                mView = MarkerCell.factoryMarkerCell(this);
-            } catch (Exception e) {
-                mView = null;
-            }
-        }
-        return mView;
-    }
-
     public static String toInternalRepresentation(Marker pMarker) {
-        return pMarker.getMarkerID() + "&" + pMarker.getMarkerType() + "&" + pMarker.getMarkerColor().getRed() + "&" + pMarker.getMarkerColor().getGreen() + "&" + pMarker.getMarkerColor().getBlue() + "&" + pMarker.isShownOnMap();
+        return pMarker.getMarkerID() + "&" + (pMarker.getMarkerType()==MarkerType.ALLY?1:0)
+                + "&" + pMarker.getMarkerColor().getRed()
+                + "&" + pMarker.getMarkerColor().getGreen()
+                + "&" + pMarker.getMarkerColor().getBlue()
+                + "&" + pMarker.isShownOnMap();
 
     }
 
     public static Marker fromInternalRepresentation(String pLine) {
-        Marker m = new Marker();
         try {
             String[] split = pLine.trim().split("&");
+            Marker m = new Marker();
             m.setMarkerID(Integer.parseInt(split[0]));
-            m.setMarkerType(Integer.parseInt(split[1]));
+            m.setMarkerType((Integer.parseInt(split[1]) == 1)?(MarkerType.ALLY):(MarkerType.TRIBE));
             m.setMarkerColor(new Color(Integer.parseInt(split[2]), Integer.parseInt(split[3]), Integer.parseInt(split[4])));
             m.setShownOnMap(Boolean.parseBoolean(split[5]));
-        } catch (IllegalArgumentException iae) {
-            m = null;
+            return m;
+        } catch (IllegalArgumentException ignored) {
+            return null;
         }
-        return m;
     }
 
     @Override
@@ -144,7 +161,7 @@ public class Marker extends ManageableType implements BBSupport {
         try {
             StringBuilder b = new StringBuilder();
             b.append("<marker>\n");
-            b.append("<type>").append(markerType).append("</type>\n");
+            b.append("<type>").append(type==MarkerType.ALLY?1:0).append("</type>\n");
             b.append("<id>").append(markerID).append("</id>\n");
             int red = markerColor.getRed();
             int green = markerColor.getGreen();
@@ -176,35 +193,22 @@ public class Marker extends ManageableType implements BBSupport {
 
     @Override
     public void loadFromXml(Element pElement) {
-        setMarkerType(Integer.parseInt(pElement.getChild("type").getText()));
         try {
+            setMarkerType((Integer.parseInt(pElement.getChild("type").getText()) == 1)
+                    ?(MarkerType.ALLY):(MarkerType.TRIBE));
             setMarkerID(Integer.parseInt(pElement.getChild("id").getText()));
-        } catch (Exception e) {
-            //try to read old marker version with plain text value
-            String value = pElement.getChild("value").getText();
-            if (markerType == Marker.TRIBE_MARKER_TYPE) {
-                setMarkerID(DataHolder.getSingleton().getTribeByName(value).getId());
-            } else {
-                setMarkerID(DataHolder.getSingleton().getAllyByName(value).getId());
-            }
-        }
-        try {
+            
             Element e = pElement.getChild("color");
             int red = e.getAttribute("r").getIntValue();
             int green = e.getAttribute("g").getIntValue();
             int blue = e.getAttribute("b").getIntValue();
             int alpha = e.getAttribute("a").getIntValue();
             this.markerColor = new Color(red, green, blue, alpha);
-        } catch (Exception e) {
-            //try to read old color value
-            this.markerColor = Color.decode(pElement.getChild("color").getText());
-        }
-        try {
+            
             String value = pElement.getChild("shownOnMap").getText();
             this.shownOnMap = Boolean.parseBoolean(value);
         } catch (Exception e) {
-            //try to read old format
-            this.shownOnMap = true;
+            logger.warn("Failed to decode XML", e);
         }
     }
 

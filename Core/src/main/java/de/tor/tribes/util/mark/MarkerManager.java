@@ -19,6 +19,7 @@ import de.tor.tribes.control.GenericManager;
 import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.Marker;
+import de.tor.tribes.types.Marker.MarkerType;
 import de.tor.tribes.types.ext.Ally;
 import de.tor.tribes.types.ext.Barbarians;
 import de.tor.tribes.types.ext.Tribe;
@@ -250,7 +251,7 @@ public class MarkerManager extends GenericManager<Marker> {
             return;
         }
 
-        addMarkerInternal(Marker.ALLY_MARKER_TYPE, pAlly.getId(), pColor);
+        addMarkerInternal(Marker.MarkerType.ALLY, pAlly.getId(), pColor);
     }
 
     /**
@@ -263,29 +264,30 @@ public class MarkerManager extends GenericManager<Marker> {
         if (pTribe == null) {
             return;
         }
-        addMarkerInternal(Marker.TRIBE_MARKER_TYPE, pTribe.getId(), pColor);
+        addMarkerInternal(Marker.MarkerType.TRIBE, pTribe.getId(), pColor);
     }
 
     /**
      * Add a marker by value (for internal use only)
      */
-    private void addMarkerInternal(int pType, int pId, Color pColor) {
+    private void addMarkerInternal(MarkerType pType, int pId, Color pColor) {
         Marker m;
         switch (pType) {
-            case Marker.TRIBE_MARKER_TYPE: {
+            case TRIBE:
                 m = getMarker(DataHolder.getSingleton().getTribes().get(pId));
                 break;
-            }
-            default: {
+            case ALLY:
                 m = getMarker(DataHolder.getSingleton().getAllies().get(pId));
-            }
+                break;
+            default:
+                m = null;
         }
 
         if (m != null) {
             m.setMarkerColor(pColor);
         } else {
             m = new Marker();
-            m.setMarkerType((pType == 0) ? Marker.TRIBE_MARKER_TYPE : Marker.ALLY_MARKER_TYPE);
+            m.setMarkerType(pType);
             m.setMarkerID(pId);
             m.setMarkerColor(pColor);
             addManagedElement(m);
@@ -302,8 +304,8 @@ public class MarkerManager extends GenericManager<Marker> {
      */
     public void addMarker(Tribe pTribe, Color pTribeColor, Ally pAlly, Color pAllyColor) {
         invalidate();
-        addMarkerInternal(Marker.TRIBE_MARKER_TYPE, pTribe.getId(), pTribeColor);
-        addMarkerInternal(Marker.ALLY_MARKER_TYPE, pAlly.getId(), pAllyColor);
+        addMarkerInternal(Marker.MarkerType.TRIBE, pTribe.getId(), pTribeColor);
+        addMarkerInternal(Marker.MarkerType.ALLY, pAlly.getId(), pAllyColor);
         revalidate(true);
     }
 
@@ -315,7 +317,7 @@ public class MarkerManager extends GenericManager<Marker> {
 
         for (ManageableType t : getAllElementsFromAllGroups()) {
             Marker m = (Marker) t;
-            if ((m.getMarkerType() == Marker.TRIBE_MARKER_TYPE) && (m.getMarkerID() == pTribe.getId())) {
+            if ((m.getMarkerType() == Marker.MarkerType.TRIBE) && (m.getMarkerID() == pTribe.getId())) {
                 return m;
             }
         }
@@ -330,7 +332,7 @@ public class MarkerManager extends GenericManager<Marker> {
         }
         for (ManageableType t : getAllElementsFromAllGroups()) {
             Marker m = (Marker) t;
-            if ((m.getMarkerType() == Marker.ALLY_MARKER_TYPE) && (m.getMarkerID() == pAlly.getId())) {
+            if ((m.getMarkerType() == Marker.MarkerType.ALLY) && (m.getMarkerID() == pAlly.getId())) {
                 return m;
             }
         }
@@ -356,8 +358,8 @@ public class MarkerManager extends GenericManager<Marker> {
         for (String group : getGroups()) {
             for (ManageableType t : getAllElements(group)) {
                 Marker m = (Marker) t;
-                if (((m.getMarkerType() == Marker.TRIBE_MARKER_TYPE) && (m.getMarkerID() == tribe.getId()))
-                        || (ally != null && (m.getMarkerType() == Marker.ALLY_MARKER_TYPE) && (m.getMarkerID() == ally.getId()))) {
+                if (((m.getMarkerType() == Marker.MarkerType.TRIBE) && (m.getMarkerID() == tribe.getId()))
+                        || (ally != null && (m.getMarkerType() == Marker.MarkerType.ALLY) && (m.getMarkerID() == ally.getId()))) {
                     return m;
                 }
                 /*

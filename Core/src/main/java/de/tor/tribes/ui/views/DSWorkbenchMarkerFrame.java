@@ -463,15 +463,15 @@ private void fireCreateMarkerSetEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
             Marker a = new Marker();
             a.setMarkerColor(Color.GREEN);
             a.setMarkerID(DataHolder.getSingleton().getRandomVillage().getTribeID());
-            a.setMarkerType(Marker.TRIBE_MARKER_TYPE);
+            a.setMarkerType(Marker.MarkerType.TRIBE);
             Marker a2 = new Marker();
             a2.setMarkerColor(Color.RED);
             a2.setMarkerID(DataHolder.getSingleton().getRandomVillage().getTribeID());
-            a2.setMarkerType(Marker.TRIBE_MARKER_TYPE);
+            a2.setMarkerType(Marker.MarkerType.TRIBE);
             Marker a3 = new Marker();
             a3.setMarkerColor(Color.BLUE);
             a3.setMarkerID(DataHolder.getSingleton().getRandomVillage().getTribeID());
-            a3.setMarkerType(Marker.TRIBE_MARKER_TYPE);
+            a3.setMarkerType(Marker.MarkerType.TRIBE);
             MarkerManager.getSingleton().addManagedElement(a);
             MarkerManager.getSingleton().addManagedElement("test1", a2);
             MarkerManager.getSingleton().addManagedElement("asd2", a3);

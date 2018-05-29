@@ -70,19 +70,19 @@ public class DiplomacyParser implements SilentParserInterface {
                 if (allies) {
                     Marker m = getMarkerFromLine(line, Constants.ALLY_MARKER);
                     if (m != null) {
-                        logger.debug("Adding ally marker for tag " + m.getView().getAlly());
+                        logger.debug("Adding ally marker for tag " + m.getAlly());
                         markers.add(m);
                     }
                 } else if (naps) {
                     Marker m = getMarkerFromLine(line, Constants.NAP_MARKER);
                     if (m != null) {
-                        logger.debug("Adding nap marker for tag " + m.getView().getAlly());
+                        logger.debug("Adding nap marker for tag " + m.getAlly());
                         markers.add(m);
                     }
                 } else if (enemies) {
                     Marker m = getMarkerFromLine(line, Constants.ENEMY_MARKER);
                     if (m != null) {
-                        logger.debug("Adding enemy marker for tag " + m.getView().getAlly());
+                        logger.debug("Adding enemy marker for tag " + m.getAlly());
                         markers.add(m);
                     }
                 }
@@ -111,7 +111,7 @@ public class DiplomacyParser implements SilentParserInterface {
             Ally a = DataHolder.getSingleton().getAllyByTagName(tag);
             if (a != null) {
                 Marker m = new Marker();
-                m.setMarkerType(Marker.ALLY_MARKER_TYPE);
+                m.setMarkerType(Marker.MarkerType.ALLY);
                 m.setMarkerID(a.getId());
                 m.setMarkerColor(pMarkerColor);
                 return m;

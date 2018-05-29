@@ -96,15 +96,16 @@ public class ScreenshotPanel extends javax.swing.JPanel {
             for (ManageableType elem : allElements) {
 
                 Marker m = (Marker) elem;
-                String value = "";
+                String value;
                 switch (m.getMarkerType()) {
-                    case Marker.TRIBE_MARKER_TYPE: {
+                    case TRIBE:
                         value = DataHolder.getSingleton().getTribes().get(m.getMarkerID()).getName();
                         break;
-                    }
-                    default: {
+                    case ALLY:
                         value = DataHolder.getSingleton().getAllies().get(m.getMarkerID()).getName();
-                    }
+                        break;
+                    default:
+                        value = "";
                 }
 
                 Rectangle2D bounds = b.getGraphics().getFontMetrics().getStringBounds(value, b.getGraphics());
@@ -123,15 +124,16 @@ public class ScreenshotPanel extends javax.swing.JPanel {
             for (int i = 0; i < allElements.size(); i++) {
                 g2d.setColor(Color.BLACK);
                 Marker m = (Marker) allElements.get(i);
-                String value = "";
+                String value;
                 switch (m.getMarkerType()) {
-                    case Marker.TRIBE_MARKER_TYPE: {
+                    case TRIBE:
                         value = DataHolder.getSingleton().getTribes().get(m.getMarkerID()).getName();
                         break;
-                    }
-                    default: {
+                    case ALLY:
                         value = DataHolder.getSingleton().getAllies().get(m.getMarkerID()).getName();
-                    }
+                        break;
+                    default:
+                        value = "";
                 }
 
                 Color c = m.getMarkerColor();

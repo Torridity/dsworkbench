@@ -24,8 +24,8 @@ import de.tor.tribes.ui.ImageManager;
 import de.tor.tribes.ui.models.FormTableModel;
 import de.tor.tribes.ui.panels.GenericTestPanel;
 import de.tor.tribes.ui.panels.MapPanel;
+import de.tor.tribes.ui.renderer.CustomBooleanRenderer;
 import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
-import de.tor.tribes.ui.renderer.VisibilityCellRenderer;
 import de.tor.tribes.ui.windows.AbstractDSWorkbenchFrame;
 import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
 import de.tor.tribes.ui.windows.FormConfigFrame;
@@ -617,7 +617,7 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame implements Li
     static {
         jFormsTable.setHighlighters(HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B));
         jFormsTable.setColumnControlVisible(true);
-        jFormsTable.setDefaultRenderer(Boolean.class, new VisibilityCellRenderer());
+        jFormsTable.setDefaultRenderer(Boolean.class, new CustomBooleanRenderer(CustomBooleanRenderer.LayoutStyle.VISIBLE_INVISIBLE));
         BufferedImage back = ImageUtils.createCompatibleBufferedImage(5, 5, BufferedImage.BITMASK);
         Graphics2D g = back.createGraphics();
         GeneralPath p = new GeneralPath();

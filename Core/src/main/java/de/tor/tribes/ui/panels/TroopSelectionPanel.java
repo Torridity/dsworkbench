@@ -23,8 +23,6 @@ import de.tor.tribes.io.TroopAmount;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.StandardAttack;
 import de.tor.tribes.ui.ImageManager;
-import de.tor.tribes.util.GlobalOptions;
-import de.tor.tribes.util.ProfileManager;
 import de.tor.tribes.util.attack.StandardAttackManager;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -34,7 +32,6 @@ import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.*;
-import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
 
 /**
@@ -284,24 +281,6 @@ public abstract class TroopSelectionPanel<T extends TroopAmount> extends javax.s
     private javax.swing.JPanel jUnitContainer;
     private org.jdesktop.swingx.JXCollapsiblePane jXCollapsiblePane1;
     // End of variables declaration//GEN-END:variables
-
-    public static void main(String[] args) {
-        Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
-        GlobalOptions.setSelectedServer("de77");
-        ProfileManager.getSingleton().loadProfiles();
-        GlobalOptions.setSelectedProfile(ProfileManager.getSingleton().getProfiles("de77")[0]);
-        DataHolder.getSingleton().loadData(false);
-        GlobalOptions.loadUserData();
-        
-        JFrame f = new JFrame();
-        f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        f.setSize(300, 300);
-        TroopSelectionPanelFixed panel = new TroopSelectionPanelFixed();
-        panel.setupDefense(false);
-        f.getContentPane().add(panel);
-        f.pack();
-        f.setVisible(true);
-    }
 
     protected LabeledTextField getFieldForUnit(UnitHolder pUnit) {
         Point location = unitCoordinates.get(pUnit.getPlainName());

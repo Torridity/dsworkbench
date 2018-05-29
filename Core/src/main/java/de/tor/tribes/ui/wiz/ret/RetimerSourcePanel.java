@@ -23,8 +23,8 @@ import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.components.VillageOverviewMapPanel;
 import de.tor.tribes.ui.components.VillageSelectionPanel;
 import de.tor.tribes.ui.models.RETSourceTableModel;
+import de.tor.tribes.ui.renderer.CustomBooleanRenderer;
 import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
-import de.tor.tribes.ui.renderer.FakeCellRenderer;
 import de.tor.tribes.ui.renderer.UnitCellRenderer;
 import de.tor.tribes.ui.wiz.ret.types.RETSourceElement;
 import de.tor.tribes.util.Constants;
@@ -81,7 +81,7 @@ public class RetimerSourcePanel extends WizardPage {
         initComponents();
         jVillageTable.setModel(new RETSourceTableModel());
         jVillageTable.setDefaultRenderer(UnitHolder.class, new UnitCellRenderer());
-        jVillageTable.setDefaultRenderer(Boolean.class, new FakeCellRenderer());
+        jVillageTable.setDefaultRenderer(Boolean.class, new CustomBooleanRenderer(CustomBooleanRenderer.LayoutStyle.FAKE_NOFAKE));
         jXCollapsiblePane1.setLayout(new BorderLayout());
         jXCollapsiblePane1.add(jInfoScrollPane, BorderLayout.CENTER);
         villageSelectionPanel = new VillageSelectionPanel(new VillageSelectionPanel.VillageSelectionPanelListener() {

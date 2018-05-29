@@ -24,8 +24,8 @@ import de.tor.tribes.ui.components.VillageOverviewMapPanel;
 import de.tor.tribes.ui.components.VillageSelectionPanel;
 import de.tor.tribes.ui.models.TAPTargetTableModel;
 import de.tor.tribes.ui.panels.TAPAttackInfoPanel;
+import de.tor.tribes.ui.renderer.CustomBooleanRenderer;
 import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
-import de.tor.tribes.ui.renderer.FakeCellRenderer;
 import de.tor.tribes.ui.wiz.tap.types.TAPAttackSourceElement;
 import de.tor.tribes.ui.wiz.tap.types.TAPAttackTargetElement;
 import de.tor.tribes.util.Constants;
@@ -91,7 +91,7 @@ public class AttackTargetPanel extends WizardPage {
     AttackTargetPanel() {
         initComponents();
         jVillageTable.setModel(new TAPTargetTableModel());
-        jVillageTable.setDefaultRenderer(Boolean.class, new FakeCellRenderer());
+        jVillageTable.setDefaultRenderer(Boolean.class, new CustomBooleanRenderer(CustomBooleanRenderer.LayoutStyle.FAKE_NOFAKE));
         jXCollapsiblePane1.setLayout(new BorderLayout());
         jVillageTable.setHighlighters(HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B));
         jVillageTable.getTableHeader().setDefaultRenderer(new DefaultTableHeaderRenderer());

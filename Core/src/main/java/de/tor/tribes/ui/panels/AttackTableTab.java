@@ -108,11 +108,11 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
 
         jxAttackTable.setModel(attackModel);
         TableColumnExt drawCol = jxAttackTable.getColumnExt("Einzeichnen");
-        drawCol.setCellRenderer(new DrawNotDrawCellRenderer());
-        drawCol.setCellEditor(new CustomCheckBoxEditor(CustomCheckBoxEditor.LayoutStyle.DRAW_NOTDRAW));
+        drawCol.setCellRenderer(new CustomBooleanRenderer(CustomBooleanRenderer.LayoutStyle.DRAW_NOTDRAW));
+        drawCol.setCellEditor(new CustomCheckBoxEditor(CustomBooleanRenderer.LayoutStyle.DRAW_NOTDRAW));
         TableColumnExt transferCol = jxAttackTable.getColumnExt("Übertragen");
-        transferCol.setCellRenderer(new SentNotSentCellRenderer());
-        transferCol.setCellEditor(new CustomCheckBoxEditor(CustomCheckBoxEditor.LayoutStyle.SENT_NOTSENT));
+        transferCol.setCellRenderer(new CustomBooleanRenderer(CustomBooleanRenderer.LayoutStyle.SENT_NOTSENT));
+        transferCol.setCellEditor(new CustomCheckBoxEditor(CustomBooleanRenderer.LayoutStyle.SENT_NOTSENT));
         
         BufferedImage back = ImageUtils.createCompatibleBufferedImage(5, 5, BufferedImage.BITMASK);
         Graphics2D g = back.createGraphics();

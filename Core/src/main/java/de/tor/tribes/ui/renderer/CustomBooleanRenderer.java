@@ -26,16 +26,35 @@ import org.jdesktop.swingx.renderer.DefaultTableRenderer;
  *
  * @author Torridity
  */
-public class DrawNotDrawCellRenderer extends DefaultTableRenderer {
+public class CustomBooleanRenderer extends DefaultTableRenderer {
+    public enum LayoutStyle {
+        SENT_NOTSENT ("/res/ui/unsent_small.gif", "/res/ui/sent_small.gif"),
+        DRAW_NOTDRAW ("/res/ui/not_draw_small.gif", "/res/ui/draw_small.gif"),
+        VISIBLE_INVISIBLE ("/res/ui/eye_forbidden.png", "/res/ui/eye.png"),
+        FAKE_NOFAKE ("/res/ui/no_fake.png", "/res/ui/fake.png");
+        
+        private final String trueImg;
+        private final String falseImg;
+        LayoutStyle(String falseImg, String trueImg) {
+            this.falseImg = falseImg;
+            this.trueImg = trueImg;
+        }
+        public String trueImg() { return trueImg; }
+        public String falseImg() { return falseImg; }
+    }
 
-    private ImageIcon draw = null;
-    private ImageIcon notDraw = null;
+    private ImageIcon falseImg = null;
+    private ImageIcon trueImg = null;
 
-    public DrawNotDrawCellRenderer() {
+    public CustomBooleanRenderer(LayoutStyle style) {
+        this(style.falseImg(), style.trueImg());
+    }
+    
+    public CustomBooleanRenderer(String falseImgPath, String trueImgPath) {
         super();
         try {
-            draw = new ImageIcon(SentNotSentCellRenderer.class.getResource("/res/ui/draw_small.gif"));
-            notDraw = new ImageIcon(SentNotSentCellRenderer.class.getResource("/res/ui/not_draw_small.gif"));
+            falseImg = new ImageIcon(CustomBooleanRenderer.class.getResource(falseImgPath));
+            trueImg = new ImageIcon(CustomBooleanRenderer.class.getResource(trueImgPath));
         } catch (Exception ignored) {
         }
     }
@@ -45,10 +64,10 @@ public class DrawNotDrawCellRenderer extends DefaultTableRenderer {
         Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
         JLabel label = (JLabel) c;
         label.setText(null);
-        if ((Boolean) value) {
-            label.setIcon(draw);
+        if (value != null && (Boolean) value) {
+            label.setIcon(trueImg);
         } else {
-            label.setIcon(notDraw);
+            label.setIcon(falseImg);
         }
         label.setHorizontalAlignment(SwingConstants.CENTER);
         return label;

@@ -26,8 +26,8 @@ import de.tor.tribes.ui.components.VillageOverviewMapPanel;
 import de.tor.tribes.ui.components.VillageSelectionPanel;
 import de.tor.tribes.ui.models.TAPSourceTableModel;
 import de.tor.tribes.ui.panels.TAPAttackInfoPanel;
+import de.tor.tribes.ui.renderer.CustomBooleanRenderer;
 import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
-import de.tor.tribes.ui.renderer.FakeCellRenderer;
 import de.tor.tribes.ui.renderer.UnitCellRenderer;
 import de.tor.tribes.ui.windows.TroopSplitDialog;
 import de.tor.tribes.ui.wiz.tap.types.TAPAttackSourceElement;
@@ -87,7 +87,7 @@ public class AttackSourcePanel extends WizardPage {
         initComponents();
         jVillageTable.setModel(new TAPSourceTableModel());
         jVillageTable.setDefaultRenderer(UnitHolder.class, new UnitCellRenderer());
-        jVillageTable.setDefaultRenderer(Boolean.class, new FakeCellRenderer());
+        jVillageTable.setDefaultRenderer(Boolean.class, new CustomBooleanRenderer(CustomBooleanRenderer.LayoutStyle.FAKE_NOFAKE));
         jXCollapsiblePane1.setLayout(new BorderLayout());
         jXCollapsiblePane1.add(jInfoScrollPane, BorderLayout.CENTER);
         villageSelectionPanel = new VillageSelectionPanel(new VillageSelectionPanel.VillageSelectionPanelListener() {

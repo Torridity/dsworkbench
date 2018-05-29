@@ -145,7 +145,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
         jSupportsTable.setHighlighters(HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B));
         jSupportsTable.getTableHeader().setDefaultRenderer(new DefaultTableHeaderRenderer());
         jSupportsTable.setDefaultRenderer(Date.class, new ColoredDateCellRenderer());
-        jSupportsTable.setDefaultRenderer(Boolean.class, new SentNotSentCellRenderer());
+        jSupportsTable.setDefaultRenderer(Boolean.class, new CustomBooleanRenderer(CustomBooleanRenderer.LayoutStyle.SENT_NOTSENT));
 
         new SupportCountdownThread().start();
         new SupportColorUpdateThread().start();

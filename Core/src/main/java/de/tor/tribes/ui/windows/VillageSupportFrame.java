@@ -637,12 +637,7 @@ public class VillageSupportFrame extends javax.swing.JFrame implements ActionLis
 
         jSupportTable.setModel(model);
         jSupportTable.getTableHeader().setDefaultRenderer(new DefaultTableHeaderRenderer());
-
-        if (ServerSettings.getSingleton().isMillisArrival()) {
-            jSupportTable.setDefaultRenderer(Date.class, new DateCellRenderer("dd.MM.yy HH:mm:ss.SSS"));
-        } else {
-            jSupportTable.setDefaultRenderer(Date.class, new DateCellRenderer("dd.MM.yy HH:mm:ss"));
-        }
+        jSupportTable.setDefaultRenderer(Date.class, new DateCellRenderer());
         jSupportTable.setHighlighters(HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B));
         jSupportTable.setColumnControlVisible(false);
         jSupportTable.setDefaultRenderer(UnitHolder.class, new UnitCellRenderer());

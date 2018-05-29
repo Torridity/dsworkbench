@@ -15,6 +15,7 @@
  */
 package de.tor.tribes.ui.editors;
 
+import de.tor.tribes.ui.renderer.CustomBooleanRenderer;
 import java.awt.Component;
 import javax.swing.DefaultCellEditor;
 import javax.swing.ImageIcon;
@@ -27,26 +28,12 @@ import javax.swing.SwingConstants;
  * @author extremeCrazyCoder
  */
 public class CustomCheckBoxEditor extends DefaultCellEditor {
-    public enum LayoutStyle {
-        SENT_NOTSENT ("/res/ui/unsent_small.gif", "/res/ui/sent_small.gif"),
-        DRAW_NOTDRAW ("/res/ui/not_draw_small.gif", "/res/ui/draw_small.gif"),
-        VISIBLE_INVISIBLE ("/res/ui/eye_forbidden.png", "/res/ui/eye.png");
-        
-        private final String checkedImg;
-        private final String uncheckedImg;
-        LayoutStyle(String uncheckedImg, String checkedImg) {
-            this.uncheckedImg = uncheckedImg;
-            this.checkedImg = checkedImg;
-        }
-        public String checkedImg() { return checkedImg; }
-        public String uncheckedImg() { return uncheckedImg; }
-    }
     private JCheckBox editorComponent = null;
     private ImageIcon checked = null;
     private ImageIcon unchecked = null;
     
-    public CustomCheckBoxEditor(LayoutStyle layout) {
-        this(layout.uncheckedImg(), layout.checkedImg());
+    public CustomCheckBoxEditor(CustomBooleanRenderer.LayoutStyle layout) {
+        this(layout.falseImg(), layout.trueImg());
     }
     
     /**

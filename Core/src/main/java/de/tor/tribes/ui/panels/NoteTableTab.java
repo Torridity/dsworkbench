@@ -83,7 +83,7 @@ public class NoteTableTab extends javax.swing.JPanel implements ListSelectionLis
 
         jxNoteTable.setColumnControlVisible(true);
         jxNoteTable.setDefaultRenderer(String.class, new BBCellRenderer());
-        jxNoteTable.setDefaultRenderer(Boolean.class, new VisibilityCellRenderer());
+        jxNoteTable.setDefaultRenderer(Boolean.class, new CustomBooleanRenderer(CustomBooleanRenderer.LayoutStyle.VISIBLE_INVISIBLE));
         jxNoteTable.setDefaultRenderer(Date.class, new DateCellRenderer());
         jxNoteTable.setDefaultEditor(String.class, new BBPanelCellEditor(null));
 

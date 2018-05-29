@@ -83,7 +83,7 @@ public class ResourceDistributorFinishPanel extends WizardPage {
         jTransportsTable.setModel(new REDFinalTransportsTableModel());
         jTransportsTable.getTableHeader().setDefaultRenderer(new DefaultTableHeaderRenderer());
         jTransportsTable.setHighlighters(HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B));
-        jTransportsTable.setDefaultRenderer(Boolean.class, new SentNotSentCellRenderer());
+        jTransportsTable.setDefaultRenderer(Boolean.class, new CustomBooleanRenderer(CustomBooleanRenderer.LayoutStyle.SENT_NOTSENT));
         jTransportsTable.setDefaultRenderer(Integer.class, new NumberFormatCellRenderer());
 
         jDistributionTable.setModel(new REDFinalDistributionTableModel());

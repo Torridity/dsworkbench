@@ -21,9 +21,9 @@ import de.tor.tribes.ui.editors.ColorChooserCellEditor;
 import de.tor.tribes.ui.editors.CustomCheckBoxEditor;
 import de.tor.tribes.ui.models.MarkerTableModel;
 import de.tor.tribes.ui.renderer.ColorCellRenderer;
+import de.tor.tribes.ui.renderer.CustomBooleanRenderer;
 import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
 import de.tor.tribes.ui.renderer.MarkerPanelCellRenderer;
-import de.tor.tribes.ui.renderer.VisibilityCellRenderer;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.ImageUtils;
 import de.tor.tribes.util.JOptionPaneHelper;
@@ -95,8 +95,8 @@ public class MarkerTableTab extends javax.swing.JPanel implements ListSelectionL
         markerModel = new MarkerTableModel(MarkerManager.DEFAULT_GROUP);
         jxMarkerTable.setModel(markerModel);
         TableColumnExt visibilityCol = jxMarkerTable.getColumnExt("Sichtbar");
-        visibilityCol.setCellRenderer(new VisibilityCellRenderer());
-        visibilityCol.setCellEditor(new CustomCheckBoxEditor(CustomCheckBoxEditor.LayoutStyle.VISIBLE_INVISIBLE));
+        visibilityCol.setCellRenderer(new CustomBooleanRenderer(CustomBooleanRenderer.LayoutStyle.VISIBLE_INVISIBLE));
+        visibilityCol.setCellEditor(new CustomCheckBoxEditor(CustomBooleanRenderer.LayoutStyle.VISIBLE_INVISIBLE));
 
         BufferedImage back = ImageUtils.createCompatibleBufferedImage(5, 5, BufferedImage.BITMASK);
         Graphics2D g = back.createGraphics();

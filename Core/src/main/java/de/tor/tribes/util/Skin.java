@@ -219,7 +219,7 @@ public class Skin {
                 }
             }
         } catch (IOException ioe) {
-            throw new Exception("Fehler beim laden des Grafikpaketes");
+            throw new Exception("Fehler beim laden des Grafikpaketes", ioe);
         } catch (Exception e) {
             throw new Exception("Grafikpaket ungültig (" + e.getMessage() + ")");
         }

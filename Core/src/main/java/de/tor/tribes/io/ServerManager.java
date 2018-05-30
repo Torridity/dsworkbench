@@ -88,7 +88,7 @@ public class ServerManager {
                 logger.info("Read " + regCnt + " regions and " + cnt + " servers");
             }
         } catch (Throwable e) {
-            logger.warn("Failed to read servers. Skipping it.", e);
+            logger.error("Failed to read servers. Skipping it.", e);
         } finally {
             if (r != null) {
                 try {

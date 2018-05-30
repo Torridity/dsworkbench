@@ -176,11 +176,11 @@ public class TroopHelper {
                 }
             }
         }
-        if (result != null && result.hasUnits()) { // Only add spies if there are farm units
-            UnitHolder spy = DataHolder.getSingleton().getUnitByPlainName("spy");
-            Integer amountSpies = configTroops.getAmountForUnit(spy, pTroops.getVillage());
-            result.setAmountForUnit(spy, amountSpies);
-        }
+        // add Spies
+        UnitHolder spy = DataHolder.getSingleton().getUnitByPlainName("spy");
+        Integer amountSpies = configTroops.getAmountForUnit(spy, pTroops.getVillage());
+        result.setAmountForUnit(spy, amountSpies);
+        
         return result;
     }
 

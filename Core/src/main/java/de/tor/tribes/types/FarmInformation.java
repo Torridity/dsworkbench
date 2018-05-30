@@ -516,42 +516,44 @@ public class FarmInformation extends ManageableType {
      * Reset farming troops and status (READY or NOT_SPYED)
      */
     public void resetFarmStatus() {
-        farmSourceId = -1;
-        farmTroop = null;
-        farmTroopArrive = -1;
-        lastResult = FARM_RESULT.UNKNOWN;
-        lastSendInformation = null;
-        woodInStorage = 0;
-        clayInStorage = 0;
-        ironInStorage = 0;
-        if (!inactive) {
-            if (spyed) {
-                setStatus(FARM_STATUS.READY);
-            } else {
-                setStatus(FARM_STATUS.NOT_SPYED);
-                // now it is time to check updates in building levels
-                logger.debug("Checking building updates");
-                guessBuildings();
+        if (this.getStatus().equals(FarmInformation.FARM_STATUS.READY)) {
+            // only reset, if reset is needed
+        } else {
+            farmSourceId = -1;
+            farmTroop = null;
+            farmTroopArrive = -1;
+            lastResult = FARM_RESULT.UNKNOWN;
+            lastSendInformation = null;
+            if (!inactive) {
+                if (spyed) {
+                    setStatus(FARM_STATUS.READY);
+                } else {
+                    setStatus(FARM_STATUS.NOT_INITIATED);
+                    setInitialResources();
+                    // now it is time to check updates in building levels
+                }
             }
         }
     }
 
     /**
-     * Reset siege troops and status (READY or )
+     * Reset siege troops and status (atHome or final_farm)
      */
     public void resetSiegeStatus() {
-        siegeTroop = null;
-        siegeTroopArrival = -1;
-        lastResult = FARM_RESULT.UNKNOWN;
-        if (!inactive || !isFinal) {
-            if (spyed) {
+        if (this.getSiegeStatus().equals(FarmInformation.Siege_STATUS.atHome)) {
+            // only reset, if reset is needed
+        } else {
+            siegeTroop = null;
+            siegeTroopArrival = -1;
+            lastResult = FARM_RESULT.UNKNOWN;
+            if (!inactive && !isFinal) {
                 setSiegeStatus(Siege_STATUS.atHome);
                 if (mainLevel == 1 && smithyLevel == 0 && barracksLevel == 0 && stableLevel == 0 && workshopLevel == 0
                         && marketLevel == 0 && wallLevel == 0 && this.getVillage().getPoints() >= 500) {
                     setSiegeStatus(Siege_STATUS.final_farm);
                 }
             }
-        }
+        }    
     }
 
     /**
@@ -574,7 +576,6 @@ public class FarmInformation extends ManageableType {
                     + lastReport + " > " + pReport.getTimestamp() + ")");
             return;
         }
-
         if (pReport.wasLostEverything() || pReport.hasSurvivedDefenders()) {
             logger.debug("Changing farm status to due to total loss or found troops");
             setStatus(FARM_STATUS.TROOPS_FOUND);
@@ -644,6 +645,7 @@ public class FarmInformation extends ManageableType {
             // set wall destruction (works also without spying)
             wallLevel = pReport.getWallAfter();
         }
+        
     }
 
     /**
@@ -761,9 +763,7 @@ public class FarmInformation extends ManageableType {
                 final HashMap<Village, TroopAmountFixed> carriageMap = new HashMap<>();
                 List<Village> villages = new LinkedList<>();
 
-                for (Village selectedVillage : DSWorkbenchFarmManager.activeFarmGroup) { // Goes through all the
-                                                                                            // villages that can farm
-                                                                                            // this village
+                for (Village selectedVillage : DSWorkbenchFarmManager.getSelectedFarmGroup()) { 
                     TroopAmountFixed units;
                     units = new TroopAmountFixed();
                     VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(selectedVillage,
@@ -870,6 +870,20 @@ public class FarmInformation extends ManageableType {
                         // send troops and update
                         if (BrowserInterface.sendTroops(selection, getVillage(), farmers)) {
                             // if (true) {
+                            if (pConfig.equals(DSWorkbenchFarmManager.FARM_CONFIGURATION.C)) {
+                                int farmCap = farmers.getFarmCapacity();
+                                
+                                int pwood = getWoodInStorage(System.currentTimeMillis()
+                                        + DSCalculator.calculateMoveTimeInMillis(selection, getVillage(), farmers.getSpeed()));
+                                int pclay = getClayInStorage(System.currentTimeMillis()
+                                        + DSCalculator.calculateMoveTimeInMillis(selection, getVillage(), farmers.getSpeed()));
+                                int piron = getIronInStorage(System.currentTimeMillis()
+                                        + DSCalculator.calculateMoveTimeInMillis(selection, getVillage(), farmers.getSpeed()));
+                                
+                                setExtraResources(Math.max(pwood - farmCap * pwood/(pwood + pclay + piron), 0), 
+                                        Math.max(pclay - farmCap * pclay/(pwood + pclay + piron),0) , 
+                                                Math.max(piron - farmCap * piron/(pwood + pclay + piron),0));
+                            }
                             TroopHelper.sendTroops(selection, farmers);
                             if (pConfig.equals(DSWorkbenchFarmManager.FARM_CONFIGURATION.K)) {
                                 siegeTroop = farmers;

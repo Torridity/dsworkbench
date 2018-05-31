@@ -959,9 +959,9 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
             int row = rowIndex.get(i);
             int modelRow = jFarmTable.convertRowIndexToModel(row);
 
-            if ((f.getSiegeStatus().equals(FarmInformation.Siege_STATUS.BOTH_onWay)
-                    || f.getSiegeStatus().equals(FarmInformation.Siege_STATUS.CATA_onWay)
-                    || f.getSiegeStatus().equals(FarmInformation.Siege_STATUS.RAM_onWay))
+            if ((f.getSiegeStatus().equals(FarmInformation.Siege_STATUS.BOTH_ON_WAY)
+                    || f.getSiegeStatus().equals(FarmInformation.Siege_STATUS.CATA_ON_WAY)
+                    || f.getSiegeStatus().equals(FarmInformation.Siege_STATUS.RAM_ON_WAY))
                     && pConfig.equals(DSWorkbenchFarmManager.FARM_CONFIGURATION.K)) {
                 siegeOnWay++;
                 jFarmTable.getSelectionModel().removeSelectionInterval(row, row);
@@ -969,7 +969,7 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
                     jFarmTable.getSelectionModel().addSelectionInterval(rowIndex.get(i + 1), rowIndex.get(i + 1));
                     jFarmTable.requestFocus();
                 }
-            } else if (f.getSiegeStatus().equals(FarmInformation.Siege_STATUS.final_farm)
+            } else if (f.getSiegeStatus().equals(FarmInformation.Siege_STATUS.FINAL_FARM)
                     && pConfig.equals(DSWorkbenchFarmManager.FARM_CONFIGURATION.K)) {
                 farmFinal++;
                 jFarmTable.getSelectionModel().removeSelectionInterval(row, row);

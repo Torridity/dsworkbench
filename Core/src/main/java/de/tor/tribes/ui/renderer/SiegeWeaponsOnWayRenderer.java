@@ -44,19 +44,19 @@ public class SiegeWeaponsOnWayRenderer extends DefaultTableRenderer{
             
             FarmInformation.Siege_STATUS siege_status = (FarmInformation.Siege_STATUS) value;
             switch (siege_status) {  
-                case BOTH_onWay:
+                case BOTH_ON_WAY:
                     label.setIcon(BOTH_onWay);
                     break;  
-                case CATA_onWay:
+                case CATA_ON_WAY:
                     label.setIcon(CATA_onWay);
                     break;  
-                case RAM_onWay:
+                case RAM_ON_WAY:
                     label.setIcon(RAM_onWay);
                     break;  
-                case Not_initiated:
+                case NOT_INITIATED:
                     label.setIcon(Not_initiated);
                     break;
-                case final_farm:
+                case FINAL_FARM:
                     label.setIcon(final_farm);
                     break;
                 default:

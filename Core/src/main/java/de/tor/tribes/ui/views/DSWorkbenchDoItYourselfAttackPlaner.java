@@ -740,7 +740,7 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
                 a.setUnit(newUnit);
             }
         } else if (evt.getSource() == jAdeptTypeButton) {
-            Integer newType = (Integer) jAttackTypeComboBox.getSelectedItem();
+            StandardAttack newType = (StandardAttack) jAttackTypeComboBox.getSelectedItem();
             if (newType == null) {
                 showError("Kein Angriffstyp ausgewählt");
                 return;
@@ -749,7 +749,7 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
             for (int r = rows.length - 1; r >= 0; r--) {
                 int row = jAttackTable.convertRowIndexToModel(rows[r]);
                 Attack a = (Attack) AttackManager.getSingleton().getDoItYourselfAttacks().get(row);
-                a.setType(newType);
+                a.setType(newType.getIcon());
                 a.setTroopsByType();
             }
         }

@@ -31,7 +31,8 @@ public class CustomBooleanRenderer extends DefaultTableRenderer {
         SENT_NOTSENT ("/res/ui/unsent_small.gif", "/res/ui/sent_small.gif"),
         DRAW_NOTDRAW ("/res/ui/not_draw_small.gif", "/res/ui/draw_small.gif"),
         VISIBLE_INVISIBLE ("/res/ui/eye_forbidden.png", "/res/ui/eye.png"),
-        FAKE_NOFAKE ("/res/ui/no_fake.png", "/res/ui/fake.png");
+        FAKE_NOFAKE ("/res/ui/no_fake.png", "/res/ui/fake.png"),
+        RES_IN_STORAGE ("/res/nores.png", "/res/res.png");
         
         private final String trueImg;
         private final String falseImg;

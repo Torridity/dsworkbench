@@ -26,7 +26,7 @@ import de.tor.tribes.ui.models.REDExtendedMerchantTableModel;
 import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
 import de.tor.tribes.ui.renderer.NumberFormatCellRenderer;
 import de.tor.tribes.ui.renderer.StorageCellRenderer;
-import de.tor.tribes.ui.renderer.TradeDirectionCellRenderer;
+import de.tor.tribes.ui.renderer.EnumImageCellRenderer;
 import de.tor.tribes.util.*;
 import java.awt.BorderLayout;
 import java.awt.event.*;
@@ -79,7 +79,7 @@ public class ResourceDistributorSettingsPanel extends WizardPage {
         jDataTable.getTableHeader().setDefaultRenderer(new DefaultTableHeaderRenderer());
         jDataTable.setHighlighters(HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B));
         jDataTable.setDefaultRenderer(StorageStatus.class, new StorageCellRenderer());
-        jDataTable.setDefaultRenderer(VillageMerchantInfo.Direction.class, new TradeDirectionCellRenderer());
+        jDataTable.setDefaultRenderer(VillageMerchantInfo.Direction.class, new EnumImageCellRenderer(EnumImageCellRenderer.LayoutStyle.TradeDirection));
         jDataTable.setDefaultRenderer(Integer.class, new NumberFormatCellRenderer());
         TableSortController sorter = (TableSortController) jDataTable.getRowSorter();
         SlashComparator splitComparator = new SlashComparator();

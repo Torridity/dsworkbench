@@ -114,6 +114,14 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
         return STANDARD_TEMPLATE;
     }
     
+    public enum status {
+        LOST_NOTHING,
+        WON_WITH_LOSSES,
+        LOST_EVERYTHING,
+        SPY,
+        HIDDEN
+    }
+    
     private Logger logger = Logger.getLogger("FightReport");
     
     private boolean won = false;
@@ -1131,5 +1139,13 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
 
     public int getSpyLevel() {
         return spyLevel;
+    }
+    
+    public status getStatus() {
+        if (areAttackersHidden()) return status.HIDDEN;
+        if (isSpyReport()) return status.SPY;
+        if (wasLostEverything()) return status.LOST_EVERYTHING;
+        if (wasLostNothing()) return status.LOST_NOTHING;
+        return status.WON_WITH_LOSSES;
     }
 }

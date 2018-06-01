@@ -30,7 +30,7 @@ import org.apache.log4j.Logger;
 public class ReportManagerTableModel extends AbstractTableModel {
 
     private String sSet = null;
-    private Class[] types = new Class[]{FightReport.class, Date.class, Tribe.class, Village.class, Tribe.class, Village.class, Integer.class, Byte.class};
+    private Class[] types = new Class[]{FightReport.status.class, Date.class, Tribe.class, Village.class, Tribe.class, Village.class, Integer.class, Byte.class};
     private String[] colNames = new String[]{"Status", "Gesendet", "Angreifer", "Herkunft", "Verteidiger", "Ziel", "Typ", "Sonstiges"};
     private static Logger logger = Logger.getLogger("ReportTableModel");
 
@@ -80,7 +80,7 @@ public class ReportManagerTableModel extends AbstractTableModel {
             FightReport r = (FightReport) ReportManager.getSingleton().getAllElements(sSet).get(rowIndex);
             switch (columnIndex) {
                 case 0:
-                    return r;
+                    return r.getStatus();
                 case 1:
                     return new Date(r.getTimestamp());//new SimpleDateFormat("dd.MM.yy HH:mm").format(new Date(r.getTimestamp()));
                 case 2:

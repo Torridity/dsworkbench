@@ -90,7 +90,7 @@ public class ResourceDistributorFinishPanel extends WizardPage {
         jDistributionTable.getTableHeader().setDefaultRenderer(new DefaultTableHeaderRenderer());
         jDistributionTable.setHighlighters(HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B));
         jDistributionTable.setDefaultRenderer(StorageStatus.class, new StorageCellRenderer());
-        jDistributionTable.setDefaultRenderer(VillageMerchantInfo.Direction.class, new TradeDirectionCellRenderer());
+        jDistributionTable.setDefaultRenderer(VillageMerchantInfo.Direction.class, new EnumImageCellRenderer(EnumImageCellRenderer.LayoutStyle.TradeDirection));
         KeyStroke delete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, false);
         jTransportsTable.registerKeyboardAction(new ActionListener() {
 

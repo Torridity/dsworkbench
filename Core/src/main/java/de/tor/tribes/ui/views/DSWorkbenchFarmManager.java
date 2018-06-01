@@ -103,13 +103,13 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
         jFarmTable.setModel(new FarmTableModel());
         jFarmTable.getTableHeader().setDefaultRenderer(new DefaultTableHeaderRenderer());
         jFarmTable.setHighlighters(HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B));
-        jFarmTable.setDefaultRenderer(Boolean.class, new ResourcesInStorageCellRenderer());
+        jFarmTable.setDefaultRenderer(Boolean.class, new CustomBooleanRenderer(CustomBooleanRenderer.LayoutStyle.RES_IN_STORAGE));
         jFarmTable.setDefaultRenderer(Date.class, new DateCellRenderer());
         jFarmTable.setDefaultRenderer(Float.class, new PercentCellRenderer());
-        jFarmTable.setDefaultRenderer(FarmInformation.FARM_STATUS.class, new FarmStatusCellRenderer());
-        jFarmTable.setDefaultRenderer(FarmInformation.FARM_RESULT.class, new FarmResultRenderer());
+        jFarmTable.setDefaultRenderer(FarmInformation.FARM_STATUS.class, new EnumImageCellRenderer(EnumImageCellRenderer.LayoutStyle.FarmStatus));
+        jFarmTable.setDefaultRenderer(FarmInformation.FARM_RESULT.class, new EnumImageCellRenderer(EnumImageCellRenderer.LayoutStyle.FarmResult));
         jFarmTable.setDefaultRenderer(StorageStatus.class, new StorageCellRenderer());
-        jFarmTable.setDefaultRenderer(FarmInformation.Siege_STATUS.class, new SiegeWeaponsOnWayRenderer());
+        jFarmTable.setDefaultRenderer(FarmInformation.Siege_STATUS.class, new EnumImageCellRenderer(EnumImageCellRenderer.LayoutStyle.SiegeStatus));
         jFarmTable.setColumnControlVisible(true);
         jFarmTable.setSortsOnUpdates(false);
         FarmManager.getSingleton().addManagerListener(DSWorkbenchFarmManager.this);

@@ -114,7 +114,7 @@ public class ReportTableTab extends javax.swing.JPanel implements ListSelectionL
         reportModel = new ReportManagerTableModel(ReportManager.DEFAULT_GROUP);
         jxReportTable.setModel(reportModel);
         TableColumnExt statCol = jxReportTable.getColumnExt("Status");
-        statCol.setCellRenderer(new FightReportCellRenderer());
+        statCol.setCellRenderer(new EnumImageCellRenderer(EnumImageCellRenderer.LayoutStyle.FightReportStatus));
         TableColumnExt miscCol = jxReportTable.getColumnExt("Sonstiges");
         miscCol.setCellRenderer(new ReportWallCataCellRenderer());
         BufferedImage back = ImageUtils.createCompatibleBufferedImage(5, 5, BufferedImage.BITMASK);

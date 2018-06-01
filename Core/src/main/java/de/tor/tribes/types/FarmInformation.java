@@ -55,12 +55,12 @@ public class FarmInformation extends ManageableType {
         READY, NOT_SPYED, FARMING, REPORT_EXPECTED, TROOPS_FOUND, CONQUERED, LOCKED, NOT_INITIATED
     }
 
-    public enum Siege_STATUS {
+    public enum SIEGE_STATUS {
 
         FINAL_FARM, BOTH_ON_WAY, RAM_ON_WAY, CATA_ON_WAY, AT_HOME, NOT_INITIATED
     }
 
-    private Siege_STATUS siegeStatus = Siege_STATUS.NOT_INITIATED;
+    private SIEGE_STATUS siegeStatus = SIEGE_STATUS.NOT_INITIATED;
     private FARM_STATUS status = FARM_STATUS.NOT_INITIATED;
     private boolean justCreated = false;
     private boolean spyed = false;
@@ -540,17 +540,17 @@ public class FarmInformation extends ManageableType {
      * Reset siege troops and status (atHome or final_farm)
      */
     public void resetSiegeStatus() {
-        if (this.getSiegeStatus().equals(FarmInformation.Siege_STATUS.AT_HOME)) {
+        if (this.getSiegeStatus().equals(FarmInformation.SIEGE_STATUS.AT_HOME)) {
             // only reset, if reset is needed
         } else {
             siegeTroop = null;
             siegeTroopArrival = -1;
             lastResult = FARM_RESULT.UNKNOWN;
             if (!inactive && !isFinal) {
-                setSiegeStatus(Siege_STATUS.AT_HOME);
+                setSiegeStatus(SIEGE_STATUS.AT_HOME);
                 if (mainLevel == 1 && smithyLevel == 0 && barracksLevel == 0 && stableLevel == 0 && workshopLevel == 0
                         && marketLevel == 0 && wallLevel == 0 && this.getVillage().getPoints() >= 500) {
-                    setSiegeStatus(Siege_STATUS.FINAL_FARM);
+                    setSiegeStatus(SIEGE_STATUS.FINAL_FARM);
                 }
             }
         }    
@@ -891,13 +891,13 @@ public class FarmInformation extends ManageableType {
                                         .calculateMoveTimeInMillis(selection, getVillage(), siegeTroop.getSpeed());
                                 if(siegeTroop.getAmountForUnit("catapult") > 0) {
                                     if(siegeTroop.getAmountForUnit("ram") > 0) {
-                                        setSiegeStatus(Siege_STATUS.BOTH_ON_WAY);
+                                        setSiegeStatus(SIEGE_STATUS.BOTH_ON_WAY);
                                     } else {
-                                        setSiegeStatus(Siege_STATUS.CATA_ON_WAY);
+                                        setSiegeStatus(SIEGE_STATUS.CATA_ON_WAY);
                                     }
                                 } else {
                                     if(siegeTroop.getAmountForUnit("ram") > 0) {
-                                        setSiegeStatus(Siege_STATUS.RAM_ON_WAY);
+                                        setSiegeStatus(SIEGE_STATUS.RAM_ON_WAY);
                                     } else {
                                         logger.debug("Code should not get here!");
                                     }
@@ -960,7 +960,7 @@ public class FarmInformation extends ManageableType {
     /**
      * Set the current siege status
      */
-    public void setSiegeStatus(Siege_STATUS siege_status) {
+    public void setSiegeStatus(SIEGE_STATUS siege_status) {
         logger.debug(
                 "Changing siege status for " + getVillage() + " from " + this.siegeStatus + " to " + siege_status);
         this.siegeStatus = siege_status;
@@ -977,7 +977,7 @@ public class FarmInformation extends ManageableType {
     /**
      * Get the current siege status
      */
-    public Siege_STATUS getSiegeStatus() {
+    public SIEGE_STATUS getSiegeStatus() {
         return siegeStatus;
     }
 

@@ -266,17 +266,17 @@ public class ReportParser implements SilentParserInterface {
                 }
             }
 
-            for(int i = 0; i < Constants.buildingNames.length; i++) {
-                if (line.contains(getVariable("report.buildings." + Constants.buildingNames[i]))) {
-                    logger.debug("Parse " + Constants.buildingNames[i]);
+            for(int i = 0; i < Constants.BUILDING_NAMES.length; i++) {
+                if (line.contains(getVariable("report.buildings." + Constants.BUILDING_NAMES[i]))) {
+                    logger.debug("Parse " + Constants.BUILDING_NAMES[i]);
                     int val = parseIntFromReportTable(line, getVariable(
-                            "report.buildings." + Constants.buildingNames[i]));
+                            "report.buildings." + Constants.BUILDING_NAMES[i]));
                     if (val != -1) {
-                        logger.debug("Got " + Constants.buildingNames[i] + " level " + val);
+                        logger.debug("Got " + Constants.BUILDING_NAMES[i] + " level " + val);
                         result.setBuilding(i, val);
                         break;
                     } else {
-                        logger.debug("No valid " + Constants.buildingNames[i] + " level from " + line);
+                        logger.debug("No valid " + Constants.BUILDING_NAMES[i] + " level from " + line);
                     }
                 }
             }
@@ -469,8 +469,8 @@ public class ReportParser implements SilentParserInterface {
     }
 
     private int getBuildingId(String translatedBuilding) {
-        for(int i = 0; i < Constants.buildingNames.length; i++) {
-            if(translatedBuilding.equals(getVariable("report.buildings." + Constants.buildingNames[i])))
+        for(int i = 0; i < Constants.BUILDING_NAMES.length; i++) {
+            if(translatedBuilding.equals(getVariable("report.buildings." + Constants.BUILDING_NAMES[i])))
                 return i;
         }
         logger.error("Could not find Building " + translatedBuilding);

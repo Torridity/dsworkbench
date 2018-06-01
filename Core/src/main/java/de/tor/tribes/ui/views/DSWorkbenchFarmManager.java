@@ -137,7 +137,7 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
         jFarmTable.setDefaultRenderer(FarmInformation.FARM_STATUS.class, new FarmStatusCellRenderer());
         jFarmTable.setDefaultRenderer(FarmInformation.FARM_RESULT.class, new FarmResultRenderer());
         jFarmTable.setDefaultRenderer(StorageStatus.class, new StorageCellRenderer());
-        jFarmTable.setDefaultRenderer(FarmInformation.Siege_STATUS.class, new SiegeWeaponsOnWayRenderer());
+        jFarmTable.setDefaultRenderer(FarmInformation.SIEGE_STATUS.class, new SiegeWeaponsOnWayRenderer());
         jFarmTable.setColumnControlVisible(true);
         jFarmTable.setSortsOnUpdates(false);
         FarmManager.getSingleton().addManagerListener(DSWorkbenchFarmManager.this);
@@ -959,9 +959,9 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
             int row = rowIndex.get(i);
             int modelRow = jFarmTable.convertRowIndexToModel(row);
 
-            if ((f.getSiegeStatus().equals(FarmInformation.Siege_STATUS.BOTH_ON_WAY)
-                    || f.getSiegeStatus().equals(FarmInformation.Siege_STATUS.CATA_ON_WAY)
-                    || f.getSiegeStatus().equals(FarmInformation.Siege_STATUS.RAM_ON_WAY))
+            if ((f.getSiegeStatus().equals(FarmInformation.SIEGE_STATUS.BOTH_ON_WAY)
+                    || f.getSiegeStatus().equals(FarmInformation.SIEGE_STATUS.CATA_ON_WAY)
+                    || f.getSiegeStatus().equals(FarmInformation.SIEGE_STATUS.RAM_ON_WAY))
                     && pConfig.equals(DSWorkbenchFarmManager.FARM_CONFIGURATION.K)) {
                 siegeOnWay++;
                 jFarmTable.getSelectionModel().removeSelectionInterval(row, row);
@@ -969,7 +969,7 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
                     jFarmTable.getSelectionModel().addSelectionInterval(rowIndex.get(i + 1), rowIndex.get(i + 1));
                     jFarmTable.requestFocus();
                 }
-            } else if (f.getSiegeStatus().equals(FarmInformation.Siege_STATUS.FINAL_FARM)
+            } else if (f.getSiegeStatus().equals(FarmInformation.SIEGE_STATUS.FINAL_FARM)
                     && pConfig.equals(DSWorkbenchFarmManager.FARM_CONFIGURATION.K)) {
                 farmFinal++;
                 jFarmTable.getSelectionModel().removeSelectionInterval(row, row);

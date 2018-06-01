@@ -42,7 +42,7 @@ public class SiegeWeaponsOnWayRenderer extends DefaultTableRenderer{
 
             label.setHorizontalAlignment(SwingConstants.CENTER);
             
-            FarmInformation.Siege_STATUS siege_status = (FarmInformation.Siege_STATUS) value;
+            FarmInformation.SIEGE_STATUS siege_status = (FarmInformation.SIEGE_STATUS) value;
             switch (siege_status) {  
                 case BOTH_ON_WAY:
                     label.setIcon(BOTH_onWay);

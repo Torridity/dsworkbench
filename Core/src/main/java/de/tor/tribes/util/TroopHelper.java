@@ -37,36 +37,35 @@ import java.util.*;
 public class TroopHelper {
 
     private final static Logger logger = Logger.getLogger("TroopHelper");
-    final static int[] KatasNeededOther = new int[] { 0, 2, 6, 10, 15, 21, 28, 36, 45, 56, 68, 82, 98, 115, 136, 159,
+    
+    final static int[] CATAS_NEEDED_OTHER = new int[] { 0, 2, 6, 10, 15, 21, 28, 36, 45, 56, 68, 82, 98, 115, 136, 159,
             185, 215, 248, 286, 328, 376, 430, 490, 558, 634, 720, 815, 922, 1041, 1175 };
-    final static int[] cataMinDmg = new int[] { 0, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4, 5, 5, 6, 6, 6, 7, 8, 8, 9, 10, 10,
+    final static int[] CATA_MIN_DMG = new int[] { 0, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4, 5, 5, 6, 6, 6, 7, 8, 8, 9, 10, 10,
             11, 12, 13, 15, 16, 17, 19, 20 };
-    final static int[] KatasNeededHG = new int[] { 0, 0, 2, 6, 11, 17, 23, 31, 39, 49, 61, 74, 89, 106, 126, 148, 173,
+    final static int[] CATAS_NEEDED_MAIN = new int[] { 0, 0, 2, 6, 11, 17, 23, 31, 39, 49, 61, 74, 89, 106, 126, 148, 173,
             202, 234, 270, 312, 358, 410, 469, 534, 608, 691, 784, 888, 1005, 1135 };
-    final static int[] ramsNeeded = new int[] { 0, 2, 4, 7, 10, 14, 19, 24, 30, 37, 46, 55, 65, 77, 91, 106, 124, 143,
+    final static int[] RAMS_NEEDED = new int[] { 0, 2, 4, 7, 10, 14, 19, 24, 30, 37, 46, 55, 65, 77, 91, 106, 124, 143,
             166, 191, 219 };
-    final static int[] minDmgWall = new int[] { 0, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6 };
+    final static int[] RAM_MIN_DMG = new int[] { 0, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6 };
 
     public static void addNeededCatas(TroopAmountFixed units, VillageTroopsHolder pTroops, FarmInformation pInfo) {
         Village source = pTroops.getVillage();
         TroopAmountFixed backupUnits = DSWorkbenchFarmManager.getSingleton().getBackupUnits(source);
         String buildingname = DSWorkbenchFarmManager.getSingleton().getCataTarget();
         int BuildingLevel = pInfo.getCataTargetBuildingLevel(buildingname);
-        logger.debug("The building target is " + buildingname + " with level " + BuildingLevel);
         int catapults = pTroops.getTroops().getAmountForUnit("catapult") - backupUnits.getAmountForUnit("catapult");
 
-        if (catapults >= cataMinDmg[BuildingLevel]) { // If enough catas to down building by at least one ... Do it
+        if (catapults >= CATA_MIN_DMG[BuildingLevel]) { // If enough catas to down building by at least one ... Do it
             switch (buildingname) {
             case "main":
                 if (BuildingLevel > 1) {
-                    int needed = KatasNeededHG[BuildingLevel];
+                    int needed = CATAS_NEEDED_MAIN[BuildingLevel];
                     int using = Math.min(needed, catapults);
                     units.setAmountForUnit("catapult", using);
                     logger.debug("Check amount: " + units.getAmountForUnit("axe") + " / "
                             + units.getAmountForUnit("catapult"));
                 } else { // Do not send attack if no Catas are needed
                     units.fill(0);
-                    logger.debug("Kick units, because main is level 1");
                 }
                 break;
             case "none":
@@ -78,20 +77,16 @@ public class TroopHelper {
                 break;
             default:
                 if (BuildingLevel > 0) {
-                    int needed = KatasNeededOther[BuildingLevel];
+                    int needed = CATAS_NEEDED_OTHER[BuildingLevel];
                     int using = Math.min(needed, catapults);
                     units.setAmountForUnit("catapult", using);
-                    logger.debug("Check amount: " + units.getAmountForUnit("axe") + " / "
-                            + units.getAmountForUnit("catapult"));
                 } else { // Do not send attack if no Catas are needed
                     units.fill(0);
-                    logger.debug("Kick units, because building is level 0");
                 }
                 break;
             }
         } else { // No attack if not enough catas to bring down the building by 1
             units.fill(0);
-            logger.debug("Kick all units, because no katas are available");
         }
     }
 
@@ -103,13 +98,13 @@ public class TroopHelper {
             UnitHolder ram = DataHolder.getSingleton().getUnitByPlainName("ram");
             int rams = pTroops.getTroops().getAmountForUnit(ram) - backupUnits.getAmountForUnit(ram);
             if (rams > 1) {
-                int needed = ramsNeeded[pInfo.getWallLevel()];
+                int needed = RAMS_NEEDED[pInfo.getWallLevel()];
                 int using = Math.min(needed, rams);
                 units.setAmountForUnit(ram, using);
             }
             // If enough rams to lower wall by 1 ... send attack
             // else ... clear attack
-            if (rams < minDmgWall[pInfo.getWallLevel()]) {
+            if (rams < RAM_MIN_DMG[pInfo.getWallLevel()]) {
                 units.fill(0); 
             }
         }

@@ -40,7 +40,7 @@ public class Constants {
     public final static Hashtable<String, Integer> LAYERS = new Hashtable<>();
     public final static int LAYER_COUNT = 10;
     public final static boolean DEBUG = false;
-    public static final String[] buildingNames = {"main", "barracks", "stable", "workshop",
+    public static final String[] BUILDING_NAMES = {"main", "barracks", "stable", "workshop",
         "church", "watchtower", "academy", "smithy", "rally", "statue", "market", "timber",
         "clay", "iron", "farm", "storage", "hide", "wall"};
     

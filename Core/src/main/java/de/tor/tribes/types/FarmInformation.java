@@ -51,11 +51,11 @@ public class FarmInformation extends ManageableType {
         READY, NOT_SPYED, FARMING, REPORT_EXPECTED, TROOPS_FOUND, CONQUERED, LOCKED, NOT_INITIATED
     }
 
-    public enum Siege_STATUS {
-        final_farm, BOTH_onWay, RAM_onWay, CATA_onWay, atHome, Not_initiated
+    public enum SIEGE_STATUS {
+        FINAL_FARM, BOTH_ON_WAY, RAM_ON_WAY, CATA_ON_WAY, AT_HOME, NOT_INITIATED
     }
 
-    private Siege_STATUS siege_status = Siege_STATUS.Not_initiated;
+    private SIEGE_STATUS siegeStatus = SIEGE_STATUS.NOT_INITIATED;
     private FARM_STATUS status = FARM_STATUS.NOT_INITIATED;
     private boolean justCreated = false;
     private boolean spyed = false;
@@ -502,42 +502,44 @@ public class FarmInformation extends ManageableType {
      * Reset farming troops and status (READY or NOT_SPYED)
      */
     public void resetFarmStatus() {
-        farmSourceId = -1;
-        farmTroop = null;
-        farmTroopArrive = -1;
-        lastResult = FARM_RESULT.UNKNOWN;
-        lastSendInformation = null;
-        woodInStorage = 0;
-        clayInStorage = 0;
-        ironInStorage = 0;
-        if (!inactive) {
-            if (spyed) {
-                setStatus(FARM_STATUS.READY);
-            } else {
-                setStatus(FARM_STATUS.NOT_SPYED);
-                // now it is time to check updates in building levels
-                logger.debug("Checking building updates");
-                guessBuildings();
+        if (this.getStatus().equals(FarmInformation.FARM_STATUS.READY)) {
+            // only reset, if reset is needed
+        } else {
+            farmSourceId = -1;
+            farmTroop = null;
+            farmTroopArrive = -1;
+            lastResult = FARM_RESULT.UNKNOWN;
+            lastSendInformation = null;
+            if (!inactive) {
+                if (spyed) {
+                    setStatus(FARM_STATUS.READY);
+                } else {
+                    setStatus(FARM_STATUS.NOT_INITIATED);
+                    setInitialResources();
+                    // now it is time to check updates in building levels
+                }
             }
         }
     }
 
     /**
-     * Reset siege troops and status (READY or )
+     * Reset siege troops and status (atHome or final_farm)
      */
     public void resetSiegeStatus() {
-        siegeTroop = null;
-        siegeTroopArrival = -1;
-        lastResult = FARM_RESULT.UNKNOWN;
-        if (!inactive || !isFinal) {
-            if (spyed) {
-                setSiegeStatus(Siege_STATUS.atHome);
+        if (this.getSiegeStatus().equals(FarmInformation.SIEGE_STATUS.AT_HOME)) {
+            // only reset, if reset is needed
+        } else {
+            siegeTroop = null;
+            siegeTroopArrival = -1;
+            lastResult = FARM_RESULT.UNKNOWN;
+            if (!inactive && !isFinal) {
+                setSiegeStatus(SIEGE_STATUS.AT_HOME);
                 if (mainLevel == 1 && smithyLevel == 0 && barracksLevel == 0 && stableLevel == 0 && workshopLevel == 0
                         && marketLevel == 0 && wallLevel == 0 && this.getVillage().getPoints() >= 500) {
-                    setSiegeStatus(Siege_STATUS.final_farm);
+                    setSiegeStatus(SIEGE_STATUS.FINAL_FARM);
                 }
             }
-        }
+        }    
     }
 
     /**
@@ -560,7 +562,6 @@ public class FarmInformation extends ManageableType {
                     + lastReport + " > " + pReport.getTimestamp() + ")");
             return;
         }
-
         if (pReport.wasLostEverything() || pReport.hasSurvivedDefenders()) {
             logger.debug("Changing farm status to due to total loss or found troops");
             setStatus(FARM_STATUS.TROOPS_FOUND);
@@ -630,6 +631,7 @@ public class FarmInformation extends ManageableType {
             // set wall destruction (works also without spying)
             wallLevel = pReport.getWallAfter();
         }
+        
     }
 
     /**
@@ -747,8 +749,7 @@ public class FarmInformation extends ManageableType {
                 final HashMap<Village, TroopAmountFixed> carriageMap = new HashMap<>();
                 List<Village> villages = new LinkedList<>();
 
-                for (Village selectedVillage : DSWorkbenchFarmManager.activeFarmGroup) {
-                    // Goes through all the villages that can farm this village
+                for (Village selectedVillage : DSWorkbenchFarmManager.getSelectedFarmGroup()) { 
                     TroopAmountFixed units;
                     units = new TroopAmountFixed();
                     VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(selectedVillage,
@@ -861,6 +862,20 @@ public class FarmInformation extends ManageableType {
                         // send troops and update
                         if (BrowserInterface.sendTroops(selection, getVillage(), farmers)) {
                             // if (true) {
+                            if (pConfig.equals(DSWorkbenchFarmManager.FARM_CONFIGURATION.C)) {
+                                int farmCap = farmers.getFarmCapacity();
+                                
+                                int pwood = getWoodInStorage(System.currentTimeMillis()
+                                        + DSCalculator.calculateMoveTimeInMillis(selection, getVillage(), farmers.getSpeed()));
+                                int pclay = getClayInStorage(System.currentTimeMillis()
+                                        + DSCalculator.calculateMoveTimeInMillis(selection, getVillage(), farmers.getSpeed()));
+                                int piron = getIronInStorage(System.currentTimeMillis()
+                                        + DSCalculator.calculateMoveTimeInMillis(selection, getVillage(), farmers.getSpeed()));
+                                
+                                setExtraResources(Math.max(pwood - farmCap * pwood/(pwood + pclay + piron), 0), 
+                                        Math.max(pclay - farmCap * pclay/(pwood + pclay + piron),0) , 
+                                                Math.max(piron - farmCap * piron/(pwood + pclay + piron),0));
+                            }
                             TroopHelper.sendTroops(selection, farmers);
                             if (pConfig.equals(DSWorkbenchFarmManager.FARM_CONFIGURATION.K)) {
                                 siegeTroop = farmers;
@@ -868,13 +883,13 @@ public class FarmInformation extends ManageableType {
                                         .calculateMoveTimeInMillis(selection, getVillage(), siegeTroop.getSpeed());
                                 if(siegeTroop.getAmountForUnit("catapult") > 0) {
                                     if(siegeTroop.getAmountForUnit("ram") > 0) {
-                                        setSiegeStatus(Siege_STATUS.BOTH_onWay);
+                                        setSiegeStatus(SIEGE_STATUS.BOTH_ON_WAY);
                                     } else {
-                                        setSiegeStatus(Siege_STATUS.CATA_onWay);
+                                        setSiegeStatus(SIEGE_STATUS.CATA_ON_WAY);
                                     }
                                 } else {
                                     if(siegeTroop.getAmountForUnit("ram") > 0) {
-                                        setSiegeStatus(Siege_STATUS.RAM_onWay);
+                                        setSiegeStatus(SIEGE_STATUS.RAM_ON_WAY);
                                     } else {
                                         logger.debug("Code should not get here!");
                                     }
@@ -937,12 +952,12 @@ public class FarmInformation extends ManageableType {
     /**
      * Set the current siege status
      */
-    public void setSiegeStatus(Siege_STATUS siege_status) {
+    public void setSiegeStatus(SIEGE_STATUS siege_status) {
         logger.debug(
-                "Changing siege status for " + getVillage() + " from " + this.siege_status + " to " + siege_status);
-        this.siege_status = siege_status;
-        switch (this.siege_status) {
-        case final_farm:
+                "Changing siege status for " + getVillage() + " from " + this.siegeStatus + " to " + siege_status);
+        this.siegeStatus = siege_status;
+        switch (this.siegeStatus) {
+        case FINAL_FARM:
             isFinal = true;
             break;
         default:
@@ -954,8 +969,8 @@ public class FarmInformation extends ManageableType {
     /**
      * Get the current siege status
      */
-    public Siege_STATUS getSiegeStatus() {
-        return siege_status;
+    public SIEGE_STATUS getSiegeStatus() {
+        return siegeStatus;
     }
 
     public String getLastSendInformation() {

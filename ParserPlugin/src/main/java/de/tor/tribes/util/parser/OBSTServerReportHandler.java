@@ -281,17 +281,17 @@ public class OBSTServerReportHandler implements SilentParserInterface {
             logger.info("No spy information found");
         }
 
-        for(int i = 0; i < Constants.buildingNames.length; i++) {
+        for(int i = 0; i < Constants.BUILDING_NAMES.length; i++) {
             m = Pattern.compile(getVariable("report.buildings." +
-                    Constants.buildingNames[i]) + "\\s+([0-9]+)").matcher(data);
+                    Constants.BUILDING_NAMES[i]) + "\\s+([0-9]+)").matcher(data);
             if (m.find()) {
                 try {
                     report.setBuilding(i, Integer.parseInt(m.group(1)));
                 } catch (Exception e) {
-                    logger.error("Failed to parse " + Constants.buildingNames[i] + " level from " + m.group(1));
+                    logger.error("Failed to parse " + Constants.BUILDING_NAMES[i] + " level from " + m.group(1));
                 }
             } else {
-                logger.info("No " + Constants.buildingNames[i] + " level information found");
+                logger.info("No " + Constants.BUILDING_NAMES[i] + " level information found");
             }
         }
 
@@ -348,8 +348,8 @@ public class OBSTServerReportHandler implements SilentParserInterface {
     }
 
     private int getBuildingId(String translatedBuilding) {
-        for(int i = 0; i < Constants.buildingNames.length; i++) {
-            if(translatedBuilding.equals(getVariable("report.buildings." + Constants.buildingNames[i])))
+        for(int i = 0; i < Constants.BUILDING_NAMES.length; i++) {
+            if(translatedBuilding.equals(getVariable("report.buildings." + Constants.BUILDING_NAMES[i])))
                 return i;
         }
         logger.error("Could not find Building " + translatedBuilding);

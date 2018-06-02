@@ -104,7 +104,7 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
                 ? "[b]Schaden durch Rammen:[/b] Wall beschädigt von Level " + getWallBefore() + " auf Level " + getWallAfter()
                 : "";
         String cataChangeVal = (wasBuildingDamaged())
-                ? "[b]Schaden durch Katapultbeschuss:[/b] " + Constants.buildingNames[aimedBuildingId] + " beschädigt von Level " + getBuildingBefore() + " auf Level " + getBuildingAfter()
+                ? "[b]Schaden durch Katapultbeschuss:[/b] " + Constants.BUILDING_NAMES[aimedBuildingId] + " beschädigt von Level " + getBuildingBefore() + " auf Level " + getBuildingAfter()
                 : "";
         return new String[]{attackerVal, sourceVal, defenderVal, targetVal, sendDateVal, resultVal, luckVal, moraleVal, attackerTroopsVal, defenderTroopsVal, troopsOutsideVal, troopsEnRouteVal, loyalityChangeVal, wallChangeVal, cataChangeVal};
     }
@@ -164,7 +164,7 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
         defendersOutside = new HashMap<>();
         defendersOnTheWay = new TroopAmountFixed();
         
-        buildingLevels = new int[Constants.buildingNames.length];
+        buildingLevels = new int[Constants.BUILDING_NAMES.length];
         Arrays.fill(buildingLevels, -1);
     }
 
@@ -291,7 +291,7 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
                 
                 for(int i = 0; i < buildingLevels.length; i++) {
                     buildingLevels[i] = Integer.parseInt(e.getChildText(
-                            Constants.buildingNames[i]));
+                            Constants.BUILDING_NAMES[i]));
                 }
             } catch (Exception e) {
                 logger.debug("Failed to read buildings", e);
@@ -375,7 +375,7 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
 
             b.append("<spyBuildings");
             for(int i = 0; i < buildingLevels.length; i++) {
-                b.append(" ").append(Constants.buildingNames[i]).append("=\"");
+                b.append(" ").append(Constants.BUILDING_NAMES[i]).append("=\"");
                 b.append(buildingLevels[i]).append("\"");
             }
             b.append("/>\n");
@@ -983,7 +983,7 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
             result.append("Wall zerstört von Stufe ").append(getWallBefore()).append(" auf ").append(getWallAfter()).append("\n");
         }
         if (wasBuildingDamaged()) {
-            result.append(Constants.buildingNames[aimedBuildingId]).append(" zerstört von Stufe ").append(getBuildingBefore()).append(" auf ").append(getBuildingAfter()).append("\n");
+            result.append(Constants.BUILDING_NAMES[aimedBuildingId]).append(" zerstört von Stufe ").append(getBuildingBefore()).append(" auf ").append(getBuildingAfter()).append("\n");
         }
         if (wasSnobAttack()) {
             result.append("Zustimmung gesenkt von ").append(getAcceptanceBefore()).append(" auf ").append(getAcceptanceAfter()).append("\n");

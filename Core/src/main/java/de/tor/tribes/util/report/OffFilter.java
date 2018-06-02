@@ -42,4 +42,10 @@ public class OffFilter implements ReportRuleInterface {
     public String getStringRepresentation() {
         return "Off-Berichte";
     }
+
+    @Override
+    public String toXml() {
+        //TODO create function
+        return "";
+    }
 }

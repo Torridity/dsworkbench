@@ -839,17 +839,4 @@ public class AttackTimePanel extends javax.swing.JPanel implements DragGestureLi
     @Override
     public void dropActionChanged(DropTargetDragEvent dtde) {
     }
-
-    public static void main(String[] args) {
-        try {
-            //  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-        } catch (Exception ignored) {
-        }
-        JFrame f = new JFrame();
-        f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        f.add(new AttackTimePanel(null));
-        f.pack();
-        f.setVisible(true);
-    }
 }

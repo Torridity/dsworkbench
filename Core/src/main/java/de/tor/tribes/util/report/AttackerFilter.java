@@ -82,4 +82,10 @@ public class AttackerFilter implements ReportRuleInterface {
         result.append("Angreifer ").append(tribes.toString());
         return result.toString();
     }
+
+    @Override
+    public String toXml() {
+        //TODO create function
+        return "";
+    }
 }

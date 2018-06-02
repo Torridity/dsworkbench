@@ -244,26 +244,7 @@ public class WelcomePanel extends JXPanel {
             DSWorkbenchMainFrame.getSingleton().hideWelcomePage();
         }
     }//GEN-LAST:event_firePerformWelcomeActionEvent
-
-    public static void main(String[] args) {
-        Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
-        try {
-            // UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-            //JFrame.setDefaultLookAndFeelDecorated(true);
-
-            // SubstanceLookAndFeel.setSkin(SubstanceLookAndFeel.getAllSkins().get("Twilight").getClassName());
-            //  UIManager.put(SubstanceLookAndFeel.FOCUS_KIND, FocusKind.NONE);
-        } catch (Exception ignored) {
-        }
-        JFrame f = new JFrame();
-        f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        f.getContentPane().setLayout(new BorderLayout());
-        f.getContentPane().add(new WelcomePanel(), BorderLayout.CENTER);
-        f.setSize(500, 500);
-        f.setVisible(true);
-
-    }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private org.jdesktop.swingx.JXLabel jContentLabel;
     private javax.swing.JCheckBox jDisableWelcome;

@@ -15,8 +15,6 @@
  */
 package de.tor.tribes.util.farm;
 
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.converters.ConversionException;
 import de.tor.tribes.control.GenericManager;
 import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;
@@ -25,6 +23,7 @@ import de.tor.tribes.types.FightReport;
 import de.tor.tribes.types.ext.*;
 import de.tor.tribes.util.*;
 import de.tor.tribes.util.report.ReportManager;
+import de.tor.tribes.util.xml.JaxenUtils;
 import java.awt.HeadlessException;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -38,6 +37,8 @@ import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import org.apache.log4j.Logger;
+import org.jdom.Document;
+import org.jdom.Element;
 
 /**
  *
@@ -286,150 +287,96 @@ public class FarmManager extends GenericManager<FarmInformation> {
 
   @Override
   public void loadElements(String pFile) {
-    XStream x = new XStream();
-    x.alias("farmInfo", FarmInformation.class);
-    lastUpdatedFarm = null;
-    FileReader r = null;
-    logger.debug("Reading farm information from file " + pFile);
-    initialize();
-    infoMap.clear();
-    try {
-      r = new FileReader(pFile);
-      List<ManageableType> el = (List<ManageableType>) x.fromXML(r);
-      invalidate();
-      for (ManageableType t : el) {
-        FarmInformation info = (FarmInformation) t;
-        if (info.getVillage() != null) {
-          //just add valid information
-          info.revalidate();
-          addManagedElement(info);
-          infoMap.put(info.getVillage(), info);
-        }
-      }
-      r.close();
-      logger.debug("Farm information successfully read");
-    } catch (Exception e) {
-      logger.error("Failed to read farm information", e);
-    } finally {
-      try {
-        if (r != null) {
-          r.close();
-        }
-      } catch (IOException ignored) {
-      }
+    if (pFile == null) {
+      logger.error("File argument is 'null'");
+      return;
     }
-
+    invalidate();
+    initialize();
+    File farmFile = new File(pFile);
+    infoMap.clear();
+    if (farmFile.exists()) {
+      logger.debug("Reading farm information from file " + pFile);
+      try {
+        Document d = JaxenUtils.getDocument(farmFile);
+        for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//farmInfos/farmInfo")) {
+          FarmInformation element = new FarmInformation(e);
+          if (element.getVillage() != null) {
+            //just add valid information
+            element.revalidate();
+            addManagedElement(element);
+            infoMap.put(element.getVillage(), element);
+          }
+        }
+        logger.debug("Farm information successfully read");
+      } catch (Exception e) {
+        logger.error("Failed to read farm information", e);
+      }
+    } else {
+        logger.info("No FarmInformation found under '" + pFile + "'");
+    }
     revalidate(true);
   }
 
   @Override
   public void saveElements(String pFile) {
-    XStream x = new XStream();
-    x.alias("farmInfo", FarmInformation.class);
     logger.debug("Writing farm information to file " + pFile);
-    FileWriter w = null;
-
-    try {
-      w = new FileWriter(pFile);
-      x.toXML(getAllElements(), w);
-      w.flush();
-    } catch (IOException ioe) {
-      logger.error("Failed to write farm information", ioe);
-    } finally {
-      try {
-        if (w != null) {
-          w.close();
-        }
-      } catch (IOException ignored) {
+    try (FileWriter w = new FileWriter(pFile)) {
+      w.write("<farmInfos>\n");
+      for (ManageableType element : getAllElements()) {
+        w.write(element.toXml());
       }
+      w.write("</farmInfos>\n");
+      w.flush();
+      w.close();
+    } catch (Exception e) {
+      logger.error("Failed to write farm information", e);
     }
   }
 
   @Override
   public String getExportData(List<String> pGroupsToExport) {
-    XStream x = new XStream();
-    x
-            .alias("farmInfo", FarmInformation.class
-            );
-    ByteArrayOutputStream bout = new ByteArrayOutputStream();
-
-    try {
-      x.toXML(getAllElements(), bout);
-      bout.flush();
-      bout.close();
-    } catch (IOException ioe) {
-      logger.error("Failed to write farm information", ioe);
-    } finally {
-      try {
-        if (bout != null) {
-          bout.close();
-        }
-      } catch (IOException ignored) {
+      StringBuilder expData = new StringBuilder();
+      expData.append("<farmInfos>\n");
+      for (ManageableType element : getAllElements()) {
+        expData.append(element.toXml());
       }
-    }
-
-    return bout.toString();
+      expData.append("</farmInfos>\n");
+    return expData.toString();
   }
 
   @Override
   public boolean importData(File pFile, String pExtension) {
-    StringBuilder b = new StringBuilder();
-    BufferedReader reader = null;
-    try {
-      reader = new BufferedReader(new FileReader(pFile));
-      String line = "";
-      boolean haveStart = false;
-      String end = "</java.util.Collections_-UnmodifiableRandomAccessList>";
-      while ((line = reader.readLine()) != null) {
-        if (line.startsWith("<java.util.Collections")) {
-          haveStart = true;
-        }
-
-        if (haveStart) {
-          if (line.startsWith(end)) {
-            b.append(line.substring(0, end.length()));
-          } else {
-            b.append(line);
+    if (pFile == null) {
+      logger.error("File argument is 'null'");
+      return false;
+    }
+    invalidate();
+    if (pFile.exists()) {
+      logger.debug("Reading farm information from file " + pFile);
+      try {
+        Document d = JaxenUtils.getDocument(pFile);
+        for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//farmInfos/farmInfo")) {
+          FarmInformation element = new FarmInformation(e);
+          if (element.getVillage() != null) {
+            //just add valid information
+            element.revalidate();
+            addManagedElement(element);
+            infoMap.put(element.getVillage(), element);
           }
         }
+        logger.debug("Farm information successfully read");
+      } catch (Exception e) {
+        logger.error("Failed to read farm information", e);
+        revalidate(true);
+        return false;
       }
-    } catch (IOException e) {
-      logger.error("Failed to farm data from file", e);
-    } finally {
-      if (reader != null) {
-        try {
-          reader.close();
-        } catch (IOException ignored) {
-        }
-      }
-    }
-    XStream x = new XStream();
-    x
-            .alias("farmInfo", FarmInformation.class
-            );
-    lastUpdatedFarm = null;
-
-    initialize();
-
-    infoMap.clear();
-
-    try {
-      List<ManageableType> el = (List<ManageableType>) x.fromXML(b.toString());
-      invalidate();
-      for (ManageableType t : el) {
-        FarmInformation info = (FarmInformation) t;
-        info.revalidate();
-        addManagedElement(info);
-        infoMap.put(info.getVillage(), info);
-      }
-      logger.debug("Farm information successfully imported");
-    } catch (ConversionException ce) {
-      logger.error("Failed to deserialize farm information", ce);
-      return false;
-    } finally {
+    } else {
+      logger.info("No FarmInformation found under '" + pFile + "'");
       revalidate(true);
+      return false;
     }
-
+    revalidate(true);
     return true;
   }
 }

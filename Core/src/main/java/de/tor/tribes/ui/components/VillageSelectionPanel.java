@@ -608,34 +608,6 @@ public class VillageSelectionPanel extends javax.swing.JPanel{
     private org.jdesktop.swingx.JXButton jXButton2;
     private org.jdesktop.swingx.JXTextField jXTextField1;
     // End of variables declaration//GEN-END:variables
-
-    public static void main(String[] args) {
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            //UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-        } catch (Exception ignored) {
-        }
-        Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
-        GlobalOptions.setSelectedServer("de43");
-        DataHolder.getSingleton().loadData(false);
-        ProfileManager.getSingleton().loadProfiles();
-        GlobalOptions.setSelectedProfile(ProfileManager.getSingleton().getProfiles("de43")[0]);
-        GlobalOptions.loadUserData();
-        JFrame f = new JFrame();
-        f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        VillageSelectionPanel p = new VillageSelectionPanel(new VillageSelectionPanelListener() {
-
-            @Override
-            public void fireVillageSelectionEvent(Village[] pSelection) {
-            }
-        });
-        p.setup();
-        p.enableSelectionElement(SELECTION_ELEMENT.GROUP, false);
-        f.getContentPane().add(p);
-        f.pack();
-        f.setVisible(true);
-
-    }
 }
 
 abstract class FilterPipeline<C, D> implements ListSelectionListener {

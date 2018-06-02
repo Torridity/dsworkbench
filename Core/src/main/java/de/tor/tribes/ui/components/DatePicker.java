@@ -448,15 +448,4 @@ public class DatePicker extends JPanel {
         dateformat.format(date, stringbuffer1, fieldposition1);
         return stringbuffer.toString().substring(fieldposition.getBeginIndex(), fieldposition.getEndIndex()) + " " + stringbuffer1.toString().substring(fieldposition1.getBeginIndex(), fieldposition1.getEndIndex());
     }
-
-    public static void main(String[] args) {
-        try {
-            //  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-        } catch (Exception ignored) {
-        }
-        JFrame f = new JFrame();
-        f.add(new DatePicker());
-        f.setVisible(true);
-    }
 }

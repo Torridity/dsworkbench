@@ -42,4 +42,10 @@ public class FakeFilter implements ReportRuleInterface {
     public String getStringRepresentation() {
         return "Fakes";
     }
+
+    @Override
+    public String toXml() {
+        //TODO create function
+        return "";
+    }
 }

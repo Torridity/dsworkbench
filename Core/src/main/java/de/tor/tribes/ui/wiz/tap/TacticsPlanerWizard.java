@@ -173,26 +173,4 @@ public class TacticsPlanerWizard extends WizardPanelProvider {
             parent = null;
         }
     }
-
-    public static void main(String[] args) {
-        try {
-            // UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-        } catch (Exception ignored) {
-        }
-
-
-        Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
-        GlobalOptions.setSelectedServer("de38");
-        ProfileManager.getSingleton().loadProfiles();
-        GlobalOptions.setSelectedProfile(ProfileManager.getSingleton().getProfiles("de38")[1]);
-        DataHolder.getSingleton().loadData(false);
-        GlobalOptions.loadUserData();
-
-        TacticsPlanerWizard to = new TacticsPlanerWizard();
-        to.restoreProperties();
-        to.show();
-        //Wizard wizard = provider.createWizard();
-        //   System.out.println(WizardDisplayer.showWizard(wizard));
-    }
 }

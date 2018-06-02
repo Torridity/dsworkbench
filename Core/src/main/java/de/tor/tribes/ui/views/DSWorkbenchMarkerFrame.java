@@ -439,48 +439,7 @@ private void fireCreateMarkerSetEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
     @Override
     public void fireVillagesDraggedEvent(List<Village> pVillages, Point pDropLocation) {
     }
-
-    public static void main(String[] args) {
-        MouseGestures mMouseGestures = new MouseGestures();
-        mMouseGestures.setMouseButton(MouseEvent.BUTTON3_MASK);
-        mMouseGestures.addMouseGesturesListener(new MouseGestureHandler());
-        mMouseGestures.start();
-        try {
-            //  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-        } catch (Exception ignored) {
-        }
-        Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
-        DSWorkbenchMarkerFrame.getSingleton().pack();
-        MarkerManager.getSingleton().addGroup("test1");
-        MarkerManager.getSingleton().addGroup("asd2");
-        MarkerManager.getSingleton().addGroup("awe3");
-        GlobalOptions.setSelectedServer("de68");
-        ProfileManager.getSingleton().loadProfiles();
-        GlobalOptions.setSelectedProfile(ProfileManager.getSingleton().getProfiles("de68")[0]);
-        DataHolder.getSingleton().loadData(false);
-        for (int i = 0; i < 5; i++) {
-            Marker a = new Marker();
-            a.setMarkerColor(Color.GREEN);
-            a.setMarkerID(DataHolder.getSingleton().getRandomVillage().getTribeID());
-            a.setMarkerType(Marker.MarkerType.TRIBE);
-            Marker a2 = new Marker();
-            a2.setMarkerColor(Color.RED);
-            a2.setMarkerID(DataHolder.getSingleton().getRandomVillage().getTribeID());
-            a2.setMarkerType(Marker.MarkerType.TRIBE);
-            Marker a3 = new Marker();
-            a3.setMarkerColor(Color.BLUE);
-            a3.setMarkerID(DataHolder.getSingleton().getRandomVillage().getTribeID());
-            a3.setMarkerType(Marker.MarkerType.TRIBE);
-            MarkerManager.getSingleton().addManagedElement(a);
-            MarkerManager.getSingleton().addManagedElement("test1", a2);
-            MarkerManager.getSingleton().addManagedElement("asd2", a3);
-        }
-        DSWorkbenchMarkerFrame.getSingleton().resetView();
-        DSWorkbenchMarkerFrame.getSingleton().setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        DSWorkbenchMarkerFrame.getSingleton().setVisible(true);
-
-    }
+    
     // <editor-fold defaultstate="collapsed" desc="Gesture handling">
 
     @Override

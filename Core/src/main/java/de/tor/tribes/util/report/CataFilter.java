@@ -41,4 +41,10 @@ public class CataFilter implements ReportRuleInterface {
     public String getStringRepresentation() {
         return "Berichte mit Gebäudebeschädigung";
     }
+
+    @Override
+    public String toXml() {
+        //TODO create function
+        return "";
+    }
 }

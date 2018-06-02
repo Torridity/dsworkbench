@@ -95,4 +95,10 @@ public class ColorFilter implements ReportRuleInterface {
         result.append("Farben ").append(validFor.toString());
         return result.toString();
     }
+
+    @Override
+    public String toXml() {
+        //TODO create function
+        return "";
+    }
 }

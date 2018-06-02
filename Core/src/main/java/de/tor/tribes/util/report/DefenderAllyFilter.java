@@ -77,4 +77,10 @@ public class DefenderAllyFilter implements ReportRuleInterface {
         result.append("Verteidigende Stämme ").append(allies.toString());
         return result.toString();
     }
+
+    @Override
+    public String toXml() {
+        //TODO create function
+        return "";
+    }
 }

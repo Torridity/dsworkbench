@@ -15,7 +15,6 @@
  */
 package de.tor.tribes.util.report;
 
-import com.thoughtworks.xstream.XStream;
 import de.tor.tribes.control.GenericManager;
 import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.types.FightReport;
@@ -198,6 +197,7 @@ public class ReportManager extends GenericManager<FightReport> {
     }
     invalidate();
     initialize();
+    rules.clear();
     File reportFile = new File(pFile);
     try {
       if (reportFile.exists()) {
@@ -220,6 +220,12 @@ public class ReportManager extends GenericManager<FightReport> {
             }
           }
           logger.debug("Reports successfully loaded");
+          
+          for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//rules/rule")) {
+            RuleEntry r = new RuleEntry(e);
+            rules.add(r);
+          }
+          logger.debug("Report Rules successfully loaded");
         } catch (Exception e) {
           logger.error("Failed to load Reports", e);
         }
@@ -231,9 +237,6 @@ public class ReportManager extends GenericManager<FightReport> {
     } finally {
       revalidate();
     }
-
-    //load rules
-    loadRules(GlobalOptions.getSelectedProfile().getProfileDirectory() + File.separator + "rules.xml");
   }
 
   @Override
@@ -323,6 +326,12 @@ public class ReportManager extends GenericManager<FightReport> {
         }
       }
       b.append("</reportSets>");
+      
+      b.append("<rules>");
+      for(RuleEntry r: rules) {
+          b.append(r.getRule().toXml());
+      }
+      b.append("</rules>");
       //writing data to file
       FileWriter w = new FileWriter(pFile);
       w.write(b.toString());
@@ -336,58 +345,6 @@ public class ReportManager extends GenericManager<FightReport> {
         logger.info("Ignoring error, server directory does not exists yet");
       } else {
         logger.error("Failed to save reports", e);
-      }
-    }
-
-    //save rules
-    saveRules(GlobalOptions.getSelectedProfile().getProfileDirectory() + File.separator + "rules.xml");
-  }
-
-  private void saveRules(String pFile) {
-    XStream x = new XStream();
-    x.alias("rule", RuleEntry.class);
-    logger.debug("Writing report rules to file " + pFile);
-    FileWriter w = null;
-    try {
-      w = new FileWriter(pFile);
-      x.toXML(rules, w);
-      w.flush();
-    } catch (IOException ioe) {
-      logger.error("Failed to write report rules", ioe);
-    } finally {
-      try {
-        if (w != null) {
-          w.close();
-        }
-      } catch (IOException ignored) {
-      }
-    }
-  }
-
-  private void loadRules(String pFile) {
-    XStream x = new XStream();
-    x.alias("rule", RuleEntry.class);
-    FileReader r = null;
-    logger.debug("Reading report rules from file " + pFile);
-    invalidate();
-    try {
-      r = new FileReader(pFile);
-      rules.clear();
-      List<RuleEntry> entries = (List<RuleEntry>) x.fromXML(r);
-      for (RuleEntry entry : entries) {
-        rules.add(entry);
-      }
-      r.close();
-      logger.debug("Report rules successfully read");
-    } catch (Exception ioe) {
-      logger.error("Failed to read report rules", ioe);
-    } finally {
-      revalidate();
-      try {
-        if (r != null) {
-          r.close();
-        }
-      } catch (IOException ignored) {
       }
     }
   }
@@ -479,6 +436,10 @@ public class ReportManager extends GenericManager<FightReport> {
     public RuleEntry(ReportRuleInterface pRule, String pTargetSet) {
       rule = pRule;
       targetSet = pTargetSet;
+    }
+
+    private RuleEntry(Element e) {
+        //TODO create function
     }
 
     public void setRule(ReportRuleInterface rule) {

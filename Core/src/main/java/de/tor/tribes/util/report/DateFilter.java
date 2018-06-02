@@ -60,4 +60,10 @@ public class DateFilter implements ReportRuleInterface {
         SimpleDateFormat df = new SimpleDateFormat("dd.MM.yy");
         return "Gesendet zwischen " + df.format(new Date(start)) + " und " + df.format(new Date(end));
     }
+
+    @Override
+    public String toXml() {
+        //TODO create function
+        return "";
+    }
 }

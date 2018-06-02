@@ -50,4 +50,10 @@ public class AgeFilter implements ReportRuleInterface {
     public String getStringRepresentation() {
         return "Bericht älter als " + DurationFormatUtils.formatDuration(maxAge, "dd", false) + " Tag(e)";
     }
+
+    @Override
+    public String toXml() {
+        //TODO create function
+        return "";
+    }
 }

@@ -128,23 +128,4 @@ public class ResourceDistributorWizard extends WizardPanelProvider {
 
         parent.setVisible(true);
     }
-
-    public static void main(String[] args) {
-        try {
-            // UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-        } catch (Exception ignored) {
-        }
-
-        Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
-        GlobalOptions.setSelectedServer("de43");
-        ProfileManager.getSingleton().loadProfiles();
-        GlobalOptions.setSelectedProfile(ProfileManager.getSingleton().getProfiles("de43")[0]);
-        DataHolder.getSingleton().loadData(false);
-        GlobalOptions.loadUserData();
-
-        //  Wizard wizard = new ResourceDistributorBranchController().createWizard();
-        new ResourceDistributorWizard().show();
-        //  System.out.println("RES: " + WizardDisplayer.showWizard(wizard));
-    }
 }

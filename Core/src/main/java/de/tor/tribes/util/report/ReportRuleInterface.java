@@ -29,4 +29,6 @@ public interface ReportRuleInterface extends Filter<FightReport> {
     String getDescription();
 
     String getStringRepresentation();
+
+    public String toXml();
 }

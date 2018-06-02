@@ -42,4 +42,10 @@ public class ConqueredFilter implements ReportRuleInterface {
     public String getStringRepresentation() {
         return "AG-Angriffe/Eroberungen";
     }
+
+    @Override
+    public String toXml() {
+        //TODO create function
+        return "";
+    }
 }

@@ -353,25 +353,6 @@ public class TimePicker extends javax.swing.JPanel {
         Calendar cal = Calendar.getInstance();
         pHour = cal.get(Calendar.HOUR_OF_DAY);
         pMinute = cal.get(Calendar.MINUTE);
-
-        /*selectedDate = getToday();
-        if (isVisible()) {
-        monthAndYear.setText(formatDateText(selectedDate.getTime()));
-        calculateCalendar();
-        }*/
-    }
-
-    public static void main(String[] args) {
-        try {
-            //  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-        } catch (Exception ignored) {
-        }
-        JDialog f = new JDialog();
-        f.getContentPane().add(new TimePicker(Calendar.getInstance().getTime()));
-        //f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        f.pack();
-        f.setVisible(true);
     }
 
     /** This method is called from within the constructor to

@@ -528,7 +528,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
         try {
             GlobalDefaults.initialize();
             GlobalOptions.initialize();
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            //UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {
             logger.error("Failed to setup LnF", e);
         }

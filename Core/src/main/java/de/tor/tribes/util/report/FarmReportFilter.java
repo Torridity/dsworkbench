@@ -42,4 +42,10 @@ public class FarmReportFilter implements ReportRuleInterface {
     public String getStringRepresentation() {
         return "Farmberichte";
     }
+
+    @Override
+    public String toXml() {
+        //TODO create function
+        return "";
+    }
 }

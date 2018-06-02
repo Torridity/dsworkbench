@@ -41,4 +41,10 @@ public class WallFilter implements ReportRuleInterface {
     public String getStringRepresentation() {
         return "Berichte mit Wallbeschädigung";
     }
+
+    @Override
+    public String toXml() {
+        //TODO create function
+        return "";
+    }
 }

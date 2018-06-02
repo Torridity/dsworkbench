@@ -82,4 +82,10 @@ public class DefenderFilter implements ReportRuleInterface {
         result.append("Verteidiger ").append(tribes.toString());
         return result.toString();
     }
+
+    @Override
+    public String toXml() {
+        //TODO create function
+        return "";
+    }
 }

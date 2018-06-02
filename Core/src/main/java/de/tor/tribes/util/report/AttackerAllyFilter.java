@@ -79,4 +79,10 @@ public class AttackerAllyFilter implements ReportRuleInterface {
         result.append("Angreifende Stämme ").append(allies.toString());
         return result.toString();
     }
+
+    @Override
+    public String toXml() {
+        //TODO create function
+        return "";
+    }
 }

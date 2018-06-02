@@ -15,7 +15,6 @@
  */
 package de.tor.tribes.types;
 
-import com.thoughtworks.xstream.XStream;
 import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.TroopAmountFixed;
@@ -88,7 +87,6 @@ public class FarmInformation extends ManageableType {
     private int actualHaul = 0;
     private long lastReport = -1;
     private long farmTroopArrive = -1;
-    private int farmSourceId = -1;
     public TroopAmountFixed siegeTroop;
     public long siegeTroopArrival = -1;
     private TroopAmountFixed farmTroop = null;
@@ -98,16 +96,19 @@ public class FarmInformation extends ManageableType {
     private transient String lastSendInformation = null;
     private transient DSWorkbenchFarmManager.FARM_CONFIGURATION usedConfig = null;
 
-    public FarmInformation() {
-        // needed for proper XStream integration
-    }
-
     /**
      * Default constructor
      */
     public FarmInformation(Village pVillage) {
         villageId = pVillage.getId();
         ownerId = pVillage.getTribe().getId();
+    }
+    
+    /**
+     * Constructor from xml
+     */
+    public FarmInformation(Element e) {
+        loadFromXml(e);
     }
 
     /**
@@ -225,7 +226,6 @@ public class FarmInformation extends ManageableType {
             }
             arriveTimeRelativeToNow = 0;
             farmTroopArrive = -1;
-            farmSourceId = -1;
             farmTroop = null;
         }
         return arriveTimeRelativeToNow;
@@ -253,7 +253,7 @@ public class FarmInformation extends ManageableType {
      * Returns the last result of farmFarm()
      */
     public FARM_RESULT getLastResult() {
-        if (lastResult == null) {// used for lazy loading of XStream input
+        if (lastResult == null) {
             lastResult = FARM_RESULT.OK;
         }
         return lastResult;
@@ -505,7 +505,6 @@ public class FarmInformation extends ManageableType {
         if (this.getStatus().equals(FarmInformation.FARM_STATUS.READY)) {
             // only reset, if reset is needed
         } else {
-            farmSourceId = -1;
             farmTroop = null;
             farmTroopArrive = -1;
             lastResult = FARM_RESULT.UNKNOWN;
@@ -536,10 +535,10 @@ public class FarmInformation extends ManageableType {
                 setSiegeStatus(SIEGE_STATUS.AT_HOME);
                 if (mainLevel == 1 && smithyLevel == 0 && barracksLevel == 0 && stableLevel == 0 && workshopLevel == 0
                         && marketLevel == 0 && wallLevel == 0 && this.getVillage().getPoints() >= 500) {
-                    setSiegeStatus(SIEGE_STATUS.FINAL_FARM);
+                setSiegeStatus(SIEGE_STATUS.FINAL_FARM);
                 }
             }
-        }    
+        }
     }
 
     /**
@@ -562,6 +561,7 @@ public class FarmInformation extends ManageableType {
                     + lastReport + " > " + pReport.getTimestamp() + ")");
             return;
         }
+
         if (pReport.wasLostEverything() || pReport.hasSurvivedDefenders()) {
             logger.debug("Changing farm status to due to total loss or found troops");
             setStatus(FARM_STATUS.TROOPS_FOUND);
@@ -631,7 +631,6 @@ public class FarmInformation extends ManageableType {
             // set wall destruction (works also without spying)
             wallLevel = pReport.getWallAfter();
         }
-        
     }
 
     /**
@@ -900,7 +899,6 @@ public class FarmInformation extends ManageableType {
                                 farmTroop = farmers;
                                 farmTroopArrive = System.currentTimeMillis() + DSCalculator
                                         .calculateMoveTimeInMillis(selection, getVillage(), farmers.getSpeed());
-                                farmSourceId = selection.getId();
                                 setStatus(FARM_STATUS.FARMING);
                                 attackCount++;
                                 lastResult = FARM_RESULT.OK;
@@ -909,7 +907,6 @@ public class FarmInformation extends ManageableType {
                         } else {
                             farmTroop = null;
                             farmTroopArrive = -1;
-                            farmSourceId = -1;
                             lastResult = FARM_RESULT.FAILED;
                             info.append("Der Farmangriff konnte nicht im Browser geöffnet werden.\n"
                                     + "Bitte überprüfe die Browsereinstellungen von DS Workbench.");
@@ -1110,12 +1107,47 @@ public class FarmInformation extends ManageableType {
 
     @Override
     public String toXml() {
-        XStream xstream = new XStream();
-        xstream.alias("farmInfo", FarmInformation.class);
-        return xstream.toXML(this);
+        StringBuilder str = new StringBuilder();
+        str.append("<farmInfo>");
+        str.append("<siege_status>").append(siegeStatus.name()).append("</siege_status>");
+        str.append("<status>").append(status.name()).append("</status>");
+        str.append("<justCreated>").append(justCreated?1:0).append("</justCreated>");
+        str.append("<spyed>").append(spyed?1:0).append("</spyed>");
+        str.append("<inactive>").append(inactive?1:0).append("</inactive>");
+        str.append("<isFinal>").append(isFinal?1:0).append("</isFinal>");
+        str.append("<villageId>").append(villageId).append("</villageId>");
+        str.append("<ownerId>").append(ownerId).append("</ownerId>");
+        str.append("<attackCount>").append(attackCount).append("</attackCount>");
+        str.append("<woodLevel>").append(woodLevel).append("</woodLevel>");
+        str.append("<clayLevel>").append(clayLevel).append("</clayLevel>");
+        str.append("<ironLevel>").append(ironLevel).append("</ironLevel>");
+        str.append("<storageLevel>").append(storageLevel).append("</storageLevel>");
+        str.append("<hideLevel>").append(hideLevel).append("</hideLevel>");
+        str.append("<wallLevel>").append(wallLevel).append("</wallLevel>");
+        str.append("<mainLevel>").append(mainLevel).append("</mainLevel>");
+        str.append("<barracksLevel>").append(barracksLevel).append("</barracksLevel>");
+        str.append("<stableLevel>").append(stableLevel).append("</stableLevel>");
+        str.append("<workshopLevel>").append(workshopLevel).append("</workshopLevel>");
+        str.append("<smithyLevel>").append(smithyLevel).append("</smithyLevel>");
+        str.append("<marketLevel>").append(marketLevel).append("</marketLevel>");
+        str.append("<woodInStorage>").append(woodInStorage).append("</woodInStorage>");
+        str.append("<clayInStorage>").append(clayInStorage).append("</clayInStorage>");
+        str.append("<ironInStorage>").append(ironInStorage).append("</ironInStorage>");
+        str.append("<hauledWood>").append(hauledWood).append("</hauledWood>");
+        str.append("<hauledClay>").append(hauledClay).append("</hauledClay>");
+        str.append("<hauledIron>").append(hauledIron).append("</hauledIron>");
+        str.append("<expectedHaul>").append(expectedHaul).append("</expectedHaul>");
+        str.append("<actualHaul>").append(actualHaul).append("</actualHaul>");
+        str.append("<lastReport>").append(lastReport).append("</lastReport>");
+        str.append("<farmTroopArrive>").append(farmTroopArrive).append("</farmTroopArrive>");
+        str.append("<siegeTroopArrival>").append(siegeTroopArrival).append("</siegeTroopArrival>");
+        str.append("<resourcesFoundInLastReport>").append(resourcesFoundInLastReport?1:0).append("</resourcesFoundInLastReport>");
+        str.append("</farmInfo>");
+        return str.toString();
     }
 
     @Override
-    public void loadFromXml(Element e) {
+    public final void loadFromXml(Element e) {
+        //TODO create function
     }
 }

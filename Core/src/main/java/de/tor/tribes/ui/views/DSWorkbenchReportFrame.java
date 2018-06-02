@@ -1226,37 +1226,8 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
             jReportsTabbedPane.editTabAt(idx);
         }
     }
-// </editor-fold>
-
-    public static void main(String[] args) {
-        Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
-        MouseGestures mMouseGestures = new MouseGestures();
-        mMouseGestures.setMouseButton(MouseEvent.BUTTON3_MASK);
-        mMouseGestures.addMouseGesturesListener(new MouseGestureHandler());
-        mMouseGestures.start();
-        GlobalOptions.setSelectedServer("de43");
-        DataHolder.getSingleton().loadData(false);
-        ProfileManager.getSingleton().loadProfiles();
-        GlobalOptions.setSelectedProfile(ProfileManager.getSingleton().getProfiles("de43")[0]);
-        GlobalOptions.loadUserData();
-        try {
-            //  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-        } catch (Exception ignored) {
-        }
-
-
-        ReportGenerator rgen = new ReportGenerator();
-
-        rgen.setVisible(true);
-
-        DSWorkbenchReportFrame.getSingleton().setSize(800, 600);
-        DSWorkbenchReportFrame.getSingleton().resetView();
-        DSWorkbenchReportFrame.getSingleton().setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-
-        DSWorkbenchReportFrame.getSingleton().setVisible(true);
-
-    }
+    // </editor-fold>
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private de.tor.tribes.ui.components.CapabilityInfoPanel capabilityInfoPanel1;
     private de.tor.tribes.ui.components.CapabilityInfoPanel capabilityInfoPanel2;

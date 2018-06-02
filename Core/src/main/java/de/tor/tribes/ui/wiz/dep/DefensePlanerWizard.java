@@ -163,37 +163,4 @@ public class DefensePlanerWizard extends WizardPanelProvider {
         parent.setVisible(true);
         new SOSGenerator().setVisible(true);
     }
-
-    public static void main(String[] args) throws Exception {
-        try {
-            // UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-        } catch (Exception ignored) {
-        }
-
-        Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
-        GlobalOptions.setSelectedServer("de77");
-        ProfileManager.getSingleton().loadProfiles();
-        GlobalOptions.setSelectedProfile(ProfileManager.getSingleton().getProfiles("de77")[0]);
-        DataHolder.getSingleton().loadData(false);
-        GlobalOptions.loadUserData();
-
-    /*    for (SOSRequest r : createSampleRequests()) {
-            SOSManager.getSingleton().addManagedElement(r);
-        }*/
-
-new SOSGenerator().setVisible(true);
-        new DefensePlanerWizard().show();
-        // DefenseAnalysePanel.getSingleton().setData(createSampleRequests());
-       /*
-         * final JFrame f = new JFrame(); f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); JPanel p = new JPanel(); p.setLayout(new
-         * BorderLayout()); WizardDisplayer.installInContainer(p, BorderLayout.CENTER, wizard, null, null, new WizardResultReceiver() {
-         *
-         * @Override public void finished(Object o) { System.out.println(o); }
-         *
-         * @Override public void cancelled(Map map) { System.out.println("Cancel: " + map); f.dispose(); } }); f.getContentPane().add(p);
-         * f.pack(); f.setVisible(true);
-         */
-
-    }
 }

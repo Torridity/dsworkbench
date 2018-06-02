@@ -55,12 +55,12 @@ public class EnumImageCellRenderer extends DefaultTableRenderer {
             put(FarmInformation.FARM_STATUS.TROOPS_FOUND.ordinal(), "/res/ui/red_report_lock.png");
         };}),
         SiegeStatus(new HashMap<Integer, String>() {{
-            put(FarmInformation.Siege_STATUS.BOTH_onWay.ordinal(), "/res/ui/both_siege.png");
-            put(FarmInformation.Siege_STATUS.CATA_onWay.ordinal(), "/res/ui/unit_catapult.png");
-            put(FarmInformation.Siege_STATUS.RAM_onWay.ordinal(), "/res/ui/rams.png");
-            put(FarmInformation.Siege_STATUS.atHome.ordinal(), "/res/ui/checkbox.png");
-            put(FarmInformation.Siege_STATUS.Not_initiated.ordinal(), "/res/ui/spy_needed.png");
-            put(FarmInformation.Siege_STATUS.final_farm.ordinal(), "/res/ui/final_farm.png");
+            put(FarmInformation.SIEGE_STATUS.BOTH_ON_WAY.ordinal(), "/res/ui/both_siege.png");
+            put(FarmInformation.SIEGE_STATUS.CATA_ON_WAY.ordinal(), "/res/ui/unit_catapult.png");
+            put(FarmInformation.SIEGE_STATUS.RAM_ON_WAY.ordinal(), "/res/ui/rams.png");
+            put(FarmInformation.SIEGE_STATUS.AT_HOME.ordinal(), "/res/ui/checkbox.png");
+            put(FarmInformation.SIEGE_STATUS.NOT_INITIATED.ordinal(), "/res/ui/spy_needed.png");
+            put(FarmInformation.SIEGE_STATUS.FINAL_FARM.ordinal(), "/res/ui/final_farm.png");
         };}),
         FightReportStatus(new HashMap<Integer, String>() {{
             put(FightReport.status.LOST_NOTHING.ordinal(), "/res/ui/bullet_ball_green.png");

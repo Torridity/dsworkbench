@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
-import org.jdom.Element;
+import org.jdom2.Element;
 
 /**
  *

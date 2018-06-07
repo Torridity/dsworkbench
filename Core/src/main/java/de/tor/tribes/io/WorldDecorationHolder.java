@@ -26,7 +26,9 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 /**
  *
@@ -34,7 +36,7 @@ import org.apache.log4j.Logger;
  */
 public class WorldDecorationHolder {
 
-  private static Logger logger = Logger.getLogger("WorldDecorationManager");
+  private static Logger logger = LogManager.getLogger("WorldDecorationManager");
   private static byte[] decoration = new byte[1000000];
   private static List<BufferedImage> mTextures = null;
   private static HashMap<Integer, HashMap<Double, BufferedImage>> cache = new HashMap<>();

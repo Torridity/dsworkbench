@@ -16,12 +16,11 @@
 package de.tor.tribes.util.parser;
 
 import de.tor.tribes.io.DataHolder;
-import de.tor.tribes.types.ext.Ally;
 import de.tor.tribes.types.Marker;
+import de.tor.tribes.types.ext.Ally;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.SilentParserInterface;
 import de.tor.tribes.util.mark.MarkerManager;
-
 import java.awt.Color;
 import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
@@ -29,7 +28,8 @@ import java.awt.datatransfer.Transferable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  *
@@ -37,8 +37,7 @@ import org.apache.log4j.Logger;
  * @author Torridity
  */
 public class DiplomacyParser implements SilentParserInterface {
-    
-    private static Logger logger = Logger.getLogger("DiplomacyParser");
+    private static Logger logger = LogManager.getLogger("DiplomacyParser");
     
     public boolean parse(String pData) {
         StringTokenizer lineTok = new StringTokenizer(pData, "\n\r");

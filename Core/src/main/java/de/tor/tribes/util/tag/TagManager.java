@@ -21,21 +21,22 @@ import de.tor.tribes.types.LinkedTag;
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.TagUtils;
-import de.tor.tribes.util.xml.JaxenUtils;
+import de.tor.tribes.util.xml.JDomUtils;
 import java.io.File;
 import java.io.FileWriter;
 import java.util.LinkedList;
 import java.util.List;
-import org.apache.log4j.Logger;
-import org.jdom.Document;
-import org.jdom.Element;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jdom2.Document;
+import org.jdom2.Element;
 
 /**Manager for village tags. Tags can be stored in files or in a database (not implemented yet)
  * @author Torridity
  */
 public class TagManager extends GenericManager<Tag> {
 
-    private static Logger logger = Logger.getLogger("TagManager");
+    private static Logger logger = LogManager.getLogger("TagManager");
     private static TagManager SINGLETON = null;
 
     public static synchronized TagManager getSingleton() {
@@ -63,8 +64,8 @@ public class TagManager extends GenericManager<Tag> {
                 logger.debug("Loading tags from '" + pFile + "'");
             }
             try {
-                Document d = JaxenUtils.getDocument(tagFile);
-                for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//tags/tag")) {
+                Document d = JDomUtils.getDocument(tagFile);
+                for (Element e : (List<Element>) JDomUtils.getNodes(d, "tags/tag")) {
                     Tag t = null;
                     if (e.getChild("equation") != null) {
                         t = new LinkedTag();
@@ -108,8 +109,8 @@ public class TagManager extends GenericManager<Tag> {
         }
         logger.debug("Importing tags");
         try {
-            Document d = JaxenUtils.getDocument(pFile);
-            for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//tags/tag")) {
+            Document d = JDomUtils.getDocument(pFile);
+            for (Element e : (List<Element>) JDomUtils.getNodes(d, "tags/tag")) {
                 Tag t = null;
                 if (e.getChild("equation") != null) {
                     t = new LinkedTag();
@@ -173,12 +174,12 @@ public class TagManager extends GenericManager<Tag> {
             logger.debug("Writing tags to '" + pFile + "'");
 
             StringBuilder b = new StringBuilder();
-            b.append("<tags>\n");
+            b.append("<data><tags>\n");
             for (ManageableType e : getAllElements()) {
                 Tag t = (Tag) e;
                 b.append(t.toXml());
             }
-            b.append("</tags>\n");
+            b.append("</tags></data>\n");
             FileWriter w = new FileWriter(pFile);
             w.write(b.toString());
             w.flush();

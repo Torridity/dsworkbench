@@ -16,7 +16,6 @@
 package de.tor.tribes.ui.windows;
 
 import de.tor.tribes.control.ManageableType;
-import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.LinkedTag;
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.ui.editors.LinkGroupColorCellEditor;
@@ -24,9 +23,7 @@ import de.tor.tribes.ui.models.TagLinkMatrixModel;
 import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
 import de.tor.tribes.ui.renderer.MultiColorCellRenderer;
 import de.tor.tribes.util.Constants;
-import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.JOptionPaneHelper;
-import de.tor.tribes.util.ProfileManager;
 import de.tor.tribes.util.tag.TagManager;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -34,9 +31,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
-import javax.swing.UIManager;
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.Logger;
 import org.jdesktop.swingx.decorator.CompoundHighlighter;
 import org.jdesktop.swingx.decorator.HighlightPredicate;
 import org.jdesktop.swingx.decorator.HighlighterFactory;

@@ -20,6 +20,7 @@ import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.FightReport;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.Constants;
+import de.tor.tribes.util.EscapeChars;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -28,13 +29,15 @@ import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Set;
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  *
  * @author Torridity
  */
 public class FightReportHTMLToolTipGenerator {
+    private final static Logger logger = LogManager.getLogger("FightReportHTMLToolTipGenerator");
 
     private final static String WINNER_STRING = "\\$WINNER_STRING";
     private final static String SEND_TIME = "\\$SEND_TIME";
@@ -62,12 +65,12 @@ public class FightReportHTMLToolTipGenerator {
         try {
             fr = new FileReader(new File("templates/report.tmpl"));
             BufferedReader r = new BufferedReader(fr);
-            String line = "";
+            String line;
             while ((line = r.readLine()) != null) {
                 pTemplateData += line;
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Unable to read Report templates", e);
         } finally {
             if (fr != null) {
                 try {
@@ -99,10 +102,10 @@ public class FightReportHTMLToolTipGenerator {
         res = res.replaceAll(LUCK_POS, ((pReport.getLuck() >= 0) ? "<b>" + nf.format(pReport.getLuck()) + "%</b>" : ""));
         res = res.replaceAll(LUCK_ICON1, "<img src=\"" + ((pReport.getLuck() <= 0) ? FightReportHTMLToolTipGenerator.class.getResource("/res/rabe.png") : FightReportHTMLToolTipGenerator.class.getResource("/res/rabe_grau.png")) + "\"/>");
         res = res.replaceAll(LUCK_ICON2, "<img src=\"" + ((pReport.getLuck() >= 0) ? FightReportHTMLToolTipGenerator.class.getResource("/res/klee.png") : FightReportHTMLToolTipGenerator.class.getResource("/res/klee_grau.png")) + "\"/>");
-        res = res.replaceAll(ATTACKER, StringEscapeUtils.escapeHtml(pReport.getAttacker().getName()));
-        res = res.replaceAll(SOURCE, StringEscapeUtils.escapeHtml(pReport.getSourceVillage().getFullName()));
-        res = res.replaceAll(DEFENDER, StringEscapeUtils.escapeHtml(pReport.getDefender().getName()));
-        res = res.replaceAll(TARGET, StringEscapeUtils.escapeHtml(pReport.getTargetVillage().getFullName()));
+        res = res.replaceAll(ATTACKER, EscapeChars.forHTML(pReport.getAttacker().getName()));
+        res = res.replaceAll(SOURCE, EscapeChars.forHTML(pReport.getSourceVillage().getFullName()));
+        res = res.replaceAll(DEFENDER, EscapeChars.forHTML(pReport.getDefender().getName()));
+        res = res.replaceAll(TARGET, EscapeChars.forHTML(pReport.getTargetVillage().getFullName()));
         res = res.replaceAll(RAM_DAMAGE, ((pReport.wasWallDamaged()) ? "Wall besch&auml;digt von Level <b>" + pReport.getWallBefore() + "</b> auf Level <b>" + pReport.getWallAfter() + "</b>" : ""));
         res = res.replaceAll(CATA_DAMAGE, ((pReport.wasBuildingDamaged()) ? Constants.BUILDING_NAMES[pReport.getAimedBuildingId()]+ " besch&auml;digt von Level <b>" + pReport.getBuildingBefore() + "</b> auf Level <b>" + pReport.getBuildingAfter() + "</b>" : ""));
         res = res.replaceAll(SNOB_INFLUENCE, ((pReport.wasSnobAttack()) ? "Zustimmung gesunken von <b>" + pReport.getAcceptanceBefore() + "</b> auf <b>" + pReport.getAcceptanceAfter() + "</b>" : ""));

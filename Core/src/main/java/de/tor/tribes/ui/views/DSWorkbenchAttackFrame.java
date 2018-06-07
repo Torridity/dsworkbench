@@ -54,8 +54,9 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.plaf.UIResource;
-import org.apache.commons.configuration.Configuration;
-import org.apache.log4j.Logger;
+import org.apache.commons.configuration2.Configuration;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jdesktop.swingx.JXButton;
 import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.painter.MattePainter;
@@ -119,7 +120,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
             }
         }
     }
-    private static Logger logger = Logger.getLogger("AttackView");
+    private static Logger logger = LogManager.getLogger("AttackView");
     private static DSWorkbenchAttackFrame SINGLETON = null;
     private CountdownThread mCountdownThread = null;
     private GenericTestPanel centerPanel = null;

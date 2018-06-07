@@ -30,17 +30,18 @@ import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
 import de.tor.tribes.util.village.KnownVillage;
 import java.util.*;
-import org.apache.commons.lang.math.IntRange;
-import org.apache.commons.lang.time.DateUtils;
-import org.apache.log4j.Logger;
-import org.jdom.Element;
+import org.apache.commons.lang3.Range;
+import org.apache.commons.lang3.time.DateUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jdom2.Element;
 
 /**
  *
  * @author Torridity
  */
 public class FarmInformation extends ManageableType {
-    private static Logger logger = Logger.getLogger("FarmInformation");
+    private static Logger logger = LogManager.getLogger("FarmInformation");
 
     public enum FARM_RESULT {
         UNKNOWN, OK, IMPOSSIBLE, FAILED, FARM_INACTIVE
@@ -805,7 +806,7 @@ public class FarmInformation extends ManageableType {
                     // now select the "best" village for farming
                     Village selection = null;
                     TroopAmountFixed farmers = null;
-                    IntRange r = DSWorkbenchFarmManager.getSingleton().getFarmRange(pConfig);
+                    Range<Integer> r = DSWorkbenchFarmManager.getSingleton().getFarmRange(pConfig);
                     int noTroops = 0;
                     int distCheckFailed = 0;
                     int minHaulCheckFailed = 0;
@@ -824,7 +825,7 @@ public class FarmInformation extends ManageableType {
                                 && troops.getFarmCapacity() == 0)) {
                             noTroops++;
                         } else {// enough troops
-                            if (dist > 0 && r.containsDouble(dist)) {
+                            if (dist > 0 && r.contains((int) dist)) {
                                 if (resources < minHaul) {
                                     minHaulCheckFailed++;
                                 } else {

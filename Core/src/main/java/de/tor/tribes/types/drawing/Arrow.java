@@ -32,7 +32,7 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.net.URLDecoder;
 import java.util.List;
-import org.jdom.Element;
+import org.jdom2.Element;
 
 /**
  *

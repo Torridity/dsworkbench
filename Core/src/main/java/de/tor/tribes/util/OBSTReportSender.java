@@ -15,85 +15,63 @@
  */
 package de.tor.tribes.util;
 
-import java.net.Socket;
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.URL;
-import org.apache.http.*;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.DefaultConnectionReuseStrategy;
-import org.apache.http.impl.DefaultHttpClientConnection;
-import org.apache.http.message.BasicHttpEntityEnclosingRequest;
-import org.apache.http.params.HttpParams;
-import org.apache.http.params.HttpProtocolParams;
-import org.apache.http.params.SyncBasicHttpParams;
-import org.apache.http.protocol.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  *
  * @author Torridity
  */
 public class OBSTReportSender {
-
+    private static final Logger logger = LogManager.getLogger("OBSTReportSender");
+    //TODO check if this works
+    //TODO check return of Obst-Server
     public static void sendReport(URL pTarget, String pData) throws Exception {
-
-        HttpParams params = new SyncBasicHttpParams();
-        HttpProtocolParams.setVersion(params, HttpVersion.HTTP_1_1);
-        HttpProtocolParams.setContentCharset(params, "UTF-8");
-        HttpProtocolParams.setUserAgent(params, "HttpComponents/1.1");
-        HttpProtocolParams.setUseExpectContinue(params, true);
-
-        HttpProcessor httpproc = new ImmutableHttpProcessor(new HttpRequestInterceptor[]{
-                    // Required protocol interceptors
-                    new RequestContent(),
-                    new RequestTargetHost(),
-                    // Recommended protocol interceptors
-                    new RequestConnControl(),
-                    new RequestUserAgent(),
-                    new RequestExpectContinue()});
-
-        HttpRequestExecutor httpexecutor = new HttpRequestExecutor();
-
-        HttpContext context = new BasicHttpContext(null);
-
-        HttpHost host = new HttpHost(pTarget.getHost(), pTarget.getPort());
-
-        DefaultHttpClientConnection conn = new DefaultHttpClientConnection();
-        ConnectionReuseStrategy connStrategy = new DefaultConnectionReuseStrategy();
-
-        context.setAttribute(ExecutionContext.HTTP_CONNECTION, conn);
-        context.setAttribute(ExecutionContext.HTTP_TARGET_HOST, host);
+        HttpURLConnection connection = null;
 
         try {
-            HttpEntity[] requestBodies = { new StringEntity(pData)};
+            //Create connection
+            connection = (HttpURLConnection) pTarget.openConnection();
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Content-Type", 
+                "application/x-www-form-urlencoded");
 
+            connection.setRequestProperty("Content-Length", 
+                Integer.toString(pData.getBytes().length));
+            connection.setRequestProperty("Content-Language", "de-DE");  
 
-            for (HttpEntity requestBody : requestBodies) {
-                if (!conn.isOpen()) {
-                    Socket socket = new Socket(host.getHostName(), host.getPort());
-                    conn.bind(socket, params);
-                }
-                BasicHttpEntityEnclosingRequest request = new BasicHttpEntityEnclosingRequest("POST",
-                        pTarget.getPath() + "?" + pTarget.getQuery());
+            connection.setUseCaches(false);
+            connection.setDoOutput(true);
 
-                request.setEntity(requestBody);
-                // System.out.println(">> Request URI: " + request.getRequestLine().getUri());
+            //Send request
+            DataOutputStream wr = new DataOutputStream (
+                connection.getOutputStream());
+            wr.writeBytes(pData);
+            wr.close();
 
-                request.setParams(params);
-                httpexecutor.preProcess(request, httpproc, context);
-                HttpResponse response = httpexecutor.execute(request, conn, context);
-                response.setParams(params);
-                httpexecutor.postProcess(response, httpproc, context);
-
-                //   System.out.println("<< Response: " + response.getStatusLine());
-                // System.out.println(EntityUtils.toString(response.getEntity()));
-                // System.out.println("==============");
-                if (!connStrategy.keepAlive(response, context)) {
-                    conn.close();
-                } else {
-                    System.out.println("Connection kept alive...");
-                }
+            //Get Response  
+            InputStream is = connection.getInputStream();
+            BufferedReader rd = new BufferedReader(new InputStreamReader(is));
+            StringBuilder response = new StringBuilder(); // or StringBuffer if Java version 5+
+            String line;
+            while ((line = rd.readLine()) != null) {
+                response.append(line);
+                response.append('\r');
             }
+            rd.close();
+            //return response.toString();
+        } catch (Exception e) {
+            logger.warn("Unable to send Report", e);
         } finally {
-            conn.close();
+            if (connection != null) {
+                connection.disconnect();
+            }
         }
     }
 }

@@ -21,7 +21,7 @@ import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.Note;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.views.DSWorkbenchNotepad;
-import de.tor.tribes.util.xml.JaxenUtils;
+import de.tor.tribes.util.xml.JDomUtils;
 import java.io.File;
 import java.io.FileWriter;
 import java.net.URLDecoder;
@@ -33,9 +33,10 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import org.apache.log4j.Logger;
-import org.jdom.Document;
-import org.jdom.Element;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jdom2.Document;
+import org.jdom2.Element;
 
 /**
  *
@@ -43,7 +44,7 @@ import org.jdom.Element;
  */
 public class NoteManager extends GenericManager<Note> {
 
-    private static Logger logger = Logger.getLogger("NoteManager");
+    private static Logger logger = LogManager.getLogger("NoteManager");
     private static NoteManager SINGLETON = null;
 
     public static synchronized NoteManager getSingleton() {
@@ -90,12 +91,12 @@ public class NoteManager extends GenericManager<Note> {
                 logger.debug("Reading notes from '" + pFile + "'");
             }
             try {
-                Document d = JaxenUtils.getDocument(noteFile);
-                List<Element> data = (List<Element>) JaxenUtils.getNodes(d, "//noteData");
+                Document d = JDomUtils.getDocument(noteFile);
+                List<Element> data = (List<Element>) JDomUtils.getNodes(d, "noteData");
                 if (data == null || data.isEmpty()) {
                     logger.info("Loading legacy data format");
                     //old version
-                    for (Element e1 : (List<Element>) JaxenUtils.getNodes(d, "//notes/note")) {
+                    for (Element e1 : (List<Element>) JDomUtils.getNodes(d, "notes/note")) {
                         try {
                             Note n = new Note();
                             n.loadFromXml(e1);
@@ -107,14 +108,14 @@ public class NoteManager extends GenericManager<Note> {
                 } else {
                     Element dataNode = data.get(0);
                     double version = Double.parseDouble(dataNode.getAttributeValue("version"));
-                    for (Element e : (List<Element>) JaxenUtils.getNodes(dataNode, "noteSets/noteSet")) {
+                    for (Element e : (List<Element>) JDomUtils.getNodes(dataNode, "noteSets/noteSet")) {
                         String setKey = e.getAttributeValue("name");
                         setKey = URLDecoder.decode(setKey, "UTF-8");
                         if (logger.isDebugEnabled()) {
                             logger.debug("Loading note set '" + setKey + "'");
                         }
                         addGroup(setKey);
-                        for (Element e1 : (List<Element>) JaxenUtils.getNodes(e, "notes/note")) {
+                        for (Element e1 : (List<Element>) JDomUtils.getNodes(e, "notes/note")) {
                             try {
                                 Note n = new Note();
                                 n.loadFromXml(e1);
@@ -150,7 +151,7 @@ public class NoteManager extends GenericManager<Note> {
         }
         try {
             StringBuilder b = new StringBuilder();
-            b.append("<noteData version=\"1.0\">\n");
+            b.append("<data><noteData version=\"1.0\">\n");
             b.append("<noteSets>\n");
             Iterator<String> plans = getGroupIterator();
 
@@ -167,7 +168,7 @@ public class NoteManager extends GenericManager<Note> {
                 b.append("</noteSet>\n");
             }
             b.append("</noteSets>");
-            b.append("</noteData>");
+            b.append("</noteData></data>");
             FileWriter w = new FileWriter(pFile);
             w.write(b.toString());
             w.flush();
@@ -225,11 +226,11 @@ public class NoteManager extends GenericManager<Note> {
         boolean result = false;
         logger.info("Loading notes");
         try {
-            Document d = JaxenUtils.getDocument(pFile);
+            Document d = JDomUtils.getDocument(pFile);
 
-            List<Element> data = (List<Element>) JaxenUtils.getNodes(d, "//noteData");
+            List<Element> data = (List<Element>) JDomUtils.getNodes(d, "noteData");
             if (data == null || data.isEmpty()) {
-                for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//notes/note")) {
+                for (Element e : (List<Element>) JDomUtils.getNodes(d, "notes/note")) {
                     Note note = new Note();
                     note.loadFromXml(e);
                     if (note != null) {
@@ -238,7 +239,7 @@ public class NoteManager extends GenericManager<Note> {
                 }
             } else {
                 Element dataNode = data.get(0);
-                for (Element e : (List<Element>) JaxenUtils.getNodes(dataNode, "noteSets/noteSet")) {
+                for (Element e : (List<Element>) JDomUtils.getNodes(dataNode, "noteSets/noteSet")) {
                     String setKey = e.getAttributeValue("name");
                     setKey = URLDecoder.decode(setKey, "UTF-8");
                     if (pExtension != null) {
@@ -249,7 +250,7 @@ public class NoteManager extends GenericManager<Note> {
                     }
                     addGroup(setKey);
 
-                    for (Element e1 : (List<Element>) JaxenUtils.getNodes(e, "notes/note")) {
+                    for (Element e1 : (List<Element>) JDomUtils.getNodes(e, "notes/note")) {
                         try {
                             Note n = new Note();
                             n.loadFromXml(e1);

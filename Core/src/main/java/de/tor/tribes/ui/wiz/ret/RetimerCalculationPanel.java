@@ -38,9 +38,10 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.time.DateUtils;
-import org.apache.log4j.Logger;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.time.DateUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.netbeans.spi.wizard.*;
 
 /**
@@ -49,7 +50,7 @@ import org.netbeans.spi.wizard.*;
  */
 public class RetimerCalculationPanel extends WizardPage {
 
-    private static Logger logger = Logger.getLogger("Retimer-Calculation");
+    private static Logger logger = LogManager.getLogger("Retimer-Calculation");
     private static final String GENERAL_INFO = "In diesem Schritt können alle verfügbaren Retimes berechnet werden. Dabei wird DS Workbench versuchen,<br/>"
             + "die angegebenen Herkunftsdörfer so zu timen, dass sie die angreifenden Dörfer erreichen sobald die Truppen aus diesen Dörfern zurückkehren.<br/>"
             + "Da ein Angriff auch mal schiefgehen kann, berechnet DS Workbench für jedes Herkunfts- und Zieldorf verschiedene Kombinationen, die von der verwendeten<br/>"

@@ -23,7 +23,6 @@ import de.tor.tribes.util.mark.MarkerManager;
 import java.awt.Color;
 import java.io.Serializable;
 import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.text.NumberFormat;
 import java.util.Comparator;
 import java.util.LinkedList;

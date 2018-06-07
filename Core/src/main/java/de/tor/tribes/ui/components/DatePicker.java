@@ -28,8 +28,6 @@ import java.text.FieldPosition;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicArrowButton;
-import org.netbeans.lib.awtextra.AbsoluteConstraints;
-import org.netbeans.lib.awtextra.AbsoluteLayout;
 
 public class DatePicker extends JPanel {
 
@@ -106,15 +104,14 @@ public class DatePicker extends JPanel {
         }
     }
 
-    private void init() {
-        setLayout(new AbsoluteLayout());
+    private void init() { 
         setMinimumSize(new Dimension(161, 220));
         setMaximumSize(getMinimumSize());
         setPreferredSize(getMinimumSize());
         setBorder(new javax.swing.plaf.BorderUIResource.EtchedBorderUIResource());
         backButton.setFont(smallFont);
-        //  backButton.setText("<");
         backButton.setMargin(insets);
+        backButton.setBounds(10, 10, 20, 20);
         backButton.setDefaultCapable(false);
         backButton.addActionListener(new ActionListener() {
 
@@ -123,15 +120,17 @@ public class DatePicker extends JPanel {
                 onBackClicked(actionevent);
             }
         });
-        add(backButton, new AbsoluteConstraints(10, 10, 20, 20));
+        add(backButton);
         //    monthAndYear.setFont(largeFont);
         monthAndYear.setHorizontalAlignment(SwingConstants.CENTER);
         monthAndYear.setText(formatDateText(selectedDate.getTime()));
-        add(monthAndYear, new AbsoluteConstraints(30, 10, 100, 20));
+        monthAndYear.setBounds(30, 10, 100, 20);
+        add(monthAndYear);
         forwardButton.setFont(smallFont);
         //forwardButton.setText(">");
         forwardButton.setMargin(insets);
         forwardButton.setDefaultCapable(false);
+        monthAndYear.setBounds(130, 10, 20, 20);
         forwardButton.addActionListener(new ActionListener() {
 
             @Override
@@ -139,7 +138,7 @@ public class DatePicker extends JPanel {
                 onForwardClicked(actionevent);
             }
         });
-        add(forwardButton, new AbsoluteConstraints(130, 10, 20, 20));
+        add(forwardButton);
         int i = 10;
         for (JTextField dayHeading : dayHeadings) {
             dayHeading.setBackground(gray);
@@ -148,7 +147,8 @@ public class DatePicker extends JPanel {
             dayHeading.setHorizontalAlignment(0);
             dayHeading.setBorder(BorderFactory.createEmptyBorder());
             dayHeading.setFocusable(false);
-            add(dayHeading, new AbsoluteConstraints(i, 40, 21, 21));
+            dayHeading.setBounds(i, 40, 21, 21);
+            add(dayHeading);
             i += 20;
         }
 
@@ -161,6 +161,7 @@ public class DatePicker extends JPanel {
                 anADaysInMonth.setHorizontalAlignment(SwingConstants.RIGHT);
                 anADaysInMonth.setText("");
                 anADaysInMonth.setFocusable(false);
+                anADaysInMonth.setBounds(i, k, 21, 21);
                 anADaysInMonth.addMouseListener(new MouseAdapter() {
 
                     @Override
@@ -168,7 +169,7 @@ public class DatePicker extends JPanel {
                         onDayClicked(mouseevent);
                     }
                 });
-                add(anADaysInMonth, new AbsoluteConstraints(i, k, 21, 21));
+                add(anADaysInMonth);
                 i += 20;
             }
 
@@ -188,11 +189,10 @@ public class DatePicker extends JPanel {
             todayButton.setMargin(insets);
             todayButton.setMaximumSize(dimension);
             todayButton.setMinimumSize(dimension);
-            todayButton.setPreferredSize(dimension);
             todayButton.setDefaultCapable(true);
             todayButton.setSelected(true);
+            todayButton.setBounds(9, 190, 68, 24);
             todayButton.addActionListener(new ActionListener() {
-
                 @Override
                 public void actionPerformed(ActionEvent actionevent) {
                     onToday(actionevent);
@@ -203,7 +203,7 @@ public class DatePicker extends JPanel {
             cancelButton.setMargin(insets);
             cancelButton.setMaximumSize(dimension);
             cancelButton.setMinimumSize(dimension);
-            cancelButton.setPreferredSize(dimension);
+            todayButton.setBounds(9, 190, 68, 24);
             cancelButton.addActionListener(new ActionListener() {
 
                 @Override
@@ -216,8 +216,8 @@ public class DatePicker extends JPanel {
             remove(cancelButton);
         }
 
-        add(todayButton, new AbsoluteConstraints(9, 190, 68, -1));
-        add(cancelButton, new AbsoluteConstraints(87, 190, 48, -1));
+        add(todayButton);
+        add(cancelButton);
     }
 
     public void removeOk() {
@@ -308,37 +308,28 @@ public class DatePicker extends JPanel {
         }
 
         //re-map the calendars day and get leading and trailing village amount
-        int startDay = 0;
         int leadingDays = 0;
         int calendarDay = calCurrent.get(GregorianCalendar.DAY_OF_WEEK);
         switch (calendarDay) {
             case Calendar.TUESDAY:
-                startDay = 1;
                 leadingDays = 1;
                 break;
             case Calendar.WEDNESDAY:
-                startDay = 2;
                 leadingDays = 2;
                 break;
             case Calendar.THURSDAY:
-                startDay = 3;
                 leadingDays = 3;
                 break;
             case Calendar.FRIDAY:
-                startDay = 4;
                 leadingDays = 4;
                 break;
             case Calendar.SATURDAY:
-                startDay = 5;
                 leadingDays = 5;
                 break;
             case Calendar.SUNDAY:
-                startDay = 6;
                 leadingDays = 6;
                 break;
             default:
-                //monday
-                startDay = 0;
                 leadingDays = 7;
         }
 
@@ -350,18 +341,17 @@ public class DatePicker extends JPanel {
         }
 
         int week = 0;
-        startDay = leadingDays;
         do {
             //check if we've reached sunday
-            if (startDay != 0 && startDay % 7 == 0) {
+            if (leadingDays != 0 && leadingDays % 7 == 0) {
                 //increment week and reset week day
                 week++;
-                startDay = 0;
+                leadingDays = 0;
             }
             //get current calendar field
-            CrossedLabel currentDayField = daysInMonth[week][startDay];
+            CrossedLabel currentDayField = daysInMonth[week][leadingDays];
             //increment day of week
-            startDay += 1;
+            leadingDays += 1;
             //set value of day from calendar
             currentDayField.setText(Integer.toString(calCurrent.get(GregorianCalendar.DAY_OF_MONTH)));
             currentDayField.setForeground(Color.BLACK);
@@ -384,18 +374,18 @@ public class DatePicker extends JPanel {
             //increment to next day
             calCurrent.add(GregorianCalendar.DAY_OF_MONTH, 1);
 
-        } while (startDay <= daysInCurrentMonth);
+        } while (leadingDays <= daysInCurrentMonth);
 
         int trailingDay = 1;
         //add trailing days beginning with the last day of this month
-        for (int i = week * 7 + startDay + 1; i <= 42; i++) {
-            if (startDay % 7 == 0) {
+        for (int i = week * 7 + leadingDays + 1; i <= 42; i++) {
+            if (leadingDays % 7 == 0) {
                 week++;
-                startDay = 0;
+                leadingDays = 0;
             }
             //get trailing field
-            CrossedLabel trailingField = daysInMonth[week][startDay];
-            startDay++;
+            CrossedLabel trailingField = daysInMonth[week][leadingDays];
+            leadingDays++;
             //set trailing value and increment trailing day
             trailingField.setForeground(Color.LIGHT_GRAY);
             trailingField.setText(Integer.toString(trailingDay));

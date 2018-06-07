@@ -21,7 +21,7 @@ import de.tor.tribes.util.interfaces.BBFormatterInterface;
 import java.text.NumberFormat;
 import java.util.Collection;
 import java.util.List;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author Torridity

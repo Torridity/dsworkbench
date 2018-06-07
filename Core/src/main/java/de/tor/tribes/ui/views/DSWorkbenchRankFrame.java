@@ -16,8 +16,6 @@
 package de.tor.tribes.ui.views;
 
 import com.jidesoft.swing.JideTabbedPane;
-import com.smardec.mousegestures.MouseGestures;
-import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.panels.GenericTestPanel;
 import de.tor.tribes.ui.panels.RankTableTab;
@@ -25,7 +23,6 @@ import de.tor.tribes.ui.windows.AbstractDSWorkbenchFrame;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ImageUtils;
-import de.tor.tribes.util.MouseGestureHandler;
 import de.tor.tribes.util.PropertyHelper;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -45,9 +42,9 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import org.apache.commons.configuration.Configuration;
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.Logger;
+import org.apache.commons.configuration2.Configuration;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jdesktop.swingx.JXButton;
 import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.painter.MattePainter;
@@ -90,7 +87,7 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame implements Ac
         }
         
     }
-    private static Logger logger = Logger.getLogger("RankDialog");
+    private static Logger logger = LogManager.getLogger("RankDialog");
     private static DSWorkbenchRankFrame SINGLETON = null;
     private GenericTestPanel centerPanel = null;
     

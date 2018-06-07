@@ -19,7 +19,6 @@ import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
 import de.tor.tribes.util.SilentParserInterface;
-
 import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
@@ -30,7 +29,9 @@ import java.util.List;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -38,8 +39,8 @@ import org.json.JSONObject;
  * @author Jejkal
  */
 public class GroupParser implements SilentParserInterface {
-
-    private static Logger logger = Logger.getLogger("GroupParser");
+    private static Logger logger = LogManager.getLogger("GroupParser");
+    
     /*
     (09) Sunset Beach (459|468) K44      2   1023    2323    Fertig; Off    » bearbeiten
     )=-g-town-=( (469|476) K44      2   1234    2323    Fertig; Off    » bearbeiten
@@ -68,7 +69,7 @@ public class GroupParser implements SilentParserInterface {
                 Village v = DataHolder.getSingleton().getVillagesById().get(Integer.parseInt(villageId));
                 groups.add(v);
             }
-        } catch (Exception e) {
+        } catch (JSONException | NumberFormatException e) {
             logger.warn("Failed to parse group info from village renamer data");
             mappings.clear();
         }
@@ -80,6 +81,7 @@ public class GroupParser implements SilentParserInterface {
         return false;
     }
 
+    @Override
     public boolean parse(String pGroupsString) {
         
         if (parseVillageRenamerData(pGroupsString)) {
@@ -131,7 +133,7 @@ public class GroupParser implements SilentParserInterface {
 
                     if (v != null) {
                         //valid line found
-                        int groupCount = 0;
+                        int groupCount;
                         try {
                             groupCount = Integer.parseInt(groupCountToken.trim());
                         } catch (Exception e) {

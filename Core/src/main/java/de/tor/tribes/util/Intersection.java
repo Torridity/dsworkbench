@@ -23,7 +23,9 @@ import java.awt.geom.FlatteningPathIterator;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
 import java.awt.geom.PathIterator;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 /**
  * The Intersection class provides methods for determining
@@ -38,7 +40,7 @@ public class Intersection {
      * Log4J Category. The name of the category is the fully qualified name of the
      * enclosing class.
      */
-    static Logger logger = Logger.getLogger(Intersection.class);
+    static Logger logger = LogManager.getLogger(Intersection.class);
 
     /**
      * Returns the intersection point of two lines.

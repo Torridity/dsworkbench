@@ -23,7 +23,8 @@ import java.net.URLConnection;
 import java.util.*;
 import java.util.zip.GZIPInputStream;
 import javax.swing.*;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.netbeans.spi.wizard.Wizard;
 import org.netbeans.spi.wizard.WizardController;
 import org.netbeans.spi.wizard.WizardPanel;
@@ -34,7 +35,7 @@ import org.netbeans.spi.wizard.WizardPanelNavResult;
  * @author Torridity
  */
 public class ServerSettings extends javax.swing.JPanel implements WizardPanel {
-    private static Logger logger = Logger.getLogger("ServerSettings");
+    private static Logger logger = LogManager.getLogger("ServerSettings");
 
   private WizardController wizCtrl;
   private Map currentSettings = null;

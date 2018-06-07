@@ -72,8 +72,9 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
-import org.apache.commons.configuration.Configuration;
-import org.apache.log4j.Logger;
+import org.apache.commons.configuration2.Configuration;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jdesktop.swingx.JXButton;
 import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.painter.MattePainter;
@@ -106,7 +107,7 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
         }
 
     }
-    private static Logger logger = Logger.getLogger("SelectionFrame");
+    private static Logger logger = LogManager.getLogger("SelectionFrame");
     private static DSWorkbenchSelectionFrame SINGLETON = null;
     private SelectionTreeRootNode mRoot = null;
     private List<Village> treeData = null;

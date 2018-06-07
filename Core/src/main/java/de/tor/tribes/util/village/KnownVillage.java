@@ -23,8 +23,9 @@ import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.ServerSettings;
 import java.awt.Color;
 import java.util.Arrays;
-import org.apache.log4j.Logger;
-import org.jdom.Element;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jdom2.Element;
 
 /**
  * @author extremeCrazyCoder
@@ -35,7 +36,7 @@ import org.jdom.Element;
  */
 public class KnownVillage extends ManageableType {
     
-    private static Logger logger = Logger.getLogger("KnownVillage");
+    private static Logger logger = LogManager.getLogger("KnownVillage");
     
     private int[] buildings;
 

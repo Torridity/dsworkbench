@@ -39,7 +39,8 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.decorator.HighlightPredicate;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
@@ -58,7 +59,7 @@ public class RankTableTab extends javax.swing.JPanel implements ListSelectionLis
 
         TRIBE, ALLY, TRIBE_BASH, ALLY_BASH
     }
-    private static Logger logger = Logger.getLogger("RankTableTab");
+    private static Logger logger = LogManager.getLogger("RankTableTab");
     private RANK_TYPE eType = null;
     private JXTable jxRankTable = new JXTable();
     private DefaultTableModel theModel = null;

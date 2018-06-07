@@ -18,7 +18,7 @@ package de.tor.tribes.io;
 import java.io.Serializable;
 import java.util.Comparator;
 import java.util.Objects;
-import org.jdom.Element;
+import org.jdom2.Element;
 
 /**
  *
@@ -41,7 +41,7 @@ public class UnitHolder implements Serializable {
 
     public UnitHolder() {
         name = "";
-        plainName = null;
+        plainName = "";
     }
 
     public UnitHolder(Element pElement) throws Exception {

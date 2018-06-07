@@ -35,17 +35,21 @@ import de.tor.tribes.util.tag.TagManager;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.village.KnownVillageManager;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 import javax.help.CSH;
 import javax.help.HelpBroker;
 import javax.help.HelpSet;
 import javax.help.HelpSetException;
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.PropertiesConfiguration;
-import org.apache.log4j.Logger;
+import jdk.nashorn.api.scripting.URLReader;
+import org.apache.commons.configuration2.PropertiesConfiguration;
+import org.apache.commons.configuration2.ex.ConfigurationException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 /**
  * Global settings used by almost all components. e.g. WorldData or UI specific objects
@@ -54,7 +58,7 @@ import org.apache.log4j.Logger;
  */
 public class GlobalOptions {
 
-    private static Logger logger = Logger.getLogger("GlobalSettings");
+    private static Logger logger = LogManager.getLogger("GlobalSettings");
     private static boolean INITIALIZED = false;
     private static boolean STARTED = false;
     /**
@@ -215,9 +219,9 @@ public class GlobalOptions {
         GLOBAL_PROPERTIES = new DSPropertiesConfiguration();
         if (new File("global.properties").exists()) {
             logger.debug("Loading existing properties file");
-            FileInputStream fin = new FileInputStream("global.properties");
-            GLOBAL_PROPERTIES.load(fin);
-            fin.close();
+            try (FileReader fin = new FileReader(new File("global.properties"))) {
+                GLOBAL_PROPERTIES.load(fin);
+            }
         } else {
             logger.debug("Creating empty properties file");
             saveProperties();
@@ -229,11 +233,9 @@ public class GlobalOptions {
      */
     public static void saveProperties() {
         logger.debug("Saving global properties");
-        try {
-            FileOutputStream fout = new FileOutputStream("global.properties");
+        try (FileWriter fout = new FileWriter(new File("global.properties"))) {
             GLOBAL_PROPERTIES.save(fout);
             fout.flush();
-            fout.close();
         } catch (Exception e) {
             logger.error("Failed to write properties", e);
         }
@@ -455,23 +457,33 @@ public class GlobalOptions {
 }
         
         public DSPropertiesConfiguration(String fileName) throws ConfigurationException {
-            GLOBAL_PROPERTIES = new PropertiesConfiguration(fileName);
+            this(new File(fileName));
         }
         
         public DSPropertiesConfiguration(File file) throws ConfigurationException {
-            GLOBAL_PROPERTIES = new PropertiesConfiguration(file);
+            this();
+            try {
+                GLOBAL_PROPERTIES.read(new FileReader(file));
+            } catch (IOException ex) {
+                logger.error("Can't read Global options", ex);
+            }
         }
         
         public DSPropertiesConfiguration(URL url) throws ConfigurationException {
-            GLOBAL_PROPERTIES = new PropertiesConfiguration(url);
+            this();
+            try {
+                GLOBAL_PROPERTIES.read(new URLReader(url));
+            } catch (IOException ex) {
+                logger.error("Can't read Global options", ex);
+            }
         }
         
-        public synchronized void load(FileInputStream in) throws ConfigurationException {
-            GLOBAL_PROPERTIES.load(in);
+        public synchronized void load(FileReader in) throws ConfigurationException, IOException {
+            GLOBAL_PROPERTIES.read(in);
         }
         
-        public void save(FileOutputStream write) throws ConfigurationException {
-            GLOBAL_PROPERTIES.save(write);
+        public void save(FileWriter write) throws ConfigurationException, IOException {
+            GLOBAL_PROPERTIES.write(write);
         }
         
         /**

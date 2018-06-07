@@ -18,11 +18,13 @@ package de.tor.tribes.util;
 import java.lang.management.*;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArraySet;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 public class ThreadDeadlockDetector {
     
-    private static Logger logger = Logger.getLogger("ThreadDeadlockDetector");
+    private static Logger logger = LogManager.getLogger("ThreadDeadlockDetector");
     private final Timer threadCheck = new Timer("ThreadDeadlockDetector", true);
     private final ThreadMXBean mbean =
             ManagementFactory.getThreadMXBean();
@@ -105,7 +107,7 @@ public class ThreadDeadlockDetector {
     public static class DefaultDeadlockListener implements
             ThreadDeadlockDetector.Listener {
         
-        private static Logger logger = Logger.getLogger("DefaultDeadlockListener");
+        private static Logger logger = LogManager.getLogger("DefaultDeadlockListener");
         
         @Override
         public void deadlockDetected(Thread[] threads) {

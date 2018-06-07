@@ -22,8 +22,9 @@ import de.tor.tribes.ui.ImageManager;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import org.apache.log4j.Logger;
-import org.jdom.Element;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jdom2.Element;
 
 /**
  *
@@ -31,7 +32,7 @@ import org.jdom.Element;
  */
 public class StandardAttack extends ManageableType {
 
-    private static Logger logger = Logger.getLogger("StandardAttack");
+    private static Logger logger = LogManager.getLogger("StandardAttack");
     private String name = null;
     private TroopAmountDynamic troops = null;
     public static final int NO_ICON = ImageManager.NOTE_SYMBOL_NONE;

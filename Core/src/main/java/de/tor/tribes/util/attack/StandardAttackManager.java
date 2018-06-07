@@ -18,22 +18,23 @@ package de.tor.tribes.util.attack;
 import de.tor.tribes.control.GenericManager;
 import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.types.StandardAttack;
-import de.tor.tribes.util.xml.JaxenUtils;
+import de.tor.tribes.util.xml.JDomUtils;
 import java.io.File;
 import java.io.FileWriter;
 import java.util.List;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
-import org.apache.log4j.Logger;
-import org.jdom.Document;
-import org.jdom.Element;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.Predicate;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jdom2.Document;
+import org.jdom2.Element;
 
 /**
  * @author Charon
  */
 public class StandardAttackManager extends GenericManager<StandardAttack> {
 
-    private static final Logger logger = Logger.getLogger("StandardAttackManager");
+    private static final Logger logger = LogManager.getLogger("StandardAttackManager");
     public static final String NO_TYPE_NAME = "Keine Auswahl";
     public static final String FAKE_TYPE_NAME = "Fake";
     public static final String OFF_TYPE_NAME = "Off";
@@ -170,8 +171,8 @@ public class StandardAttackManager extends GenericManager<StandardAttack> {
         if (attackFile.exists()) {
             logger.info("Loading standard attacks from '" + pFile + "'");
             try {
-                Document d = JaxenUtils.getDocument(attackFile);
-                for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//stdAttacks/stdAttack")) {
+                Document d = JDomUtils.getDocument(attackFile);
+                for (Element e : (List<Element>) JDomUtils.getNodes(d, "stdAttacks/stdAttack")) {
                     StandardAttack element = new StandardAttack();
                     element.loadFromXml(e);
                     addManagedElement(element);
@@ -192,12 +193,12 @@ public class StandardAttackManager extends GenericManager<StandardAttack> {
     @Override
     public void saveElements(String pFile) {
         try (FileWriter w = new FileWriter(pFile)) {
-            w.write("<stdAttacks>\n");
+            w.write("<data><stdAttacks>\n");
 
             for (ManageableType element : getAllElements()) {
                 w.write(element.toXml());
             }
-            w.write("</stdAttacks>\n");
+            w.write("</stdAttacks></data>\n");
             w.flush();
             w.close();
         } catch (Exception e) {

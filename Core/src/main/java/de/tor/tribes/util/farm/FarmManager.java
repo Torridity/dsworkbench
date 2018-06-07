@@ -23,7 +23,7 @@ import de.tor.tribes.types.FightReport;
 import de.tor.tribes.types.ext.*;
 import de.tor.tribes.util.*;
 import de.tor.tribes.util.report.ReportManager;
-import de.tor.tribes.util.xml.JaxenUtils;
+import de.tor.tribes.util.xml.JDomUtils;
 import java.awt.HeadlessException;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -36,9 +36,10 @@ import java.io.*;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
-import org.apache.log4j.Logger;
-import org.jdom.Document;
-import org.jdom.Element;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jdom2.Document;
+import org.jdom2.Element;
 
 /**
  *
@@ -46,7 +47,7 @@ import org.jdom.Element;
  */
 public class FarmManager extends GenericManager<FarmInformation> {
 
-  private static Logger logger = Logger.getLogger("FarmManager");
+  private static Logger logger = LogManager.getLogger("FarmManager");
   private static FarmManager SINGLETON = null;
   private Hashtable<Village, FarmInformation> infoMap = null;
   private Village lastUpdatedFarm = null;
@@ -298,8 +299,8 @@ public class FarmManager extends GenericManager<FarmInformation> {
     if (farmFile.exists()) {
       logger.debug("Reading farm information from file " + pFile);
       try {
-        Document d = JaxenUtils.getDocument(farmFile);
-        for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//farmInfos/farmInfo")) {
+        Document d = JDomUtils.getDocument(farmFile);
+        for (Element e : (List<Element>) JDomUtils.getNodes(d, "farmInfos/farmInfo")) {
           FarmInformation element = new FarmInformation(e);
           if (element.getVillage() != null) {
             //just add valid information
@@ -322,11 +323,11 @@ public class FarmManager extends GenericManager<FarmInformation> {
   public void saveElements(String pFile) {
     logger.debug("Writing farm information to file " + pFile);
     try (FileWriter w = new FileWriter(pFile)) {
-      w.write("<farmInfos>\n");
+      w.write("<data><farmInfos>\n");
       for (ManageableType element : getAllElements()) {
         w.write(element.toXml());
       }
-      w.write("</farmInfos>\n");
+      w.write("</farmInfos></data>\n");
       w.flush();
       w.close();
     } catch (Exception e) {
@@ -355,8 +356,8 @@ public class FarmManager extends GenericManager<FarmInformation> {
     if (pFile.exists()) {
       logger.debug("Reading farm information from file " + pFile);
       try {
-        Document d = JaxenUtils.getDocument(pFile);
-        for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//farmInfos/farmInfo")) {
+        Document d = JDomUtils.getDocument(pFile);
+        for (Element e : (List<Element>) JDomUtils.getNodes(d, "farmInfos/farmInfo")) {
           FarmInformation element = new FarmInformation(e);
           if (element.getVillage() != null) {
             //just add valid information

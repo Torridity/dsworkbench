@@ -22,14 +22,14 @@ import de.tor.tribes.ui.ImageManager;
 import de.tor.tribes.util.BBSupport;
 import de.tor.tribes.util.StringHelper;
 import de.tor.tribes.util.bb.VillageListFormatter;
-import de.tor.tribes.util.xml.JaxenUtils;
+import de.tor.tribes.util.xml.JDomUtils;
 import java.awt.Color;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
-import org.jdom.Element;
+import org.jdom2.Element;
 
 /**
  *
@@ -125,7 +125,7 @@ public class Tag extends ManageableType implements Comparable<Tag>, BBSupport {
                 setTagIcon(-1);
             }
 
-            for (Element e : (List<Element>) JaxenUtils.getNodes(pElement, "villages/village")) {
+            for (Element e : (List<Element>) JDomUtils.getNodes(pElement, "villages/village")) {
                 tagVillage(Integer.parseInt(e.getValue()));
             }
         } catch (Exception ignored) {

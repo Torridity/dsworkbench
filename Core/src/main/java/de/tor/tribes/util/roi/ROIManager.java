@@ -15,16 +15,17 @@
  */
 package de.tor.tribes.util.roi;
 
-import de.tor.tribes.util.xml.JaxenUtils;
+import de.tor.tribes.util.xml.JDomUtils;
 import java.io.File;
 import java.io.FileWriter;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.LinkedList;
 import java.util.List;
-import org.apache.log4j.Logger;
-import org.jdom.Document;
-import org.jdom.Element;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jdom2.Document;
+import org.jdom2.Element;
 
 /**
  *
@@ -32,7 +33,7 @@ import org.jdom.Element;
  */
 public class ROIManager {
 
-    private static Logger logger = Logger.getLogger("ROIManager");
+    private static Logger logger = LogManager.getLogger("ROIManager");
     private static ROIManager SINGLETON = null;
     private List<String> rois = null;
 
@@ -62,8 +63,8 @@ public class ROIManager {
                 logger.debug("Reading markers from '" + pFile + "'");
             }
             try {
-                Document d = JaxenUtils.getDocument(roiFile);
-                for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//rois/roi")) {
+                Document d = JDomUtils.getDocument(roiFile);
+                for (Element e : (List<Element>) JDomUtils.getNodes(d, "rois/roi")) {
                     try {
                         String text = URLDecoder.decode(e.getTextTrim(), "UTF-8");
                         rois.add(text);
@@ -98,13 +99,13 @@ public class ROIManager {
         try {
 
             StringBuilder b = new StringBuilder();
-            b.append("<rois>\n");
+            b.append("<data><rois>\n");
 
             for (String r : rois) {
                 String text = URLEncoder.encode(r, "UTF-8");
                 b.append("<roi>").append(text).append("</roi>\n");
             }
-            b.append("</rois>");
+            b.append("</rois></data>");
             FileWriter w = new FileWriter(pFile);
             w.write(b.toString());
             w.flush();

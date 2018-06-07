@@ -19,7 +19,7 @@ import de.tor.tribes.control.GenericManager;
 import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.ext.Village;
-import de.tor.tribes.util.xml.JaxenUtils;
+import de.tor.tribes.util.xml.JDomUtils;
 import java.awt.*;
 import java.io.File;
 import java.io.FileWriter;
@@ -28,9 +28,10 @@ import java.net.URLEncoder;
 import java.util.*;
 import java.util.List;
 import javax.imageio.ImageIO;
-import org.apache.log4j.Logger;
-import org.jdom.Document;
-import org.jdom.Element;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jdom2.Document;
+import org.jdom2.Element;
 
 /**
  * @author Charon
@@ -46,7 +47,7 @@ public class TroopsManager extends GenericManager<VillageTroopsHolder> {
     public static final String OUTWARDS_GROUP = "Außerhalb";
     public static final String ON_THE_WAY_GROUP = "Unterwegs";
     public static final String SUPPORT_GROUP = "Unterstützung";
-    private static Logger logger = Logger.getLogger("TroopsManager");
+    private static Logger logger = LogManager.getLogger("TroopsManager");
     private static TroopsManager SINGLETON = null;
     private HashMap<String, HashMap<Village, VillageTroopsHolder>> managedElementGroups = new HashMap<>();
     //  private Hashtable<Village, VillageTroopsHolder> mTroops = null;
@@ -427,14 +428,14 @@ public class TroopsManager extends GenericManager<VillageTroopsHolder> {
         if (troopsFile.exists()) {
             logger.info("Loading troops from '" + pFile + "'");
             try {
-                Document d = JaxenUtils.getDocument(troopsFile);
-                for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//troopGroups/troopGroup")) {
+                Document d = JDomUtils.getDocument(troopsFile);
+                for (Element e : (List<Element>) JDomUtils.getNodes(d, "troopGroups/troopGroup")) {
                     String groupKey = e.getAttributeValue("name");
                     groupKey = URLDecoder.decode(groupKey, "UTF-8");
                     if (logger.isDebugEnabled()) {
                         logger.debug("Loading troops from group '" + groupKey + "'");
                     }
-                    for (Element e1 : (List<Element>) JaxenUtils.getNodes(e, "troopInfos/troopInfo")) {
+                    for (Element e1 : (List<Element>) JDomUtils.getNodes(e, "troopInfos/troopInfo")) {
                         String type = e1.getAttributeValue("type");
                         if (type != null && type.equals("support")) {
                             SupportVillageTroopsHolder holder = new SupportVillageTroopsHolder();
@@ -468,14 +469,14 @@ public class TroopsManager extends GenericManager<VillageTroopsHolder> {
 
         logger.info("Importing troops");
         try {
-            Document d = JaxenUtils.getDocument(pFile);
-            for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//troopGroups/troopGroup")) {
+            Document d = JDomUtils.getDocument(pFile);
+            for (Element e : (List<Element>) JDomUtils.getNodes(d, "troopGroups/troopGroup")) {
                 String groupKey = e.getAttributeValue("name");
                 groupKey = URLDecoder.decode(groupKey, "UTF-8");
                 if (logger.isDebugEnabled()) {
                     logger.debug("Loading troops from group '" + groupKey + "'");
                 }
-                for (Element e1 : (List<Element>) JaxenUtils.getNodes(e, "troopInfos/troopInfo")) {
+                for (Element e1 : (List<Element>) JDomUtils.getNodes(e, "troopInfos/troopInfo")) {
                     String type = e1.getAttributeValue("type");
                     VillageTroopsHolder holder = null;
                     if (type != null && type.equals("support")) {
@@ -528,7 +529,7 @@ public class TroopsManager extends GenericManager<VillageTroopsHolder> {
     public void saveElements(String pFile) {
         try {
             StringBuilder b = new StringBuilder();
-            b.append("<troopGroups>\n");
+            b.append("<data><troopGroups>\n");
             for (String group : getGroups()) {
                 b.append("<troopGroup name=\"").append(URLEncoder.encode(group, "UTF-8")).append("\">\n");
                 b.append("<troopInfos>\n");
@@ -538,7 +539,7 @@ public class TroopsManager extends GenericManager<VillageTroopsHolder> {
                 b.append("</troopInfos>\n");
                 b.append("</troopGroup>\n");
             }
-            b.append("</troopGroups>\n\n");
+            b.append("</troopGroups></data>\n\n");
             FileWriter w = new FileWriter(pFile);
             w.write(b.toString());
             w.flush();

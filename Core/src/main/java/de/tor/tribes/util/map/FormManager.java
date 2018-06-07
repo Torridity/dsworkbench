@@ -19,14 +19,15 @@ import de.tor.tribes.control.GenericManager;
 import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.types.drawing.AbstractForm;
 import de.tor.tribes.ui.panels.MapPanel;
-import de.tor.tribes.util.xml.JaxenUtils;
+import de.tor.tribes.util.xml.JDomUtils;
 import java.io.File;
 import java.io.FileWriter;
 import java.util.LinkedList;
 import java.util.List;
-import org.apache.log4j.Logger;
-import org.jdom.Document;
-import org.jdom.Element;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jdom2.Document;
+import org.jdom2.Element;
 
 /**
  *
@@ -34,7 +35,7 @@ import org.jdom.Element;
  */
 public class FormManager extends GenericManager<AbstractForm> {
 
-    private static Logger logger = Logger.getLogger("FormManager");
+    private static Logger logger = LogManager.getLogger("FormManager");
     private static FormManager SINGLETON = null;
 
     public static synchronized FormManager getSingleton() {
@@ -60,8 +61,8 @@ public class FormManager extends GenericManager<AbstractForm> {
         if (formFile.exists()) {
             logger.info("Loading forms from '" + pFile + "'");
             try {
-                Document d = JaxenUtils.getDocument(formFile);
-                for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//forms/form")) {
+                Document d = JDomUtils.getDocument(formFile);
+                for (Element e : (List<Element>) JDomUtils.getNodes(d, "forms/form")) {
                     AbstractForm form = AbstractForm.fromXml(e);
                     if (form != null) {
                         addManagedElement(form);
@@ -88,8 +89,8 @@ public class FormManager extends GenericManager<AbstractForm> {
         boolean result = false;
         invalidate();
         try {
-            Document d = JaxenUtils.getDocument(pFile);
-            for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//forms/form")) {
+            Document d = JDomUtils.getDocument(pFile);
+            for (Element e : (List<Element>) JDomUtils.getNodes(d, "forms/form")) {
                 AbstractForm form = AbstractForm.fromXml(e);
                 if (form != null) {
                     if (form.getFormName() == null) {
@@ -144,13 +145,13 @@ public class FormManager extends GenericManager<AbstractForm> {
     public void saveElements(String pFile) {
         try {
             FileWriter w = new FileWriter(pFile);
-            w.write("<forms>\n");
+            w.write("<data><forms>\n");
 
             for (ManageableType type : getAllElements()) {
                 AbstractForm form = (AbstractForm) type;
                 w.write(form.toXml());
             }
-            w.write("</forms>\n");
+            w.write("</forms></data>\n");
             w.flush();
             w.close();
         } catch (Exception e) {

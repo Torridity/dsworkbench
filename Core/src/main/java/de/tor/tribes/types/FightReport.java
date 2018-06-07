@@ -28,7 +28,7 @@ import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.BBSupport;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.village.KnownVillage;
-import de.tor.tribes.util.xml.JaxenUtils;
+import de.tor.tribes.util.xml.JDomUtils;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -36,9 +36,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
-import org.apache.log4j.Logger;
-import org.jdom.Document;
-import org.jdom.Element;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jdom2.Document;
+import org.jdom2.Element;
 
 /**
  *
@@ -122,7 +123,7 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
         HIDDEN
     }
     
-    private Logger logger = Logger.getLogger("FightReport");
+    private Logger logger = LogManager.getLogger("FightReport");
     
     private boolean won = false;
     private long timestamp = 0;
@@ -177,8 +178,8 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
     public static FightReport fromInternalRepresentation(String pLine) {
         FightReport r = new FightReport();
         try {
-            Document d = JaxenUtils.getDocument(pLine);
-            r.loadFromXml((Element) JaxenUtils.getNodes(d, "//report").get(0));
+            Document d = JDomUtils.getDocument(pLine);
+            r.loadFromXml((Element) JDomUtils.getNodes(d, "report").get(0));
             return r;
         } catch (Exception e) {
             return null;
@@ -244,7 +245,7 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
 
             defendersOutside = new HashMap<>();
             if (dDefendersOutside != null) {
-                for (Element e : (List<Element>) JaxenUtils.getNodes(dDefendersOutside, "support")) {
+                for (Element e : (List<Element>) JDomUtils.getNodes(dDefendersOutside, "support")) {
                     int villageId = e.getAttribute("trg").getIntValue();
                     Village v = DataHolder.getSingleton().getVillagesById().get(villageId);
                     if(v != null) {

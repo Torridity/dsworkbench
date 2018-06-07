@@ -23,8 +23,6 @@ import java.awt.Component;
 import java.awt.event.ItemEvent;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.Logger;
 
 /**
  *

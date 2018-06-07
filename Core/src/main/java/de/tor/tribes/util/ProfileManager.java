@@ -25,7 +25,9 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 /**
  *
@@ -33,7 +35,7 @@ import org.apache.log4j.Logger;
  */
 public class ProfileManager {
 
-    private static Logger logger = Logger.getLogger("ProfileManager");
+    private static Logger logger = LogManager.getLogger("ProfileManager");
     private static ProfileManager SINGLETON = null;
     private List<UserProfile> mProfiles = null;
     private List<ProfileManagerListener> mListeners = null;

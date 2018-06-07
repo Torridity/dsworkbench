@@ -26,16 +26,17 @@ import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.ImageManager;
 import de.tor.tribes.util.*;
 import de.tor.tribes.util.attack.StandardAttackManager;
-import de.tor.tribes.util.xml.JaxenUtils;
+import de.tor.tribes.util.xml.JDomUtils;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
-import org.apache.log4j.Logger;
-import org.jdom.Element;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.Predicate;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jdom2.Element;
 
 /**
  *
@@ -43,7 +44,7 @@ import org.jdom.Element;
  */
 public class Attack extends ManageableType implements Serializable, Comparable<Attack>, BBSupport {
 
-    private static Logger logger = Logger.getLogger("AttackTableModel");
+    private static Logger logger = LogManager.getLogger("AttackTableModel");
 
     private final static String[] VARIABLES = new String[]{"%TYPE%", "%ATTACKER%", "%SOURCE%", "%UNIT%", "%DEFENDER%", "%TARGET%", "%SEND%", "%ARRIVE%", "%PLACE%", "%PLACE_URL%"};
     private final static String STANDARD_TEMPLATE = "%TYPE% von %ATTACKER% aus %SOURCE% mit %UNIT% auf %DEFENDER% in %TARGET% startet am [color=#ff0e0e]%SEND%[/color] und kommt am [color=#2eb92e]%ARRIVE%[/color] an (%PLACE%)";
@@ -314,7 +315,7 @@ public class Attack extends ManageableType implements Serializable, Comparable<A
         this.unit = DataHolder.getSingleton().getUnitByPlainName(pElement.getChild("unit").getText());
         
         try {
-            this.type = Integer.parseInt(JaxenUtils.getNodeValue(pElement, "extensions/type"));
+            this.type = Integer.parseInt(JDomUtils.getNodeValue(pElement, "extensions/type"));
             try {
                 this.amounts = new TroopAmountDynamic(pElement.getChild("extensions").getChild("amounts"));
             } catch (Exception e) {
@@ -326,9 +327,9 @@ public class Attack extends ManageableType implements Serializable, Comparable<A
             this.type = NO_TYPE;
             this.amounts = new TroopAmountDynamic(0);
         }
-        this.showOnMap = Boolean.parseBoolean(JaxenUtils.getNodeValue(pElement, "extensions/showOnMap"));
+        this.showOnMap = Boolean.parseBoolean(JDomUtils.getNodeValue(pElement, "extensions/showOnMap"));
         try {
-            this.transferredToBrowser = Boolean.parseBoolean(JaxenUtils.getNodeValue(pElement, "extensions/transferredToBrowser"));
+            this.transferredToBrowser = Boolean.parseBoolean(JDomUtils.getNodeValue(pElement, "extensions/transferredToBrowser"));
         } catch (Exception e) {
             //not transferred yet
             this.transferredToBrowser = false;

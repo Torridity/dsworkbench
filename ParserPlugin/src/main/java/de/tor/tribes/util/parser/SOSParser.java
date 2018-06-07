@@ -24,8 +24,6 @@ import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.GenericParserInterface;
 import de.tor.tribes.util.ServerSettings;
-import org.apache.log4j.Logger;
-
 import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
@@ -33,15 +31,15 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
 import java.util.regex.Pattern;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  *
  * @author Torridity
  */
 public class SOSParser implements GenericParserInterface<SOSRequest> {
-
-    private boolean debug = true;
-    private static Logger logger = Logger.getLogger("SOSParser");
+    private static Logger logger = LogManager.getLogger("SOSParser");
     /*
      * [b]Verteidiger[/b] Name: [player]Rattenfutter[/player] Stamm: [ally][KdS][/ally] Punkte: 1887516
      *
@@ -63,6 +61,7 @@ public class SOSParser implements GenericParserInterface<SOSRequest> {
      * Ankunftszeit: 23.03.12 18:44:15:931
      */
 
+    @Override
     public List<SOSRequest> parse(String pData) {
         print("Start parsing SOS request");
         List<SOSRequest> requests = new LinkedList<>();
@@ -92,7 +91,7 @@ public class SOSParser implements GenericParserInterface<SOSRequest> {
         Village source = null;
         Village target = null;
 
-        SimpleDateFormat dateFormat = null;
+        SimpleDateFormat dateFormat;
         boolean useMillis = ServerSettings.getSingleton().isMillisArrival();
         if (!useMillis) {
             dateFormat = new SimpleDateFormat(getVariable("sos.date.format"));

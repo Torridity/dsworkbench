@@ -15,7 +15,6 @@
  */
 package de.tor.tribes.ui.views;
 
-import com.smardec.mousegestures.MouseGestures;
 import de.tor.tribes.control.GenericManagerListener;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.LinkedTag;
@@ -47,9 +46,9 @@ import java.util.List;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import org.apache.commons.configuration.Configuration;
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.Logger;
+import org.apache.commons.configuration2.Configuration;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jdesktop.swingx.JXButton;
 import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.decorator.CompoundHighlighter;
@@ -108,7 +107,7 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame implements Gen
         ((TagTableModel) jTagsTable.getModel()).fireTableDataChanged();
         updateVillageList();
     }
-    private static Logger logger = Logger.getLogger("GroupView");
+    private static Logger logger = LogManager.getLogger("GroupView");
     private static DSWorkbenchTagFrame SINGLETON = null;
     private GenericTestPanel centerPanel = null;
 

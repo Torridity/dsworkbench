@@ -15,8 +15,9 @@
  */
 package de.tor.tribes.ui.panels;
 
-import de.tor.tribes.dssim.ui.DSWorkbenchSimulatorFrame;
-import de.tor.tribes.dssim.util.AStarResultReceiver;
+//TODO re add
+//import de.tor.tribes.dssim.ui.DSWorkbenchSimulatorFrame;
+//import de.tor.tribes.dssim.util.AStarResultReceiver;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.TroopAmountFixed;
 import de.tor.tribes.io.UnitHolder;
@@ -54,7 +55,8 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.decorator.HighlightPredicate;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
@@ -70,9 +72,11 @@ import org.jdesktop.swingx.table.TableColumnExt;
  *
  * @author Torridity
  */
-public class ReportTableTab extends javax.swing.JPanel implements ListSelectionListener, AStarResultReceiver {
+//TODO re add
+public class ReportTableTab extends javax.swing.JPanel implements ListSelectionListener {//, AStarResultReceiver {
 
-    @Override
+    //TODO re add
+//@Override
     public void fireNotifyOnResultEvent(Point point, int pAttacks) {
         if (point == null) {
             showError("Die Zielkoordinate ist ungültig");
@@ -90,7 +94,7 @@ public class ReportTableTab extends javax.swing.JPanel implements ListSelectionL
             showError("Das Zieldorf ist ungültig");
         }
     }
-    private static Logger logger = Logger.getLogger("ReportTableTab");
+    private static Logger logger = LogManager.getLogger("ReportTableTab");
 
     public enum TRANSFER_TYPE {
 
@@ -498,12 +502,13 @@ public class ReportTableTab extends javax.swing.JPanel implements ListSelectionL
         values.put("moral", report.getMoral());
         if (!GlobalOptions.isOfflineMode()) {
             try {
-                if (!DSWorkbenchSimulatorFrame.getSingleton().isVisible()) {
+                //TODO re add
+/*if (!DSWorkbenchSimulatorFrame.getSingleton().isVisible()) {
                     DSWorkbenchSimulatorFrame.getSingleton().setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
                     DSWorkbenchSimulatorFrame.getSingleton().showIntegratedVersion(DSWorkbenchSettingsDialog.getSingleton().getWebProxy(),GlobalOptions.getSelectedServer());
                 }
                 Point coord = new Point(report.getTargetVillage().getX(), report.getTargetVillage().getY());
-                DSWorkbenchSimulatorFrame.getSingleton().insertValuesExternally(coord, values, this);
+                DSWorkbenchSimulatorFrame.getSingleton().insertValuesExternally(coord, values, this);*/
             } catch(Exception e) {
                 logger.warn("Problem during writing Troops to AStar", e);
             }

@@ -20,14 +20,16 @@ import de.tor.tribes.ui.LayerOrderConfigurationFrame;
 import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
 import java.io.File;
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 /**
  * @author Charon
  */
 public class MainShutdownHook extends Thread {
 
-    private static Logger logger = Logger.getLogger("ShutdownHook");
+    private static Logger logger = LogManager.getLogger("ShutdownHook");
 
     public MainShutdownHook() {
         setName("ShutdownHook");

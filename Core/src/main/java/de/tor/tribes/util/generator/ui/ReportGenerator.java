@@ -28,7 +28,9 @@ import de.tor.tribes.util.farm.FarmManager;
 import de.tor.tribes.util.report.ReportManager;
 import de.tor.tribes.util.village.KnownVillage;
 import java.util.List;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 /**
  *
@@ -36,7 +38,7 @@ import org.apache.log4j.Logger;
  */
 public class ReportGenerator extends javax.swing.JFrame {
 
-    private static Logger logger = Logger.getLogger("ReportGenerator");
+    private static Logger logger = LogManager.getLogger("ReportGenerator");
 
     /**
      * Creates new form ReportGenerator

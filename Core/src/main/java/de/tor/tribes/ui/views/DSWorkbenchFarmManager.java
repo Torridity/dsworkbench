@@ -36,11 +36,8 @@ import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
 import de.tor.tribes.ui.windows.FarmInformationDetailsDialog;
 import de.tor.tribes.util.*;
 import de.tor.tribes.util.farm.FarmManager;
-import de.tor.tribes.util.generator.ui.ReportGenerator;
 import de.tor.tribes.util.report.ReportManager;
 import de.tor.tribes.util.tag.TagManager;
-import de.tor.tribes.util.troops.TroopsManager;
-import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.awt.*;
 import java.awt.event.*;
 import java.text.NumberFormat;
@@ -50,11 +47,10 @@ import java.util.Timer;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import org.apache.commons.configuration.Configuration;
-import org.apache.commons.lang.math.IntRange;
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+import org.apache.commons.configuration2.Configuration;
+import org.apache.commons.lang3.Range;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jdesktop.swingx.JXButton;
 import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
@@ -70,7 +66,7 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
     public enum FARM_CONFIGURATION {
         A, B, C, K
     }
-    private static Logger logger = Logger.getLogger("FarmManager");
+    private static Logger logger = LogManager.getLogger("FarmManager");
     private static DSWorkbenchFarmManager SINGLETON = null;
     private GenericTestPanel centerPanel = null;
     private ClickAccountPanel clickAccount = null;
@@ -240,22 +236,22 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
         } // </editor-fold>
     }
 
-    public IntRange getFarmRange(FARM_CONFIGURATION pConfig) {
+    public Range<Integer> getFarmRange(FARM_CONFIGURATION pConfig) {
         if (pConfig == null) {
             pConfig = FARM_CONFIGURATION.C;
         }
         switch (pConfig) {
             case A:
-            return new IntRange(UIHelper.parseIntFromField(jMinFarmRuntimeA, 0),
+            return Range.between(UIHelper.parseIntFromField(jMinFarmRuntimeA, 0),
                     UIHelper.parseIntFromField(jMaxFarmRuntimeA, 60));
             case B:
-            return new IntRange(UIHelper.parseIntFromField(jMinFarmRuntimeB, 0),
+            return Range.between(UIHelper.parseIntFromField(jMinFarmRuntimeB, 0),
                     UIHelper.parseIntFromField(jMaxFarmRuntimeB, 60));
         case K:
-            return new IntRange(UIHelper.parseIntFromField(jMinFarmRuntimeK, 0),
+            return Range.between(UIHelper.parseIntFromField(jMinFarmRuntimeK, 0),
                     UIHelper.parseIntFromField(jMaxFarmRuntimeK, 60));
             default:
-            return new IntRange(UIHelper.parseIntFromField(jMinFarmRuntimeC, 0),
+            return Range.between(UIHelper.parseIntFromField(jMinFarmRuntimeC, 0),
                     UIHelper.parseIntFromField(jMaxFarmRuntimeC, 60));
         }
     }
@@ -2082,66 +2078,6 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
     private FarmTableModel getModel() {
         return TableHelper.getTableModel(jFarmTable);
     }
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) throws Exception {
-        /*
-         * Set the Nimbus look and feel
-         */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /*
-         * If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel. For details see
-         * http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException | UnsupportedLookAndFeelException | IllegalAccessException | InstantiationException ex) {
-            java.util.logging.Logger.getLogger(DSWorkbenchFarmManager.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-        Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
-        Logger.getRootLogger().setLevel(Level.ERROR);
-        GlobalOptions.setSelectedServer("de43");
-        ProfileManager.getSingleton().loadProfiles();
-        GlobalOptions.setSelectedProfile(ProfileManager.getSingleton().getProfiles("de43")[0]);
-        DataHolder.getSingleton().loadData(false);
-        GlobalOptions.loadUserData();
-
-        for (Village v : GlobalOptions.getSelectedProfile().getTribe().getVillageList()) {
-            VillageTroopsHolder h = TroopsManager.getSingleton().getTroopsForVillage(v, TroopsManager.TROOP_TYPE.OWN, true);
-            TroopAmountFixed troops = new TroopAmountFixed(0);
-            troops.setAmountForUnit(DataHolder.getSingleton().getUnitByPlainName("axe"), 2000);
-            troops.setAmountForUnit(DataHolder.getSingleton().getUnitByPlainName("light"), 2000);
-            troops.setAmountForUnit(DataHolder.getSingleton().getUnitByPlainName("spy"), 100);
-            h.setTroops(troops);
-        }
-
-        DataHolder.getSingleton().getUnitByPlainName("light").setSpeed(.1);
-        DataHolder.getSingleton().getUnitByPlainName("spy").setSpeed(.01);
-        new ReportGenerator().setVisible(true);
-        /*
-         * Create and display the form
-         */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-
-            @Override
-            public void run() {
-                DSWorkbenchFarmManager.getSingleton().resetView();
-                /*
-                 * for (int i = 0; i < 10; i++) { trayIcon.displayMessage("Test", "Hello World " + Math.random(),
-                 * TrayIcon.MessageType.INFO); try { Thread.sleep(500); } catch (Exception e) { } }
-                 */
-                DSWorkbenchFarmManager.getSingleton().setVisible(true);
-            }
-        });
-    }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> JCataTarget;
@@ -2245,7 +2181,7 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
     
         
     (non-Javadoc)
- * @see de.tor.tribes.ui.windows.AbstractDSWorkbenchFrame#storeCustomProperties(org.apache.commons.configuration.Configuration)
+ * @see de.tor.tribes.ui.windows.AbstractDSWorkbenchFrame#storeCustomProperties(org.apache.commons.configuration2.Configuration)
  */
     @Override
     public void storeCustomProperties(Configuration pConfig) {

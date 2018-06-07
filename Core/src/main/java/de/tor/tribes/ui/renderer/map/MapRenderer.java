@@ -37,7 +37,9 @@ import java.awt.image.WritableRaster;
 import java.util.*;
 import java.util.List;
 import javax.swing.*;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 /**
  * Map Renderer which supports "dirty layers" defining which layer has to be
@@ -56,7 +58,7 @@ import org.apache.log4j.Logger;
  */
 public class MapRenderer {
 
-    private static Logger logger = Logger.getLogger("MapRenderer");
+    private static Logger logger = LogManager.getLogger("MapRenderer");
     public static final int ALL_LAYERS = 0;
     public static final int MAP_LAYER = 1;
     public static final int MARKER_LAYER = 2;

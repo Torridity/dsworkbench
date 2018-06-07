@@ -22,7 +22,7 @@ import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalDefaults;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ServerSettings;
-import de.tor.tribes.util.xml.JaxenUtils;
+import de.tor.tribes.util.xml.JDomUtils;
 import java.awt.*;
 import java.io.*;
 import java.net.URL;
@@ -31,15 +31,16 @@ import java.util.*;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
-import org.jdom.Document;
-import org.jdom.Element;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jdom2.Document;
+import org.jdom2.Element;
 
 /**
  * @author Charon
  */
 public class DataHolder {
-    private static Logger logger = Logger.getLogger("DataManager");
+    private static Logger logger = LogManager.getLogger("DataManager");
     private static final int ID_OFF = 0;
     private static final int ID_DEF = 1;
     private Village[][] mVillages = null;
@@ -928,8 +929,8 @@ public class DataHolder {
         //buildingsFile += "/units.xml";
         logger.debug("Loading units");
         try {
-            Document d = JaxenUtils.getDocument(new File(unitFile));
-            List<Element> l = (List<Element>) JaxenUtils.getNodes(d, "/config/*");
+            Document d = JDomUtils.getDocument(new File(unitFile));
+            List<Element> l = (List<Element>) JDomUtils.getNodes(d, "config");
             for (Element e : l) {
                 try {
                     UnitHolder unit = new UnitHolder(e);

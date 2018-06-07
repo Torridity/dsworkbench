@@ -26,7 +26,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jdesktop.swingx.renderer.DefaultTableRenderer;
 
 /**
@@ -34,7 +35,7 @@ import org.jdesktop.swingx.renderer.DefaultTableRenderer;
  * @author Torridity
  */
 public class EnumImageCellRenderer extends DefaultTableRenderer {
-    private final static Logger logger = Logger.getLogger("FarmResultRenderer");
+    private final static Logger logger = LogManager.getLogger("FarmResultRenderer");
     
     public enum LayoutStyle {
         FarmResult(new HashMap<Integer, String>() {{

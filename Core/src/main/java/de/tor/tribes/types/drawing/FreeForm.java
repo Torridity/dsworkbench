@@ -33,7 +33,7 @@ import java.awt.geom.Rectangle2D;
 import java.net.URLDecoder;
 import java.util.LinkedList;
 import java.util.List;
-import org.jdom.Element;
+import org.jdom2.Element;
 
 /**
  *

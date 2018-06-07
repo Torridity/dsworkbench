@@ -19,8 +19,8 @@ import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.ext.*;
 import java.util.*;
 import java.util.Map.Entry;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.Predicate;
 
 /**
  *

@@ -23,8 +23,9 @@ import java.awt.*;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.log4j.Logger;
-import org.jdom.Element;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jdom2.Element;
 
 /**
  *
@@ -51,7 +52,7 @@ public abstract class AbstractForm extends ManageableType implements BBSupport {
 
         LINE, ARROW, RECTANGLE, CIRCLE, TEXT, FREEFORM
     }
-    private static Logger logger = Logger.getLogger("AbstractForm");
+    private static Logger logger = LogManager.getLogger("AbstractForm");
     private double xPos = 0;
     private double yPos = 0;
     private Color textColor = Color.BLACK;

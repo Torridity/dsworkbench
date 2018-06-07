@@ -21,14 +21,16 @@ import de.tor.tribes.types.ext.Village;
 import java.io.*;
 import java.util.LinkedList;
 import java.util.List;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 /**
  * @author Torridity
  */
 public class PluginManager {
 
-  private static Logger logger = Logger.getLogger("PluginManager");
+  private static Logger logger = LogManager.getLogger("PluginManager");
   private static PluginManager SINGLETON = null;
   private final File PLUGIN_DIR = new File("./plugins");
   private ClassLoader mClassloader = null;

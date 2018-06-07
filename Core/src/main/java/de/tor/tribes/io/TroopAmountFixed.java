@@ -23,9 +23,10 @@ import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import org.apache.log4j.Logger;
-import org.jdom.Attribute;
-import org.jdom.Element;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jdom2.Attribute;
+import org.jdom2.Element;
 
 /**
  * This Class holds a fixed troop split
@@ -33,7 +34,7 @@ import org.jdom.Element;
  * @author extremeCrazyCoder
  */
 public class TroopAmountFixed extends TroopAmount {
-    private static Logger logger = Logger.getLogger("TroopAmount");
+    private static Logger logger = LogManager.getLogger("TroopAmount");
     HashMap<UnitHolder, Integer> amounts;
 
     @Override

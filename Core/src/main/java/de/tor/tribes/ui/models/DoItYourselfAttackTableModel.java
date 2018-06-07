@@ -20,8 +20,9 @@ import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.attack.AttackManager;
 import java.util.Date;
-import java.util.logging.Logger;
 import javax.swing.table.AbstractTableModel;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  *
@@ -29,7 +30,7 @@ import javax.swing.table.AbstractTableModel;
  */
 public class DoItYourselfAttackTableModel extends AbstractTableModel {
 
-    private static Logger logger = Logger.getLogger("DoItYourselfAttackTable");
+    private static Logger logger = LogManager.getLogger("DoItYourselfAttackTable");
     protected static Class[] types = new Class[]{Integer.class, UnitHolder.class, Village.class, Village.class, Date.class, Date.class, Long.class};
     protected static String[] colNames = new String[]{"Angriffstyp", "Einheit", "Herkunft", "Ziel", "Abschickzeit", "Ankunftzeit", "Verbleibend"};
     protected static boolean[] editableColumns = new boolean[]{true, true, true, true, true, true, false};

@@ -31,14 +31,16 @@ import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.*;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 /**
  * @author Torridity
  */
 public class DSWorkbenchSearchFrame extends javax.swing.JFrame implements SearchListener {
     
-    private static Logger logger = Logger.getLogger("Search");
+    private static Logger logger = LogManager.getLogger("Search");
     private String sLastPlayerValue = null;
     private SearchThread mSearchThread = null;
     private static DSWorkbenchSearchFrame SINGLETON = null;

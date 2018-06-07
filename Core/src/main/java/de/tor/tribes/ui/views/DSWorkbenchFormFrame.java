@@ -17,8 +17,6 @@ package de.tor.tribes.ui.views;
 
 import de.tor.tribes.control.GenericManagerListener;
 import de.tor.tribes.types.drawing.AbstractForm;
-import de.tor.tribes.types.drawing.Circle;
-import de.tor.tribes.types.drawing.Line;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.ImageManager;
 import de.tor.tribes.ui.models.FormTableModel;
@@ -43,9 +41,9 @@ import java.util.List;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import org.apache.commons.configuration.Configuration;
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.Logger;
+import org.apache.commons.configuration2.Configuration;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jdesktop.swingx.JXButton;
 import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.decorator.HighlightPredicate;
@@ -72,7 +70,7 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame implements Li
             deleteSelection();
         }
     }
-    private static Logger logger = Logger.getLogger("FormFrame");
+    private static Logger logger = LogManager.getLogger("FormFrame");
     private static DSWorkbenchFormFrame SINGLETON = null;
     private GenericTestPanel centerPanel = null;
     

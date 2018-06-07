@@ -31,7 +31,9 @@ import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import javax.swing.text.BadLocationException;
 import net.java.dev.colorchooser.ColorChooser;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 /**
  *
@@ -39,7 +41,7 @@ import org.apache.log4j.Logger;
  */
 public class BBPanel extends javax.swing.JPanel {
 
-    private static Logger logger = Logger.getLogger("BBPanel");
+    private static Logger logger = LogManager.getLogger("BBPanel");
     private String buffer = "";
     private ColorChooser colorChooser = null;
     private BBChangeListener changeListener = null;

@@ -21,15 +21,16 @@ import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.GlobalOptions;
-import de.tor.tribes.util.xml.JaxenUtils;
+import de.tor.tribes.util.xml.JDomUtils;
 import java.io.File;
 import java.io.FileWriter;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.*;
-import org.apache.log4j.Logger;
-import org.jdom.Document;
-import org.jdom.Element;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jdom2.Document;
+import org.jdom2.Element;
 
 /**
  *
@@ -37,7 +38,7 @@ import org.jdom.Element;
  */
 public class AttackManager extends GenericManager<Attack> {
 
-    private static Logger logger = Logger.getLogger("AttackManager");
+    private static Logger logger = LogManager.getLogger("AttackManager");
     public final static String MANUAL_ATTACK_PLAN = "Manuelle Planung";
     private static AttackManager SINGLETON = null;
 
@@ -95,15 +96,15 @@ public class AttackManager extends GenericManager<Attack> {
             logger.info("Loading troop movements from '" + pFile + "'");
 
             try {
-                Document d = JaxenUtils.getDocument(attackFile);
-                for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//plans/plan")) {
+                Document d = JDomUtils.getDocument(attackFile);
+                for (Element e : (List<Element>) JDomUtils.getNodes(d, "plans/plan")) {
                     String planKey = e.getAttributeValue("key");
                     planKey = URLDecoder.decode(planKey, "UTF-8");
                     if (logger.isDebugEnabled()) {
                         logger.debug("Loading plan '" + planKey + "'");
                     }
                     addGroup(planKey);
-                    for (Element e1 : (List<Element>) JaxenUtils.getNodes(e, "attacks/attack")) {
+                    for (Element e1 : (List<Element>) JDomUtils.getNodes(e, "attacks/attack")) {
                         Attack a = new Attack();
                         a.loadFromXml(e1);
                         
@@ -131,8 +132,8 @@ public class AttackManager extends GenericManager<Attack> {
         } else {
             try {
                 logger.info("Importing attacks");
-                Document d = JaxenUtils.getDocument(pFile);
-                for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//plans/plan")) {
+                Document d = JDomUtils.getDocument(pFile);
+                for (Element e : (List<Element>) JDomUtils.getNodes(d, "plans/plan")) {
                     String planKey = e.getAttributeValue("key");
                     planKey = URLDecoder.decode(planKey, "UTF-8");
                     if (pExtension != null) {
@@ -143,7 +144,7 @@ public class AttackManager extends GenericManager<Attack> {
                         logger.debug("Loading plan '" + planKey + "'");
                     }
 
-                    for (Element e1 : (List<Element>) JaxenUtils.getNodes(e, "attacks/attack")) {
+                    for (Element e1 : (List<Element>) JDomUtils.getNodes(e, "attacks/attack")) {
                         Attack a = new Attack();
                         a.loadFromXml(e1);
 
@@ -202,7 +203,7 @@ public class AttackManager extends GenericManager<Attack> {
 
         try {
             StringBuilder b = new StringBuilder();
-            b.append("<plans>\n");
+            b.append("<data><plans>\n");
             Iterator<String> plans = getGroupIterator();
 
             while (plans.hasNext()) {
@@ -215,7 +216,7 @@ public class AttackManager extends GenericManager<Attack> {
                 }
 
                 b.append("</attacks>\n");
-                b.append("</plan>\n");
+                b.append("</plan></data>\n");
             }
 
             b.append("</plans>\n");

@@ -26,7 +26,9 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 /**
  *
@@ -36,7 +38,7 @@ public class Iterix extends AbstractAttackAlgorithm {
     //Log the Times needed to execute the algorithm to console
     private static final boolean LOG_TIMES = false; 
     
-    private static Logger logger = Logger.getLogger("SystematicAlgorithm");
+    private static Logger logger = LogManager.getLogger("SystematicAlgorithm");
     
     //[unit type id * source.size() + source][target]
     private int[][] mappings;

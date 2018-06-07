@@ -16,8 +16,8 @@
 package de.tor.tribes.util.report;
 
 import de.tor.tribes.types.FightReport;
-import org.apache.commons.lang.time.DateUtils;
-import org.apache.commons.lang.time.DurationFormatUtils;
+import org.apache.commons.lang3.time.DateUtils;
+import org.apache.commons.lang3.time.DurationFormatUtils;
 
 /**
  *

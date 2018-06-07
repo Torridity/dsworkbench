@@ -28,8 +28,10 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
-import org.apache.commons.collections.ListUtils;
-import org.apache.log4j.Logger;
+import org.apache.commons.collections4.ListUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 /**
  * @author Charon
@@ -37,7 +39,7 @@ import org.apache.log4j.Logger;
  */
 public class BruteForce extends AbstractAttackAlgorithm {
 
-    private static Logger logger = Logger.getLogger("Algorithm_BruteForce");
+    private static Logger logger = LogManager.getLogger("Algorithm_BruteForce");
 
     @Override
     public List<TroopMovement> calculateAttacks(

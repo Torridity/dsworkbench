@@ -29,10 +29,7 @@ import de.tor.tribes.util.map.FormManager;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.*;
 import net.java.dev.colorchooser.ColorChooser;
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.Logger;
 
 /**
  *

@@ -24,14 +24,16 @@ import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 /**
  * @author Charon
  */
 public class SupportCalculator {
 
-    private static Logger logger = Logger.getLogger("SupportCalculator");
+    private static Logger logger = LogManager.getLogger("SupportCalculator");
 
     public static List<SupportMovement> calculateSupport(Village pVillage, Date pArrive, boolean pRealDefOnly, List<Tag> pTags, int pMinNumber) {
         Hashtable<UnitHolder, Integer> unitTable = new Hashtable<>();

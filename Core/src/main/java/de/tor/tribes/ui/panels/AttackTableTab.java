@@ -59,7 +59,8 @@ import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.decorator.*;
 import org.jdesktop.swingx.painter.AbstractLayoutPainter.HorizontalAlignment;
@@ -74,7 +75,7 @@ import org.jdesktop.swingx.table.TableColumnExt;
  */
 public class AttackTableTab extends javax.swing.JPanel implements ListSelectionListener {
 
-    private static Logger logger = Logger.getLogger("AttackTableTab");
+    private static Logger logger = LogManager.getLogger("AttackTableTab");
 
     public enum TRANSFER_TYPE {
         CLIPBOARD_PLAIN, CLIPBOARD_BB, FILE_HTML, FILE_TEXT, FILE_GM, DSWB_RETIME, SELECTION_TOOL, BROWSER_LINK, CUT_TO_INTERNAL_CLIPBOARD, COPY_TO_INTERNAL_CLIPBOARD, FROM_INTERNAL_CLIPBOARD

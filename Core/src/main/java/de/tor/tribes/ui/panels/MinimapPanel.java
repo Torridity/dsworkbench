@@ -29,7 +29,6 @@ import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ImageUtils;
 import de.tor.tribes.util.JOptionPaneHelper;
-import de.tor.tribes.util.ProfileManager;
 import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.interfaces.ToolChangeListener;
 import de.tor.tribes.util.mark.MarkerManager;
@@ -60,8 +59,8 @@ import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.labels.StandardPieSectionLabelGenerator;
@@ -82,7 +81,7 @@ public class MinimapPanel extends javax.swing.JPanel implements GenericManagerLi
     public void dataChangedEvent(String pGroup) {
         redraw();
     }
-    private static Logger logger = Logger.getLogger("MinimapCanvas");
+    private static Logger logger = LogManager.getLogger("MinimapCanvas");
     private Image mBuffer = null;
     private int iX = 0;
     private int iY = 0;
@@ -948,19 +947,6 @@ private void fireScreenshotControlClosingEvent(java.awt.event.WindowEvent evt) {
     jScreenshotPreview.setVisible(false);
 }//GEN-LAST:event_fireScreenshotControlClosingEvent
 
-    public static void main(String[] args) {
-        Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
-        GlobalOptions.setSelectedServer("de43");
-        ProfileManager.getSingleton().loadProfiles();
-        GlobalOptions.setSelectedProfile(ProfileManager.getSingleton().getProfiles("de43")[0]);
-        DataHolder.getSingleton().loadData(false);
-        JFrame f = new JFrame();
-        f.getContentPane().add(MinimapPanel.getSingleton());
-        f.pack();
-        f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        f.setVisible(true);
-
-    }
   // Variables declaration - do not modify//GEN-BEGIN:variables
   private javax.swing.JButton jButton1;
   private javax.swing.JButton jButton2;
@@ -978,7 +964,7 @@ private void fireScreenshotControlClosingEvent(java.awt.event.WindowEvent evt) {
 
 class MinimapRepaintThread extends Thread {
 
-    private static Logger logger = Logger.getLogger("MinimapRenderer");
+    private static Logger logger = LogManager.getLogger("MinimapRenderer");
     private BufferedImage mBuffer = null;
     private boolean drawn = false;
     private Rectangle mapDim = null;

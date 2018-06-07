@@ -30,14 +30,16 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 /**
  * @author Charon
  */
 public class Skin {
 
-    private static Logger logger = Logger.getLogger("TexturePack");
+    private static Logger logger = LogManager.getLogger("TexturePack");
     public final static String MINIMAP_SKIN_ID = "minimap";
     private int iFieldWidth = 0;
     private int iFieldHeight = 0;

@@ -38,12 +38,17 @@ import java.awt.dnd.DropTargetDropEvent;
 import java.awt.dnd.DropTargetEvent;
 import java.awt.dnd.DropTargetListener;
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
-import org.apache.commons.configuration.Configuration;
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.PropertiesConfiguration;
-import org.apache.log4j.Logger;
+import org.apache.commons.configuration2.Configuration;
+import org.apache.commons.configuration2.PropertiesConfiguration;
+import org.apache.commons.configuration2.ex.ConfigurationException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 /**
  *
@@ -51,7 +56,7 @@ import org.apache.log4j.Logger;
  */
 public abstract class AbstractDSWorkbenchFrame extends DSWorkbenchGesturedFrame implements DropTargetListener, DragGestureListener, DragSourceListener {
 
-    private static Logger logger = Logger.getLogger("AbstractDSWorkbenchFrame");
+    private static Logger logger = LogManager.getLogger("AbstractDSWorkbenchFrame");
 
     @Override
     public void fireCloseGestureEvent() {
@@ -110,15 +115,14 @@ public abstract class AbstractDSWorkbenchFrame extends DSWorkbenchGesturedFrame 
 
         }
         String prefix = getPropertyPrefix();
-        PropertiesConfiguration config = null;
+        PropertiesConfiguration config = new PropertiesConfiguration();
         boolean newConfig = false;
         if (!new File(dataDir + "/usergui.properties").exists()) {
-            config = new PropertiesConfiguration();
             newConfig = true;
         }
         try {
-            if (config == null) {
-                config = new PropertiesConfiguration(dataDir + "/usergui.properties");
+            if (!newConfig) {
+                config.read(new FileReader(dataDir + "/usergui.properties"));
             }
             config.setProperty(prefix + ".width", getWidth());
             config.setProperty(prefix + ".height", getHeight());
@@ -126,7 +130,7 @@ public abstract class AbstractDSWorkbenchFrame extends DSWorkbenchGesturedFrame 
             config.setProperty(prefix + ".y", getY());
             // config.setProperty(prefix + ".visible", isVisible());
             config.setProperty(prefix + ".alwaysOnTop", isAlwaysOnTop());
-        } catch (ConfigurationException ex) {
+        } catch (IOException | ConfigurationException ex) {
             logger.error("Failed to create properties", ex);
             return;
         }
@@ -134,12 +138,8 @@ public abstract class AbstractDSWorkbenchFrame extends DSWorkbenchGesturedFrame 
         storeCustomProperties(config);
 
         try {
-            if (newConfig) {
-                config.save(dataDir + "/usergui.properties");
-            } else {
-                config.save();
-            }
-        } catch (ConfigurationException ex) {
+            config.write(new FileWriter(dataDir + "/usergui.properties"));
+        } catch (IOException | ConfigurationException ex) {
             logger.error("Failed to write properties", ex);
         }
     }
@@ -153,7 +153,8 @@ public abstract class AbstractDSWorkbenchFrame extends DSWorkbenchGesturedFrame 
         String prefix = getPropertyPrefix();
         PropertiesConfiguration config = null;
         try {
-            config = new PropertiesConfiguration(dataDir + "/usergui.properties");
+            config = new PropertiesConfiguration();
+            config.read(new FileReader(dataDir + "/usergui.properties"));
             config.setThrowExceptionOnMissing(false);
             Dimension size = new Dimension(config.getInteger(prefix + ".width", getWidth()), config.getInteger(prefix + ".height", getHeight()));
             setPreferredSize(size);
@@ -161,7 +162,7 @@ public abstract class AbstractDSWorkbenchFrame extends DSWorkbenchGesturedFrame 
             setLocation(config.getInteger(prefix + ".x", getX()), config.getInteger(prefix + ".y", getY()));
             //setVisible(config.getBoolean(prefix + ".visible", false));
             setAlwaysOnTop(config.getBoolean(prefix + ".alwaysOnTop", false));
-        } catch (ConfigurationException ex) {
+        } catch (IOException | ConfigurationException ex) {
             logger.info("Cannot read properties", ex);
             return;
         }

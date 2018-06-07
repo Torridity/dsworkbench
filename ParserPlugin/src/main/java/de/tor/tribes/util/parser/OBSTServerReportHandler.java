@@ -23,9 +23,9 @@ import de.tor.tribes.types.UnknownUnit;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
 import de.tor.tribes.ui.windows.NotifierFrame;
-import de.tor.tribes.util.ServerSettings;
-import de.tor.tribes.util.RegExpHelper;
 import de.tor.tribes.util.Constants;
+import de.tor.tribes.util.RegExpHelper;
+import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.SilentParserInterface;
 import de.tor.tribes.util.report.ReportManager;
 import de.tor.tribes.util.village.KnownVillage;
@@ -34,7 +34,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  *
@@ -43,8 +44,7 @@ import org.apache.log4j.Logger;
  * parses data got from the OBST server that WB is running
  */
 public class OBSTServerReportHandler implements SilentParserInterface {
-
-    private static Logger logger = Logger.getLogger("OBSTReportParser");
+    private static Logger logger = LogManager.getLogger("OBSTReportParser");
 
     @Override
     public boolean parse(String pData) {

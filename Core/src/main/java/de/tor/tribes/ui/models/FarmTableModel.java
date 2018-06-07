@@ -20,7 +20,7 @@ import de.tor.tribes.types.StorageStatus;
 import de.tor.tribes.util.farm.FarmManager;
 import java.util.Date;
 import javax.swing.table.AbstractTableModel;
-import org.apache.commons.lang.time.DurationFormatUtils;
+import org.apache.commons.lang3.time.DurationFormatUtils;
 
 /**
  *

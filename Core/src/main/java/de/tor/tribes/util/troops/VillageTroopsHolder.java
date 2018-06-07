@@ -23,7 +23,7 @@ import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.BBSupport;
 import de.tor.tribes.util.GlobalOptions;
 import java.util.Date;
-import org.jdom.Element;
+import org.jdom2.Element;
 
 /**
  * @author Torridity

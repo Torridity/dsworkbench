@@ -25,14 +25,16 @@ import de.tor.tribes.util.ProfileManager;
 import java.util.Arrays;
 import java.util.Collection;
 import javax.swing.DefaultComboBoxModel;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 /**
  *
  * @author Torridity
  */
 public class DSWorkbenchProfileDialog extends javax.swing.JDialog {
-    private static Logger logger = Logger.getLogger("ProfileDialog");
+    private static Logger logger = LogManager.getLogger("ProfileDialog");
     
     private static DSWorkbenchProfileDialog SINGLETON = null;
     private UserProfile currentProfile = null;

@@ -41,8 +41,9 @@ import java.util.StringTokenizer;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import org.apache.commons.configuration.Configuration;
-import org.apache.log4j.Logger;
+import org.apache.commons.configuration2.Configuration;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jdesktop.swingx.JXButton;
 import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.decorator.CompoundHighlighter;
@@ -70,7 +71,7 @@ public class DSWorkbenchWatchtowerFrame extends AbstractDSWorkbenchFrame impleme
     public void dataChangedEvent(String pGroup) {
         ((WatchtowerTableModel) jWatchtowerTable.getModel()).fireTableDataChanged();
     }
-    private final static Logger logger = Logger.getLogger("WatchtowerView");
+    private final static Logger logger = LogManager.getLogger("WatchtowerView");
     private static DSWorkbenchWatchtowerFrame SINGLETON = null;
     private GenericTestPanel centerPanel = null;
 

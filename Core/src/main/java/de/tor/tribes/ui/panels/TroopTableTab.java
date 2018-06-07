@@ -57,7 +57,8 @@ import javax.swing.RowFilter;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableModel;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.decorator.HighlightPredicate;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
@@ -73,7 +74,7 @@ import org.jdesktop.swingx.painter.MattePainter;
  */
 public class TroopTableTab extends javax.swing.JPanel implements ListSelectionListener {
 
-    private static Logger logger = Logger.getLogger("TroopTableTab");
+    private static Logger logger = LogManager.getLogger("TroopTableTab");
 
     public enum TRANSFER_TYPE {
 

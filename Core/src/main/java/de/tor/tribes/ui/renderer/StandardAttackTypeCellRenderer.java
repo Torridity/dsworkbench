@@ -24,7 +24,9 @@ import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 /**
  *
@@ -32,7 +34,7 @@ import org.apache.log4j.Logger;
  */
 public class StandardAttackTypeCellRenderer implements TableCellRenderer {
 
-    private static Logger logger = Logger.getLogger("AttackDialog (StandardAttackTypeRenderer)");
+    private static Logger logger = LogManager.getLogger("AttackDialog (StandardAttackTypeRenderer)");
     private DefaultTableCellRenderer renderer = new DefaultTableCellRenderer();
     private List<ImageIcon> icons = null;
 

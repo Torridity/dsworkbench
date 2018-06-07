@@ -16,15 +16,16 @@
 package de.tor.tribes.util;
 
 import de.tor.tribes.io.TroopAmountFixed;
-import de.tor.tribes.util.xml.JaxenUtils;
+import de.tor.tribes.util.xml.JDomUtils;
 import java.io.File;
 import java.io.FileWriter;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
-import org.apache.log4j.Logger;
-import org.jdom.Document;
-import org.jdom.Element;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jdom2.Document;
+import org.jdom2.Element;
 
 /**
  *
@@ -32,7 +33,7 @@ import org.jdom.Element;
  */
 public class SplitSetHelper {
 
-    private static Logger logger = Logger.getLogger("SplitHelper");
+    private static Logger logger = LogManager.getLogger("SplitHelper");
 
     public static void loadSplitSets(Hashtable<String, TroopAmountFixed> pTarget) {
         String profileDir = GlobalOptions.getSelectedProfile().getProfileDirectory();
@@ -42,8 +43,8 @@ public class SplitSetHelper {
         }
         
         try {
-            Document d = JaxenUtils.getDocument(filterFile);
-            for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//splits/split")) {
+            Document d = JDomUtils.getDocument(filterFile);
+            for (Element e : (List<Element>) JDomUtils.getNodes(d, "splits/split")) {
                 String name = e.getAttributeValue("name");
                 TroopAmountFixed amount = new TroopAmountFixed(e);
                 pTarget.put(name, amount);
@@ -60,7 +61,7 @@ public class SplitSetHelper {
         StringBuilder b = new StringBuilder();
         Enumeration<String> setKeys = pSource.keys();
         
-        b.append("<splits>\n");
+        b.append("<data><splits>\n");
         while (setKeys.hasMoreElements()) {
             String key = setKeys.nextElement();
             b.append("<split name=\"");
@@ -68,7 +69,7 @@ public class SplitSetHelper {
             b.append(pSource.get(key).toXml());
             b.append(" />\n");
         }
-        b.append("</splits>\n");
+        b.append("</splits></data>\n");
         
         try (FileWriter w = new FileWriter(filterFile)) {
             w.write(b.toString());

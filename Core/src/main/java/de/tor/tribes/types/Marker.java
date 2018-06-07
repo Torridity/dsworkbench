@@ -21,15 +21,16 @@ import de.tor.tribes.types.ext.Ally;
 import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.util.BBSupport;
 import java.awt.Color;
-import org.apache.log4j.Logger;
-import org.jdom.Element;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jdom2.Element;
 
 /**
  *
  * @author Charon
  */
 public class Marker extends ManageableType implements BBSupport {
-    private final static Logger logger = Logger.getLogger("Marker");
+    private final static Logger logger = LogManager.getLogger("Marker");
 
     private final static String[] VARIABLES = new String[]{"%NAME%", "%BB_CODE%", "%MARKER_COLOR%"};
     private final static String STANDARD_TEMPLATE = "Anzahl der Markierungen: %ELEMENT_COUNT%\n\n"

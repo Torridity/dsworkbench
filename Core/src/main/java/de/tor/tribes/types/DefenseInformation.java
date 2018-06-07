@@ -19,14 +19,14 @@ import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.DSCalculator;
-import de.tor.tribes.util.xml.JaxenUtils;
+import de.tor.tribes.util.xml.JDomUtils;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
-import org.apache.commons.lang.time.DateUtils;
-import org.jdom.Element;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.Predicate;
+import org.apache.commons.lang3.time.DateUtils;
+import org.jdom2.Element;
 
 /**
  *
@@ -227,7 +227,7 @@ public class DefenseInformation {
         cleanAfter = Integer.parseInt(e.getChild("cleanAfter").getText());
         Element defenseElement = e.getChild("defenses");
         if (defenseElement != null) {
-            for (Element defense : (List<Element>) JaxenUtils.getNodes(e, "defenses/defense")) {
+            for (Element defense : (List<Element>) JDomUtils.getNodes(e, "defenses/defense")) {
                 Village v = DataHolder.getSingleton().getVillagesById().get(Integer.parseInt(defense.getAttributeValue("id")));
                 UnitHolder unit = DataHolder.getSingleton().getUnitByPlainName(defense.getAttributeValue("unit"));
                 boolean transferred = Boolean.parseBoolean(defense.getAttributeValue("transferred"));

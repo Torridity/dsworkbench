@@ -26,7 +26,7 @@ import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.bb.AttackListFormatter;
 import de.tor.tribes.util.support.SOSFormater;
-import de.tor.tribes.util.xml.JaxenUtils;
+import de.tor.tribes.util.xml.JDomUtils;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -36,7 +36,7 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
-import org.jdom.Element;
+import org.jdom2.Element;
 
 /**
  *
@@ -397,13 +397,13 @@ public class SOSRequest extends ManageableType implements BBSupport {
     public void loadFromXml(Element e) {
         int defenderId = Integer.parseInt(e.getAttributeValue("defender"));
         mDefender = DataHolder.getSingleton().getTribes().get(defenderId);
-        for (Element targetInfo : (List<Element>) JaxenUtils.getNodes(e, "targetInformations/targetInformation")) {
+        for (Element targetInfo : (List<Element>) JDomUtils.getNodes(e, "targetInformations/targetInformation")) {
             int targetId = Integer.parseInt(targetInfo.getAttributeValue("target"));
             Village target = DataHolder.getSingleton().getVillagesById().get(targetId);
             addTarget(target);
             getTargetInformation(target).loadFromXml(targetInfo);
         }
-        for (Element defenseInfo : (List<Element>) JaxenUtils.getNodes(e, "defenseInformations/defenseInformation")) {
+        for (Element defenseInfo : (List<Element>) JDomUtils.getNodes(e, "defenseInformations/defenseInformation")) {
             int targetId = Integer.parseInt(defenseInfo.getAttributeValue("target"));
             boolean analyzed = Boolean.parseBoolean(defenseInfo.getAttributeValue("analyzed"));
             boolean ignored = Boolean.parseBoolean(defenseInfo.getAttributeValue("ignored"));

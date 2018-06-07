@@ -15,8 +15,8 @@
  */
 package de.tor.tribes.ui.windows;
 
-import com.smardec.mousegestures.MouseGestures;
-import de.tor.tribes.dssim.ui.DSWorkbenchSimulatorFrame;
+//TODO re add
+//import de.tor.tribes.dssim.ui.DSWorkbenchSimulatorFrame;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.UserProfile;
@@ -77,7 +77,8 @@ import java.util.TimerTask;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jdesktop.swingx.painter.MattePainter;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonFrame;
 
@@ -93,7 +94,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         DSWorkbenchFrameListener,
         MapShotListener {
 
-  private static final Logger logger = Logger.getLogger("MainApp");
+  private static final Logger logger = LogManager.getLogger("MainApp");
   private double dCenterX = 500.0;
   private double dCenterY = 500.0;
   private double dZoomFactor = 1.0;
@@ -105,7 +106,6 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
   private static DSWorkbenchMainFrame SINGLETON = null;
   private boolean initialized = false;
   private boolean putOnline = false;
-  private MouseGestures mMouseGestures = new MouseGestures();
   private boolean bWatchClipboard = true;
   private final JFileChooser chooser = new JFileChooser();
   private NotificationHideThread mNotificationHideThread = null;
@@ -409,12 +409,6 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
       jGraphicPacks.setSelectedItem("default");
     }
     //</editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="Init mouse gesture listener">
-    mMouseGestures.setMouseButton(MouseEvent.BUTTON3_MASK);
-    mMouseGestures.addMouseGesturesListener(new MouseGestureHandler());
-    mMouseGestures.start();
-// </editor-fold>
     
     minZoom = GlobalOptions.getProperties().getDouble("map.zoom.min");
     maxZoom = GlobalOptions.getProperties().getDouble("map.zoom.max");
@@ -539,13 +533,14 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
       DSWorkbenchNotepad.getSingleton().resetView();
       DSWorkbenchNotepad.getSingleton().restoreProperties();
 
-      if (!GlobalOptions.isOfflineMode() && DSWorkbenchSimulatorFrame.getSingleton().isVisible()) {
+//TODO re add
+/*      if (!GlobalOptions.isOfflineMode() && DSWorkbenchSimulatorFrame.getSingleton().isVisible()) {
         try {
           DSWorkbenchSimulatorFrame.getSingleton().showIntegratedVersion(DSWorkbenchSettingsDialog.getSingleton().getWebProxy(), GlobalOptions.getSelectedServer());
         } catch(Exception e) {
             logger.warn("Problem during writing Troops to AStar", e);
         }
-      }
+      }*/
       ConquerManager.getSingleton().revalidate(true);
       //relevant for first start
       LayerOrderConfigurationFrame.getSingleton();
@@ -2965,7 +2960,7 @@ class NotificationHideThread extends Thread {
 
 class BackupTask extends TimerTask {
 
-  private static Logger logger = Logger.getLogger("BackupTask");
+  private static Logger logger = LogManager.getLogger("BackupTask");
 
   @Override
   public void run() {

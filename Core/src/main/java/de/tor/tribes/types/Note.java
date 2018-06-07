@@ -21,7 +21,7 @@ import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.ImageManager;
 import de.tor.tribes.util.BBSupport;
 import de.tor.tribes.util.bb.VillageListFormatter;
-import de.tor.tribes.util.xml.JaxenUtils;
+import de.tor.tribes.util.xml.JDomUtils;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -29,7 +29,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import org.jdom.Element;
+import org.jdom2.Element;
 
 /**
  *
@@ -109,7 +109,7 @@ public class Note extends ManageableType implements BBSupport {
         } catch (UnsupportedEncodingException usee) {
             setNoteText("FEHLER");
         }
-        for (Element elem : (List<Element>) JaxenUtils.getNodes(e, "villages/village")) {
+        for (Element elem : (List<Element>) JDomUtils.getNodes(e, "villages/village")) {
             villageIds.add(Integer.parseInt(elem.getValue()));
         }
 

@@ -25,14 +25,16 @@ import java.util.Collections;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 /**
  * @author Torridity
  */
 public abstract class AbstractAttackAlgorithm extends Thread {
     
-    private static Logger logger = Logger.getLogger("AttackAlgorithm");
+    private static Logger logger = LogManager.getLogger("AttackAlgorithm");
     private List<TroopMovement> results = null;
     private Hashtable<UnitHolder, List<Village>> sources = null;
     private Hashtable<UnitHolder, List<Village>> fakes = null;

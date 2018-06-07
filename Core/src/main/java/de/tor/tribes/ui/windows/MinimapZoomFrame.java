@@ -22,7 +22,9 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import javax.imageio.ImageIO;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 /**
  *
@@ -30,7 +32,7 @@ import org.apache.log4j.Logger;
  */
 public class MinimapZoomFrame extends javax.swing.JFrame {
 
-    private static Logger logger = Logger.getLogger("Minimap-Zoomframe");
+    private static Logger logger = LogManager.getLogger("Minimap-Zoomframe");
     //Image of the whole minimap
     protected BufferedImage mMap = null;
     private DrawThread mDrawThread;
@@ -137,7 +139,7 @@ public class MinimapZoomFrame extends javax.swing.JFrame {
 
 class DrawThread extends Thread {
 
-    private static Logger logger = Logger.getLogger("Minimap-Zoomframe(PaintThread)");
+    private static Logger logger = LogManager.getLogger("Minimap-Zoomframe(PaintThread)");
     private MinimapZoomFrame mParent;
     private int centerX = 0;
     private int centerY = 0;

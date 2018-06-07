@@ -37,7 +37,9 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 /**
  *
@@ -45,7 +47,7 @@ import org.apache.log4j.Logger;
  */
 public class SelectionHTMLExporter {
 
-    private static Logger logger = Logger.getLogger("SelectionHTMLExporter");
+    private static Logger logger = LogManager.getLogger("SelectionHTMLExporter");
     private static String HEADER = "";
     private static String FOOTER = "";
     private static String ALLY_BLOCK = "";

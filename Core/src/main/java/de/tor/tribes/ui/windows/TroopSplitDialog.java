@@ -27,7 +27,6 @@ import de.tor.tribes.ui.renderer.TroopSplitListCellRenderer;
 import de.tor.tribes.ui.renderer.UnitListCellRenderer;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.JOptionPaneHelper;
-import de.tor.tribes.util.ProfileManager;
 import de.tor.tribes.util.SplitSetHelper;
 import java.awt.*;
 import java.awt.event.*;
@@ -36,15 +35,16 @@ import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.*;
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 /**
  * @author Torridity
  */
 public class TroopSplitDialog extends javax.swing.JDialog {
 
-    private static final Logger logger = Logger.getLogger("TroopSplitDialog");
+    private static final Logger logger = LogManager.getLogger("TroopSplitDialog");
     private boolean isInitialized = false;
     private TroopAmountFixed mSplitAmounts = new TroopAmountFixed();
     private List<TroopSplit> mSplits = new LinkedList<>();
@@ -586,31 +586,7 @@ public class TroopSplitDialog extends javax.swing.JDialog {
         }
         jSplitsList.setModel(model);
     }
-
-    /**
-     * Internal class for data holding
-     */
-  
-    public static void main(String[] args) {
-        Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
-        GlobalOptions.setSelectedServer("de43");
-        ProfileManager.getSingleton().loadProfiles();
-        GlobalOptions.setSelectedProfile(ProfileManager.getSingleton().getProfiles("de43")[0]);
-        DataHolder.getSingleton().loadData(false);
-
-        final TroopSplitDialog dialog = new TroopSplitDialog(null, false);
-
-        dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-
-        java.awt.EventQueue.invokeLater(new Runnable() {
-
-            @Override
-            public void run() {
-                dialog.setupAndShow(new LinkedList<Village>());
-            }
-        });
-
-    }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private de.tor.tribes.ui.components.CapabilityInfoPanel capabilityInfoPanel3;
     private javax.swing.JButton jAcceptButton;

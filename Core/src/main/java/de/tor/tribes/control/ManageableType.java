@@ -15,7 +15,7 @@
  */
 package de.tor.tribes.control;
 
-import org.jdom.Element;
+import org.jdom2.Element;
 
 /**
  *

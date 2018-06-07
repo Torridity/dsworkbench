@@ -25,7 +25,7 @@ import de.tor.tribes.types.ext.Barbarians;
 import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.panels.MinimapPanel;
-import de.tor.tribes.util.xml.JaxenUtils;
+import de.tor.tribes.util.xml.JDomUtils;
 import java.awt.Color;
 import java.io.File;
 import java.io.FileWriter;
@@ -36,9 +36,10 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
-import org.apache.log4j.Logger;
-import org.jdom.Document;
-import org.jdom.Element;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jdom2.Document;
+import org.jdom2.Element;
 
 /**
  * Manager implementation to handle markers for tribes and allies.<BR> The global MarkerManager can be accessed using the getSingleton()
@@ -49,7 +50,7 @@ import org.jdom.Element;
  */
 public class MarkerManager extends GenericManager<Marker> {
 
-    private static Logger logger = Logger.getLogger("MarkerManager");
+    private static Logger logger = LogManager.getLogger("MarkerManager");
     private static MarkerManager SINGLETON = null;
 
     public static synchronized MarkerManager getSingleton() {
@@ -80,15 +81,15 @@ public class MarkerManager extends GenericManager<Marker> {
                 logger.debug("Reading markers from '" + pFile + "'");
             }
             try {
-                Document d = JaxenUtils.getDocument(markerFile);
-                for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//markerSets/markerSet")) {
+                Document d = JDomUtils.getDocument(markerFile);
+                for (Element e : (List<Element>) JDomUtils.getNodes(d, "markerSets/markerSet")) {
                     String setKey = e.getAttributeValue("name");
                     setKey = URLDecoder.decode(setKey, "UTF-8");
                     if (logger.isDebugEnabled()) {
                         logger.debug("Loading marker set '" + setKey + "'");
                     }
                     addGroup(setKey);
-                    for (Element e1 : (List<Element>) JaxenUtils.getNodes(e, "markers/marker")) {
+                    for (Element e1 : (List<Element>) JDomUtils.getNodes(e, "markers/marker")) {
                         Marker m = new Marker();
                         m.loadFromXml(e1);
                         if (!groupExists(setKey)) {
@@ -118,10 +119,9 @@ public class MarkerManager extends GenericManager<Marker> {
         logger.debug("Importing markers");
         boolean result = false;
         invalidate();
-        //initialize();
         try {
-            Document d = JaxenUtils.getDocument(pFile);
-            for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//markerSets/markerSet")) {
+            Document d = JDomUtils.getDocument(pFile);
+            for (Element e : (List<Element>) JDomUtils.getNodes(d, "markerSets/markerSet")) {
                 String setKey = e.getAttributeValue("name");
                 setKey = URLDecoder.decode(setKey, "UTF-8");
                 if (pExtension != null) {
@@ -130,7 +130,7 @@ public class MarkerManager extends GenericManager<Marker> {
                 if (logger.isDebugEnabled()) {
                     logger.debug("Loading marker set '" + setKey + "'");
                 }
-                for (Element e1 : (List<Element>) JaxenUtils.getNodes(e, "markers/marker")) {
+                for (Element e1 : (List<Element>) JDomUtils.getNodes(e, "markers/marker")) {
                     Marker m = new Marker();
                     m.loadFromXml(e1);
                     if (!groupExists(setKey)) {
@@ -189,7 +189,7 @@ public class MarkerManager extends GenericManager<Marker> {
         }
         try {
             StringBuilder b = new StringBuilder();
-            b.append("<markerSets>\n");
+            b.append("<data><markerSets>\n");
             Iterator<String> setKeys = getGroupIterator();
             while (setKeys.hasNext()) {
                 String group = setKeys.next();
@@ -204,7 +204,7 @@ public class MarkerManager extends GenericManager<Marker> {
                 b.append("</markerSet>\n");
 
             }
-            b.append("</markerSets>");
+            b.append("</markerSets></data>");
             FileWriter w = new FileWriter(pFile);
             w.write(b.toString());
             w.flush();
@@ -362,9 +362,6 @@ public class MarkerManager extends GenericManager<Marker> {
                         || (ally != null && (m.getMarkerType() == Marker.MarkerType.ALLY) && (m.getMarkerID() == ally.getId()))) {
                     return m;
                 }
-                /*
-                 * if (ally != null && (m.getMarkerType() == Marker.ALLY_MARKER_TYPE) && (m.getMarkerID() == ally.getId())) { return m; }
-                 */
             }
         }
         //no marker found

@@ -45,8 +45,9 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 /**
  * @author Torridity
@@ -54,7 +55,7 @@ import org.apache.log4j.Logger;
 public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         DataHolderListener {
 
-    private static Logger logger = Logger.getLogger("SettingsDialog");
+    private static Logger logger = LogManager.getLogger("SettingsDialog");
     private static DSWorkbenchSettingsDialog SINGLETON = null;
     private boolean updating = false;
     private Proxy webProxy;

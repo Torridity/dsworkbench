@@ -16,7 +16,8 @@
 package de.tor.tribes.ui.panels;
 
 import de.tor.tribes.control.GenericManagerListener;
-import de.tor.tribes.dssim.ui.DSWorkbenchSimulatorFrame;
+//TODO re add
+//import de.tor.tribes.dssim.ui.DSWorkbenchSimulatorFrame;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.FightReport;
@@ -64,7 +65,9 @@ import java.util.*;
 import java.util.List;
 import java.util.Timer;
 import javax.swing.*;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 /**
  * @author Charon
@@ -112,7 +115,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
         }
     }
     // <editor-fold defaultstate="collapsed" desc=" Member variables ">
-    private static final Logger logger = Logger.getLogger("MapCanvas");
+    private static final Logger logger = LogManager.getLogger("MapCanvas");
     private BufferedImage mBuffer = null;
     //private VolatileImage mBuffer = null;
     private double dCenterX = 500.0;
@@ -1392,12 +1395,13 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
             }
             if (!GlobalOptions.isOfflineMode()) {
                 try {
-                    if (!DSWorkbenchSimulatorFrame.getSingleton().isVisible()) {
+                    //TODO re add
+/*if (!DSWorkbenchSimulatorFrame.getSingleton().isVisible()) {
                         DSWorkbenchSimulatorFrame.getSingleton().setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
                         DSWorkbenchSimulatorFrame.getSingleton().showIntegratedVersion(DSWorkbenchSettingsDialog.getSingleton().getWebProxy(), GlobalOptions.getSelectedServer());
                     }
                     DSWorkbenchSimulatorFrame.getSingleton().toFront();
-                    DSWorkbenchSimulatorFrame.getSingleton().insertValuesExternally(values);
+                    DSWorkbenchSimulatorFrame.getSingleton().insertValuesExternally(values);*/
                 } catch(Exception e) {
                     logger.warn("Problem during writing Troops to AStar", e);
                 }

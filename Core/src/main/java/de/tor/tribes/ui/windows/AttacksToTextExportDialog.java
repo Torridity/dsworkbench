@@ -22,7 +22,9 @@ import de.tor.tribes.util.JOptionPaneHelper;
 import java.io.File;
 import java.util.List;
 import javax.swing.JFileChooser;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 /**
  *
@@ -30,7 +32,7 @@ import org.apache.log4j.Logger;
  */
 public class AttacksToTextExportDialog extends javax.swing.JDialog {
 
-    private static Logger logger = Logger.getLogger("AttacksToTextExportDialog");
+    private static Logger logger = LogManager.getLogger("AttacksToTextExportDialog");
     private boolean result = false;
     private Attack[] attacks = null;
 

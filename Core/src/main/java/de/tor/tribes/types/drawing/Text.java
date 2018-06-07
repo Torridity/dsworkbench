@@ -20,7 +20,7 @@ import de.tor.tribes.util.GlobalOptions;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.net.URLDecoder;
-import org.jdom.Element;
+import org.jdom2.Element;
 
 /**
  *

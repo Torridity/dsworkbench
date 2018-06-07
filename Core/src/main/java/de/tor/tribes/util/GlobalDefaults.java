@@ -18,8 +18,10 @@ package de.tor.tribes.util;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import java.awt.Toolkit;
-import org.apache.commons.configuration.PropertiesConfiguration;
-import org.apache.log4j.Logger;
+import org.apache.commons.configuration2.PropertiesConfiguration;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 
 /**
@@ -31,7 +33,7 @@ import org.apache.log4j.Logger;
  */
 
 public class GlobalDefaults {
-    private static Logger logger = Logger.getLogger("GlobalDefaults");
+    private static Logger logger = LogManager.getLogger("GlobalDefaults");
     private static boolean INITIALIZED = false;
 
     private static PropertiesConfiguration GLOBAL_DEFAULTS = null;

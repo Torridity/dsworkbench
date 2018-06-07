@@ -21,7 +21,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -31,7 +32,7 @@ import org.json.JSONObject;
  * @author Torridity
  */
 public final class GithubVersionCheck {
-    private static final Logger LOGGER = Logger.getLogger("GithubVersionCheck");
+    private static final Logger LOGGER = LogManager.getLogger("GithubVersionCheck");
 
     private static final String API_URL = "https://api.github.com/repos/torridity/dsworkbench/releases/latest";
 

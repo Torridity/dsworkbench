@@ -20,7 +20,9 @@ import de.tor.tribes.util.village.KnownVillage;
 import de.tor.tribes.util.village.KnownVillageManager;
 import java.awt.Color;
 import javax.swing.table.AbstractTableModel;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 /**
  *
@@ -29,7 +31,7 @@ import org.apache.log4j.Logger;
  */
 public class WatchtowerTableModel extends AbstractTableModel {
 
-    private static Logger logger = Logger.getLogger("WatchtowerTableModel");
+    private static Logger logger = LogManager.getLogger("WatchtowerTableModel");
 
     private final Class[] types = new Class[]{Tribe.class, KnownVillage.class, Integer.class, Color.class};
     private final String[] colNames = new String[]{"Spieler", "Dorf", "Stufe", "Farbe"};

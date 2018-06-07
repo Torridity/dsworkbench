@@ -51,7 +51,8 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.decorator.*;
 import org.jdesktop.swingx.painter.AbstractLayoutPainter.HorizontalAlignment;
@@ -66,7 +67,7 @@ import org.jdesktop.swingx.table.TableColumnExt;
  */
 public class MarkerTableTab extends javax.swing.JPanel implements ListSelectionListener {
 
-    private static Logger logger = Logger.getLogger("MarkerTableTab");
+    private static Logger logger = LogManager.getLogger("MarkerTableTab");
 
     public enum TRANSFER_TYPE {
 

@@ -16,21 +16,21 @@
 package de.tor.tribes.util.parser;
 
 import de.tor.tribes.util.GlobalOptions;
-import java.io.File;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.Properties;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  *
  * @author Torridity
  */
 public class ParserVariableManager {
-    
-    private static final Logger logger = Logger.getLogger("ParserVariableManager");
+    private static final Logger logger = LogManager.getLogger("ParserVariableManager");
 
     private static ParserVariableManager SINGLETON = null;
     private Properties variableMappings = null;

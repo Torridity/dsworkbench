@@ -19,9 +19,8 @@ import de.tor.tribes.util.ServerSettings;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import org.apache.commons.lang.math.IntRange;
-import org.apache.commons.lang.math.LongRange;
-import org.apache.commons.lang.time.DateUtils;
+import org.apache.commons.lang3.Range;
+import org.apache.commons.lang3.time.DateUtils;
 
 /**
  *
@@ -33,47 +32,24 @@ public class TimeSpan implements Comparable<TimeSpan> {
     if (getDirection().equals(DIRECTION.NONE)) {
       throw new CloneNotSupportedException("Divider cannot be cloned");
     }
-    TimeSpan s = new TimeSpan();
-    s.init(exactSpan, daily);
+    TimeSpan s = new TimeSpan(exactSpan, daily);
     s.setDirection(getDirection());
     return s;
   }
   private boolean daily = false;
-  private LongRange exactSpan = null;
+  private Range<Long> exactSpan = null;
   private DIRECTION direction = DIRECTION.SEND;
 
   public TimeSpan() {
   }
-
-  public TimeSpan(IntRange pSpan) { //every Day
-    if(pSpan.getMinimumInteger() == pSpan.getMaximumInteger())
-        throw new RuntimeException("Span without size not allowed");
-    LongRange asLong = new LongRange(pSpan.getMinimumLong() * DateUtils.MILLIS_PER_HOUR, pSpan.getMaximumLong() * DateUtils.MILLIS_PER_HOUR - 1);
-    init(asLong, true);
-  }
-
-  public TimeSpan(Date pExactDate) { //exact Time
-    LongRange asLong = new LongRange(pExactDate.getTime(), pExactDate.getTime());
-    init(asLong, false);
+  
+  public TimeSpan(Range<Long> pSpan, boolean repeatDaily) {
+      this.exactSpan = pSpan;
+      this.daily = repeatDaily;
   }
   
-  public TimeSpan(LongRange pExactRange) { //exact Range
-    init(pExactRange, false);
-  }
-
-  public TimeSpan(Date pAtDate, IntRange pSpan) { //range at Day
-    if(pSpan.getMinimumInteger() == pSpan.getMaximumInteger())
-        throw new RuntimeException("Span without size not allowed");
-    
-    pAtDate = DateUtils.truncate(pAtDate, Calendar.DATE);
-    LongRange asLong = new LongRange(pAtDate.getTime() + pSpan.getMinimumLong() * DateUtils.MILLIS_PER_HOUR,
-        pAtDate.getTime() + pSpan.getMaximumLong() * DateUtils.MILLIS_PER_HOUR - 1);
-    init(asLong, false);
-  }
-
-  protected void init(LongRange pExactRange, boolean pDaily) {
-      this.exactSpan = pExactRange;
-      this.daily = pDaily;
+  public TimeSpan(Date pExactDate) { //exact Time
+    this(Range.between(pExactDate.getTime(), pExactDate.getTime()), false);
   }
 
   @Override
@@ -93,7 +69,7 @@ public class TimeSpan implements Comparable<TimeSpan> {
         return 1;
       } else {
         //both valid at everyday or both valid at specified range
-        return new Long(getSpan().getMinimumLong()).compareTo(o.getSpan().getMinimumLong());
+        return getSpan().getMaximum().compareTo(o.getSpan().getMinimum());
       }
     }
     return 0;
@@ -118,7 +94,7 @@ public class TimeSpan implements Comparable<TimeSpan> {
   }
 
   public boolean isValidAtExactTime() {
-      return exactSpan.getMinimumLong() == exactSpan.getMaximumLong();
+      return exactSpan.getMinimum() == exactSpan.getMaximum();
   }
 
   public boolean isValidAtEveryDay() {
@@ -127,7 +103,7 @@ public class TimeSpan implements Comparable<TimeSpan> {
 
   public boolean isValidAtSpecificDay() {
       return !isValidAtEveryDay() && !isValidAtExactTime() &&
-              DateUtils.isSameDay(new Date(exactSpan.getMinimumLong()), new Date(exactSpan.getMaximumLong()));
+              DateUtils.isSameDay(new Date(exactSpan.getMinimum()), new Date(exactSpan.getMaximum()));
   }
 
   public boolean isValidAtManualRange() {
@@ -136,7 +112,7 @@ public class TimeSpan implements Comparable<TimeSpan> {
 
   public boolean isValid() {
     if (isValidAtExactTime() || isValidAtSpecificDay() || isValidAtManualRange()) {
-      if (getSpan().getMaximumLong() < System.currentTimeMillis()) {
+      if (getSpan().getMaximum() < System.currentTimeMillis()) {
         //start and end are in past
         return false;
       }
@@ -148,18 +124,18 @@ public class TimeSpan implements Comparable<TimeSpan> {
 
   public String getValidityInfo() {
     String typeStr = (getDirection() == DIRECTION.SEND)?("Abschick"):("Ankunfts");
-    if (isValidAtExactTime() && getSpan().getMinimumLong() < System.currentTimeMillis()) {
+    if (isValidAtExactTime() && getSpan().getMinimum() < System.currentTimeMillis()) {
       //exact date is in past
       return typeStr + "datum in der Vergangenheit";
     } else if (isValidAtSpecificDay()) {
       if (getDate().getTime() < System.currentTimeMillis()) {
         return typeStr + "datum in der Vergangenheit";
       }
-      if (getSpan().getMaximumLong() < System.currentTimeMillis()) {
+      if (getSpan().getMaximum() < System.currentTimeMillis()) {
         //start and end are in past
         return typeStr + "zeitrahmen in der Vergangenheit";
       }
-    } else if(isValidAtManualRange() && exactSpan.getMaximumLong() < System.currentTimeMillis()) {
+    } else if(isValidAtManualRange() && exactSpan.getMaximum() < System.currentTimeMillis()) {
         return typeStr + "zeitrahmen in der Vergangenheit";
     }
 
@@ -171,7 +147,9 @@ public class TimeSpan implements Comparable<TimeSpan> {
     if (!ServerSettings.getSingleton().isNightBonusActive()) {
         return false;
     }
-    TimeSpan nightBonusSpan = new TimeSpan(new IntRange(ServerSettings.getSingleton().getNightBonusStartHour(), ServerSettings.getSingleton().getNightBonusEndHour()));
+    TimeSpan nightBonusSpan = new TimeSpan(
+            Range.between(ServerSettings.getSingleton().getNightBonusStartHour() * DateUtils.MILLIS_PER_HOUR,
+            ServerSettings.getSingleton().getNightBonusEndHour() * DateUtils.MILLIS_PER_HOUR), true);
     return nightBonusSpan.intersects(this);
   }
 
@@ -180,16 +158,16 @@ public class TimeSpan implements Comparable<TimeSpan> {
    */
   public Date getDate() {
     if(isValidAtSpecificDay()) {
-      return DateUtils.truncate(new Date(exactSpan.getMinimumLong()), Calendar.DATE);
+      return DateUtils.truncate(new Date(exactSpan.getMinimum()), Calendar.DATE);
     }
     return null;
   }
   
-  public LongRange getSpan() {
+  public Range<Long> getSpan() {
     return exactSpan;
   }
   
-  public void setSpan(LongRange pSpan) {
+  public void setSpan(Range<Long> pSpan) {
     exactSpan = pSpan;
   }
 
@@ -200,30 +178,30 @@ public class TimeSpan implements Comparable<TimeSpan> {
     }
     
     //one of the spans uses manual Time (new intersect)
-    LongRange thisSpan = this.getSpan();
-    LongRange theOtherSpan = pSpan.getSpan();
+    Range<Long> thisSpan = this.getSpan();
+    Range<Long> theOtherSpan = pSpan.getSpan();
     
     if(this.isValidAtEveryDay() || pSpan.isValidAtEveryDay()) {
         if(this.isValidAtSpecificDay() || pSpan.isValidAtSpecificDay()) {
           //remove day Information
-          Long thisStart = DateUtils.getFragmentInMilliseconds(new Date(thisSpan.getMinimumLong()), Calendar.DATE);
-          Long thisEnd = DateUtils.getFragmentInMilliseconds(new Date(thisSpan.getMaximumLong()), Calendar.DATE);
-          thisSpan = new LongRange(thisStart, thisEnd);
+          Long thisStart = DateUtils.getFragmentInMilliseconds(new Date(thisSpan.getMinimum()), Calendar.DATE);
+          Long thisEnd = DateUtils.getFragmentInMilliseconds(new Date(thisSpan.getMaximum()), Calendar.DATE);
+          thisSpan = Range.between(thisStart, thisEnd);
           
-          Long otherStart = DateUtils.getFragmentInMilliseconds(new Date(theOtherSpan.getMinimumLong()), Calendar.DATE);
-          Long otherEnd = DateUtils.getFragmentInMilliseconds(new Date(theOtherSpan.getMaximumLong()), Calendar.DATE);
+          Long otherStart = DateUtils.getFragmentInMilliseconds(new Date(theOtherSpan.getMinimum()), Calendar.DATE);
+          Long otherEnd = DateUtils.getFragmentInMilliseconds(new Date(theOtherSpan.getMaximum()), Calendar.DATE);
           
-          theOtherSpan = new LongRange(otherStart, otherEnd);
+          theOtherSpan = Range.between(otherStart, otherEnd);
           
-          return thisSpan.overlapsRange(theOtherSpan);
+          return thisSpan.isOverlappedBy(theOtherSpan);
         } else if(this.isValidAtEveryDay() && pSpan.isValidAtEveryDay()) {
           //both valid at every Day - just compare spans
-          return thisSpan.overlapsRange(theOtherSpan);
+          return thisSpan.isOverlappedBy(theOtherSpan);
         } else {
             //one span is for everyDay the other is over multiple Days
             //manual intersect
-            LongRange always;
-            LongRange manual;
+            Range<Long> always;
+            Range<Long> manual;
             if(this.isValidAtEveryDay()) {
                 always = thisSpan;
                 manual = theOtherSpan;
@@ -232,39 +210,38 @@ public class TimeSpan implements Comparable<TimeSpan> {
                 manual = thisSpan;
             }
             
-            long manualDate = DateUtils.truncate(new Date(manual.getMinimumLong()), Calendar.DATE).getTime();
-            long manualStart = manual.getMinimumLong() - manualDate;
-            long manualEnd = manual.getMaximumLong() - manualDate;
+            long manualDate = DateUtils.truncate(new Date(manual.getMinimum()), Calendar.DATE).getTime();
+            long manualStart = manual.getMinimum() - manualDate;
+            long manualEnd = manual.getMaximum() - manualDate;
             
             if(manualEnd - manualStart > DateUtils.MILLIS_PER_DAY) {
                 //must intersect somehow because span is longer than 1 Day
                 return true;
             }
             //direct intersection
-            manual = new LongRange(manualStart, manualEnd);
-            if(always.overlapsRange(manual)) return true;
+            manual = Range.between(manualStart, manualEnd);
+            if(always.isOverlappedBy(manual)) return true;
             
             //should not be possible, because it should be handeld by isValidAtSpecificDay
             if(manualEnd <= DateUtils.MILLIS_PER_DAY) return false;
             
             //maybe intersection at next day
-            manual = new LongRange(0, manualEnd - DateUtils.MILLIS_PER_DAY);
-            return always.overlapsRange(manual);
+            manual = Range.between(new Long(0), manualEnd - DateUtils.MILLIS_PER_DAY);
+            return always.isOverlappedBy(manual);
         }
     }
     
-    return thisSpan.overlapsRange(theOtherSpan);
+    return thisSpan.isOverlappedBy(theOtherSpan);
   }
 
   public static TimeSpan fromPropertyString(String pString) {
     String[] split = pString.split(",");
-    TimeSpan t = new TimeSpan();
     try {
       long start = Long.parseLong(split[0]);
       long end = Long.parseLong(split[1]);
       boolean daily = Boolean.parseBoolean(split[2]);
       int dir = Integer.parseInt(split[3]);
-      t.init(new LongRange(start, end), daily);
+      TimeSpan t = new TimeSpan(Range.between(start, end), daily);
       switch (dir) {
         case 0:
           t.setDirection(DIRECTION.SEND);
@@ -273,17 +250,16 @@ public class TimeSpan implements Comparable<TimeSpan> {
           t.setDirection(DIRECTION.ARRIVE);
           break;
       }
-    } catch (Exception e) {
-      return null;
+      return t;
+    } catch (Exception ignored) {
     }
-
-    return t;
+    return null;
   }
 
   public String toPropertyString() {
     String res = "";
-    res += exactSpan.getMinimumLong() + ",";
-    res += exactSpan.getMaximumLong() + ",";
+    res += exactSpan.getMinimum() + ",";
+    res += exactSpan.getMaximum() + ",";
     res += daily + ",";
     res += getDirection().equals(DIRECTION.SEND) ? "0" : "1";
     return res;
@@ -295,21 +271,21 @@ public class TimeSpan implements Comparable<TimeSpan> {
     
     if (isValidAtSpecificDay()) {
       SimpleDateFormat fDate = new SimpleDateFormat("dd.MM.yy");
-      int startHour =(int) DateUtils.getFragmentInHours(new Date(getSpan().getMinimumLong()), Calendar.DATE);
-      int endHour =(int) DateUtils.getFragmentInHours(new Date(getSpan().getMaximumLong() + 1), Calendar.DATE);
+      int startHour =(int) DateUtils.getFragmentInHours(new Date(getSpan().getMinimum()), Calendar.DATE);
+      int endHour =(int) DateUtils.getFragmentInHours(new Date(getSpan().getMaximum() + 1), Calendar.DATE);
       
       result = "Am " + fDate.format(getDate()) + ", von " + startHour + " Uhr bis " + endHour + " Uhr";
     } else if (isValidAtEveryDay()) {
-      int startHour =(int) (getSpan().getMinimumLong() / DateUtils.MILLIS_PER_HOUR);
-      int endHour =(int) ((getSpan().getMaximumLong() + 1) / DateUtils.MILLIS_PER_HOUR);
+      int startHour =(int) (getSpan().getMinimum() / DateUtils.MILLIS_PER_HOUR);
+      int endHour =(int) ((getSpan().getMaximum() + 1) / DateUtils.MILLIS_PER_HOUR);
       
       result = "T\u00E4glich, von " + startHour + " Uhr bis " + endHour + " Uhr";
     } else if (isValidAtExactTime()) {
       SimpleDateFormat f = new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss 'Uhr'");
-      result = "Am " + f.format(getSpan().getMinimumLong());
+      result = "Am " + f.format(getSpan().getMinimum());
     } else if (isValidAtManualRange()) {
       SimpleDateFormat f = new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss 'Uhr'");
-      result = "Von " + f.format(new Date(getSpan().getMinimumLong())) + " bis " + f.format(new Date(getSpan().getMaximumLong()));
+      result = "Von " + f.format(new Date(getSpan().getMinimum())) + " bis " + f.format(new Date(getSpan().getMaximum()));
     } else {
       result = "";
     }

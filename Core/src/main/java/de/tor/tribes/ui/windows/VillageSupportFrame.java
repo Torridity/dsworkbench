@@ -43,7 +43,8 @@ import java.util.*;
 import java.util.List;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.jdesktop.swingx.painter.MattePainter;
 
@@ -71,7 +72,7 @@ public class VillageSupportFrame extends javax.swing.JFrame implements ActionLis
         }
 
     }
-    private static Logger logger = Logger.getLogger("SupportDialog");
+    private static Logger logger = LogManager.getLogger("SupportDialog");
     private static VillageSupportFrame SINGLETON = null;
     private Village mCurrentVillage = null;
 

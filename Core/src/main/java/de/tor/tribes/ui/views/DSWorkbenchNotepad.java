@@ -46,8 +46,9 @@ import java.util.List;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import org.apache.commons.configuration.Configuration;
-import org.apache.log4j.Logger;
+import org.apache.commons.configuration2.Configuration;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jdesktop.swingx.JXButton;
 import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.painter.MattePainter;
@@ -103,7 +104,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
             tab.updateSet();
         }
     }
-    private static Logger logger = Logger.getLogger("Notepad");
+    private static Logger logger = LogManager.getLogger("Notepad");
     private static DSWorkbenchNotepad SINGLETON = null;
     private GenericTestPanel centerPanel = null;
     

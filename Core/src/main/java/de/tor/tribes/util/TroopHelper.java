@@ -26,7 +26,9 @@ import de.tor.tribes.ui.views.DSWorkbenchFarmManager;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.util.*;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 /**
  *
@@ -34,7 +36,7 @@ import org.apache.log4j.Logger;
  */
 public class TroopHelper {
 
-    private final static Logger logger = Logger.getLogger("TroopHelper");
+    private final static Logger logger = LogManager.getLogger("TroopHelper");
     final static int[] CATAS_NEEDED_OTHER = new int[] { 0, 2, 6, 10, 15, 21, 28, 36, 45, 56, 68, 82, 98, 115, 136, 159,
             185, 215, 248, 286, 328, 376, 430, 490, 558, 634, 720, 815, 922, 1041, 1175 };
     final static int[] CATA_MIN_DMG = new int[] { 0, 2, 2, 2, 3, 3, 3, 3, 3, 4, 4, 4, 5, 5, 6, 6, 6, 7, 8, 8, 9, 10, 10,

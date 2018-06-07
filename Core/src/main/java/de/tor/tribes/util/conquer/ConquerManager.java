@@ -32,7 +32,7 @@ import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
 import de.tor.tribes.util.village.KnownVillageManager;
-import de.tor.tribes.util.xml.JaxenUtils;
+import de.tor.tribes.util.xml.JDomUtils;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
@@ -42,16 +42,17 @@ import java.net.URLConnection;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import org.apache.log4j.Logger;
-import org.jdom.Document;
-import org.jdom.Element;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jdom2.Document;
+import org.jdom2.Element;
 
 /**
  * @author Charon
  */
 public class ConquerManager extends GenericManager<Conquer> {
 
-    private static Logger logger = Logger.getLogger("ConquerManager");
+    private static Logger logger = LogManager.getLogger("ConquerManager");
     private static ConquerManager SINGLETON = null;
     private long lastUpdate = -1;
     private ConquerUpdateThread updateThread = null;
@@ -97,14 +98,14 @@ public class ConquerManager extends GenericManager<Conquer> {
                 logger.debug("Reading conquers from '" + pFile + "'");
             }
             try {
-                Document d = JaxenUtils.getDocument(conquerFile);
-                String lastup = JaxenUtils.getNodeValue(d, "//conquers/lastUpdate");
+                Document d = JDomUtils.getDocument(conquerFile);
+                String lastup = JDomUtils.getNodeValue(d, "conquers/lastUpdate");
                 this.lastUpdate = Long.parseLong(lastup);
                 if (lastUpdate == -1) {
                     //set update correct on error
                     this.lastUpdate = (long) 0;
                 }
-                for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//conquers/conquer")) {
+                for (Element e : (List<Element>) JDomUtils.getNodes(d, "conquers/conquer")) {
                     try {
                         Conquer c = new Conquer();
                         c.loadFromXml(e);
@@ -178,7 +179,7 @@ public class ConquerManager extends GenericManager<Conquer> {
         try {
 
             StringBuilder b = new StringBuilder();
-            b.append("<conquers>\n");
+            b.append("<data><conquers>\n");
             b.append("<lastUpdate>").append(lastUpdate).append("</lastUpdate>\n");
             for (ManageableType t : getAllElements()) {
                 Conquer c = (Conquer) t;
@@ -189,7 +190,7 @@ public class ConquerManager extends GenericManager<Conquer> {
                     }
                 }
             }
-            b.append("</conquers>");
+            b.append("</conquers></data>");
             FileWriter w = new FileWriter(pFile);
             w.write(b.toString());
             w.flush();

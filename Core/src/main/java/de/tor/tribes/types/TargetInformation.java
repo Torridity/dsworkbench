@@ -20,7 +20,7 @@ import de.tor.tribes.io.TroopAmountFixed;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.ServerSettings;
-import de.tor.tribes.util.xml.JaxenUtils;
+import de.tor.tribes.util.xml.JDomUtils;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
@@ -28,10 +28,11 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
-import org.apache.log4j.Logger;
-import org.jdom.Element;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.Predicate;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jdom2.Element;
 
 /**
  *
@@ -48,7 +49,7 @@ public class TargetInformation {
     private int fakes = 0;
     private long first = Long.MAX_VALUE;
     private long last = Long.MIN_VALUE;
-    private final Logger logger = Logger.getLogger("TargetInformation");
+    private final Logger logger = LogManager.getLogger("TargetInformation");
     
     public TargetInformation(Village pTarget) {
         target = pTarget;
@@ -333,7 +334,7 @@ public class TargetInformation {
         this.iWallLevel = Integer.parseInt(e.getChild("wall").getText());
         troops = new TroopAmountFixed(e.getChild("troops"));
         
-        for (Element attack : (List<Element>) JaxenUtils.getNodes(e, "attacks/attack")) {
+        for (Element attack : (List<Element>) JDomUtils.getNodes(e, "attacks/attack")) {
             int sourceId = Integer.parseInt(attack.getAttributeValue("source"));
             long arrive = Long.parseLong(attack.getAttributeValue("arrive"));
             boolean fake = Boolean.parseBoolean(attack.getAttributeValue("fake"));

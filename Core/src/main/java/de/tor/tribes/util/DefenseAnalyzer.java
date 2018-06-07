@@ -16,12 +16,13 @@
 package de.tor.tribes.util;
 
 import de.tor.tribes.control.ManageableType;
-import de.tor.tribes.dssim.algo.NewSimulator;
+//TODO re add
+/*import de.tor.tribes.dssim.algo.NewSimulator;
 import de.tor.tribes.dssim.types.AbstractUnitElement;
 import de.tor.tribes.dssim.types.KnightItem;
 import de.tor.tribes.dssim.types.SimulatorResult;
 import de.tor.tribes.dssim.types.UnitHolder;
-import de.tor.tribes.dssim.util.UnitManager;
+import de.tor.tribes.dssim.util.UnitManager;*/
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.TroopAmountFixed;
 import de.tor.tribes.types.DefenseInformation;
@@ -36,14 +37,16 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Map.Entry;
 import java.util.Set;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 /**
  *
  * @author Torridity
  */
 public class DefenseAnalyzer extends Thread {
-    private static Logger logger = Logger.getLogger("DefenseAnalyzer");
+    private static Logger logger = LogManager.getLogger("DefenseAnalyzer");
 
     private TroopAmountFixed standardOff = null;
     private TroopAmountFixed standardDefSplit = null;
@@ -78,14 +81,15 @@ public class DefenseAnalyzer extends Thread {
         void fireFinishedEvent();
     }
 
-    private Hashtable<UnitHolder, AbstractUnitElement> dswbUnitsToSimulatorUnits(TroopAmountFixed pInput) {
+    //TODO re add
+    /*private Hashtable<UnitHolder, AbstractUnitElement> dswbUnitsToSimulatorUnits(TroopAmountFixed pInput) {
         Hashtable<UnitHolder, AbstractUnitElement> result = new Hashtable<>();
         for (de.tor.tribes.io.UnitHolder unit : DataHolder.getSingleton().getUnits()) {
             int value = pInput.getAmountForUnit(unit);
             result.put(UnitManager.getSingleton().getUnitByPlainName(unit.getPlainName()), new AbstractUnitElement(UnitManager.getSingleton().getUnitByPlainName(unit.getPlainName()), value, 10));
         }
         return result;
-    }
+    }*/
 
     public boolean isRunning() {
         return running;
@@ -99,7 +103,8 @@ public class DefenseAnalyzer extends Thread {
     public void run() {
         running = true;
         try {
-            UnitManager.getSingleton().setUnits("./servers/" + GlobalOptions.getSelectedServer() + "/units.xml");
+            //TODO re add
+//UnitManager.getSingleton().setUnits("./servers/" + GlobalOptions.getSelectedServer() + "/units.xml");
         } catch (Exception ignored) {
         }
         updateStatus();
@@ -108,6 +113,8 @@ public class DefenseAnalyzer extends Thread {
     }
 
     private void updateStatus() {
+        //TODO re add
+        /*
         int targetCount = SOSManager.getSingleton().getOverallTargetCount();
         int currentTarget = 0;
         for (ManageableType e : SOSManager.getSingleton().getAllElements()) {
@@ -188,10 +195,11 @@ public class DefenseAnalyzer extends Thread {
                     logger.warn("Problems during simutlation", except);
                 }
             }
-        }
+        }*/
     }
 
-    private Hashtable<UnitHolder, AbstractUnitElement> getDefense(TargetInformation pTargetInfo, DefenseInformation pInfo, int pAdditionalSplits) {
+    //TODO re add
+    /*private Hashtable<UnitHolder, AbstractUnitElement> getDefense(TargetInformation pTargetInfo, DefenseInformation pInfo, int pAdditionalSplits) {
         int supportCount = pInfo.getSupports().length;
         TroopAmountFixed units = new TroopAmountFixed();
         VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(pTargetInfo.getTarget(), TroopsManager.TROOP_TYPE.IN_VILLAGE);
@@ -275,5 +283,5 @@ public class DefenseAnalyzer extends Thread {
         } catch(Exception e) {
             logger.warn("Problems during simulation", e);
         }
-    }
+    }*/
 }

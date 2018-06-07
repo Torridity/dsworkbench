@@ -23,17 +23,16 @@ import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.SystrayHelper;
 import de.tor.tribes.util.farm.FarmManager;
 import de.tor.tribes.util.village.KnownVillageManager;
-import de.tor.tribes.util.xml.JaxenUtils;
+import de.tor.tribes.util.xml.JDomUtils;
 import java.io.File;
-import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.net.URLDecoder;
 import java.util.*;
 import java.util.Map.Entry;
-import org.apache.log4j.Logger;
-import org.jdom.Document;
-import org.jdom.Element;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jdom2.Document;
+import org.jdom2.Element;
 
 /**
  *
@@ -41,7 +40,7 @@ import org.jdom.Element;
  */
 public class ReportManager extends GenericManager<FightReport> {
 
-  private static Logger logger = Logger.getLogger("ReportManager");
+  private static Logger logger = LogManager.getLogger("ReportManager");
   private static ReportManager SINGLETON = null;
   public final static String FARM_SET = "Farmberichte";
   private List<RuleEntry> rules = new LinkedList<>();
@@ -205,15 +204,15 @@ public class ReportManager extends GenericManager<FightReport> {
           logger.debug("Reading reports from '" + pFile + "'");
         }
         try {
-          Document d = JaxenUtils.getDocument(reportFile);
-          for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//reportSets/reportSet")) {
+          Document d = JDomUtils.getDocument(reportFile);
+          for (Element e : (List<Element>) JDomUtils.getNodes(d, "reportSets/reportSet")) {
             String setKey = e.getAttributeValue("name");
             setKey = URLDecoder.decode(setKey, "UTF-8");
             if (logger.isDebugEnabled()) {
               logger.debug("Loading report set '" + setKey + "'");
             }
             addGroup(setKey);
-            for (Element e1 : (List<Element>) JaxenUtils.getNodes(e, "reports/report")) {
+            for (Element e1 : (List<Element>) JDomUtils.getNodes(e, "reports/report")) {
               FightReport r = new FightReport();
               r.loadFromXml(e1);
               addManagedElement(setKey, r);
@@ -221,7 +220,7 @@ public class ReportManager extends GenericManager<FightReport> {
           }
           logger.debug("Reports successfully loaded");
           
-          for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//rules/rule")) {
+          for (Element e : (List<Element>) JDomUtils.getNodes(d, "rules/rule")) {
             RuleEntry r = new RuleEntry(e);
             rules.add(r);
           }
@@ -249,8 +248,8 @@ public class ReportManager extends GenericManager<FightReport> {
     }
     logger.debug("Importing reports");
     try {
-      Document d = JaxenUtils.getDocument(pFile);
-      for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//reportSets/reportSet")) {
+      Document d = JDomUtils.getDocument(pFile);
+      for (Element e : (List<Element>) JDomUtils.getNodes(d, "reportSets/reportSet")) {
         String setKey = e.getAttributeValue("name");
         setKey = URLDecoder.decode(setKey, "UTF-8");
         if (pExtension != null) {
@@ -261,7 +260,7 @@ public class ReportManager extends GenericManager<FightReport> {
           logger.debug("Loading report set '" + setKey + "'");
         }
 
-        for (Element e1 : (List<Element>) JaxenUtils.getNodes(e, "reports/report")) {
+        for (Element e1 : (List<Element>) JDomUtils.getNodes(e, "reports/report")) {
           FightReport r = new FightReport();
           r.loadFromXml(e1);
           addManagedElement(setKey, r);
@@ -311,7 +310,7 @@ public class ReportManager extends GenericManager<FightReport> {
     }
     try {
       StringBuilder b = new StringBuilder();
-      b.append("<reportSets>\n");
+      b.append("<data><reportSets>\n");
       Iterator<String> setKeys = getGroupIterator();
       while (setKeys.hasNext()) {
         String set = setKeys.next();
@@ -331,7 +330,7 @@ public class ReportManager extends GenericManager<FightReport> {
       for(RuleEntry r: rules) {
           b.append(r.getRule().toXml());
       }
-      b.append("</rules>");
+      b.append("</rules></data>");
       //writing data to file
       FileWriter w = new FileWriter(pFile);
       w.write(b.toString());

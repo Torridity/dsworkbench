@@ -30,7 +30,9 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 /**
  *
@@ -38,7 +40,7 @@ import org.apache.log4j.Logger;
  */
 public class AttackTableModel extends AbstractTableModel {
 
-    private static Logger logger = Logger.getLogger("AttackTableModel");
+    private static Logger logger = LogManager.getLogger("AttackTableModel");
 
     private String sPlan = null;
     private final List<String> columnNames = new LinkedList<>();

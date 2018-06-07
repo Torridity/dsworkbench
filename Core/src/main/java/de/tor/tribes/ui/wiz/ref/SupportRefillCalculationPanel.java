@@ -43,8 +43,8 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
-import org.apache.commons.lang.math.IntRange;
-import org.apache.commons.lang.math.LongRange;
+import org.apache.commons.lang3.Range;
+import org.apache.commons.lang3.time.DateUtils;
 import org.netbeans.spi.wizard.*;
 
 /**
@@ -410,20 +410,20 @@ public class SupportRefillCalculationPanel extends WizardPage {
             TimeFrame f = new TimeFrame(new Date(System.currentTimeMillis()), new Date(System.currentTimeMillis()),
                     new Date(System.currentTimeMillis() + 60 * 60 * 24 * 365 * 1000), new Date(System.currentTimeMillis() + 60 * 60 * 24 * 365 * 1000));
             
-            f.addArriveTimeSpan(new TimeSpan(new IntRange(0,24)));
-            f.addStartTimeSpan(new TimeSpan(new IntRange(0,24)));
+            f.addArriveTimeSpan(new TimeSpan(Range.between(0l, 24l * DateUtils.MILLIS_PER_HOUR), true));
+            f.addStartTimeSpan(new TimeSpan(Range.between(0l, 24l * DateUtils.MILLIS_PER_HOUR), true));
             return f;
         } else if(jRadioLastArrive.isSelected()) {
             Date arrive = jArriveTime.getSelectedDate();
             TimeFrame f = new TimeFrame(new Date(System.currentTimeMillis()), new Date(System.currentTimeMillis()), arrive, arrive);
-            f.addStartTimeSpan(new TimeSpan(new LongRange(System.currentTimeMillis(), arrive.getTime())));
-            f.addArriveTimeSpan(new TimeSpan(new IntRange(0,24)));
+            f.addStartTimeSpan(new TimeSpan(Range.between(System.currentTimeMillis(), arrive.getTime()), false));
+            f.addArriveTimeSpan(new TimeSpan(Range.between(0l, 24l * DateUtils.MILLIS_PER_HOUR), true));
             return f;
         } else if(jRadioFixedArrive.isSelected()) {
             Date arrive = jArriveTime.getSelectedDate();
             TimeFrame f = new TimeFrame(new Date(System.currentTimeMillis()), new Date(System.currentTimeMillis()), arrive, arrive);
             f.addArriveTimeSpan(new TimeSpan(arrive));
-            f.addStartTimeSpan(new TimeSpan(new IntRange(0, 24)));
+            f.addStartTimeSpan(new TimeSpan(Range.between(0l, 24l * DateUtils.MILLIS_PER_HOUR), true));
             return f;
         } else {
             notifyStatusUpdate("Kein Ankunftszeit Typ gew\u00E4hlt");
@@ -435,7 +435,7 @@ public class SupportRefillCalculationPanel extends WizardPage {
     private void initializeCalculation() {
         TimeFrame f = getTimeFrame();
         
-        if (f.getArriveRange().getMaximumLong() < System.currentTimeMillis()) {
+        if (f.getArriveRange().getMaximum() < System.currentTimeMillis()) {
             notifyStatusUpdate("Die gewählte Ankunftzeit liegt in der Vergangenheit");
             notifyStatusUpdate("Berechnung abgebrochen!");
             return;

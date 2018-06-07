@@ -23,14 +23,16 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 /**
  * @author Charon
  */
 public class DefenseBruteForce {
 
-    private static Logger logger = Logger.getLogger("Algorithm_DefenseBruteForce");
+    private static Logger logger = LogManager.getLogger("Algorithm_DefenseBruteForce");
     private boolean allowMultiSupport = false;
 
     public DefenseBruteForce(boolean pMultiSupport) {

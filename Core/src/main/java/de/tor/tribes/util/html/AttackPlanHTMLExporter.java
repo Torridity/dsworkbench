@@ -34,14 +34,16 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 /**
  * @author Charon
  */
 public class AttackPlanHTMLExporter {
 
-    private static Logger logger = Logger.getLogger("AttackHTMLExporter");
+    private static Logger logger = LogManager.getLogger("AttackHTMLExporter");
     private static String HEADER = "";
     private static String FOOTER = "";
     private static String BLOCK = "";

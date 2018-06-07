@@ -18,7 +18,8 @@ package de.tor.tribes.io;
 import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.types.ext.Village;
 import java.util.List;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * This Class holds many functions for calculations with troops
@@ -27,7 +28,7 @@ import org.apache.log4j.Logger;
  */
 
 public abstract class TroopAmount extends ManageableType implements Cloneable {
-    private static final Logger logger = Logger.getLogger("TroopAmount");
+    private static final Logger logger = LogManager.getLogger("TroopAmount");
 
     @Override
     public String getElementIdentifier() {

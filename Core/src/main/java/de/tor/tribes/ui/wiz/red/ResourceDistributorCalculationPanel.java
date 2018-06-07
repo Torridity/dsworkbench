@@ -40,7 +40,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 import javax.swing.Icon;
 import javax.swing.JOptionPane;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.netbeans.spi.wizard.Wizard;
 import org.netbeans.spi.wizard.WizardPage;
 import org.netbeans.spi.wizard.WizardPanelNavResult;
@@ -58,7 +59,7 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
     private static ResourceDistributorCalculationPanel singleton = null;
     private MerchantDistributor calculator = null;
     private boolean transportsAlreadyTransferred = false;
-    private static Logger logger = Logger.getLogger("ResourceDistributorCalculationPanel");
+    private static Logger logger = LogManager.getLogger("ResourceDistributorCalculationPanel");
 
     public static synchronized ResourceDistributorCalculationPanel getSingleton() {
         if (singleton == null) {

@@ -27,14 +27,16 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 /**
  * @author Torridity
  */
 public class StatManager {
 
-    private static Logger logger = Logger.getLogger("StatManager");
+    private static Logger logger = LogManager.getLogger("StatManager");
     private static StatManager SINGLETON = null;
     private boolean INITIALIZED = false;
     private Hashtable<Integer, Hashtable<Integer, TribeStatsElement>> data = null;

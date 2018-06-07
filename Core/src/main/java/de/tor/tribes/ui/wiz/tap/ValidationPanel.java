@@ -40,7 +40,8 @@ import java.util.List;
 import java.util.Map;
 import javax.swing.SwingUtilities;
 import javax.swing.table.AbstractTableModel;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.netbeans.spi.wizard.Wizard;
 import org.netbeans.spi.wizard.WizardPage;
@@ -52,7 +53,7 @@ import org.netbeans.spi.wizard.WizardPanelNavResult;
  */
 public class ValidationPanel extends WizardPage implements SettingsChangedListener {
     
-    Logger logger = Logger.getLogger("ValidationPanel");
+    Logger logger = LogManager.getLogger("ValidationPanel");
     @Override
     public void fireTimeFrameChangedEvent() {
     }

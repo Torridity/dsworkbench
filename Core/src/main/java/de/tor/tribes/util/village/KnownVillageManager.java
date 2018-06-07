@@ -20,21 +20,22 @@ import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.types.FightReport;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.panels.MinimapPanel;
-import de.tor.tribes.util.xml.JaxenUtils;
+import de.tor.tribes.util.xml.JDomUtils;
 import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.log4j.Logger;
-import org.jdom.Document;
-import org.jdom.Element;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jdom2.Document;
+import org.jdom2.Element;
 
 /**
  * @author Charon
  */
 public class KnownVillageManager extends GenericManager<KnownVillage> {
 
-    private static Logger logger = Logger.getLogger("ChurchManager");
+    private static Logger logger = LogManager.getLogger("ChurchManager");
     private static KnownVillageManager SINGLETON = null;
 
     private List<KnownVillage> churchVillages;
@@ -67,8 +68,8 @@ public class KnownVillageManager extends GenericManager<KnownVillage> {
                 logger.debug("Reading KnownVillages from '" + pFile + "'");
             }
             try {
-                Document d = JaxenUtils.getDocument(villageFile);
-                for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//villages/village")) {
+                Document d = JDomUtils.getDocument(villageFile);
+                for (Element e : (List<Element>) JDomUtils.getNodes(d, "villages/village")) {
                     try {
                         KnownVillage v = new KnownVillage(e);
                         if (getKnownVillage(v.getVillage()) == null) {
@@ -106,8 +107,8 @@ public class KnownVillageManager extends GenericManager<KnownVillage> {
         invalidate();
         logger.debug("Importing KnownVillages");
         try {
-            Document d = JaxenUtils.getDocument(pFile);
-            for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//villages/village")) {
+            Document d = JDomUtils.getDocument(pFile);
+            for (Element e : (List<Element>) JDomUtils.getNodes(d, "villages/village")) {
                 try {
                     KnownVillage v = new KnownVillage(e);
                     if (getKnownVillage(v.getVillage()) == null) {
@@ -162,12 +163,12 @@ public class KnownVillageManager extends GenericManager<KnownVillage> {
         try {
             StringBuilder b = new StringBuilder();
 
-            b.append("<villages>\n");
+            b.append("<data><villages>\n");
             for (ManageableType t : getAllElements()) {
                 KnownVillage c = (KnownVillage) t;
                 b.append(c.toXml()).append("\n");
             }
-            b.append("</villages>");
+            b.append("</villages></data>");
             //write data to file
             FileWriter w = new FileWriter(pFile);
             w.write(b.toString());

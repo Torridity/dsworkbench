@@ -24,14 +24,16 @@ import de.tor.tribes.util.attack.StandardAttackManager;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 /**
  *
  * @author Torridity
  */
 public class AttackTypeTableModel extends AbstractTableModel {
-    private static final Logger logger = Logger.getLogger("AttackTypeTableModel");
+    private static final Logger logger = LogManager.getLogger("AttackTypeTableModel");
 
     private List<String> columnNames = new LinkedList<>();
     private List<Class> columnTypes = new LinkedList<>();

@@ -17,7 +17,8 @@ package de.tor.tribes.ui.wiz;
 
 import java.util.Map;
 import javax.swing.JComponent;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.netbeans.spi.wizard.WizardController;
 import org.netbeans.spi.wizard.WizardException;
 import org.netbeans.spi.wizard.WizardPanelProvider;
@@ -28,7 +29,7 @@ import org.netbeans.spi.wizard.WizardPanelProvider;
  */
 public class FirstStartWizard extends WizardPanelProvider {
 
-    private static Logger logger = Logger.getLogger("Wizard");
+    private static Logger logger = LogManager.getLogger("Wizard");
     private static final String ID_WELCOME = "welcome-id";
     private static final String ID_NETWORK = "network-id";
     private static final String ID_SERVER = "server-id";

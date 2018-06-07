@@ -109,76 +109,84 @@ public final class EscapeChars {
         final StringCharacterIterator iterator = new StringCharacterIterator(aText);
         char character = iterator.current();
         while (character != CharacterIterator.DONE) {
-            if (character == '<') {
-                result.append("&lt;");
-            } else if (character == '>') {
-                result.append("&gt;");
-            } else if (character == '&') {
-                result.append("&amp;");
-            } else if (character == '\"') {
-                result.append("&quot;");
-            } else if (character == '\t') {
-                addCharEntity(9, result);
-            } else if (character == '!') {
-                addCharEntity(33, result);
-            } else if (character == '#') {
-                addCharEntity(35, result);
-            } else if (character == '$') {
-                addCharEntity(36, result);
-            } else if (character == '%') {
-                addCharEntity(37, result);
-            } else if (character == '\'') {
-                addCharEntity(39, result);
-            } else if (character == '(') {
-                addCharEntity(40, result);
-            } else if (character == ')') {
-                addCharEntity(41, result);
-            } else if (character == '*') {
-                addCharEntity(42, result);
-            } else if (character == '+') {
-                addCharEntity(43, result);
-            } else if (character == ',') {
-                addCharEntity(44, result);
-            } else if (character == '-') {
-                addCharEntity(45, result);
-            } else if (character == '.') {
-                addCharEntity(46, result);
-            } else if (character == '/') {
-                addCharEntity(47, result);
-            } else if (character == ':') {
-                addCharEntity(58, result);
-            } else if (character == ';') {
-                addCharEntity(59, result);
-            } else if (character == '=') {
-                addCharEntity(61, result);
-            } else if (character == '?') {
-                addCharEntity(63, result);
-            } else if (character == '@') {
-                addCharEntity(64, result);
-            } else if (character == '[') {
-                addCharEntity(91, result);
-            } else if (character == '\\') {
-                addCharEntity(92, result);
-            } else if (character == ']') {
-                addCharEntity(93, result);
-            } else if (character == '^') {
-                addCharEntity(94, result);
-            } else if (character == '_') {
-                addCharEntity(95, result);
-            } else if (character == '`') {
-                addCharEntity(96, result);
-            } else if (character == '{') {
-                addCharEntity(123, result);
-            } else if (character == '|') {
-                addCharEntity(124, result);
-            } else if (character == '}') {
-                addCharEntity(125, result);
-            } else if (character == '~') {
-                addCharEntity(126, result);
-            } else {
-                //the char is not a special one
-                //add it to the result as is
-                result.append(character);
+            switch (character) {
+                case '<':
+                    result.append("&lt;");break;
+                case '>':
+                    result.append("&gt;");break;
+                case '&':
+                    result.append("&amp;");break;
+                case '\"':
+                    result.append("&quot;");break;
+                case '\t':
+                    addCharEntity(9, result);break;
+                case '!':
+                    addCharEntity(33, result);break;
+                case '#':
+                    addCharEntity(35, result);break;
+                case '$':
+                    addCharEntity(36, result);break;
+                case '%':
+                    addCharEntity(37, result);break;
+                case '\'':
+                    addCharEntity(39, result);break;
+                case '(':
+                    addCharEntity(40, result);break;
+                case ')':
+                    addCharEntity(41, result);break;
+                case '*':
+                    addCharEntity(42, result);break;
+                case '+':
+                    addCharEntity(43, result);break;
+                case ',':
+                    addCharEntity(44, result);break;
+                case '-':
+                    addCharEntity(45, result);break;
+                case '.':
+                    addCharEntity(46, result);break;
+                case '/':
+                    addCharEntity(47, result);break;
+                case ':':
+                    addCharEntity(58, result);break;
+                case ';':
+                    addCharEntity(59, result);break;
+                case '=':
+                    addCharEntity(61, result);break;
+                case '?':
+                    addCharEntity(63, result);break;
+                case '@':
+                    addCharEntity(64, result);break;
+                case '[':
+                    addCharEntity(91, result);break;
+                case '\\':
+                    addCharEntity(92, result);break;
+                case ']':
+                    addCharEntity(93, result);break;
+                case '^':
+                    addCharEntity(94, result);break;
+                case '_':
+                    addCharEntity(95, result);break;
+                case '`':
+                    addCharEntity(96, result);break;
+                case '{':
+                    addCharEntity(123, result);break;
+                case '|':
+                    addCharEntity(124, result);break;
+                case '}':
+                    addCharEntity(125, result);break;
+                case '~':
+                    addCharEntity(126, result);break;
+                default:
+                    if(character > 127) {
+                        //over 127 --> special
+                        addCharEntity((int) character, result);
+                    }
+                    else {
+                        //the char is not a special one
+                        //add it to the result as is
+                        result.append(character);
+                    }
+                    break;
             }
             character = iterator.next();
         }

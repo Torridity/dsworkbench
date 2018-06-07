@@ -24,7 +24,8 @@ import de.tor.tribes.ui.renderer.SupportTableHeaderRenderer;
 import de.tor.tribes.util.BrowserInterface;
 import de.tor.tribes.util.Constants;
 import java.util.List;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
 
 /**
@@ -33,7 +34,7 @@ import org.jdesktop.swingx.decorator.HighlighterFactory;
  */
 public class SupportDetailsDialog extends javax.swing.JDialog {
 
-    private static Logger logger = Logger.getLogger("SupportDetailsDialog");
+    private static Logger logger = LogManager.getLogger("SupportDetailsDialog");
 
     /**
      * Creates new form SupportDetailsDialog

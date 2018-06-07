@@ -16,18 +16,6 @@
 package de.tor.tribes.util.parser;
 
 import de.tor.tribes.control.ManageableType;
-import java.awt.Toolkit;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
-import java.util.StringTokenizer;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Date;
-import java.text.SimpleDateFormat;
-
-import org.apache.log4j.Logger;
-
-import de.tor.tribes.util.SilentParserInterface;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.TroopAmountFixed;
 import de.tor.tribes.io.UnitHolder;
@@ -35,15 +23,26 @@ import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.StandardAttack;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ServerSettings;
+import de.tor.tribes.util.SilentParserInterface;
 import de.tor.tribes.util.attack.AttackManager;
 import de.tor.tribes.util.attack.StandardAttackManager;
+import java.awt.Toolkit;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.StringTokenizer;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  *
  * @author extremeCrazyCoder
  */
 public class MovementParser implements SilentParserInterface {
-    private static final Logger logger = Logger.getLogger("MovementParser");
+    private static final Logger logger = LogManager.getLogger("MovementParser");
     
     public static final int RETURNING_TYPE = 0;
     public static final int ATTACK_TYPE = 1;
@@ -55,7 +54,7 @@ public class MovementParser implements SilentParserInterface {
         List<Attack> movements = new ArrayList<>();
         Boolean insideOfTable = false;
         int rowsTODO = -1;
-        int movementType = -1;
+        int movementType;
         
         while (lineTok.hasMoreElements()) {
             //parse single line for village

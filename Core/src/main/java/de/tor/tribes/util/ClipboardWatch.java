@@ -28,7 +28,9 @@ import java.util.zip.CRC32;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 /**
  *
@@ -36,7 +38,7 @@ import org.apache.log4j.Logger;
  */
 public class ClipboardWatch extends Thread {
 
-    private static Logger logger = Logger.getLogger("ClipboardMonitor");
+    private static Logger logger = LogManager.getLogger("ClipboardMonitor");
     private static ClipboardWatch SINGLETON = null;
 
     public static synchronized ClipboardWatch getSingleton() {
@@ -73,7 +75,7 @@ public class ClipboardWatch extends Thread {
                 }
 
                 try {
-                    if (org.apache.commons.lang.SystemUtils.IS_OS_WINDOWS) {
+                    if (org.apache.commons.lang3.SystemUtils.IS_OS_WINDOWS) {
                         if (clip == null) {
                             clip = AudioSystem.getClip();
                             AudioInputStream inputStream = AudioSystem.getAudioInputStream(ClockFrame.class.getResourceAsStream("/res/Ding.wav"));

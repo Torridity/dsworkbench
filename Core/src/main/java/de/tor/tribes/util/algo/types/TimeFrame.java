@@ -18,8 +18,8 @@ package de.tor.tribes.util.algo.types;
 import de.tor.tribes.types.TimeSpan;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import org.apache.commons.lang.math.LongRange;
-import org.apache.commons.lang.time.DateUtils;
+import org.apache.commons.lang3.Range;
+import org.apache.commons.lang3.time.DateUtils;
 
 /**
  *
@@ -33,8 +33,8 @@ public class TimeFrame {
   private long arriveNotAfter = 0;
   private List<TimeSpan> sendTimeSpans = null;
   private List<TimeSpan> arriveTimeSpans = null;
-  List<LongRange> startRanges = null;
-  List<LongRange> arriveRanges = null;
+  List<Range<Long>> startRanges = null;
+  List<Range<Long>> arriveRanges = null;
   //This is needed, because the we cant send more than one movement at the same time
   private final long fixedStartTimeRangeSize = 1000;
 
@@ -87,12 +87,12 @@ public class TimeFrame {
     return true;
   }
 
-  public LongRange getStartRange() {
-    return new LongRange(startNotBefore, startNotAfter);
+  public Range<Long> getStartRange() {
+    return Range.between(startNotBefore, startNotAfter);
   }
 
-  public LongRange getArriveRange() {
-    return new LongRange(arriveNotBefore, arriveNotAfter);
+  public Range<Long> getArriveRange() {
+    return Range.between(arriveNotBefore, arriveNotAfter);
   }
 
   /**
@@ -112,10 +112,10 @@ public class TimeFrame {
       arriveRanges = arriveTimespansToRanges();
     }
 
-    for (LongRange currentStartRange : startRanges) {
-      LongRange arriveRangeForStartRange = new LongRange(currentStartRange.getMinimumLong() + pRuntime, currentStartRange.getMaximumLong() + pRuntime);
-      for (LongRange currentArriveRange : arriveRanges) {
-        if (currentArriveRange.overlapsRange(arriveRangeForStartRange)) {
+    for (Range<Long> currentStartRange : startRanges) {
+      Range<Long> arriveRangeForStartRange = Range.between(currentStartRange.getMinimum() + pRuntime, currentStartRange.getMaximum() + pRuntime);
+      for (Range<Long> currentArriveRange : arriveRanges) {
+        if (currentArriveRange.isOverlappedBy(arriveRangeForStartRange)) {
           //movement with 'pRuntime' starting in 'currentStartRange' will arrive withing 'currentArriveRange'
           return true;
         }
@@ -137,18 +137,18 @@ public class TimeFrame {
    * @return Date Fitted arrive time
    */
   public Date getFittedArriveTime(long pRuntime, List<Long> pUsedSendTimes) {
-    List<LongRange> startRanges = startTimespansToRanges();
-    List<LongRange> arriveRanges = arriveTimespansToRanges();
-    List<LongRange> possible = new ArrayList();
-    for (LongRange currentStartRange : startRanges) {
-      LongRange arriveRangeForStartRange = new LongRange(currentStartRange.getMinimumLong() + pRuntime, currentStartRange.getMaximumLong() + pRuntime);
-      for (LongRange currentArriveRange : arriveRanges) {
-        if (currentArriveRange.overlapsRange(arriveRangeForStartRange)) {
+    List<Range<Long>> startRanges = startTimespansToRanges();
+    List<Range<Long>> arriveRanges = arriveTimespansToRanges();
+    List<Range<Long>> possible = new ArrayList();
+    for (Range<Long> currentStartRange : startRanges) {
+      Range<Long> arriveRangeForStartRange = Range.between(currentStartRange.getMinimum() + pRuntime, currentStartRange.getMaximum() + pRuntime);
+      for (Range<Long> currentArriveRange : arriveRanges) {
+        if (currentArriveRange.isOverlappedBy(arriveRangeForStartRange)) {
           //movement possible for these 'currentStartRange' and 'currentArriveRange' so fit runtime into
           //           |-----------|
           //   |--------------|
-          long minArrive = currentArriveRange.getMinimumLong();
-          long minArriveForStartRange = arriveRangeForStartRange.getMinimumLong();
+          long minArrive = currentArriveRange.getMinimum();
+          long minArriveForStartRange = arriveRangeForStartRange.getMinimum();
           long checkStart = 0;
           if (minArrive < minArriveForStartRange) {
             //|----------- (Arrive)
@@ -161,8 +161,8 @@ public class TimeFrame {
             //check everything beginning with 'minArrive'
             checkStart = minArrive;
           }
-          long maxArrive = currentArriveRange.getMaximumLong();
-          long maxArriveForStartRange = arriveRangeForStartRange.getMaximumLong();
+          long maxArrive = currentArriveRange.getMaximum();
+          long maxArriveForStartRange = arriveRangeForStartRange.getMaximum();
           long checkEnd = 0;
           if (maxArrive < maxArriveForStartRange) {
             //-----------| (Arrive)
@@ -205,21 +205,21 @@ public class TimeFrame {
               return new Date(checkStart);
             }
           }
-          possible.add(new LongRange(checkStart, checkEnd));
+          possible.add(Range.between(checkStart, checkEnd));
         }
       }
     }
     
     if(!possible.isEmpty()) {
         long cnt = 0;
-        for(LongRange r: possible) {
-            cnt += r.getMaximumLong() - r.getMinimumLong() + 1;
+        for(Range<Long> r: possible) {
+            cnt += r.getMaximum() - r.getMinimum() + 1;
         }
         cnt = (long) (Math.random() * cnt);
-        for(LongRange r: possible) {
-            Long span = r.getMaximumLong() - r.getMinimumLong() + 1;
+        for(Range<Long> r: possible) {
+            Long span = r.getMaximum() - r.getMinimum() + 1;
             if(cnt < span) {
-                return new Date(r.getMinimumLong() + cnt);
+                return new Date(r.getMinimum() + cnt);
             }
             cnt -= span;
         }
@@ -228,24 +228,24 @@ public class TimeFrame {
     return null;
   }
 
-  public List<LongRange> startTimespansToRanges() {
-    List<LongRange> ranges = new LinkedList<>();
+  public List<Range<Long>> startTimespansToRanges() {
+    List<Range<Long>> ranges = new LinkedList<>();
     Date startDate = DateUtils.truncate(new Date(startNotBefore), Calendar.DATE);
 
     for (TimeSpan span : sendTimeSpans) {
       if(!span.isValidAtEveryDay()) {
-          LongRange range;
+          Range<Long> range;
           //just copy range
           if(span.isValidAtExactTime()) {
-            range = new LongRange(span.getSpan().getMinimumLong(), span.getSpan().getMaximumLong() + fixedStartTimeRangeSize);
+            range = Range.between(span.getSpan().getMinimum(), span.getSpan().getMaximum() + fixedStartTimeRangeSize);
           } else {
-            range = new LongRange(span.getSpan().getMinimumLong(), span.getSpan().getMaximumLong());
+            range = Range.between(span.getSpan().getMinimum(), span.getSpan().getMaximum());
           }
           
-          if (range.getMaximumLong() > System.currentTimeMillis()) {
-            if(range.getMinimumLong() <= System.currentTimeMillis()) {
+          if (range.getMaximum() > System.currentTimeMillis()) {
+            if(range.getMinimum() <= System.currentTimeMillis()) {
                 //rebuild Range
-                range = new LongRange(System.currentTimeMillis(), range.getMaximumLong());
+                range = Range.between(System.currentTimeMillis(), range.getMaximum());
             }
             //add range only if it is in future
             ranges.add(range);
@@ -256,40 +256,40 @@ public class TimeFrame {
         Date thisDate = new Date(startDate.getTime());
         //go through all days from start to end
         while (thisDate.getTime() < startNotAfter) {
-          long spanStart = thisDate.getTime() + span.getSpan().getMinimumLong();
-          long spanEnd = thisDate.getTime() + span.getSpan().getMaximumLong();
-          LongRange newRange = null;
+          long spanStart = thisDate.getTime() + span.getSpan().getMinimum();
+          long spanEnd = thisDate.getTime() + span.getSpan().getMaximum();
+          Range<Long> newRange = null;
           //check span location relative to start frame
           if (spanStart >= startNotBefore && spanEnd > startNotBefore
               && spanStart < startNotAfter && spanEnd <= startNotAfter) {
             //|----------| (startNotBefore - startNotAfter)
             //  |----| (SpanStart - SpanEnd)
-            newRange = new LongRange(spanStart, spanEnd);
+            newRange = Range.between(spanStart, spanEnd);
           } else if (spanStart < startNotBefore && spanEnd > startNotBefore
               && spanStart < startNotAfter && spanEnd <= startNotAfter) {
             //  |----------| (startNotBefore - startNotAfter)
             //|----| (SpanStart - SpanEnd)
             //set span start to 'startNotBefore'
-            newRange = new LongRange(startNotBefore, spanEnd);
+            newRange = Range.between(startNotBefore, spanEnd);
           } else if (spanStart <= startNotBefore && spanEnd > startNotBefore
               && spanStart > startNotAfter && spanEnd >= startNotAfter) {
             //  |----------| (startNotBefore - startNotAfter)
             //|--------------| (SpanStart - SpanEnd)
             //set span start to 'startNotBefore'
-            newRange = new LongRange(startNotBefore, startNotAfter);
+            newRange = Range.between(startNotBefore, startNotAfter);
           } else if (spanStart >= startNotBefore && spanEnd > startNotBefore
               && spanStart < startNotAfter && spanEnd >= startNotAfter) {
             //|----------| (startNotBefore - startNotAfter)
             //    |---------| (SpanStart - SpanEnd)
             //set span start to 'startNotBefore'
-            newRange = new LongRange(spanStart, startNotAfter);
+            newRange = Range.between(spanStart, startNotAfter);
           }
 
           if (newRange != null) {
-            if (newRange.getMinimumLong() < System.currentTimeMillis()) {
+            if (newRange.getMinimum() < System.currentTimeMillis()) {
               //check minimum as current minimum is in past
-              if (newRange.getMaximumLong() > System.currentTimeMillis()) {
-                newRange = new LongRange(System.currentTimeMillis(), newRange.getMaximumLong());
+              if (newRange.getMaximum() > System.currentTimeMillis()) {
+                newRange = Range.between(System.currentTimeMillis(), newRange.getMaximum());
                 ranges.add(newRange);
               }//ignore as entire range is in past
             } else {
@@ -302,29 +302,29 @@ public class TimeFrame {
         }
       }
     }
-    Collections.sort(ranges, new Comparator<LongRange>() {
+    Collections.sort(ranges, new Comparator<Range<Long>>() {
       @Override
-      public int compare(LongRange o1, LongRange o2) {
-        return Long.valueOf(o1.getMinimumLong()).compareTo(o2.getMinimumLong());
+      public int compare(Range<Long> o1, Range<Long> o2) {
+        return o1.getMinimum().compareTo(o2.getMinimum());
       }
     });
     return ranges;
   }
 
-  public List<LongRange> arriveTimespansToRanges() {
-    List<LongRange> ranges = new LinkedList<>();
+  public List<Range<Long>> arriveTimespansToRanges() {
+    List<Range<Long>> ranges = new LinkedList<>();
     Date arriveDate = DateUtils.truncate(new Date(arriveNotBefore), Calendar.DAY_OF_MONTH);
 
     for (TimeSpan span : arriveTimeSpans) {
       if(!span.isValidAtEveryDay()) {
-          LongRange range;
+          Range<Long> range;
           //just copy range
-          range = new LongRange(span.getSpan().getMinimumLong(), span.getSpan().getMaximumLong());
+          range = Range.between(span.getSpan().getMinimum(), span.getSpan().getMaximum());
           
-          if (range.getMaximumLong() > System.currentTimeMillis()) {
-            if(range.getMinimumLong() <= System.currentTimeMillis()) {
+          if (range.getMaximum() > System.currentTimeMillis()) {
+            if(range.getMinimum() <= System.currentTimeMillis()) {
                 //rebuild Range
-                range = new LongRange(System.currentTimeMillis(), range.getMaximumLong());
+                range = Range.between(System.currentTimeMillis(), range.getMaximum());
             }
             //add range only if it is in future
             ranges.add(range);
@@ -335,40 +335,40 @@ public class TimeFrame {
         Date thisDate = new Date(arriveDate.getTime());
         //go through all days from start to end
         while (thisDate.getTime() < arriveNotAfter) {
-          long spanStart = thisDate.getTime() + span.getSpan().getMinimumLong();
-          long spanEnd = thisDate.getTime() + span.getSpan().getMaximumLong();
-          LongRange newRange = null;
+          long spanStart = thisDate.getTime() + span.getSpan().getMinimum();
+          long spanEnd = thisDate.getTime() + span.getSpan().getMaximum();
+          Range<Long> newRange = null;
           //check span location relative to start frame
           if (spanStart >= arriveNotBefore && spanEnd > arriveNotBefore
               && spanStart < arriveNotAfter && spanEnd <= arriveNotAfter) {
             //|----------| (startNotBefore - startNotAfter)
             //  |----| (SpanStart - SpanEnd)
-            newRange = new LongRange(spanStart, spanEnd);
+            newRange = Range.between(spanStart, spanEnd);
           } else if (spanStart < arriveNotBefore && spanEnd > arriveNotBefore
               && spanStart < arriveNotAfter && spanEnd <= arriveNotAfter) {
             //  |----------| (startNotBefore - startNotAfter)
             //|----| (SpanStart - SpanEnd)
             //set span start to 'startNotBefore'
-            newRange = new LongRange(arriveNotBefore, spanEnd);
+            newRange = Range.between(arriveNotBefore, spanEnd);
           } else if (spanStart <= arriveNotBefore && spanEnd > arriveNotBefore
               && spanStart > arriveNotAfter && spanEnd >= arriveNotAfter) {
             //  |----------| (startNotBefore - startNotAfter)
             //|--------------| (SpanStart - SpanEnd)
             //set span start to 'startNotBefore'
-            newRange = new LongRange(arriveNotBefore, arriveNotAfter);
+            newRange = Range.between(arriveNotBefore, arriveNotAfter);
           } else if (spanStart >= arriveNotBefore && spanEnd > arriveNotBefore
               && spanStart < arriveNotAfter && spanEnd >= arriveNotAfter) {
             //|----------| (startNotBefore - startNotAfter)
             //    |---------| (SpanStart - SpanEnd)
             //set span start to 'startNotBefore'
-            newRange = new LongRange(spanStart, arriveNotAfter);
+            newRange = Range.between(spanStart, arriveNotAfter);
           }
 
           if (newRange != null) {
-            if (newRange.getMinimumLong() < System.currentTimeMillis()) {
+            if (newRange.getMinimum() < System.currentTimeMillis()) {
               //check minimum as current minimum is in past
-              if (newRange.getMaximumLong() > System.currentTimeMillis()) {
-                newRange = new LongRange(System.currentTimeMillis(), newRange.getMaximumLong());
+              if (newRange.getMaximum() > System.currentTimeMillis()) {
+                newRange = Range.between(System.currentTimeMillis(), newRange.getMaximum());
                 ranges.add(newRange);
               }//ignore as entire range is in past
             } else {
@@ -381,10 +381,10 @@ public class TimeFrame {
         }
       }
     }
-    Collections.sort(ranges, new Comparator<LongRange>() {
+    Collections.sort(ranges, new Comparator<Range<Long>>() {
       @Override
-      public int compare(LongRange o1, LongRange o2) {
-        return Long.valueOf(o1.getMinimumLong()).compareTo(o2.getMinimumLong());
+      public int compare(Range<Long> o1, Range<Long> o2) {
+        return o1.getMinimum().compareTo(o2.getMinimum());
       }
     });
     return ranges;
@@ -398,8 +398,8 @@ public class TimeFrame {
   public String toString() {
     StringBuilder builder = new StringBuilder();
     SimpleDateFormat f = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
-    builder.append("Start: ").append(f.format(new Date(getStartRange().getMinimumLong()))).append("-").append(f.format(new Date(getStartRange().getMaximumLong()))).append("\n");
-    builder.append("Arrive: ").append(f.format(new Date(getArriveRange().getMinimumLong()))).append("-").append(f.format(new Date(getArriveRange().getMaximumLong()))).append("\n");
+    builder.append("Start: ").append(f.format(new Date(getStartRange().getMinimum()))).append("-").append(f.format(new Date(getStartRange().getMaximum()))).append("\n");
+    builder.append("Arrive: ").append(f.format(new Date(getArriveRange().getMinimum()))).append("-").append(f.format(new Date(getArriveRange().getMaximum()))).append("\n");
     builder.append("SendSpans: ").append(sendTimeSpans).append("\n");
     builder.append("ArriveSpans: ").append(arriveTimeSpans).append("\n");
     return builder.toString();

@@ -31,14 +31,16 @@ import java.net.URLEncoder;
 import java.text.NumberFormat;
 import java.util.Comparator;
 import java.util.StringTokenizer;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 /**
  *
  * @author Charon
  */
 public class Village implements Comparable<Village>, Serializable, BBSupport {
-    private static Logger logger = Logger.getLogger("Village");
+    private static Logger logger = LogManager.getLogger("Village");
 
     private final static String[] VARIABLES = new String[]{"%NAME%", "%X%", "%Y%", "%CONTINENT%", "%FULL_NAME%", "%TRIBE%", "%ALLY%", "%POINTS%"};
     private final static String STANDARD_TEMPLATE = "[coord]%X%|%Y%[/coord]";

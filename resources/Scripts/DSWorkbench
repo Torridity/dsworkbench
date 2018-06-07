@@ -118,7 +118,7 @@ if $cygwin; then
   [ -n "$REPO" ] && REPO=`cygpath --path --windows "$REPO"`
 fi
 
-exec "$JAVACMD" $JAVA_OPTS -Dlog4j.configuration="$BASEDIR"/log4j.xml -Xmx512m \
+exec "$JAVACMD" $JAVA_OPTS -Dlog4j.configurationFile="$BASEDIR"/log4j.xml -Xmx512m \
   -classpath "$CLASSPATH" \
   -Dapp.name="DSWorkbench" \
   -Dapp.pid="$$" \

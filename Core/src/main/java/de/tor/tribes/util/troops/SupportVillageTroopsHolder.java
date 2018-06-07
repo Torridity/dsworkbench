@@ -20,12 +20,12 @@ import de.tor.tribes.io.TroopAmountFixed;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.GlobalOptions;
-import de.tor.tribes.util.xml.JaxenUtils;
+import de.tor.tribes.util.xml.JDomUtils;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
-import org.jdom.Element;
+import org.jdom2.Element;
 
 /**
  * @author Torridity
@@ -39,7 +39,7 @@ public class SupportVillageTroopsHolder extends VillageTroopsHolder {
     public void loadFromXml(Element e) {
         super.loadFromXml(e);
         try {
-            List<Element> supportElements = (List<Element>) JaxenUtils.getNodes(e, "supportTargets/supportTarget");
+            List<Element> supportElements = (List<Element>) JDomUtils.getNodes(e, "supportTargets/supportTarget");
             for (Element source : supportElements) {
                 int id = Integer.parseInt(source.getChildText("village"));
                 Village village = DataHolder.getSingleton().getVillagesById().get(id);
@@ -47,7 +47,7 @@ public class SupportVillageTroopsHolder extends VillageTroopsHolder {
                 addOutgoingSupport(village, supportAmount);
             }
 
-            supportElements = (List<Element>) JaxenUtils.getNodes(e, "supportSources/supportSource");
+            supportElements = (List<Element>) JDomUtils.getNodes(e, "supportSources/supportSource");
             for (Element source : supportElements) {
                 int id = source.getAttribute("village").getIntValue();
                 Village village = DataHolder.getSingleton().getVillagesById().get(id);

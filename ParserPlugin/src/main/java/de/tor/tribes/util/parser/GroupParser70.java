@@ -19,8 +19,6 @@ import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
 import de.tor.tribes.util.SilentParserInterface;
-import org.apache.log4j.Logger;
-
 import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
@@ -30,14 +28,15 @@ import java.util.List;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  *
  * @author Jejkal
  */
 public class GroupParser70 implements SilentParserInterface {
-
-    private static Logger logger = Logger.getLogger("GroupParser70");
+    private static Logger logger = LogManager.getLogger("GroupParser70");
     /*
     (09) Sunset Beach (459|468) K44      2    Fertig; Off    » bearbeiten
     )=-g-town-=( (469|476) K44      2    Fertig; Off    » bearbeiten
@@ -48,6 +47,7 @@ public class GroupParser70 implements SilentParserInterface {
     Aberdeen - Eastside (497|469) K44      2    Off; Truppenbau    » bearbeiten
      */
 
+    @Override
     public boolean parse( String pGroupsString ) {
     StringTokenizer lineTok = new StringTokenizer(pGroupsString, "\n\r");
 

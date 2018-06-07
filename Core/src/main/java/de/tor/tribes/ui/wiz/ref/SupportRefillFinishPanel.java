@@ -40,7 +40,8 @@ import java.awt.Color;
 import java.awt.Point;
 import java.util.*;
 import javax.swing.SwingUtilities;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.netbeans.spi.wizard.Wizard;
 import org.netbeans.spi.wizard.WizardPage;
@@ -59,7 +60,7 @@ public class SupportRefillFinishPanel extends WizardPage {
   private static SupportRefillFinishPanel singleton = null;
   private VillageOverviewMapPanel overviewPanel = null;
   
-  private Logger logger = Logger.getLogger("SupportRefillFinishPanel");
+  private Logger logger = LogManager.getLogger("SupportRefillFinishPanel");
   
   public static synchronized SupportRefillFinishPanel getSingleton() {
     if (singleton == null) {

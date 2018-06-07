@@ -18,8 +18,8 @@ package de.tor.tribes.ui.components;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
-import org.apache.commons.lang.time.DurationFormatUtils;
-import org.jdom.Element;
+import org.apache.commons.lang3.time.DurationFormatUtils;
+import org.jdom2.Element;
 
 /**
  *

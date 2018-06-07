@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+  <Appenders>
+    <File name="MAINFILE" fileName="log/dsworkbench.log" append="true">
+      <PatternLayout pattern="%d - %-5p [%t] - (%C [%L]) - %m%n"/>
+      <param name="maxFileSize" value="10MB" />
+      <param name="maxBackupIndex" value="3" />
+    </File>
+    <Console name="STDOUT" target="SYSTEM_OUT">
+      <PatternLayout pattern="%d - %-5p [%t] - (%C [%L]) - %m%n"/>
+    </Console>
+  </Appenders>
+  <Loggers>
+    <Logger name="de.tor" level="warn">
+    </Logger>
+    <Root level="trace">
+      <AppenderRef ref="STDOUT"/>
+      <AppenderRef ref="MAINFILE"/>
+    </Root>
+  </Loggers>
+</Configuration>

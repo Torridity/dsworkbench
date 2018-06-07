@@ -24,14 +24,16 @@ import java.io.FileWriter;
 import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.List;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 /**
  * @author Charon
  */
 public class AttackScriptWriter {
 
-    private static Logger logger = Logger.getLogger("AttackScriptWriter");
+    private static Logger logger = LogManager.getLogger("AttackScriptWriter");
 
     public static boolean writeAttackScript(List<Attack> pAttacks,
             boolean pDrawAttacks,

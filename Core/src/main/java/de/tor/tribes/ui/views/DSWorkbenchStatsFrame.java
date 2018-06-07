@@ -15,7 +15,6 @@
  */
 package de.tor.tribes.ui.views;
 
-import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.TribeStatsElement;
 import de.tor.tribes.types.TribeStatsElement.Stats;
 import de.tor.tribes.types.ext.Ally;
@@ -42,10 +41,8 @@ import java.util.List;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import org.apache.commons.configuration.Configuration;
-import org.apache.commons.lang.time.DateUtils;
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.Logger;
+import org.apache.commons.configuration2.Configuration;
+import org.apache.commons.lang3.time.DateUtils;
 import org.jdesktop.swingx.JXButton;
 import org.jdesktop.swingx.JXTaskPane;
 import org.jfree.chart.ChartFactory;
@@ -58,11 +55,11 @@ import org.jfree.chart.labels.StandardXYToolTipGenerator;
 import org.jfree.chart.plot.ValueMarker;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
+import org.jfree.chart.ui.RectangleInsets;
 import org.jfree.data.time.Second;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 import org.jfree.data.xy.XYDataset;
-import org.jfree.ui.RectangleInsets;
 
 /**
  * @author Torridity
@@ -419,9 +416,9 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
             plot.setRenderer(i, renderer);
         }
         
-        renderer.setBaseItemLabelsVisible(jShowItemValues.isSelected());
-        renderer.setBaseItemLabelGenerator(new org.jfree.chart.labels.StandardXYItemLabelGenerator());
-        renderer.setBaseToolTipGenerator(new StandardXYToolTipGenerator(StandardXYToolTipGenerator.DEFAULT_TOOL_TIP_FORMAT, new SimpleDateFormat("dd.MM.yyyy HH:mm:ss"), NumberFormat.getInstance()));
+        renderer.setDefaultItemLabelsVisible(jShowItemValues.isSelected());
+        renderer.setDefaultItemLabelGenerator(new org.jfree.chart.labels.StandardXYItemLabelGenerator());
+        renderer.setDefaultToolTipGenerator(new StandardXYToolTipGenerator(StandardXYToolTipGenerator.DEFAULT_TOOL_TIP_FORMAT, new SimpleDateFormat("dd.MM.yyyy HH:mm:ss"), NumberFormat.getInstance()));
         int lastDataset = plot.getDatasetCount() - 1;
         if (lastDataset > 0) {
             plot.getRangeAxis().setAxisLinePaint(plot.getLegendItems().get(lastDataset).getLinePaint());
@@ -456,9 +453,9 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
             renderer.setSeriesLinesVisible(0, jShowLines.isSelected());
             renderer.setSeriesShapesVisible(0, jShowDataPoints.isSelected());
             plot.setRenderer(plot.getDatasetCount() - 1, renderer);
-            renderer.setBaseItemLabelsVisible(jShowItemValues.isSelected());
-            renderer.setBaseItemLabelGenerator(new org.jfree.chart.labels.StandardXYItemLabelGenerator());
-            renderer.setBaseToolTipGenerator(new StandardXYToolTipGenerator(StandardXYToolTipGenerator.DEFAULT_TOOL_TIP_FORMAT, new SimpleDateFormat("dd.MM.yyyy HH:mm:ss"), NumberFormat.getInstance()));
+            renderer.setDefaultItemLabelsVisible(jShowItemValues.isSelected());
+            renderer.setDefaultItemLabelGenerator(new org.jfree.chart.labels.StandardXYItemLabelGenerator());
+            renderer.setDefaultToolTipGenerator(new StandardXYToolTipGenerator(StandardXYToolTipGenerator.DEFAULT_TOOL_TIP_FORMAT, new SimpleDateFormat("dd.MM.yyyy HH:mm:ss"), NumberFormat.getInstance()));
             axis.setAxisLinePaint(plot.getLegendItems().get(plot.getDatasetCount() - 1).getLinePaint());
             axis.setLabelPaint(plot.getLegendItems().get(plot.getDatasetCount() - 1).getLinePaint());
             axis.setTickLabelPaint(plot.getLegendItems().get(plot.getDatasetCount() - 1).getLinePaint());

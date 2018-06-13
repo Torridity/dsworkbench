@@ -22,8 +22,7 @@ import de.tor.tribes.ui.wiz.dep.DefenseAnalysePanel;
 import de.tor.tribes.ui.wiz.dep.DefenseCalculationSettingsPanel;
 import de.tor.tribes.ui.wiz.dep.DefenseFilterPanel;
 import de.tor.tribes.ui.wiz.dep.types.SupportSourceElement;
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -52,7 +51,7 @@ public class DefenseCalculator extends Thread {
     public void run() {
         isRunning = true;
         DefenseInformation[] defenses = DefenseAnalysePanel.getSingleton().getAllElements();
-        Hashtable<de.tor.tribes.types.ext.Village, Integer> splits = new Hashtable<>();
+        HashMap<de.tor.tribes.types.ext.Village, Integer> splits = new HashMap<>();
         List<de.tor.tribes.types.ext.Village> usedVillages = new LinkedList<>();
 
         for (SupportSourceElement element : DefenseFilterPanel.getSingleton().getFilteredElements()) {
@@ -61,9 +60,7 @@ public class DefenseCalculator extends Thread {
         }
 
         UnitHolder unit = DSWorkbenchSOSRequestAnalyzer.getSingleton().getSlowestUnit();
-        Enumeration<de.tor.tribes.types.ext.Village> villageKeys = splits.keys();
-        while (villageKeys.hasMoreElements()) {
-            de.tor.tribes.types.ext.Village v = villageKeys.nextElement();
+        for(de.tor.tribes.types.ext.Village v: splits.keySet()) {
             if (!usedVillages.contains(v)) {
                 splits.remove(v);
             }

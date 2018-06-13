@@ -33,8 +33,7 @@ import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import org.apache.logging.log4j.LogManager;
@@ -141,7 +140,6 @@ public class SelectionHTMLExporter {
 
         String server = GlobalOptions.getSelectedServer();
         String guestBaseURL = ServerManager.getServerURL(server) + "/";
-        SimpleDateFormat f = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
         NumberFormat nf = NumberFormat.getInstance();
         nf.setMinimumFractionDigits(0);
         nf.setMaximumFractionDigits(0);
@@ -153,7 +151,7 @@ public class SelectionHTMLExporter {
         // </editor-fold>
 
         Collections.sort(pVillages, Village.ALLY_TRIBE_VILLAGE_COMPARATOR);
-        Hashtable<Ally, Hashtable<Tribe, List<Village>>> data = new Hashtable<>();
+        HashMap<Ally, HashMap<Tribe, List<Village>>> data = new HashMap<>();
         for (Village v : pVillages) {
             Tribe t = v.getTribe();
             Ally a = null;
@@ -166,9 +164,9 @@ public class SelectionHTMLExporter {
                     a = NoAlly.getSingleton();
                 }
             }
-            Hashtable<Tribe, List<Village>> allyData = data.get(a);
+            HashMap<Tribe, List<Village>> allyData = data.get(a);
             if (allyData == null) {
-                allyData = new Hashtable<>();
+                allyData = new HashMap<>();
                 data.put(a, allyData);
             }
 
@@ -179,10 +177,7 @@ public class SelectionHTMLExporter {
             }
             tribeData.add(v);
         }
-        Enumeration<Ally> allyKeys = data.keys();
-        while (allyKeys.hasMoreElements()) {
-            Ally a = allyKeys.nextElement();
-
+        for(Ally a: data.keySet()) {
             String allyBlock = ALLY_BLOCK;
             //add general data
 
@@ -219,12 +214,10 @@ public class SelectionHTMLExporter {
                 allyBlock = allyBlock.replaceAll(ALLY_TWPLUS_LINK, "");
             }
             //build tribe data
-            Hashtable<Tribe, List<Village>> tribeData = data.get(a);
-            Enumeration<Tribe> tribeKeys = tribeData.keys();
             String tribeBlocks = "";
-            while (tribeKeys.hasMoreElements()) {
+            HashMap<Tribe, List<Village>> tribeData = data.get(a);
+            for(Tribe t: tribeData.keySet()) {
                 //build new tribe block
-                Tribe t = tribeKeys.nextElement();
                 String tribeBlock = TRIBE_BLOCK;
                 tribeBlock = tribeBlock.replaceAll(TRIBE_DIV_ID, "TRIBEDIV" + t.getId());
                 tribeBlock = tribeBlock.replaceAll(TRIBE_TAB_ID, "TRIBETAB" + t.getId());
@@ -279,9 +272,9 @@ public class SelectionHTMLExporter {
         String foot = FOOTER;
         foot = foot.replaceAll(VERSION, Double.toString(Constants.VERSION) + Constants.VERSION_ADDITION);
 
-        f = new SimpleDateFormat("dd.MM.yyyy 'um' HH:mm:ss 'Uhr'");
+        SimpleDateFormat f = new SimpleDateFormat("dd.MM.yyyy 'um' HH:mm:ss 'Uhr'");
 
-        foot = foot.replaceAll(CREATION_DATE, f.format(new Date(System.currentTimeMillis())));
+        foot = foot.replaceAll(CREATION_DATE, f.format(new Date()));
         result.append(foot);
         // </editor-fold>
 

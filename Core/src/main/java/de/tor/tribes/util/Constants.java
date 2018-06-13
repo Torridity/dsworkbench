@@ -17,7 +17,7 @@ package de.tor.tribes.util;
 
 import java.awt.Color;
 import java.text.SimpleDateFormat;
-import java.util.Hashtable;
+import java.util.HashMap;
 
 /**
  *
@@ -36,7 +36,7 @@ public class Constants {
     public final static Color NAP_MARKER = new Color(127, 0, 127);
     public final static Color ALLY_MARKER = new Color(0, 160, 244);
     public final static String SERVER_DIR = "./servers";
-    public final static Hashtable<String, Integer> LAYERS = new Hashtable<>();
+    public final static HashMap<String, Integer> LAYERS = new HashMap<>();
     public final static int LAYER_COUNT = 10;
     public final static boolean DEBUG = false;
     public static final String[] BUILDING_NAMES = {"main", "barracks", "stable", "workshop",

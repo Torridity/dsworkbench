@@ -31,7 +31,6 @@ import java.awt.datatransfer.StringSelection;
 import java.awt.event.ItemEvent;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Enumeration;
 import javax.swing.DefaultComboBoxModel;
 
 /**
@@ -280,7 +279,6 @@ public class SOSGenerator extends javax.swing.JFrame {
           bäääng! [coord]318|272[/coord] --> Ankunftszeit: 11.10.11 14:42:49 [player]MrBlue76[/player] bäääng! [coord]211|345[/coord] -->
           Ankunftszeit: 11.10.11 16:45:37 [player]MrBlue76[/player]
          */
-        Enumeration<Village> targets = sos.getTargets();
         StringBuilder b = new StringBuilder();
         SimpleDateFormat df;
         if (de.tor.tribes.util.ServerSettings.getSingleton().isMillisArrival()) {
@@ -288,8 +286,7 @@ public class SOSGenerator extends javax.swing.JFrame {
         } else {
             df = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
         }
-        while (targets.hasMoreElements()) {
-            Village target = targets.nextElement();
+        for(Village target: sos.getTargets()) {
             b.append("[b]Dorf:[/b] ").append(target.toBBCode()).append("\n");
             TargetInformation ti = sos.getTargetInformation(target);
             b.append("[b]Wallstufe:[/b] ").append(ti.getWallLevel()).append("\n");

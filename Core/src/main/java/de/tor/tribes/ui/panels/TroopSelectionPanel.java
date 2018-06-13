@@ -28,7 +28,7 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.Point;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.*;
@@ -44,7 +44,7 @@ import org.apache.logging.log4j.Logger;
 public abstract class TroopSelectionPanel<T extends TroopAmount> extends javax.swing.JPanel implements GenericManagerListener {
     
     private Logger logger = LogManager.getLogger("TroopSelectionPanel");
-    private Hashtable<String, Point> unitCoordinates = new Hashtable<>();
+    private HashMap<String, Point> unitCoordinates = new HashMap<>();
     private LabeledTextField[][] unitFields = new LabeledTextField[20][20];
     
     @Override

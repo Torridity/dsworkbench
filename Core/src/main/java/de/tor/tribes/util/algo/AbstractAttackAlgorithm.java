@@ -22,7 +22,7 @@ import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.algo.types.DistanceMapping;
 import de.tor.tribes.util.algo.types.TimeFrame;
 import java.util.Collections;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import org.apache.logging.log4j.LogManager;
@@ -36,11 +36,11 @@ public abstract class AbstractAttackAlgorithm extends Thread {
     
     private static Logger logger = LogManager.getLogger("AttackAlgorithm");
     private List<TroopMovement> results = null;
-    private Hashtable<UnitHolder, List<Village>> sources = null;
-    private Hashtable<UnitHolder, List<Village>> fakes = null;
+    private HashMap<UnitHolder, List<Village>> sources = null;
+    private HashMap<UnitHolder, List<Village>> fakes = null;
     private List<Village> targets = null;
     private List<Village> fakeTargets = null;
-    private Hashtable<Village, Integer> maxAttacksTable;
+    private HashMap<Village, Integer> maxAttacksTable;
     private TimeFrame timeFrame = null;
     boolean fakeOffTargets = false;
     private AlgorithmListener mListener = null;
@@ -55,11 +55,11 @@ public abstract class AbstractAttackAlgorithm extends Thread {
     }
     
     public void initialize(
-            Hashtable<UnitHolder, List<Village>> pSources,
-            Hashtable<UnitHolder, List<Village>> pFakes,
+            HashMap<UnitHolder, List<Village>> pSources,
+            HashMap<UnitHolder, List<Village>> pFakes,
             List<Village> pTargets,
             List<Village> pFakedTargets,
-            Hashtable<Village, Integer> pMaxAttacksTable,
+            HashMap<Village, Integer> pMaxAttacksTable,
             TimeFrame pTimeFrame,
             boolean pFakeOffTargets) {
         sources = pSources;
@@ -80,11 +80,11 @@ public abstract class AbstractAttackAlgorithm extends Thread {
     }
     
     public abstract List<TroopMovement> calculateAttacks(
-            Hashtable<UnitHolder, List<Village>> pSources,
-            Hashtable<UnitHolder, List<Village>> pFakes,
+            HashMap<UnitHolder, List<Village>> pSources,
+            HashMap<UnitHolder, List<Village>> pFakes,
             List<Village> pTargets,
             List<Village> pFakeTargets,
-            Hashtable<Village, Integer> pMaxAttacksTable,
+            HashMap<Village, Integer> pMaxAttacksTable,
             TimeFrame pTimeFrame,
             boolean pFakeOffTargets);
     

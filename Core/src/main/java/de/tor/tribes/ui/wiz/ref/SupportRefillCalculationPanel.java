@@ -32,7 +32,7 @@ import java.awt.BorderLayout;
 import java.awt.Point;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -450,7 +450,7 @@ public class SupportRefillCalculationPanel extends WizardPage {
             return;
         }
         
-        Hashtable<UnitHolder, List<Village>> sources = new Hashtable<>();
+        HashMap<UnitHolder, List<Village>> sources = new HashMap<>();
         UnitHolder slowest = SupportRefillSettingsPanel.getSingleton().getSplit().getSlowestUnit();
         
         List<Village> sourceVillages = new LinkedList<>();
@@ -462,14 +462,14 @@ public class SupportRefillCalculationPanel extends WizardPage {
         sources.put(slowest, sourceVillages);
         
         List<Village> targets = new LinkedList<>();
-        Hashtable<Village, Integer> maxSupports = new Hashtable<>();
+        HashMap<Village, Integer> maxSupports = new HashMap<>();
         for (REFTargetElement element : SupportRefillSettingsPanel.getSingleton().getAllElements()) {
             //ignore Targets that don't need any support, because the algorithm can't handle such targets
             if(element.getNeededSupports() <= 0) continue;
             targets.add(element.getVillage());
             maxSupports.put(element.getVillage(), element.getNeededSupports());
         }
-        calculator.initialize(sources, new Hashtable<UnitHolder, List<Village>>(), targets, new LinkedList<Village>(), maxSupports, f, false);
+        calculator.initialize(sources, new HashMap<UnitHolder, List<Village>>(), targets, new LinkedList<Village>(), maxSupports, f, false);
         jProgressBar1.setValue(0);
         calculator.setLogListener(new AbstractAttackAlgorithm.LogListener() {
             

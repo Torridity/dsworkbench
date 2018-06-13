@@ -160,7 +160,7 @@ public class ReportManager extends GenericManager<FightReport> {
   public int filterNow(String pGroup) {
     invalidate();
     try {
-      Hashtable<FightReport, String> newGroups = new Hashtable<>();
+      HashMap<FightReport, String> newGroups = new HashMap<>();
       for (ManageableType t : getAllElements(pGroup)) {
         FightReport report = (FightReport) t;
         for (RuleEntry entry : getRuleEntries()) {

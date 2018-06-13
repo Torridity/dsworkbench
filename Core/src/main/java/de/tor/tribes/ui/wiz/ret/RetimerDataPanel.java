@@ -597,9 +597,7 @@ public class RetimerDataPanel extends WizardPage {
             } else {
                 model = new DefaultComboBoxModel();
                 for (SOSRequest request : sos) {
-                    Enumeration<Village> targets = request.getTargets();
-                    while (targets.hasMoreElements()) {
-                        Village target = targets.nextElement();
+                    for(Village target: request.getTargets()) {
                         TargetInformation info = request.getTargetInformation(target);
                         for (TimedAttack attack : info.getAttacks()) {
                             if (attack.getUnit() == null || attack.getUnit().equals(UnknownUnit.getSingleton())) {

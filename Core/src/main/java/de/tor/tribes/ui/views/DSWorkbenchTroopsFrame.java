@@ -51,8 +51,7 @@ import java.awt.image.BufferedImage;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.*;
@@ -656,11 +655,11 @@ private void fireApplyTroopAddEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
 }//GEN-LAST:event_fireApplyTroopAddEvent
 
   private void addTroopsManuallyEvent() {
-    Hashtable<Integer, Tribe> tribes = DataHolder.getSingleton().getTribes();
-    Enumeration<Integer> keys = tribes.keys();
+    HashMap<Integer, Tribe> tribes = DataHolder.getSingleton().getTribes();
+    
     List<Tribe> tribesList = new LinkedList<>();
-    while (keys.hasMoreElements()) {
-      tribesList.add(tribes.get(keys.nextElement()));
+    for(Tribe t: tribes.values()) {
+        tribesList.add(t);
     }
     Collections.sort(tribesList, Tribe.CASE_INSENSITIVE_ORDER);
 

@@ -524,14 +524,13 @@ public class ResourceDistributorFinishPanel extends WizardPage {
     }
 
     protected void setup() {
-        Hashtable<Village, Hashtable<Village, List<Resource>>> transports = ResourceDistributorCalculationPanel.getSingleton().getTransports();
-        Enumeration<Village> sourceKeys = transports.keys();
+        HashMap<Village, HashMap<Village, List<Resource>>> transports = ResourceDistributorCalculationPanel.getSingleton().getTransports();
         REDFinalTransportsTableModel model = getTransportsModel();
         model.clear();
 
         VillageMerchantInfo[] infos = ResourceDistributorSettingsPanel.getSingleton().getAllElements();
 
-        Hashtable<Village, VillageMerchantInfo> infoTable = new Hashtable<>();
+        HashMap<Village, VillageMerchantInfo> infoTable = new HashMap<>();
 
         for (VillageMerchantInfo info : infos) {
             infoTable.put(info.getVillage(), info);
@@ -540,13 +539,10 @@ public class ResourceDistributorFinishPanel extends WizardPage {
         int transportedWood = 0;
         int transportedClay = 0;
         int transportedIron = 0;
-        while (sourceKeys.hasMoreElements()) {
-            Village sourceVillage = sourceKeys.nextElement();
-
-            Hashtable<Village, List<Resource>> transportsFromSource = transports.get(sourceVillage);
-            Enumeration<Village> destKeys = transportsFromSource.keys();
-            while (destKeys.hasMoreElements()) {
-                Village targetVillage = destKeys.nextElement();
+        
+        for(Village sourceVillage: transports.keySet()) {
+            HashMap<Village, List<Resource>> transportsFromSource = transports.get(sourceVillage);
+            for(Village targetVillage: transportsFromSource.keySet()) {
                 List<Resource> resources = transportsFromSource.get(targetVillage);
                 if (model.addRow(sourceVillage, targetVillage, resources)) {
                     VillageMerchantInfo sourceInfo = infoTable.get(sourceVillage);
@@ -590,9 +586,7 @@ public class ResourceDistributorFinishPanel extends WizardPage {
         REDFinalDistributionTableModel distributionModel = getDistributionModel();
         distributionModel.clear();
 
-        Enumeration<Village> keys = infoTable.keys();
-        while (keys.hasMoreElements()) {
-            Village v = keys.nextElement();
+        for(Village v: infoTable.keySet()) {
             VillageMerchantInfo info = infoTable.get(v);
             distributionModel.addRow(v, info.getStashCapacity(), info.getWoodStock(), info.getClayStock(), info.getIronStock(), info.getDirection());
         }
@@ -667,8 +661,7 @@ public class ResourceDistributorFinishPanel extends WizardPage {
             model.clear();
             try {
                 r = new BufferedReader(new FileReader(transportsFile));
-                String line = "";
-                int cnt = 0;
+                String line;
                 while ((line = r.readLine()) != null) {
                     String[] split = line.split(",");
                     Village sourceVillage = DataHolder.getSingleton().getVillagesById().get(Integer.parseInt(split[0]));
@@ -681,13 +674,12 @@ public class ResourceDistributorFinishPanel extends WizardPage {
                     if (sourceVillage != null && targetVillage != null) {
                         List<Resource> resources = Arrays.asList(wood, clay, iron);
                         model.addRow(sourceVillage, targetVillage, resources, submitted);
-                        cnt++;
                     }
                 }
                 model.fireTableDataChanged();
                 result = true;
                 focusSubmit();
-            } catch (Exception ignored) {
+            } catch (IOException | NumberFormatException ignored) {
             } finally {
                 if (r != null) {
                     try {

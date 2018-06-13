@@ -15,8 +15,7 @@
  */
 package de.tor.tribes.ui.windows;
 
-//TODO re add
-//import de.tor.tribes.dssim.ui.DSWorkbenchSimulatorFrame;
+import de.tor.tribes.dssim.ui.DSWorkbenchSimulatorFrame;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.DataHolderListener;
 import de.tor.tribes.io.ServerManager;
@@ -386,8 +385,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
             
             // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
             if (!Constants.DEBUG) {
-                //TODO re add
-//GlobalOptions.getHelpBroker().enableHelpKey(DSWorkbenchSimulatorFrame.getSingleton().getRootPane(), "pages.astar", GlobalOptions.getHelpBroker().getHelpSet());
+                GlobalOptions.getHelpBroker().enableHelpKey(DSWorkbenchSimulatorFrame.getSingleton().getRootPane(), "pages.astar", GlobalOptions.getHelpBroker().getHelpSet());
                 GlobalOptions.getHelpBroker().enableHelpKey(DSWorkbenchMainFrame.getSingleton().getRootPane(), "index", GlobalOptions.getHelpBroker().getHelpSet());
             }
             // </editor-fold>

@@ -15,8 +15,7 @@
  */
 package de.tor.tribes.ui.windows;
 
-//TODO re add
-//import de.tor.tribes.dssim.ui.DSWorkbenchSimulatorFrame;
+import de.tor.tribes.dssim.ui.DSWorkbenchSimulatorFrame;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.UserProfile;
@@ -68,7 +67,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -533,14 +532,13 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
       DSWorkbenchNotepad.getSingleton().resetView();
       DSWorkbenchNotepad.getSingleton().restoreProperties();
 
-//TODO re add
-/*      if (!GlobalOptions.isOfflineMode() && DSWorkbenchSimulatorFrame.getSingleton().isVisible()) {
+      if (!GlobalOptions.isOfflineMode() && DSWorkbenchSimulatorFrame.getSingleton().isVisible()) {
         try {
           DSWorkbenchSimulatorFrame.getSingleton().showIntegratedVersion(DSWorkbenchSettingsDialog.getSingleton().getWebProxy(), GlobalOptions.getSelectedServer());
         } catch(Exception e) {
             logger.warn("Problem during writing Troops to AStar", e);
         }
-      }*/
+      }
       ConquerManager.getSingleton().revalidate(true);
       //relevant for first start
       LayerOrderConfigurationFrame.getSingleton();
@@ -2782,7 +2780,7 @@ private void fireChangeClipboardWatchEvent(java.awt.event.MouseEvent evt) {//GEN
      */
   }
 
-  public void fireGroupParserEvent(Hashtable<String, List<Village>> pParserResult) {
+  public void fireGroupParserEvent(HashMap<String, List<Village>> pParserResult) {
     TagManager.getSingleton().invalidate();
     String[] groups = pParserResult.keySet().toArray(new String[]{});
     //NotifierFrame.doNotification("DS Workbench hat " + groups.length + ((groups.length == 1) ? " Dorfgruppe " : " Dorfgruppen ") + "in der Zwischenablage gefunden.", NotifierFrame.NOTIFY_INFO);

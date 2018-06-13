@@ -184,7 +184,7 @@ public class TroopHelper {
     }
 
     public static List<Village> fillSourcesWithAttacksForUnit(Village source,
-            Hashtable<UnitHolder, List<Village>> villagesForUnitHolder, List<Village> existingSources,
+            HashMap<UnitHolder, List<Village>> villagesForUnitHolder, List<Village> existingSources,
             UnitHolder unitHolder) {
         List<Village> sourcesForUnit = existingSources != null ? existingSources
                 : villagesForUnitHolder.get(unitHolder);

@@ -27,7 +27,6 @@ import de.tor.tribes.util.GlobalOptions;
 import java.awt.Desktop;
 import java.awt.event.ItemEvent;
 import java.util.Arrays;
-import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.*;
@@ -539,9 +538,7 @@ class SearchThread extends Thread {
                 if (sSearchTerm.length() >= 1) {
                     List<Tribe> tribeList = new LinkedList<>();
                     List<Ally> allyList = new LinkedList<>();
-                    Enumeration<Integer> tribes = DataHolder.getSingleton().getTribes().keys();
-                    while (tribes.hasMoreElements()) {
-                        Tribe t = DataHolder.getSingleton().getTribes().get(tribes.nextElement());
+                    for(Tribe t: DataHolder.getSingleton().getTribes().values()) {
                         if (t.getName().toLowerCase().contains(sSearchTerm.toLowerCase())) {
                             if (!tribeList.contains(t)) {
                                 tribeList.add(t);

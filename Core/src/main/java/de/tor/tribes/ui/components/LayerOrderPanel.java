@@ -40,7 +40,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
@@ -69,9 +68,7 @@ public class LayerOrderPanel extends javax.swing.JPanel {
 
         String layerOrder = GlobalOptions.getProperty("layer.order");
         if (layerOrder == null) {
-            Enumeration<String> values = Constants.LAYERS.keys();
-            while (values.hasMoreElements()) {
-                String layer = values.nextElement();
+            for(String layer: Constants.LAYERS.keySet()) {
                 v.set(Constants.LAYERS.get(layer), layer);
             }
         } else {
@@ -91,9 +88,7 @@ public class LayerOrderPanel extends javax.swing.JPanel {
                 }
             } else {
                 //layer number has changed since value was stored, so rebuild
-                Enumeration<String> values = Constants.LAYERS.keys();
-                while (values.hasMoreElements()) {
-                    String layer = values.nextElement();
+                for(String layer: Constants.LAYERS.keySet()) {
                     v.set(Constants.LAYERS.get(layer), layer);
                 }
             }

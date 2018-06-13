@@ -680,7 +680,7 @@ public class VillageSupportFrame extends javax.swing.JFrame implements ActionLis
             }
         });
 
-        Hashtable<UnitHolder, Integer> forceTable = new Hashtable<>();
+        HashMap<UnitHolder, Integer> forceTable = new HashMap<>();
         for (int i = 0; i < jSupportTable.getRowCount(); i++) {
             Village v = (Village) jSupportTable.getValueAt(i, 0);
             UnitHolder u = (UnitHolder) jSupportTable.getValueAt(i, 1);

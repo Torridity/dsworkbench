@@ -31,8 +31,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.DefaultComboBoxModel;
@@ -51,7 +50,7 @@ public class TroopFilterDialog extends javax.swing.JDialog {
 
     private static Logger logger = LogManager.getLogger("TroopFilter");
     private boolean doFilter = false;
-    private Hashtable<String, List<TroopFilterElement>> filterSets = new Hashtable<>();
+    private HashMap<String, List<TroopFilterElement>> filterSets = new HashMap<>();
 
     /**
      * Creates new form TroopFilterDialog
@@ -590,10 +589,7 @@ public class TroopFilterDialog extends javax.swing.JDialog {
         File filterFile = new File(profileDir + "/filters.sav");
 
         StringBuilder b = new StringBuilder();
-        Enumeration<String> setKeys = filterSets.keys();
-
-        while (setKeys.hasMoreElements()) {
-            String key = setKeys.nextElement();
+        for(String key: filterSets.keySet()) {
             b.append(key).append(",");
             List<TroopFilterElement> elements = filterSets.get(key);
             for (int i = 0; i < elements.size(); i++) {
@@ -660,9 +656,8 @@ public class TroopFilterDialog extends javax.swing.JDialog {
     private void updateFilterSetList() {
         DefaultComboBoxModel model = new DefaultComboBoxModel();
 
-        Enumeration<String> keys = filterSets.keys();
-        while (keys.hasMoreElements()) {
-            model.addElement(keys.nextElement());
+        for(String key: filterSets.keySet()) {
+            model.addElement(key);
         }
 
         jExistingFilters.setModel(model);

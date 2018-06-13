@@ -22,7 +22,7 @@ import de.tor.tribes.util.algo.types.MerchantDestination;
 import de.tor.tribes.util.algo.types.MerchantSource;
 import de.tor.tribes.util.algo.types.Order;
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -233,7 +233,7 @@ public class MerchantDistributor extends Thread {
     }
 
     private void calculateInternal(ArrayList<MerchantSource> pSources, ArrayList<MerchantDestination> pDestinations) {
-        Hashtable<Destination, Double>[] costs = calculateCosts(pSources, pDestinations);
+        HashMap<Destination, Double>[] costs = calculateCosts(pSources, pDestinations);
         Optex<MerchantSource, MerchantDestination> algo = new Optex<>(pSources, pDestinations, costs);
         try {
             algo.run();
@@ -242,12 +242,12 @@ public class MerchantDistributor extends Thread {
         }
     }
 
-    private Hashtable<Destination, Double>[] calculateCosts(
+    private HashMap<Destination, Double>[] calculateCosts(
             ArrayList<MerchantSource> pSources,
             ArrayList<MerchantDestination> pDestinations) {
-        Hashtable<Destination, Double> costs[] = new Hashtable[pSources.size()];
+        HashMap<Destination, Double> costs[] = new HashMap[pSources.size()];
         for (int i = 0; i < pSources.size(); i++) {
-            costs[i] = new Hashtable<>();
+            costs[i] = new HashMap<>();
             for (MerchantDestination pDestination : pDestinations) {
                 double cost = pSources.get(i).distanceTo(pDestination);
                 if (cost == 0) {// || cost > 19) {

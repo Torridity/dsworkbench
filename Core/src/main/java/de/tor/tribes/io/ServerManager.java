@@ -15,8 +15,7 @@
  */
 package de.tor.tribes.io;
 
-//TODO re add
-//import de.tor.tribes.dssim.util.ConfigManager;
+import de.tor.tribes.dssim.util.ConfigManager;
 import de.tor.tribes.util.Constants;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -40,7 +39,7 @@ import org.lorecraft.phparser.SerializedPhpParser;
 public class ServerManager {
 
     private static Logger logger = LogManager.getLogger("ServerManager");
-    // private static Hashtable<String, URL> SERVER_LIST = null;
+    // private static HashMap<String, URL> SERVER_LIST = null;
     // private static List<DatabaseServerEntry> SERVERS = null;
     private static LinkedHashMap<String, String> SERVERS = null;
 
@@ -143,7 +142,6 @@ public class ServerManager {
     }
     
     public static void giveSimulatorServerList() {
-        //TODO re add
-//ConfigManager.getSingleton().setServers(SERVERS);
+        ConfigManager.getSingleton().setServers(SERVERS);
     }
 }

@@ -30,8 +30,7 @@ import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.SplitSetHelper;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.*;
@@ -48,7 +47,7 @@ public class TroopSplitDialog extends javax.swing.JDialog {
     private boolean isInitialized = false;
     private TroopAmountFixed mSplitAmounts = new TroopAmountFixed();
     private List<TroopSplit> mSplits = new LinkedList<>();
-    private Hashtable<String, TroopAmountFixed> splitSets = new Hashtable<>();
+    private HashMap<String, TroopAmountFixed> splitSets = new HashMap<>();
 
     /**
      * Creates new form TroopSplitDialog
@@ -542,9 +541,8 @@ public class TroopSplitDialog extends javax.swing.JDialog {
     private void updateSplitSetList() {
         DefaultListModel model = new DefaultListModel();
 
-        Enumeration<String> keys = splitSets.keys();
-        while (keys.hasMoreElements()) {
-            model.addElement(keys.nextElement());
+        for(String key: splitSets.keySet()) {
+            model.addElement(key);
         }
 
         jSavedSplitsList.setModel(model);

@@ -16,8 +16,7 @@
 package de.tor.tribes.ui.panels;
 
 import de.tor.tribes.control.GenericManagerListener;
-//TODO re add
-//import de.tor.tribes.dssim.ui.DSWorkbenchSimulatorFrame;
+import de.tor.tribes.dssim.ui.DSWorkbenchSimulatorFrame;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.FightReport;
@@ -1373,7 +1372,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
         } else if (evt.getSource() == jCurrentToAStarAsAttacker || evt.getSource() == jCurrentToAStarAsDefender) {
             VillageTroopsHolder own = TroopsManager.getSingleton().getTroopsForVillage(actionMenuVillage, TroopsManager.TROOP_TYPE.OWN);
 
-            Hashtable<String, Double> values = new Hashtable<>();
+            HashMap<String, Double> values = new HashMap<>();
             if (evt.getSource() == jCurrentToAStarAsAttacker && own == null) {
                 JOptionPaneHelper.showInformationBox(this, "Keine Truppeninformationen (Eigene) vorhanden", "Information");
                 return;
@@ -1395,13 +1394,12 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
             }
             if (!GlobalOptions.isOfflineMode()) {
                 try {
-                    //TODO re add
-/*if (!DSWorkbenchSimulatorFrame.getSingleton().isVisible()) {
+                    if (!DSWorkbenchSimulatorFrame.getSingleton().isVisible()) {
                         DSWorkbenchSimulatorFrame.getSingleton().setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
                         DSWorkbenchSimulatorFrame.getSingleton().showIntegratedVersion(DSWorkbenchSettingsDialog.getSingleton().getWebProxy(), GlobalOptions.getSelectedServer());
                     }
                     DSWorkbenchSimulatorFrame.getSingleton().toFront();
-                    DSWorkbenchSimulatorFrame.getSingleton().insertValuesExternally(values);*/
+                    DSWorkbenchSimulatorFrame.getSingleton().insertValuesExternally(values);
                 } catch(Exception e) {
                     logger.warn("Problem during writing Troops to AStar", e);
                 }

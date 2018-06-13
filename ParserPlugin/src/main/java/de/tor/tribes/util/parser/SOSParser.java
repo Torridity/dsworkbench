@@ -31,6 +31,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
 import java.util.regex.Pattern;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -66,25 +67,22 @@ public class SOSParser implements GenericParserInterface<SOSRequest> {
         print("Start parsing SOS request");
         List<SOSRequest> requests = new LinkedList<>();
         try {
-            Hashtable<Tribe, SOSRequest> parsedData = parseRequests(pData);
+            HashMap<Tribe, SOSRequest> parsedData = parseRequests(pData);
             if (parsedData.isEmpty()) {
                 print("Check short version");
                 parsedData = parseRequestsShort(pData);
             } else {
                 print("Got results for long version");
             }
-            Enumeration<Tribe> keys = parsedData.keys();
-            while (keys.hasMoreElements()) {
-                requests.add(parsedData.get(keys.nextElement()));
-            }
+            CollectionUtils.addAll(requests, parsedData.values());
         } catch (Exception ignored) {
         }
         return requests;
     }
 
-    private Hashtable<Tribe, SOSRequest> parseRequests(String pData) {
+    private HashMap<Tribe, SOSRequest> parseRequests(String pData) {
         String[] lines = pData.split("\n");
-        Hashtable<Tribe, SOSRequest> requests = new Hashtable<>();
+        HashMap<Tribe, SOSRequest> requests = new HashMap<>();
         SOSRequest currentRequest = null;
         boolean waitForTarget = false;
         boolean waitForTroops = false;
@@ -217,9 +215,9 @@ public class SOSParser implements GenericParserInterface<SOSRequest> {
      * Ramm, 42 The White Knigth 04 (448|894) , K84 Just4Testing (448|894) K55 --> Ankunftszeit: 25.08.11 14:46:51:846 Torridity
      *
      */
-    private Hashtable<Tribe, SOSRequest> parseRequestsShort(String pData) {
+    private HashMap<Tribe, SOSRequest> parseRequestsShort(String pData) {
         String[] lines = pData.split("\n");
-        Hashtable<Tribe, SOSRequest> requests = new Hashtable<>();
+        HashMap<Tribe, SOSRequest> requests = new HashMap<>();
         Village destination = null;
         SOSRequest request = null;
         SimpleDateFormat dateFormat = null;
@@ -415,8 +413,8 @@ public class SOSParser implements GenericParserInterface<SOSRequest> {
          */
     }
 
-    public Hashtable<Tribe, SOSRequest> attacksToSOSRequests(List<Attack> pAttacks) {
-        Hashtable<Tribe, SOSRequest> requests = new Hashtable<>();
+    public HashMap<Tribe, SOSRequest> attacksToSOSRequests(List<Attack> pAttacks) {
+        HashMap<Tribe, SOSRequest> requests = new HashMap<>();
 
         for (Attack attack : pAttacks) {
             Tribe defender = attack.getTarget().getTribe();

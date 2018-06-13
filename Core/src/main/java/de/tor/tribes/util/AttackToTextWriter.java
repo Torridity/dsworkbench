@@ -22,7 +22,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
@@ -44,7 +44,7 @@ public class AttackToTextWriter {
 
     public static boolean writeAttacks(Attack[] pAttacks, File pPath, int pAttacksPerFile, boolean pExtendedInfo, boolean pZipResults) {
 
-        Hashtable<Tribe, List<Attack>> attacks = new Hashtable<>();
+        HashMap<Tribe, List<Attack>> attacks = new HashMap<>();
 
         for (Attack a : pAttacks) {
             Tribe t = a.getSource().getTribe();

@@ -21,7 +21,7 @@ import de.tor.tribes.util.GlobalOptions;
 import java.awt.TexturePaint;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.util.Hashtable;
+import java.util.HashMap;
 import javax.imageio.ImageIO;
 import org.jdesktop.swingx.JXLabel;
 import org.jdesktop.swingx.JXPanel;
@@ -33,7 +33,7 @@ import org.jdesktop.swingx.painter.MattePainter;
  */
 public class WelcomePanel extends JXPanel {
 
-    private Hashtable<JXLabel, String> welcomeTooltipMap = new Hashtable<>();
+    private HashMap<JXLabel, String> welcomeTooltipMap = new HashMap<>();
     private BufferedImage back = null;
 
     /** Creates new form WelcomePanel */

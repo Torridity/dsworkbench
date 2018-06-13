@@ -22,7 +22,7 @@ import de.tor.tribes.util.SilentParserInterface;
 import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -52,7 +52,7 @@ public class GroupParser implements SilentParserInterface {
      */
 
     private boolean parseVillageRenamerData(String pData) {
-        Hashtable<String, List<Village>> mappings = new Hashtable<>();
+        HashMap<String, List<Village>> mappings = new HashMap<>();
         try {
             JSONObject sectorObject = new JSONObject(pData);
             JSONObject data = (JSONObject) sectorObject.get("id");
@@ -91,7 +91,7 @@ public class GroupParser implements SilentParserInterface {
 
         StringTokenizer lineTok = new StringTokenizer(pGroupsString, "\n\r");
 
-        Hashtable<String, List<Village>> groups = new Hashtable<>();
+        HashMap<String, List<Village>> groups = new HashMap<>();
         while (lineTok.hasMoreElements()) {
             //parse single line for village
             String line = lineTok.nextToken();
@@ -177,7 +177,7 @@ public class GroupParser implements SilentParserInterface {
         String groupRegEx = "[(.*);\\s]*(.*)\\s(»[\\s]*bearbeiten)";
         Pattern regExPattern = Pattern.compile(villageRegEx + "(.*)" + groupCountRegEx + "\\s" + groupRegEx);
         StringTokenizer lines = new StringTokenizer(pGroups, "\n");
-        Hashtable<String, List<Village>> groupMap = new Hashtable<>();
+        HashMap<String, List<Village>> groupMap = new HashMap<>();
         while (lines.hasMoreTokens()) {
             String newLine = lines.nextToken().trim();
             Matcher matcher = regExPattern.matcher(newLine);

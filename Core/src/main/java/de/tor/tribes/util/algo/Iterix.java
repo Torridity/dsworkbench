@@ -22,8 +22,7 @@ import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.algo.types.TimeFrame;
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import org.apache.logging.log4j.LogManager;
@@ -56,11 +55,11 @@ public class Iterix extends AbstractAttackAlgorithm {
 
     @Override
     public List<TroopMovement> calculateAttacks(
-            Hashtable<UnitHolder, List<Village>> pSources,
-            Hashtable<UnitHolder, List<Village>> pFakes,
+            HashMap<UnitHolder, List<Village>> pSources,
+            HashMap<UnitHolder, List<Village>> pFakes,
             List<Village> pTargets,
             List<Village> pFakeTargets,
-            Hashtable<Village, Integer> pMaxAttacksTable,
+            HashMap<Village, Integer> pMaxAttacksTable,
             TimeFrame pTimeFrame,
             boolean pFakeOffTargets) {
         long s = System.currentTimeMillis();
@@ -72,9 +71,8 @@ public class Iterix extends AbstractAttackAlgorithm {
             if(!troops.contains(unit)) troops.add(unit);
         }
         
-        Hashtable<Village, TroopMovement> movements = new Hashtable<>();
+        HashMap<Village, TroopMovement> movements = new HashMap<>();
         List<TroopMovement> movementList = new LinkedList<>();
-        Enumeration<UnitHolder> unitKeys = pSources.keys();
         sourceAmounts = new int[troops.size()][];
         
         // <editor-fold defaultstate="collapsed" desc=" Assign Offs">
@@ -83,8 +81,7 @@ public class Iterix extends AbstractAttackAlgorithm {
         List<Village> allOffSources = new LinkedList<>();
         
         //generate a list with all source Villages
-        while(unitKeys.hasMoreElements()) {
-            UnitHolder unit = unitKeys.nextElement();
+        for(UnitHolder unit: pSources.keySet()) {
             List<Village> unitSources = pSources.get(unit);
             logInfo(" - Starte Vorbereiten für Einheit '" + unit.getName() + "' (1/2)");
  
@@ -108,11 +105,9 @@ public class Iterix extends AbstractAttackAlgorithm {
                 }
             }
         }
-        unitKeys = pSources.keys();
         
         //generate sourceAmounts Array
-        while(unitKeys.hasMoreElements()) {
-            UnitHolder unit = unitKeys.nextElement();
+        for(UnitHolder unit: pSources.keySet()) {
             List<Village> unitSources = pSources.get(unit);
             logInfo(" - Starte Vorbereiten für Einheit '" + unit.getName() + "' (2/2)");
            
@@ -179,13 +174,10 @@ public class Iterix extends AbstractAttackAlgorithm {
         // </editor-fold>
 
         //set result movements and remove used targets if needed
-        Enumeration<Village> targetKeys = movements.keys();
-        while (targetKeys.hasMoreElements()) {
-            Village target = targetKeys.nextElement();
-            
-            if(movements.get(target).getOffCount() > 0 || !pFakeOffTargets) {
+        for(TroopMovement movement: movements.values()) {
+            if(movement.getOffCount() > 0 || !pFakeOffTargets) {
                 //add all Off Targets with assigned offs
-                movementList.add(movements.get(target));
+                movementList.add(movement);
             }
         }
 
@@ -216,15 +208,13 @@ public class Iterix extends AbstractAttackAlgorithm {
         
         // <editor-fold defaultstate="collapsed" desc=" Assign Fakes">
         logText("Berechne Fakes");
-        unitKeys = pFakes.keys();
         sourceAmounts = new int[troops.size()][];
         
         //list where the source an target ids are obtained from
         List<Village> fakeSources = new LinkedList<>();
         
         //generate a list with all source Villages
-        while(unitKeys.hasMoreElements()) {
-            UnitHolder unit = unitKeys.nextElement();
+        for(UnitHolder unit: pFakes.keySet()) {
             List<Village> unitSources = pFakes.get(unit);
             logInfo(" - Starte Vorbereiten für Einheit '" + unit.getName() + "' (1/2)");
  
@@ -253,11 +243,9 @@ public class Iterix extends AbstractAttackAlgorithm {
             }
             return movementList;
         }
-        unitKeys = pFakes.keys();
         
         //generate sourceAmounts Array
-        while(unitKeys.hasMoreElements()) {
-            UnitHolder unit = unitKeys.nextElement();
+        for(UnitHolder unit: pFakes.keySet()) {
             List<Village> unitSources = pFakes.get(unit);
             logInfo(" - Starte Vorbereiten für Einheit '" + unit.getName() + "' (2/2)");
            
@@ -315,7 +303,7 @@ public class Iterix extends AbstractAttackAlgorithm {
         }//end of fake assignment
         // </editor-fold>
         
-        Hashtable<Village, TroopMovement> fakeMovements = new Hashtable<>();
+        HashMap<Village, TroopMovement> fakeMovements = new HashMap<>();
         for (int i = 0; i < mappings.length; i++) {
             for (int j = 0; j < pTargets.size(); j++) {
                 Village target = pTargets.get(j);
@@ -331,9 +319,7 @@ public class Iterix extends AbstractAttackAlgorithm {
                 }
             }
         }
-        targetKeys = fakeMovements.keys();
-        while (targetKeys.hasMoreElements()) {
-            Village target = targetKeys.nextElement();
+        for(Village target: fakeMovements.keySet()) {
             if(fakeMovements.get(target).getOffCount() > 0 || !movements.containsKey(target)) {
                 movementList.add(fakeMovements.get(target));
             }
@@ -381,7 +367,7 @@ public class Iterix extends AbstractAttackAlgorithm {
     }
 
     /**Build possible source-target mappings*/
-    public int[][] buildMappings(List<Village> pSources, List<Village> pTargets, TimeFrame pTimeFrame, Hashtable<Village, Integer> pMaxAttacksTable) {
+    public int[][] buildMappings(List<Village> pSources, List<Village> pTargets, TimeFrame pTimeFrame, HashMap<Village, Integer> pMaxAttacksTable) {
         int[][] tMappings = new int[troops.size() * pSources.size()][pTargets.size()];
         
         int cnt = 0;

@@ -61,7 +61,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -250,9 +250,9 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
         if (treeMode) {
             //tree view
             //add all villages
-            Hashtable<Ally, AllyNode> allyNodes = new Hashtable<>();
-            Hashtable<Tribe, TribeNode> tribeNodes = new Hashtable<>();
-            Hashtable<Tribe, Hashtable<Tag, TagNode>> tagNodes = new Hashtable<>();
+            HashMap<Ally, AllyNode> allyNodes = new HashMap<>();
+            HashMap<Tribe, TribeNode> tribeNodes = new HashMap<>();
+            HashMap<Tribe, HashMap<Tag, TagNode>> tagNodes = new HashMap<>();
 
             List<Village> used = new LinkedList<>();
 
@@ -284,9 +284,9 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
                 for (Tag tag : TagManager.getSingleton().getTags(v)) {
                     hasTag = true;
 
-                    Hashtable<Tag, TagNode> nodes = tagNodes.get(t);
+                    HashMap<Tag, TagNode> nodes = tagNodes.get(t);
                     if (nodes == null) {
-                        nodes = new Hashtable<>();
+                        nodes = new HashMap<>();
                         tagNodes.put(t, nodes);
                     }
                     TagNode tagNode = nodes.get(tag);

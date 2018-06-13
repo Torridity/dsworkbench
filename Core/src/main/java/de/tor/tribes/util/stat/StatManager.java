@@ -23,8 +23,7 @@ import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.util.GlobalOptions;
 import java.io.File;
 import java.io.FileFilter;
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import org.apache.logging.log4j.LogManager;
@@ -39,7 +38,7 @@ public class StatManager {
     private static Logger logger = LogManager.getLogger("StatManager");
     private static StatManager SINGLETON = null;
     private boolean INITIALIZED = false;
-    private Hashtable<Integer, Hashtable<Integer, TribeStatsElement>> data = null;
+    private HashMap<Integer, HashMap<Integer, TribeStatsElement>> data = null;
     private List<Integer> monitoredAllies = null;
 
     public static synchronized StatManager getSingleton() {
@@ -63,7 +62,7 @@ public class StatManager {
                 logger.debug(" * Created stats directory");
             }
         }
-        data = new Hashtable<>();
+        data = new HashMap<>();
         monitoredAllies = new LinkedList<>();
         File[] allyDirs = new File(dataPath).listFiles(new FileFilter() {
 
@@ -78,14 +77,13 @@ public class StatManager {
             try {
                 String name = allyDir.getName();
                 Integer allyId = Integer.parseInt(name);
-                Hashtable<Integer, TribeStatsElement> tribeStats = null;
                 if (allyId == -1 || DataHolder.getSingleton().getAllies().get(allyId) != null) {
                     //directory for non ally tribes or valid ally dir found
                     logger.debug("  - Loading ally data from '" + allyDir.getPath() + "'");
                     if (new File(allyDir.getPath() + "/ally.mon").exists()) {
                         monitoredAllies.add(allyId);
                     }
-                    tribeStats = readTribeStats(allyDir);
+                    HashMap<Integer, TribeStatsElement> tribeStats = readTribeStats(allyDir);
                     if (tribeStats != null) {
                         data.put(allyId, tribeStats);
                     }
@@ -105,8 +103,8 @@ public class StatManager {
         INITIALIZED = true;
     }
 
-    private Hashtable<Integer, TribeStatsElement> readTribeStats(File pStatDir) {
-        Hashtable<Integer, TribeStatsElement> tribeStats = new Hashtable<>();
+    private HashMap<Integer, TribeStatsElement> readTribeStats(File pStatDir) {
+        HashMap<Integer, TribeStatsElement> tribeStats = new HashMap<>();
         File[] tribeStatDirs = pStatDir.listFiles(new FileFilter() {
 
             @Override
@@ -139,17 +137,14 @@ public class StatManager {
 
     private void updateAllyChanges() {
         logger.debug(" * Updating ally changes");
-        Enumeration<Integer> allyKeys = data.keys();
         List<TribeStatsElement> outdatedElements = new LinkedList<>();
         logger.debug("  - Checking " + data.size() + " allies");
-        while (allyKeys.hasMoreElements()) {
+        for(Integer allyKey: data.keySet()) {
             //check all allies
-            Integer allyKey = allyKeys.nextElement();
-
-            Hashtable<Integer, TribeStatsElement> tribesData = data.get(allyKey);
+            HashMap<Integer, TribeStatsElement> tribesData = data.get(allyKey);
             if (tribesData == null) {
                 //avoid NPE
-                tribesData = new Hashtable<>();
+                tribesData = new HashMap<>();
             }
 
             logger.debug(" - Checking monitored allies for integrity");
@@ -168,15 +163,13 @@ public class StatManager {
                 data.put(allyKey, tribesData);
             }
 
-            Enumeration<Integer> tribeKeys = tribesData.keys();
             //get tribes that have changed the ally
             List<Tribe> outdatedTribes = new LinkedList<>();
             String allyPath = "./servers/" + GlobalOptions.getSelectedServer() + "/stats/" + allyKey;
             if (logger.isDebugEnabled()) {
                 logger.debug("  - Checking " + tribesData.size() + " tribes");
             }
-            while (tribeKeys.hasMoreElements()) {
-                Integer tribeKey = tribeKeys.nextElement();
+            for(Integer tribeKey: tribesData.keySet()) {
                 Tribe tribe = DataHolder.getSingleton().getTribes().get(tribeKey);
                 if (tribe.getAllyID() != allyKey) {
                     if (logger.isDebugEnabled()) {
@@ -209,13 +202,13 @@ public class StatManager {
             if (a == null) {
                 a = NoAlly.getSingleton();
             }
-            Hashtable<Integer, TribeStatsElement> tribeData = data.get(a.getId());
+            HashMap<Integer, TribeStatsElement> tribeData = data.get(a.getId());
             if (tribeData == null) {
                 if (logger.isDebugEnabled()) {
                     logger.debug("  - Creating new ally stats for ally '" + a + "'");
                 }
                 //add new tribe and ally data elements
-                tribeData = new Hashtable<>();
+                tribeData = new HashMap<>();
                 tribeData.put(outdatedElem.getTribe().getId(), outdatedElem);
                 data.put(a.getId(), tribeData);
             } else {
@@ -228,10 +221,8 @@ public class StatManager {
         }
 
         logger.debug("  - Removing empty ally stats");
-        allyKeys = data.keys();
-        while (allyKeys.hasMoreElements()) {
-            Integer allyKey = allyKeys.nextElement();
-            Hashtable<Integer, TribeStatsElement> tribesData = data.get(allyKey);
+        for(Integer allyKey: data.keySet()) {
+            HashMap<Integer, TribeStatsElement> tribesData = data.get(allyKey);
             Ally a = NoAlly.getSingleton();
             if (allyKey != -1) {
                 a = DataHolder.getSingleton().getAllies().get(allyKey);
@@ -253,14 +244,10 @@ public class StatManager {
         if (data == null) {
             return;
         }
-        Enumeration<Integer> allyKeys = data.keys();
         String dataPath = "./servers/" + GlobalOptions.getSelectedServer() + "/stats";
-        while (allyKeys.hasMoreElements()) {
-            Integer allyKey = allyKeys.nextElement();
-            Hashtable<Integer, TribeStatsElement> tribes = data.get(allyKey);
-            Enumeration<Integer> tribeKeys = tribes.keys();
-            while (tribeKeys.hasMoreElements()) {
-                Integer tribeKey = tribeKeys.nextElement();
+        for(Integer allyKey: data.keySet()) {
+            HashMap<Integer, TribeStatsElement> tribes = data.get(allyKey);
+            for(Integer tribeKey: tribes.keySet()) {
                 TribeStatsElement elem = tribes.get(tribeKey);
                 new File(dataPath + "/" + allyKey + "/").mkdirs();
                 if (monitoredAllies.contains(allyKey)) {
@@ -286,17 +273,15 @@ public class StatManager {
         }
         logger.debug("Adding stat monitor for tribe '" + pTribe.getName() + "'");
         Ally a = pTribe.getAlly();
-        Hashtable<Integer, TribeStatsElement> allyData = null;
+        HashMap<Integer, TribeStatsElement> allyData = null;
         int allyId = -1;
-        if (a == null) {
-            allyData = data.get(allyId);
-        } else {
+        if (a != null) {
             allyId = a.getId();
-            allyData = data.get(allyId);
         }
+        allyData = data.get(allyId);
 
         if (allyData == null) {
-            allyData = new Hashtable<>();
+            allyData = new HashMap<>();
             data.put(allyId, allyData);
         }
 
@@ -329,14 +314,9 @@ public class StatManager {
     public void takeSnapshot() {
         long now = System.currentTimeMillis();
         logger.debug("Taking stat snapshot from '" + now + "'");
-        Enumeration<Integer> allyKeys = data.keys();
-        while (allyKeys.hasMoreElements()) {
-            Integer allyKey = allyKeys.nextElement();
-            Hashtable<Integer, TribeStatsElement> tribes = data.get(allyKey);
-            Enumeration<Integer> tribeKeys = tribes.keys();
-            while (tribeKeys.hasMoreElements()) {
-                Integer tribeKey = tribeKeys.nextElement();
-                TribeStatsElement elem = tribes.get(tribeKey);
+        for(Integer allyKey: data.keySet()) {
+            HashMap<Integer, TribeStatsElement> tribes = data.get(allyKey);
+            for(TribeStatsElement elem: tribes.values()) {
                 elem.takeSnapshot(now);
             }
         }
@@ -346,11 +326,8 @@ public class StatManager {
         long now = System.currentTimeMillis();
         logger.debug("Taking stat snapshot from '" + now + "'");
         Integer allyKey = a.getId();
-        Hashtable<Integer, TribeStatsElement> tribes = data.get(allyKey);
-        Enumeration<Integer> tribeKeys = tribes.keys();
-        while (tribeKeys.hasMoreElements()) {
-            Integer tribeKey = tribeKeys.nextElement();
-            TribeStatsElement elem = tribes.get(tribeKey);
+        HashMap<Integer, TribeStatsElement> tribes = data.get(allyKey);
+        for(TribeStatsElement elem: tribes.values()) {
             elem.takeSnapshot(now);
         }
     }
@@ -359,16 +336,14 @@ public class StatManager {
         long now = System.currentTimeMillis();
         logger.debug("Taking stat snapshot from '" + now + "'");
         Integer allyKey = t.getAllyID();
-        Hashtable<Integer, TribeStatsElement> tribes = data.get(allyKey);
+        HashMap<Integer, TribeStatsElement> tribes = data.get(allyKey);
         TribeStatsElement elem = tribes.get(t.getId());
         elem.takeSnapshot(now);
     }
 
     public Ally[] getMonitoredAllies() {
         List<Ally> allies = new LinkedList<>();
-        Enumeration<Integer> allyKeys = data.keys();
-        while (allyKeys.hasMoreElements()) {
-            Integer allyKey = allyKeys.nextElement();
+        for(Integer allyKey: data.keySet()) {
             if (allyKey == -1) {
                 allies.add(NoAlly.getSingleton());
             } else {
@@ -382,14 +357,12 @@ public class StatManager {
     }
 
     public Tribe[] getMonitoredTribes(Ally pAlly) {
-        Hashtable<Integer, TribeStatsElement> tribeData = data.get(pAlly.getId());
+        HashMap<Integer, TribeStatsElement> tribeData = data.get(pAlly.getId());
         List<Tribe> tribes = new LinkedList<>();
         if (tribeData == null) {
             return new Tribe[]{};
         }
-        Enumeration<Integer> tribeKeys = tribeData.keys();
-        while (tribeKeys.hasMoreElements()) {
-            Integer tribeKey = tribeKeys.nextElement();
+        for(Integer tribeKey: tribeData.keySet()) {
             Tribe tribe = DataHolder.getSingleton().getTribes().get(tribeKey);
             if (tribe != null) {
                 tribes.add(tribe);
@@ -439,7 +412,7 @@ public class StatManager {
         if (a == null) {
             a = NoAlly.getSingleton();
         }
-        Hashtable<Integer, TribeStatsElement> allyData = data.get(a.getId());
+        HashMap<Integer, TribeStatsElement> allyData = data.get(a.getId());
         if (allyData == null) {
             logger.warn("No stats available!?");
             return;
@@ -476,7 +449,7 @@ public class StatManager {
             a = NoAlly.getSingleton();
         }
 
-        Hashtable<Integer, TribeStatsElement> allyData = data.get(a.getId());
+        HashMap<Integer, TribeStatsElement> allyData = data.get(a.getId());
         if (allyData == null) {
             logger.warn("Ally data for ally '" + a.getName() + "' not found");
             return null;
@@ -493,7 +466,7 @@ public class StatManager {
             a = NoAlly.getSingleton();
         }
 
-        Hashtable<Integer, TribeStatsElement> tribeData = data.get(a.getId());
+        HashMap<Integer, TribeStatsElement> tribeData = data.get(a.getId());
         TribeStatsElement elem = tribeData.get(pTribe.getId());
         elem.removeDataBefore(pTimestamp);
     }
@@ -507,7 +480,7 @@ public class StatManager {
             a = NoAlly.getSingleton();
         }
 
-        Hashtable<Integer, TribeStatsElement> tribeData = data.get(a.getId());
+        HashMap<Integer, TribeStatsElement> tribeData = data.get(a.getId());
         TribeStatsElement elem = tribeData.get(pTribe.getId());
         elem.removeDataAfter(pTimestamp);
     }
@@ -521,7 +494,7 @@ public class StatManager {
             a = NoAlly.getSingleton();
         }
 
-        Hashtable<Integer, TribeStatsElement> tribeData = data.get(a.getId());
+        HashMap<Integer, TribeStatsElement> tribeData = data.get(a.getId());
         TribeStatsElement elem = tribeData.get(pTribe.getId());
         elem.removeDataBetween(pStartTimestamp, pEndTimestamp);
     }

@@ -15,9 +15,8 @@
  */
 package de.tor.tribes.ui.panels;
 
-//TODO re add
-//import de.tor.tribes.dssim.ui.DSWorkbenchSimulatorFrame;
-//import de.tor.tribes.dssim.util.AStarResultReceiver;
+import de.tor.tribes.dssim.ui.DSWorkbenchSimulatorFrame;
+import de.tor.tribes.dssim.util.AStarResultReceiver;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.TroopAmountFixed;
 import de.tor.tribes.io.UnitHolder;
@@ -72,11 +71,9 @@ import org.jdesktop.swingx.table.TableColumnExt;
  *
  * @author Torridity
  */
-//TODO re add
-public class ReportTableTab extends javax.swing.JPanel implements ListSelectionListener {//, AStarResultReceiver {
+public class ReportTableTab extends javax.swing.JPanel implements ListSelectionListener, AStarResultReceiver {
 
-    //TODO re add
-//@Override
+    @Override
     public void fireNotifyOnResultEvent(Point point, int pAttacks) {
         if (point == null) {
             showError("Die Zielkoordinate ist ungültig");
@@ -105,7 +102,7 @@ public class ReportTableTab extends javax.swing.JPanel implements ListSelectionL
     private static ReportManagerTableModel reportModel = null;
     private static boolean KEY_LISTENER_ADDED = false;
     private static PainterHighlighter highlighter = null;
-    private Hashtable<Integer, List<ReportShowDialog>> showDialogs = null;
+    private HashMap<Integer, List<ReportShowDialog>> showDialogs = null;
 
     static {
         jxReportTable.setHighlighters(HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B));
@@ -166,7 +163,7 @@ public class ReportTableTab extends javax.swing.JPanel implements ListSelectionL
 
             KEY_LISTENER_ADDED = true;
         }
-        showDialogs = new Hashtable<>();
+        showDialogs = new HashMap<>();
         jxReportTable.getSelectionModel().addListSelectionListener(ReportTableTab.this);
     }
 
@@ -265,9 +262,7 @@ public class ReportTableTab extends javax.swing.JPanel implements ListSelectionL
     }
 
     public void closeAllReportDialogs() {
-        Enumeration<Integer> keys = showDialogs.keys();
-        while (keys.hasMoreElements()) {
-            Integer key = keys.nextElement();
+        for(Integer key: showDialogs.keySet()) {
             closeReportLayer(key);
         }
     }
@@ -483,7 +478,7 @@ public class ReportTableTab extends javax.swing.JPanel implements ListSelectionL
         }
 
         FightReport report = selection.get(0);
-        Hashtable<String, Double> values = new Hashtable<>();
+        HashMap<String, Double> values = new HashMap<>();
         for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
             if (!report.areAttackersHidden()) {
                 values.put("att_" + unit.getPlainName(), (double) report.getAttackers().getAmountForUnit(unit));
@@ -502,13 +497,12 @@ public class ReportTableTab extends javax.swing.JPanel implements ListSelectionL
         values.put("moral", report.getMoral());
         if (!GlobalOptions.isOfflineMode()) {
             try {
-                //TODO re add
-/*if (!DSWorkbenchSimulatorFrame.getSingleton().isVisible()) {
+                if (!DSWorkbenchSimulatorFrame.getSingleton().isVisible()) {
                     DSWorkbenchSimulatorFrame.getSingleton().setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
                     DSWorkbenchSimulatorFrame.getSingleton().showIntegratedVersion(DSWorkbenchSettingsDialog.getSingleton().getWebProxy(),GlobalOptions.getSelectedServer());
                 }
                 Point coord = new Point(report.getTargetVillage().getX(), report.getTargetVillage().getY());
-                DSWorkbenchSimulatorFrame.getSingleton().insertValuesExternally(coord, values, this);*/
+                DSWorkbenchSimulatorFrame.getSingleton().insertValuesExternally(coord, values, this);
             } catch(Exception e) {
                 logger.warn("Problem during writing Troops to AStar", e);
             }

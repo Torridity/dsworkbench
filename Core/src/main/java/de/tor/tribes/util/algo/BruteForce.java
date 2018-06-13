@@ -24,8 +24,7 @@ import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.algo.types.TimeFrame;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import org.apache.commons.collections4.ListUtils;
@@ -43,19 +42,18 @@ public class BruteForce extends AbstractAttackAlgorithm {
 
     @Override
     public List<TroopMovement> calculateAttacks(
-            Hashtable<UnitHolder, List<Village>> pSources,
-            Hashtable<UnitHolder, List<Village>> pFakes,
+            HashMap<UnitHolder, List<Village>> pSources,
+            HashMap<UnitHolder, List<Village>> pFakes,
             List<Village> pTargets,
             List<Village> pFakeTargets,
-            Hashtable<Village, Integer> pMaxAttacksTable,
+            HashMap<Village, Integer> pMaxAttacksTable,
             TimeFrame pTimeFrame,
             boolean pFakeOffTargets) {
 
         List<Village> allTargets = Arrays.asList(pTargets.toArray(new Village[pTargets.size()]));
         List<Village> allFakeTargets = Arrays.asList(pFakeTargets.toArray(new Village[pFakeTargets.size()]));
 
-        Enumeration<UnitHolder> unitKeys = pSources.keys();
-        Hashtable<Village, Hashtable<UnitHolder, List<Village>>> attacks = new Hashtable<>();
+        HashMap<Village, HashMap<UnitHolder, List<Village>>> attacks = new HashMap<>();
         logger.debug("Assigning offs");
         logText("Starte zufällige Berechnung");
 
@@ -64,8 +62,7 @@ public class BruteForce extends AbstractAttackAlgorithm {
 
         // <editor-fold defaultstate="collapsed" desc=" Assign Offs">
         logInfo(" Starte Berechnung für Offs");
-        while (unitKeys.hasMoreElements()) {
-            UnitHolder unit = unitKeys.nextElement();
+        for(UnitHolder unit: pSources.keySet()) {
             logInfo(" - Starte Berechnung für Einheit '" + unit.getName() + "'");
             List<Village> sources = pSources.get(unit);
 
@@ -100,10 +97,10 @@ public class BruteForce extends AbstractAttackAlgorithm {
                         if (pTimeFrame.isMovementPossible(runtime)) {
                             //only calculate if time is in time frame
                             //get list of source villages for current target
-                            Hashtable<UnitHolder, List<Village>> attacksForVillage = attacks.get(v);
+                            HashMap<UnitHolder, List<Village>> attacksForVillage = attacks.get(v);
                             if (attacksForVillage == null) {
                                 //create new table of attacks
-                                attacksForVillage = new Hashtable<>();
+                                attacksForVillage = new HashMap<>();
                                 List<Village> sourceList = new LinkedList<>();
                                 logInfo("   * Neue Truppenbewegung: " + source + " -> " + v);
                                 sourceList.add(source);
@@ -111,10 +108,9 @@ public class BruteForce extends AbstractAttackAlgorithm {
                                 attacks.put(v, attacksForVillage);
                                 vTarget = v;
                             } else {
-                                Enumeration<UnitHolder> units = attacksForVillage.keys();
                                 int currentAttacks = 0;
-                                while (units.hasMoreElements()) {
-                                    currentAttacks += attacksForVillage.get(units.nextElement()).size();
+                                for(List<Village> l: attacksForVillage.values()) {
+                                    currentAttacks += l.size();
                                 }
                                 //there are already attacks on this village
                                 if (currentAttacks < maxAttacksPerVillage) {
@@ -197,12 +193,8 @@ public class BruteForce extends AbstractAttackAlgorithm {
         logger.debug("Assigning fakes");
         logText(" Starte Berechnung für Fakes.");
         // <editor-fold defaultstate="collapsed" desc=" Assign fakes">
-        unitKeys = pFakes.keys();
-        Hashtable<Village, Hashtable<UnitHolder, List<Village>>> fakes = new Hashtable<>();
-
-
-        while (unitKeys.hasMoreElements()) {
-            UnitHolder unit = unitKeys.nextElement();
+        HashMap<Village, HashMap<UnitHolder, List<Village>>> fakes = new HashMap<>();
+        for(UnitHolder unit: pFakes.keySet()) {
             logInfo(" - Starte Berechnung für Einheit '" + unit.getName() + "'");
             List<Village> sources = pFakes.get(unit);
 
@@ -237,17 +229,17 @@ public class BruteForce extends AbstractAttackAlgorithm {
                         if (pTimeFrame.isMovementPossible(runtime)) {
                             //only calculate if time is in time frame
                             //get list of source villages for current target
-                            Hashtable<UnitHolder, List<Village>> attacksForVillage = attacks.get(v);
-                            Hashtable<UnitHolder, List<Village>> fakesForVillage = fakes.get(v);
+                            HashMap<UnitHolder, List<Village>> attacksForVillage = attacks.get(v);
+                            HashMap<UnitHolder, List<Village>> fakesForVillage = fakes.get(v);
                             if (attacksForVillage == null){
                             	//create empty table of attacks (will stay empty, but is used for maxAttacks calculation)
-                                attacksForVillage = new Hashtable<>();
+                                attacksForVillage = new HashMap<>();
                                 List<Village> sourceList = new LinkedList<>();
                                 attacksForVillage.put(unit, sourceList);
                             }
                             if (fakesForVillage == null) {
                                 //create new table of fakes 
-                                fakesForVillage = new Hashtable<>();
+                                fakesForVillage = new HashMap<>();
                                 List<Village> sourceList = new LinkedList<>();
                                 logInfo("   * Neue Truppenbewegung: " + source + " -> " + v);
                                 sourceList.add(source);
@@ -255,15 +247,13 @@ public class BruteForce extends AbstractAttackAlgorithm {
                                 fakes.put(v, fakesForVillage);
                                 vTarget = v;
                             } else {
-                                Enumeration<UnitHolder> units = attacksForVillage.keys();
                                 int currentAttacks = 0;
-                                while (units.hasMoreElements()) {
-                                    currentAttacks += attacksForVillage.get(units.nextElement()).size();
+                                for(List<Village> listV: attacksForVillage.values()) {
+                                    currentAttacks += listV.size();
                                 }
-                                units = fakesForVillage.keys();
                                 int currentFakes = 0;
-                                while (units.hasMoreElements()) {
-                                    currentAttacks += fakesForVillage.get(units.nextElement()).size();
+                                for(List<Village> listV: fakesForVillage.values()) {
+                                    currentFakes += listV.size();
                                 }
                                 
                                 //there are already attacks or fakes on this village
@@ -334,13 +324,11 @@ public class BruteForce extends AbstractAttackAlgorithm {
 
         logText(String.format(" %d Offs berechnet", attacks.size()));
         for (Village target : allTargets) {
-            Hashtable<UnitHolder, List<Village>> sourcesForTarget = attacks.get(target);
+            HashMap<UnitHolder, List<Village>> sourcesForTarget = attacks.get(target);
             TroopMovement f = new TroopMovement(target, pMaxAttacksTable.get(target), Attack.CLEAN_TYPE);
             
             if (sourcesForTarget != null) {
-                Enumeration<UnitHolder> sourceKeys = sourcesForTarget.keys();
-                while (sourceKeys.hasMoreElements()) {
-                    UnitHolder sourceUnit = sourceKeys.nextElement();
+                for(UnitHolder sourceUnit: sourcesForTarget.keySet()) {
                     List<Village> unitVillages = attacks.get(target).get(sourceUnit);
                     for (Village source : unitVillages) {
                         f.addOff(sourceUnit, source);
@@ -358,12 +346,10 @@ public class BruteForce extends AbstractAttackAlgorithm {
         logText(String.format(" %d Fakes berechnet", fakes.size()));
 
         for (Village target : (List<Village>)ListUtils.union(allFakeTargets, allTargets)) {
-        	Hashtable<UnitHolder, List<Village>> sourcesForTarget = fakes.get(target);
+        	HashMap<UnitHolder, List<Village>> sourcesForTarget = fakes.get(target);
             TroopMovement f = new TroopMovement(target, pMaxAttacksTable.get(target), Attack.FAKE_TYPE);
             if (sourcesForTarget != null) {
-                Enumeration<UnitHolder> sourceKeys = sourcesForTarget.keys();
-                while (sourceKeys.hasMoreElements()) {
-                    UnitHolder sourceUnit = sourceKeys.nextElement();
+                for(UnitHolder sourceUnit: sourcesForTarget.keySet()) {
                     List<Village> unitVillages = fakes.get(target).get(sourceUnit);
                     for (Village source : unitVillages) {
                         f.addOff(sourceUnit, source);

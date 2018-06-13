@@ -22,7 +22,7 @@ import de.tor.tribes.util.SilentParserInterface;
 import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -51,7 +51,7 @@ public class GroupParser70 implements SilentParserInterface {
     public boolean parse( String pGroupsString ) {
     StringTokenizer lineTok = new StringTokenizer(pGroupsString, "\n\r");
 
-    Hashtable<String, List<Village>> groups = new Hashtable<>();
+    HashMap<String, List<Village>> groups = new HashMap<>();
     while ( lineTok.hasMoreElements() ) {
         //parse single line for village
         String line = lineTok.nextToken();
@@ -127,7 +127,7 @@ public class GroupParser70 implements SilentParserInterface {
     String groupRegEx = "[(.*);\\s]*(.*)\\s(»[\\s]*bearbeiten)";
     Pattern regExPattern = Pattern.compile(villageRegEx + "(.*)" + groupCountRegEx + "\\s" + groupRegEx);
     StringTokenizer lines = new StringTokenizer(pGroups, "\n");
-    Hashtable<String, List<Village>> groupMap = new Hashtable<>();
+    HashMap<String, List<Village>> groupMap = new HashMap<>();
     while ( lines.hasMoreTokens() ) {
         String newLine = lines.nextToken().trim();
         Matcher matcher = regExPattern.matcher(newLine);

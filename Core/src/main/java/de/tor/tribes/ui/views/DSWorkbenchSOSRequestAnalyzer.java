@@ -56,6 +56,7 @@ import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import javax.swing.*;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.configuration2.Configuration;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.logging.log4j.LogManager;
@@ -508,7 +509,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
     }
 
     private void copySelectionToClipboardAsBBCode() {
-        Hashtable<Tribe, SOSRequest> selectedRequests = new Hashtable<>();
+        HashMap<Tribe, SOSRequest> selectedRequests = new HashMap<>();
         List<DefenseInformation> selection = getSelectedRows();
         if (selection.isEmpty()) {
             showInfo("Keine SOS Anfragen eingelesen");
@@ -537,11 +538,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
             }
 
             List<SOSRequest> requests = new LinkedList<>();
-
-            Enumeration<Tribe> tribeKeys = selectedRequests.keys();
-            while (tribeKeys.hasMoreElements()) {
-                requests.add(selectedRequests.get(tribeKeys.nextElement()));
-            }
+            CollectionUtils.addAll(requests, selectedRequests.values());
             buffer.append(new SosListFormatter().formatElements(requests,
                     extended));
 
@@ -801,9 +798,7 @@ private void fireAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRS
         model.clear();
         for (ManageableType t : SOSManager.getSingleton().getAllElements()) {
             SOSRequest r = (SOSRequest) t;
-            Enumeration<Village> targets = r.getTargets();
-            while (targets.hasMoreElements()) {
-                Village target = targets.nextElement();
+            for(Village target: r.getTargets()) {
                 DefenseInformation d = r.getDefenseInformation(target);
                 for (Defense i : d.getSupports()) {
                     model.addRow(i);
@@ -887,9 +882,8 @@ private void fireAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRS
 
         for (ManageableType e : SOSManager.getSingleton().getAllElements()) {
             SOSRequest r = (SOSRequest) e;
-            Enumeration<Village> targets = r.getTargets();
-            while (targets.hasMoreElements()) {
-                model.addRow(r.getDefenseInformation(targets.nextElement()));
+            for(Village target: r.getTargets()) {
+                model.addRow(r.getDefenseInformation(target));
             }
         }
         model.fireTableDataChanged();
@@ -904,15 +898,10 @@ private void fireAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRS
             
             for (ManageableType manTyp: SOSManager.getSingleton().getAllElements()) {
                 SOSRequest pRequest = (SOSRequest) manTyp;
-                Enumeration<Village> targets = pRequest.getTargets();
-
-                while (targets.hasMoreElements()) {
-                    Village target = targets.nextElement();
+                for(Village target: pRequest.getTargets()) {
                     TargetInformation targetInfo = pRequest.getTargetInformation(target);
-
-                    Enumeration<Village> targetSources = targetInfo.getSources();
-                    while (targetSources.hasMoreElements()) {
-                        Village targetSource = targetSources.nextElement();
+                    
+                    for(Village targetSource: targetInfo.getSources()) {
                         if(sourcesOnce.contains(targetSource) &&
                                 !sourcesMoreThanOnce.contains(targetSource)) {
                             sourcesMoreThanOnce.add(targetSource);
@@ -926,10 +915,8 @@ private void fireAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRS
             
             for (ManageableType manTyp: SOSManager.getSingleton().getAllElements()) {
                 SOSRequest pRequest = (SOSRequest) manTyp;
-                Enumeration<Village> targets = pRequest.getTargets();
-
-                while (targets.hasMoreElements()) {
-                    Village target = targets.nextElement();
+                
+                for(Village target: pRequest.getTargets()) {
                     TargetInformation targetInfo = pRequest.getTargetInformation(target);
 
                     Enumeration<TimedAttack> attacks = Collections.enumeration(targetInfo.getAttacks());
@@ -962,15 +949,11 @@ private void fireAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRS
             for (ManageableType manTyp: SOSManager.getSingleton().getAllElements()) {
                 SOSRequest pRequest = (SOSRequest) manTyp;
                 
-                Enumeration<Village> targets = pRequest.getTargets();
-                while (targets.hasMoreElements()) {
-                    Village target = targets.nextElement();
+                for(Village target: pRequest.getTargets()) {
                     TargetInformation targetInfo = pRequest.getTargetInformation(target);
 
                     //check for multiple attacks from same source to same target
-                    Enumeration<Village> sources = targetInfo.getSources();
-                    while (sources.hasMoreElements()) {
-                        Village source = sources.nextElement();
+                    for(Village source: targetInfo.getSources()) {
                         if (targetInfo.getAttackCountFromSource(source) > 1) {
                             for (TimedAttack att : targetInfo.getAttacksFromSource(source)) {
                                 if (!att.isPossibleFake() && !att.isPossibleSnob()) {//check only once
@@ -998,9 +981,8 @@ private void fireAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRS
             for (ManageableType manTyp: SOSManager.getSingleton().getAllElements()) {
                 SOSRequest pRequest = (SOSRequest) manTyp;
                 
-                Enumeration<Village> targets = pRequest.getTargets();
-                while (targets.hasMoreElements()) {
-                    pRequest.getDefenseInformation(targets.nextElement()).updateAttackInfo();
+                for(Village target: pRequest.getTargets()) {
+                    pRequest.getDefenseInformation(target).updateAttackInfo();
                 }
             }
         }

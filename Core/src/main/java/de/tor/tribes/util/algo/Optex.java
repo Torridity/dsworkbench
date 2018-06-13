@@ -19,13 +19,13 @@ import de.tor.tribes.util.algo.types.Destination;
 import de.tor.tribes.util.algo.types.Order;
 import de.tor.tribes.util.algo.types.Source;
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.HashMap;
 
 /*
- * Its constructor takes sources, destinations and costs (an array of Hashtables).
+ * Its constructor takes sources, destinations and costs (an array of HashMaps).
  * Each element of the array is related to a source. E.g. the element at position 0
  * is related to the source at index 0 (sources.get(0)). Therefore every source
- * 'owns' a hashtable, which maps all destinations to the according costs (think
+ * 'owns' a HashMap, which maps all destinations to the according costs (think
  * of distances) in terms of the transport problem.
  * Example:
  * 	costs[0].get(2) is the cost for transports from source 0 to destination 2.
@@ -39,7 +39,7 @@ public class Optex<S extends Source, D extends Destination> {
 
     protected ArrayList<S> sources;
     protected ArrayList<D> destinations;
-    protected Hashtable<Destination, Double> costs[];
+    protected HashMap<Destination, Double> costs[];
     protected boolean executed = false;
 
     /**
@@ -49,7 +49,7 @@ public class Optex<S extends Source, D extends Destination> {
      * @param destinations The destinations.
      * @param costs The costs.
      */
-    public Optex(ArrayList<S> sources, ArrayList<D> destinations, Hashtable<Destination, Double> costs[]) {
+    public Optex(ArrayList<S> sources, ArrayList<D> destinations, HashMap<Destination, Double> costs[]) {
         this.sources = sources;
         this.destinations = destinations;
         this.costs = costs;

@@ -32,7 +32,7 @@ import java.awt.BorderLayout;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -1414,10 +1414,10 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
         }
     }
 
-    protected Hashtable<Village, Hashtable<Village, List<Resource>>> getTransports() {
+    protected HashMap<Village, HashMap<Village, List<Resource>>> getTransports() {
         logger.debug("Getting transports");
 
-        Hashtable<Village, Hashtable<Village, List<Resource>>> transports = new Hashtable<>();
+        HashMap<Village, HashMap<Village, List<Resource>>> transports = new HashMap<>();
         if (!calculator.getResults().isEmpty()) {
             int minAmount = 1;
             if (jIgnoreTransportsButton.isSelected()) {
@@ -1454,10 +1454,10 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
 
                 for (MerchantSource source : resultForResource) {
                     Village sourceVillage = DataHolder.getSingleton().getVillages()[source.getC().getX()][source.getC().getY()];
-                    Hashtable<Village, List<Resource>> transportsForSource = transports.get(sourceVillage);
+                    HashMap<Village, List<Resource>> transportsForSource = transports.get(sourceVillage);
 
                     if (transportsForSource == null) {
-                        transportsForSource = new Hashtable<>();
+                        transportsForSource = new HashMap<>();
                         transports.put(sourceVillage, transportsForSource);
                     }
 
@@ -1481,12 +1481,12 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
                 }
             }
 
-            Set<Entry<Village, Hashtable<Village, List<Resource>>>> entries = transports.entrySet();
+            Set<Entry<Village, HashMap<Village, List<Resource>>>> entries = transports.entrySet();
 
             List<Village> destinationsToRemove = new LinkedList<>();
-            for (Entry<Village, Hashtable<Village, List<Resource>>> entry : entries) {
+            for (Entry<Village, HashMap<Village, List<Resource>>> entry : entries) {
                 Village transportDestination = entry.getKey();
-                Hashtable<Village, List<Resource>> destinationTransports = entry.getValue();
+                HashMap<Village, List<Resource>> destinationTransports = entry.getValue();
                 Set<Entry<Village, List<Resource>>> transportEntries = destinationTransports.entrySet();
                 List<Village> toRemove = new LinkedList<>();
                 for (Entry<Village, List<Resource>> transportEntry : transportEntries) {

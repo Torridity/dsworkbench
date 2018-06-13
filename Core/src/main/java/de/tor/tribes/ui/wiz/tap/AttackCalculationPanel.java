@@ -31,7 +31,7 @@ import java.awt.BorderLayout;
 import java.awt.Point;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -437,8 +437,8 @@ public class AttackCalculationPanel extends WizardPage {
         } else if (jSystematicCalculation.isSelected()) {
             calculator = new Iterix();
         }
-        Hashtable<UnitHolder, List<Village>> sources = new Hashtable<>();
-        Hashtable<UnitHolder, List<Village>> fakeSources = new Hashtable<>();
+        HashMap<UnitHolder, List<Village>> sources = new HashMap<>();
+        HashMap<UnitHolder, List<Village>> fakeSources = new HashMap<>();
         for (TAPAttackSourceElement element : AttackSourceFilterPanel.getSingleton().getFilteredElements()) {
             List<Village> sourcesForUnit;
             if (element.isFake()) {
@@ -458,7 +458,7 @@ public class AttackCalculationPanel extends WizardPage {
         }
         List<Village> targets = new LinkedList<>();
         List<Village> fakeTargets = new LinkedList<>();
-        Hashtable<Village, Integer> maxAttacks = new Hashtable<>();
+        HashMap<Village, Integer> maxAttacks = new HashMap<>();
         for (TAPAttackTargetElement element : AttackTargetFilterPanel.getSingleton().getFilteredElements()) {
             if (element.isFake()) {
                 fakeTargets.add(element.getVillage());

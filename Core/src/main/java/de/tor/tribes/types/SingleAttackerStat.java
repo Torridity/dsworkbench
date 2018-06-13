@@ -20,8 +20,7 @@ import de.tor.tribes.io.TroopAmountFixed;
 import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.village.KnownVillage;
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -47,7 +46,7 @@ public class SingleAttackerStat {
     private int atLeast6KDamage = 0;
     private int atLeast8KDamage = 0;
     private int destroyedWallLevels = 0;
-    private Hashtable<Integer, Integer> destroyedBuildingLevels = null;
+    private HashMap<Integer, Integer> destroyedBuildingLevels = null;
     private TroopAmountFixed silentKills = null;
 
     public SingleAttackerStat(Tribe pTribe) {
@@ -56,7 +55,7 @@ public class SingleAttackerStat {
         sentUnits = new TroopAmountFixed(0);
         killedUnits = new TroopAmountFixed(0);
         lostUnits = new TroopAmountFixed(0);
-        destroyedBuildingLevels = new Hashtable<>();
+        destroyedBuildingLevels = new HashMap<>();
         silentKills = new TroopAmountFixed(0);
     }
 
@@ -215,7 +214,7 @@ public class SingleAttackerStat {
         }
     }
 
-    public Hashtable<Integer, Integer> getDestroyedBuildings() {
+    public HashMap<Integer, Integer> getDestroyedBuildings() {
         return destroyedBuildingLevels;
     }
 
@@ -223,10 +222,10 @@ public class SingleAttackerStat {
         if (destroyedBuildingLevels == null || destroyedBuildingLevels.isEmpty()) {
             return 0;
         }
-        Enumeration<Integer> keys = destroyedBuildingLevels.keys();
+        
         int value = 0;
-        while (keys.hasMoreElements()) {
-            value += destroyedBuildingLevels.get(keys.nextElement());
+        for(Integer destLevels: destroyedBuildingLevels.values()) {
+            value += destLevels;
         }
         return value;
     }

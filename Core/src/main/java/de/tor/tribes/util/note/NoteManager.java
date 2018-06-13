@@ -29,7 +29,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -298,8 +298,8 @@ public class NoteManager extends GenericManager<Note> {
         return noteList;
     }
 
-    public Hashtable<Village, List<Note>> getNotesMap() {
-        Hashtable<Village, List<Note>> noteMap = new Hashtable<>();
+    public HashMap<Village, List<Note>> getNotesMap() {
+        HashMap<Village, List<Note>> noteMap = new HashMap<>();
         for (ManageableType t : getAllElementsFromAllGroups()) {
             Note n = (Note) t;
             for (Integer id : n.getVillageIds()) {

@@ -24,10 +24,10 @@ import de.tor.tribes.util.xml.JDomUtils;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.Predicate;
 import org.apache.logging.log4j.LogManager;
@@ -41,7 +41,7 @@ import org.jdom2.Element;
 public class TargetInformation {
     
     private Village target = null;
-    private Hashtable<Village, List<TimedAttack>> timedAttacks = null;
+    private HashMap<Village, List<TimedAttack>> timedAttacks = null;
     private int iWallLevel = 20;
     private TroopAmountFixed troops = null;
     private int delta = 0;
@@ -54,7 +54,7 @@ public class TargetInformation {
     public TargetInformation(Village pTarget) {
         target = pTarget;
         troops = new TroopAmountFixed();
-        timedAttacks = new Hashtable<>();
+        timedAttacks = new HashMap<>();
     }
     
     public void updateAttackInfo() {
@@ -98,11 +98,8 @@ public class TargetInformation {
      * @return the attacks
      */
     public List<TimedAttack> getAttacks() {
-        Enumeration<Village> sourceKeys = timedAttacks.keys();
         List<TimedAttack> result = new LinkedList<>();
-        while (sourceKeys.hasMoreElements()) {
-            Village source = sourceKeys.nextElement();
-            List<TimedAttack> attacksFromSource = timedAttacks.get(source);
+        for(List<TimedAttack> attacksFromSource: timedAttacks.values()) {
             for (TimedAttack a : attacksFromSource) {
                 result.add(a);
             }
@@ -114,8 +111,9 @@ public class TargetInformation {
         return timedAttacks.size();
     }
     
-    public Enumeration<Village> getSources() {
-        return timedAttacks.keys();
+    //TODO find a better way for that
+    public Set<Village> getSources() {
+        return timedAttacks.keySet();
     }
     
     public int getAttackCountFromSource(Village pSource) {
@@ -193,10 +191,7 @@ public class TargetInformation {
     }
     
     public TimedAttack getFirstTimedAttack() {
-        Enumeration<Village> sources = timedAttacks.keys();
-        while (sources.hasMoreElements()) {
-            Village source = sources.nextElement();
-            List<TimedAttack> attsForSource = timedAttacks.get(source);
+        for(List<TimedAttack> attsForSource: timedAttacks.values()) {
             for (TimedAttack a : attsForSource) {
                 if (a.getlArriveTime() == first) {
                     return a;

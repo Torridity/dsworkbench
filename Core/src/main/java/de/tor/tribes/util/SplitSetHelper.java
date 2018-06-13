@@ -19,8 +19,7 @@ import de.tor.tribes.io.TroopAmountFixed;
 import de.tor.tribes.util.xml.JDomUtils;
 import java.io.File;
 import java.io.FileWriter;
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -35,7 +34,7 @@ public class SplitSetHelper {
 
     private static Logger logger = LogManager.getLogger("SplitHelper");
 
-    public static void loadSplitSets(Hashtable<String, TroopAmountFixed> pTarget) {
+    public static void loadSplitSets(HashMap<String, TroopAmountFixed> pTarget) {
         String profileDir = GlobalOptions.getSelectedProfile().getProfileDirectory();
         File filterFile = new File(profileDir + "/splits.xml");
         if (!filterFile.exists()) {
@@ -54,16 +53,14 @@ public class SplitSetHelper {
         }
     }
 
-    public static void saveSplitSets(Hashtable<String, TroopAmountFixed> pSource) {
+    public static void saveSplitSets(HashMap<String, TroopAmountFixed> pSource) {
         String profileDir = GlobalOptions.getSelectedProfile().getProfileDirectory();
         File filterFile = new File(profileDir + "/splits.xml");
         
         StringBuilder b = new StringBuilder();
-        Enumeration<String> setKeys = pSource.keys();
-        
         b.append("<data><splits>\n");
-        while (setKeys.hasMoreElements()) {
-            String key = setKeys.nextElement();
+        
+        for(String key: pSource.keySet()) {
             b.append("<split name=\"");
             b.append(key).append("\" ");
             b.append(pSource.get(key).toXml());

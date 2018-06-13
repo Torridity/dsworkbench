@@ -25,7 +25,6 @@ import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.xml.JDomUtils;
 import java.io.File;
 import java.io.FileWriter;
-import java.util.Enumeration;
 import java.util.List;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.Predicate;
@@ -166,11 +165,7 @@ public class SOSManager extends GenericManager<SOSRequest> {
     int cnt = 0;
     for (ManageableType t : getAllElements()) {
       SOSRequest r = (SOSRequest) t;
-      Enumeration<Village> targets = r.getTargets();
-      while (targets.hasMoreElements()) {
-        targets.nextElement();
-        cnt++;
-      }
+      cnt+= r.getTargets().size();
     }
     return cnt;
   }
@@ -178,9 +173,8 @@ public class SOSManager extends GenericManager<SOSRequest> {
   public boolean hasTransferredSupports() {
     for (ManageableType t : getAllElements()) {
       SOSRequest r = (SOSRequest) t;
-      Enumeration<Village> targets = r.getTargets();
-      while (targets.hasMoreElements()) {
-        DefenseInformation info = r.getDefenseInformation(targets.nextElement());
+      for(Village target: r.getTargets()) {
+        DefenseInformation info = r.getDefenseInformation(target);
         for (Defense d : info.getSupports()) {
           if (d.isTransferredToBrowser()) {
             return true;

@@ -20,8 +20,7 @@ import de.tor.tribes.types.DefenseInformation;
 import de.tor.tribes.types.ext.Village;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -40,18 +39,15 @@ public class DefenseBruteForce {
     }
 
     public void calculateDefenses(
-            Hashtable<Village, Integer> pDefenseSources,
+            HashMap<Village, Integer> pDefenseSources,
             DefenseInformation[] pDefenseRequirements,
             UnitHolder pUnit,
             DefenseCalculator pParent) {
 
-        Enumeration<Village> sourceKeys = pDefenseSources.keys();
-
         List<DefenseInformation> defenses = Arrays.asList(pDefenseRequirements);
 
         logger.debug("Assigning defenses");
-        while (sourceKeys.hasMoreElements()) {
-            Village source = sourceKeys.nextElement();
+        for(Village source: pDefenseSources.keySet()) {
             pParent.logMessage("Suche mögliche Ziele für Dorf " + source);
             int availableSupports = pDefenseSources.get(source);
             //do good old brute force shuffle

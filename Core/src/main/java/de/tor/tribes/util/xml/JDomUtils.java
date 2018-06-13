@@ -16,6 +16,7 @@
 package de.tor.tribes.util.xml;
 
 import java.io.File;
+import java.io.InputStream;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +24,10 @@ import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.input.SAXBuilder;
 
+/**
+ *
+ * @author extremeCrazyCoder
+ */
 public class JDomUtils {
     /** Get a JDOM document from a String representation.
      * @param pDocument a String containing an XML Document
@@ -34,6 +39,10 @@ public class JDomUtils {
 
     public static Document getDocument(File xmlFile) throws Exception {
         return new SAXBuilder().build(xmlFile);
+    }
+
+    public static Document getDocument(InputStream inStream) throws Exception {
+        return new SAXBuilder().build(inStream);
     }
     
     public static List getNodes(Document document, String xPath) {

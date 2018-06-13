@@ -24,8 +24,7 @@ import de.tor.tribes.types.ext.Village;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
@@ -76,7 +75,7 @@ public class VillageUtils {
             return new Village[0];
         }
         List<Village> villages = new ArrayList<>();
-        Hashtable<Village, Integer> usageCount = new Hashtable<>();
+        HashMap<Village, Integer> usageCount = new HashMap<>();
         for (Tag tag : pTags) {
             for (Integer id : tag.getVillageIDs()) {
                 Village v = DataHolder.getSingleton().getVillagesById().get(id);
@@ -92,13 +91,10 @@ public class VillageUtils {
         }
         if (pRelation.equals(RELATION.AND)) {
             //remove villages that are tagges by less tags than tagCount
-            Enumeration<Village> keys = usageCount.keys();
             int tagAmount = pTags.length;
-            while (keys.hasMoreElements()) {
-                Village key = keys.nextElement();
-                Integer count = usageCount.get(key);
-                if (count == null || count != tagAmount) {
-                    villages.remove(key);
+            for(Entry<Village, Integer> entry: usageCount.entrySet()) {
+                if (entry.getValue() == null || entry.getValue() != tagAmount) {
+                    villages.remove(entry.getKey());
                 }
             }
         }

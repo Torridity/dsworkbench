@@ -44,14 +44,14 @@ public class DataHolder {
     private static final int ID_OFF = 0;
     private static final int ID_DEF = 1;
     private Village[][] mVillages = null;
-    private Hashtable<Integer, Village> mVillagesTable = null;
-    private Hashtable<Integer, Ally> mAllies = null;
-    private Hashtable<Integer, Tribe> mTribes = null;
-    private Hashtable<String, Ally> mAlliesByName = null;
-    private Hashtable<String, Ally> mAlliesByTagName = null;
-    private Hashtable<String, Tribe> mTribesByName = null;
+    private HashMap<Integer, Village> mVillagesTable = null;
+    private HashMap<Integer, Ally> mAllies = null;
+    private HashMap<Integer, Tribe> mTribes = null;
+    private HashMap<String, Ally> mAlliesByName = null;
+    private HashMap<String, Ally> mAlliesByTagName = null;
+    private HashMap<String, Tribe> mTribesByName = null;
     private List<UnitHolder> mUnits = null;
-    private Hashtable<String, UnitHolder> mUnitsByName = null;
+    private HashMap<String, UnitHolder> mUnitsByName = null;
     private List<DataHolderListener> mListeners = null;
     private boolean bAborted = false;
     private static DataHolder SINGLETON = null;
@@ -83,13 +83,13 @@ public class DataHolder {
         removeTempData();
 
         mVillages = new Village[1000][1000];
-        mVillagesTable = new Hashtable<>();
-        mAllies = new Hashtable<>();
-        mTribes = new Hashtable<>();
-        mTribesByName = new Hashtable<>();
-        mAlliesByName = new Hashtable<>();
-        mAlliesByTagName = new Hashtable<>();
-        mUnitsByName = new Hashtable<>();
+        mVillagesTable = new HashMap<>();
+        mAllies = new HashMap<>();
+        mTribes = new HashMap<>();
+        mTribesByName = new HashMap<>();
+        mAlliesByName = new HashMap<>();
+        mAlliesByTagName = new HashMap<>();
+        mUnitsByName = new HashMap<>();
         mUnits = new LinkedList<>();
         DATA_VALID = false;
     }
@@ -586,16 +586,16 @@ public class DataHolder {
         return true;
     }
 
-    public Hashtable<Integer, Tribe> getTribesForServer(String pServer) {
+    public HashMap<Integer, Tribe> getTribesForServer(String pServer) {
         return getTribesForServer(pServer, null);
     }
 
-    private Hashtable<Integer, Tribe> getTribesForServer(String pServer, Hashtable<Integer, Tribe> pTribes) {
+    private HashMap<Integer, Tribe> getTribesForServer(String pServer, HashMap<Integer, Tribe> pTribes) {
         try {
             String dataDir = Constants.SERVER_DIR + "/" + pServer;
             BufferedReader r = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(dataDir + "/tribe.txt.gz"))));
             if (pTribes == null) {
-                pTribes = new Hashtable<>();
+                pTribes = new HashMap<>();
             }
             String line;
 
@@ -614,16 +614,16 @@ public class DataHolder {
         return pTribes;
     }
 
-    public Hashtable<Integer, Ally> getAlliesForServer(String pServer) {
+    public HashMap<Integer, Ally> getAlliesForServer(String pServer) {
         return getAlliesForServer(pServer, null);
     }
 
-    private Hashtable<Integer, Ally> getAlliesForServer(String pServer, Hashtable<Integer, Ally> pAllies) {
+    private HashMap<Integer, Ally> getAlliesForServer(String pServer, HashMap<Integer, Ally> pAllies) {
         try {
             String dataDir = Constants.SERVER_DIR + "/" + GlobalOptions.getSelectedServer();
             BufferedReader r = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(dataDir + "/ally.txt.gz"))));
             if (pAllies == null) {
-                pAllies = new Hashtable<>();
+                pAllies = new HashMap<>();
             }
             String line;
 
@@ -842,10 +842,8 @@ public class DataHolder {
         }
 
         logger.debug("Removing empty allies");
-        Enumeration<Integer> allyKeys = mAllies.keys();
         List<Ally> toRemove = new LinkedList<>();
-        while (allyKeys.hasMoreElements()) {
-            Ally a = mAllies.get(allyKeys.nextElement());
+        for(Ally a: mAllies.values()) {
             if (a.getTribes() == null || a.getTribes().length == 0) {
                 toRemove.add(a);
             }
@@ -857,10 +855,8 @@ public class DataHolder {
         }
 
         logger.debug("Updating tribes with no allies");
-        Enumeration<Integer> tribeKeys = mTribes.keys();
         NoAlly.getSingleton().reset();
-        while (tribeKeys.hasMoreElements()) {
-            Tribe t = mTribes.get(tribeKeys.nextElement());
+        for(Tribe t: mTribes.values()) {
             if (t.getAllyID() == 0) {
                 NoAlly.getSingleton().addTribe(t);
             }
@@ -1052,9 +1048,9 @@ public class DataHolder {
     }
 
     /**
-     * Get villages as a hashtable ordered by IDs
+     * Get villages as a HashMap ordered by IDs
      */
-    public synchronized Hashtable<Integer, Village> getVillagesById() {
+    public synchronized HashMap<Integer, Village> getVillagesById() {
         if (loading) {
             //block getting villages while loading to avoid nullpointer exceptions
             try {
@@ -1068,7 +1064,7 @@ public class DataHolder {
     /**
      * Get all allies
      */
-    public Hashtable<Integer, Ally> getAllies() {
+    public HashMap<Integer, Ally> getAllies() {
         return mAllies;
     }
 
@@ -1097,7 +1093,7 @@ public class DataHolder {
     /**
      * Get all tribes
      */
-    public Hashtable<Integer, Tribe> getTribes() {
+    public HashMap<Integer, Tribe> getTribes() {
         return mTribes;
     }
 

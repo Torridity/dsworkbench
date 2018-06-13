@@ -15,8 +15,7 @@
  */
 package de.tor.tribes.ui;
 
-//TODO re add
-//import de.tor.tribes.dssim.ui.DSWorkbenchSimulatorFrame;
+import de.tor.tribes.dssim.ui.DSWorkbenchSimulatorFrame;
 import de.tor.tribes.ui.panels.MapPanel;
 import de.tor.tribes.ui.panels.MinimapPanel;
 import de.tor.tribes.ui.views.*;
@@ -283,10 +282,9 @@ public class RibbonConfigurator {
                     public void run() {
                         try {
                             if (!GlobalOptions.isOfflineMode()) {
-                                //TODO re add
-/*DSWorkbenchSimulatorFrame.getSingleton().setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
+                                DSWorkbenchSimulatorFrame.getSingleton().setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
                                 DSWorkbenchSimulatorFrame.getSingleton().showIntegratedVersion(DSWorkbenchSettingsDialog.getSingleton().getWebProxy(), GlobalOptions.getSelectedServer());
-                                DSWorkbenchSimulatorFrame.getSingleton().requestFocus();*/
+                                DSWorkbenchSimulatorFrame.getSingleton().requestFocus();
                             } else {
                                 JOptionPaneHelper.showInformationBox(DSWorkbenchMainFrame.getSingleton(), "A*Star ist im Offline-Modus leider nicht verfügbar.", "Information");
                             }

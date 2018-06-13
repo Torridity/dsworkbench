@@ -52,8 +52,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.text.NumberFormat;
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import javax.imageio.ImageIO;
@@ -105,8 +104,8 @@ public class MinimapPanel extends javax.swing.JPanel implements GenericManagerLi
     private static final int ID_MINIMAP = 0;
     private static final int ID_ALLY_CHART = 1;
     private static final int ID_TRIBE_CHART = 2;
-    private Hashtable<Integer, Rectangle> minimapButtons = new Hashtable<>();
-    private Hashtable<Integer, BufferedImage> minimapIcons = new Hashtable<>();
+    private HashMap<Integer, Rectangle> minimapButtons = new HashMap<>();
+    private HashMap<Integer, BufferedImage> minimapIcons = new HashMap<>();
     private int iCurrentView = ID_MINIMAP;
     private BufferedImage mChartImage;
     private int lastHash = 0;
@@ -551,7 +550,7 @@ public class MinimapPanel extends javax.swing.JPanel implements GenericManagerLi
     }
 
     private void renderChartInfo() {
-        Hashtable<Object, Marker> marks = new Hashtable<>();
+        HashMap<Object, Marker> marks = new HashMap<>();
         DefaultPieDataset dataset = buildDataset(marks);
 
         JFreeChart chart = ChartFactory.createPieChart(
@@ -567,15 +566,12 @@ public class MinimapPanel extends javax.swing.JPanel implements GenericManagerLi
         // plot.setBackgroundPaint(null);
         //  plot.setShadowPaint(null);
 
-        Enumeration<Object> markKeys = marks.keys();
-
-
-        while (markKeys.hasMoreElements()) {
+        for(Object o: marks.keySet()) {
             if (iCurrentView == ID_ALLY_CHART) {
-                Ally a = (Ally) markKeys.nextElement();
+                Ally a = (Ally) o;
                 plot.setSectionPaint(a.getTag(), marks.get(a).getMarkerColor());
             } else {
-                Tribe t = (Tribe) markKeys.nextElement();
+                Tribe t = (Tribe) o;
                 plot.setSectionPaint(t.getName(), marks.get(t).getMarkerColor());
             }
         }
@@ -619,25 +615,20 @@ public class MinimapPanel extends javax.swing.JPanel implements GenericManagerLi
         // g2d.drawImage(bi, 30, 30, null);
     }
 
-    private DefaultPieDataset buildDataset(Hashtable<Object, Marker> marks) {
+    private DefaultPieDataset buildDataset(HashMap<Object, Marker> marks) {
         DefaultPieDataset dataset = new DefaultPieDataset();
 
-
         if (iCurrentView == ID_ALLY_CHART) {
-            Hashtable<Ally, Integer> allyCount = MapPanel.getSingleton().getMapRenderer().getAllyCount();
+            HashMap<Ally, Integer> allyCount = MapPanel.getSingleton().getMapRenderer().getAllyCount();
             int overallVillages = 0;
-            Enumeration<Ally> keys = allyCount.keys();
+            
             //count all villages
-            while (keys.hasMoreElements()) {
-                overallVillages += allyCount.get(keys.nextElement());
+            for(Integer count: allyCount.values()) {
+                overallVillages += count;
             }
-            keys = allyCount.keys();
 
             double rest = 0;
-            // Hashtable<Ally, Marker> marks = new Hashtable<Ally, Marker>();
-
-            while (keys.hasMoreElements()) {
-                Ally a = keys.nextElement();
+            for(Ally a: allyCount.keySet()) {
                 Integer v = allyCount.get(a);
                 Double perc = (double) v / (double) overallVillages * 100;
 
@@ -656,23 +647,17 @@ public class MinimapPanel extends javax.swing.JPanel implements GenericManagerLi
 
             dataset.setValue("Sonstige", rest);
         } else {
-            Hashtable<Tribe, Integer> tribeCount = MapPanel.getSingleton().getMapRenderer().getTribeCount();
+            HashMap<Tribe, Integer> tribeCount = MapPanel.getSingleton().getMapRenderer().getTribeCount();
 
             int overallVillages = 0;
-            Enumeration<Tribe> keys = tribeCount.keys();
             //count all villages
 
-            while (keys.hasMoreElements()) {
-                overallVillages += tribeCount.get(keys.nextElement());
+            for(Integer trbCnt: tribeCount.values()) {
+                overallVillages += trbCnt;
             }
-            keys = tribeCount.keys();
 
             double rest = 0;
-            //  Hashtable<Tribe, Marker> marks = new Hashtable<Tribe, Marker>();
-
-            while (keys.hasMoreElements()) {
-                Tribe t = keys.nextElement();
-
+            for(Tribe t: tribeCount.keySet()) {
                 Integer v = tribeCount.get(t);
 
                 Double perc = (double) v / (double) overallVillages * 100;
@@ -1127,13 +1112,9 @@ class MinimapRepaintThread extends Thread {
                                     marker = MarkerManager.getSingleton().getMarker(v.getTribe().getAlly());
                                     if (marker != null && marker.isShownOnMap()) {
                                         markerColor = marker.getMarkerColor();
-                                    } else {
-                                        markerColor = DEFAULT;
                                     }
                                 } else {
-                                    if (!marker.isShownOnMap()) {
-                                        markerColor = DEFAULT;
-                                    } else {
+                                    if (marker.isShownOnMap()) {
                                         markerColor = marker.getMarkerColor();
                                     }
                                 }

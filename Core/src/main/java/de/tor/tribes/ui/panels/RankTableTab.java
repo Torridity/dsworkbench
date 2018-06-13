@@ -28,7 +28,6 @@ import de.tor.tribes.util.dsreal.DSRealManager;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -89,9 +88,7 @@ public class RankTableTab extends javax.swing.JPanel implements ListSelectionLis
             }
         };
 
-        Enumeration<Integer> tIDs = DataHolder.getSingleton().getTribes().keys();
-        while (tIDs.hasMoreElements()) {
-            Tribe next = DataHolder.getSingleton().getTribes().get(tIDs.nextElement());
+        for(Tribe next: DataHolder.getSingleton().getTribes().values()) {
             Ally nextAlly = NoAlly.getSingleton();
             if (next.getAlly() != null) {
                 nextAlly = next.getAlly();
@@ -128,9 +125,7 @@ public class RankTableTab extends javax.swing.JPanel implements ListSelectionLis
             }
         };
 
-        Enumeration<Integer> tIDs = DataHolder.getSingleton().getAllies().keys();
-        while (tIDs.hasMoreElements()) {
-            Ally next = DataHolder.getSingleton().getAllies().get(tIDs.nextElement());
+        for(Ally next: DataHolder.getSingleton().getAllies().values()) {
             double pointPerTribe = 0.0;
             int m = next.getMembers();
             if (m > 0) {
@@ -165,10 +160,7 @@ public class RankTableTab extends javax.swing.JPanel implements ListSelectionLis
             }
         };
 
-
-        Enumeration<Integer> tIDs = DataHolder.getSingleton().getTribes().keys();
-        while (tIDs.hasMoreElements()) {
-            Tribe next = DataHolder.getSingleton().getTribes().get(tIDs.nextElement());
+        for(Tribe next: DataHolder.getSingleton().getTribes().values()) {
             double p = next.getPoints();
             if (p > 0) {
                 double killsPerPointOff = 100 * next.getKillsAtt() / p;
@@ -210,10 +202,7 @@ public class RankTableTab extends javax.swing.JPanel implements ListSelectionLis
             }
         };
 
-
-        Enumeration<Integer> tIDs = DataHolder.getSingleton().getAllies().keys();
-        while (tIDs.hasMoreElements()) {
-            Ally next = DataHolder.getSingleton().getAllies().get(tIDs.nextElement());
+        for(Ally next: DataHolder.getSingleton().getAllies().values()) {
             double p = next.getAll_points();
             if (p > 0) {
                 long killsOff = 0;

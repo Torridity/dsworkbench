@@ -33,7 +33,7 @@ import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
 import java.io.*;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import org.apache.logging.log4j.LogManager;
@@ -49,7 +49,7 @@ public class FarmManager extends GenericManager<FarmInformation> {
 
   private static Logger logger = LogManager.getLogger("FarmManager");
   private static FarmManager SINGLETON = null;
-  private Hashtable<Village, FarmInformation> infoMap = null;
+  private HashMap<Village, FarmInformation> infoMap = null;
   private Village lastUpdatedFarm = null;
 
   public static synchronized FarmManager getSingleton() {
@@ -61,7 +61,7 @@ public class FarmManager extends GenericManager<FarmInformation> {
 
   FarmManager() {
     super(false);
-    infoMap = new Hashtable<>();
+    infoMap = new HashMap<>();
   }
 
   public FarmInformation addFarm(Village pVillage) {

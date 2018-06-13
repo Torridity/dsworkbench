@@ -47,8 +47,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.util.Collections;
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -365,7 +364,7 @@ public class DefenseSourcePanel extends WizardPage {
 
     private void addVillages(Village[] pVillages) {
         DEPSourceTableModel model = getModel();
-        Hashtable<Village, Integer> supports = new Hashtable<>();
+        HashMap<Village, Integer> supports = new HashMap<>();
         for (Village village : pVillages) {
             supports.put(village, getSplits(village));
         }
@@ -403,12 +402,11 @@ public class DefenseSourcePanel extends WizardPage {
         return split.getSplitCount();
     }
 
-    private void cleanSplits(Hashtable<Village, Integer> pSplits) {
+    private void cleanSplits(HashMap<Village, Integer> pSplits) {
         for (ManageableType t : SOSManager.getSingleton().getAllElements()) {
             SOSRequest r = (SOSRequest) t;
-            Enumeration<Village> targets = r.getTargets();
-            while (targets.hasMoreElements()) {
-                DefenseInformation info = r.getDefenseInformation(targets.nextElement());
+            for(Village target: r.getTargets()) {
+                DefenseInformation info = r.getDefenseInformation(target);
                 for (Defense d : info.getSupports()) {
                     Integer split = pSplits.get(d.getSupporter());
                     if (split != null && split != 0) {

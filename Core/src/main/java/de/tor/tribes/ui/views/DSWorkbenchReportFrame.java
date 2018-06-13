@@ -49,6 +49,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.configuration2.Configuration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -1057,7 +1058,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
 
         StringBuilder allyBuffer = new StringBuilder();
         StringBuilder tribeBuffer = new StringBuilder();
-        Hashtable<Ally, AllyStatResult> allyResults = new Hashtable<>();
+        HashMap<Ally, AllyStatResult> allyResults = new HashMap<>();
         OverallStatResult overallResult = new OverallStatResult();
         for (Object o : selection) {
             Ally a = (Ally) o;
@@ -1078,9 +1079,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         overallResult.setDefenders(overallDefTribes);
         overallResult.setDefenderAllies(overallDefAllies);
 
-        Enumeration<Ally> keys = allyResults.keys();
-        while (keys.hasMoreElements()) {
-            Ally a = keys.nextElement();
+        for(Ally a: allyResults.keySet()) {
             AllyStatResult res = allyResults.get(a);
             res.setAlly(a);
             res.setOverallKills(overallResult.getKills());
@@ -1105,11 +1104,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         }
         try {
             List<AllyStatResult> list = new LinkedList<>();
-            Enumeration<Ally> allyKeys = allyResults.keys();
-            while (allyKeys.hasMoreElements()) {
-                Ally a = allyKeys.nextElement();
-                list.add(allyResults.get(a));
-            }
+            CollectionUtils.addAll(list, allyResults.values());
             allyResultCodes = new AllyReportStatsFormatter().formatElements(list, true);
             jAllyStatsArea.setText("<html><head>" + BBCodeFormatter.getStyles() + "</head><body>" + BBCodeFormatter.toHtml(allyResultCodes) + "</body></html>");
         } catch (Exception e) {
@@ -1120,9 +1115,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
 
         try {
             List<TribeStatResult> list = new LinkedList<>();
-            Enumeration<Ally> allyKeys = allyResults.keys();
-            while (allyKeys.hasMoreElements()) {
-                AllyStatResult allyStat = allyResults.get(allyKeys.nextElement());
+            for(AllyStatResult allyStat: allyResults.values()) {
                 Collections.addAll(list, allyStat.getTribeStats().toArray(new TribeStatResult[allyStat.getTribeStats().size()]));
             }
             tribeResultCodes = new TribeReportStatsFormatter().formatElements(list, true);

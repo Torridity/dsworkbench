@@ -33,9 +33,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 import org.jdom2.Element;
 
 /**
@@ -47,8 +47,8 @@ public class SOSRequest extends ManageableType implements BBSupport {
     private final String[] VARIABLES = new String[]{"%SOS_ICON%", "%TARGET%", "%ATTACKS%", "%DEFENDERS%", "%WALL_INFO%", "%WALL_LEVEL%", "%FIRST_ATTACK%", "%LAST_ATTACK%", "%SOURCE_LIST%", "%SOURCE_DATE_TYPE_LIST%", "%ATTACK_LIST%", "%SOURCE_DATE_LIST%", "%SOURCE_TYPE_LIST%", "%SUMMARY%"};
     private final static String STANDARD_TEMPLATE = "[quote]%SOS_ICON% %TARGET% (%ATTACKS%)\n[quote]%DEFENDERS%\n%WALL_INFO%[/quote]\n\n%FIRST_ATTACK%\n%SOURCE_DATE_LIST%\n%LAST_ATTACK%\n\n%SUMMARY%[/quote]";
     private Tribe mDefender = null;
-    private Hashtable<Village, TargetInformation> targetInformations = null;
-    private Hashtable<Village, DefenseInformation> defenseInformations = null;
+    private HashMap<Village, TargetInformation> targetInformations = null;
+    private HashMap<Village, DefenseInformation> defenseInformations = null;
 
     @Override
     public String[] getBBVariables() {
@@ -198,7 +198,7 @@ public class SOSRequest extends ManageableType implements BBSupport {
 
     @Override
     public String[] getReplacements(boolean pExtended) {
-        return getReplacementsForTarget(targetInformations.keys().nextElement(), pExtended);
+        return getReplacementsForTarget((Village) targetInformations.keySet().toArray()[0], pExtended);
     }
 
     @Override
@@ -207,8 +207,8 @@ public class SOSRequest extends ManageableType implements BBSupport {
     }
 
     public SOSRequest() {
-        targetInformations = new Hashtable<>();
-        defenseInformations = new Hashtable<>();
+        targetInformations = new HashMap<>();
+        defenseInformations = new HashMap<>();
     }
 
     public SOSRequest(Tribe pDefender) {
@@ -245,9 +245,7 @@ public class SOSRequest extends ManageableType implements BBSupport {
     }
 
     public void resetDefenses() {
-        Enumeration<Village> targets = getTargets();
-        while (targets.hasMoreElements()) {
-            Village target = targets.nextElement();
+        for(Village target: getTargets()) {
             DefenseInformation info = getDefenseInformation(target);
             info.reset();
         }
@@ -267,8 +265,9 @@ public class SOSRequest extends ManageableType implements BBSupport {
         defenseInformations.remove(pTarget);
     }
 
-    public Enumeration<Village> getTargets() {
-        return targetInformations.keys();
+    //TODO find a new way for that
+    public Set<Village> getTargets() {
+        return targetInformations.keySet();
     }
 
     public String toBBCode() {
@@ -277,9 +276,7 @@ public class SOSRequest extends ManageableType implements BBSupport {
 
     public String toBBCode(boolean pDetailed) {
         StringBuilder buffer = new StringBuilder();
-        Enumeration<Village> targets = getTargets();
-        while (targets.hasMoreElements()) {
-            Village target = targets.nextElement();
+        for(Village target: getTargets()) {
             TargetInformation targetInfo = getTargetInformation(target);
             buffer.append(SOSFormater.format(target, targetInfo, pDetailed));
             buffer.append("\n\n");
@@ -302,9 +299,7 @@ public class SOSRequest extends ManageableType implements BBSupport {
             throw new IllegalArgumentException("Cannot merge with unequal defender");
         }
 
-        Enumeration<Village> otherTargets = pOther.getTargets();
-        while (otherTargets.hasMoreElements()) {
-            Village otherTarget = otherTargets.nextElement();
+        for(Village otherTarget: pOther.getTargets()) {
             TargetInformation otherInfo = pOther.getTargetInformation(otherTarget);
             TargetInformation thisInfo = addTarget(otherTarget);
             thisInfo.setDelta(0);
@@ -324,10 +319,7 @@ public class SOSRequest extends ManageableType implements BBSupport {
     @Override
     public String toString() {
         String result = "Verteidiger: " + mDefender + "\n";
-        Enumeration<Village> targets = getTargets();
-
-        while (targets.hasMoreElements()) {
-            Village target = targets.nextElement();
+        for(Village target: getTargets()) {
             result += " Ziel: " + target + "\n";
             result += getTargetInformation(target);
             //result += "\n";
@@ -357,9 +349,7 @@ public class SOSRequest extends ManageableType implements BBSupport {
             StringBuilder b = new StringBuilder();
             b.append("<").append(getElementIdentifier()).append(" defender=\"").append(mDefender.getId()).append("\">\n");
             b.append("<targetInformations>\n");
-            Enumeration<Village> targetKeys = getTargets();
-            while (targetKeys.hasMoreElements()) {
-                Village target = targetKeys.nextElement();
+            for(Village target: getTargets()) {
                 TargetInformation targetInfo = getTargetInformation(target);
                 if (targetInfo != null) {
                     b.append("<targetInformation target=\"").append(target.getId()).append("\">\n");
@@ -369,9 +359,7 @@ public class SOSRequest extends ManageableType implements BBSupport {
             }
             b.append("</targetInformations>\n");
             b.append("<defenseInformations>\n");
-            targetKeys = getTargets();
-            while (targetKeys.hasMoreElements()) {
-                Village target = targetKeys.nextElement();
+            for(Village target: getTargets()) {
                 DefenseInformation defense = getDefenseInformation(target);
                 if (defense != null) {
                     b.append("<defenseInformation target=\"").

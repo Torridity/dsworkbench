@@ -473,7 +473,7 @@ public class AttackSourcePanel extends WizardPage {
         TAPSourceTableModel model = getModel();
         List<Village> villages = new LinkedList<>();
         
-        Hashtable<Village, Integer> alreadyInList = new Hashtable<>();
+        HashMap<Village, Integer> alreadyInList = new HashMap<>();
         
         if (selection.length > 0) {
             for (int i : selection) {

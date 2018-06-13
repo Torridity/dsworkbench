@@ -26,7 +26,7 @@ import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -104,7 +104,7 @@ public class NoteLayerRenderer extends AbstractBufferedLayerRenderer {
         //iterate through entire row
         int cnt = 0;
         Village currentMouseVillage = MapPanel.getSingleton().getVillageAtMousePos();
-        Hashtable<Village, List<Note>> noteMap = NoteManager.getSingleton().getNotesMap();
+        HashMap<Village, List<Note>> noteMap = NoteManager.getSingleton().getNotesMap();
         for (int x = 0; x < pSettings.getVillagesInX(); x++) {
             //iterate from first row for 'pRows' times
             for (int y = firstRow; y < pSettings.getVillagesInY(); y++) {
@@ -123,7 +123,7 @@ public class NoteLayerRenderer extends AbstractBufferedLayerRenderer {
         renderNoteField(lastVillageToDraw, noteMap, lastVillageRow, lastVillageCol, pSettings.getFieldWidth(), pSettings.getFieldHeight(), pCopyPosition, g2d);
     }
 
-    private void renderNoteField(Village v, Hashtable<Village, List<Note>> pNoteMap, int row, int col, int pFieldWidth, int pFieldHeight, int pCopyPosition, Graphics2D g2d) {
+    private void renderNoteField(Village v, HashMap<Village, List<Note>> pNoteMap, int row, int col, int pFieldWidth, int pFieldHeight, int pCopyPosition, Graphics2D g2d) {
         if (v != null && v.isVisibleOnMap()) {
             List<Note> notes = pNoteMap.get(v);//NoteManager.getSingleton().getNotesForVillage(v);
             if (notes == null || notes.isEmpty()) {

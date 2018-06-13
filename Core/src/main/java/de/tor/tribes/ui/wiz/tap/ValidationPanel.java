@@ -33,11 +33,11 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import javax.swing.SwingUtilities;
 import javax.swing.table.AbstractTableModel;
 import org.apache.logging.log4j.LogManager;
@@ -347,8 +347,8 @@ public class ValidationPanel extends WizardPage implements SettingsChangedListen
         TAPAttackSourceElement[] sourceElements = AttackSourceFilterPanel.getSingleton().getFilteredElements();
         List<TAPAttackTargetElement> targetElements = AttackTargetPanel.getSingleton().getAllElements();
 
-        Hashtable<Village, Integer> validSources = new Hashtable<>();
-        Hashtable<Village, Integer> validTargets = new Hashtable<>();
+        HashMap<Village, Integer> validSources = new HashMap<>();
+        HashMap<Village, Integer> validTargets = new HashMap<>();
 
         TimeFrame f = TimeSettingsPanel.getSingleton().getTimeFrame();
         logger.debug("Got timeFrame" + f.toString());
@@ -383,24 +383,20 @@ public class ValidationPanel extends WizardPage implements SettingsChangedListen
 
         VillageUsageTableModel model = (VillageUsageTableModel) jXTable1.getModel();
         model.clear();
-        Enumeration<Village> sourceKeys = validSources.keys();
-        while (sourceKeys.hasMoreElements()) {
-            Village source = sourceKeys.nextElement();
-            float possibilities = 100f * (float) validSources.get(source) / (float) targetElements.size();
+        for(Entry<Village, Integer> entry: validSources.entrySet()) {
+            float possibilities = 100f * (float) entry.getValue() / (float) targetElements.size();
             possibilities = Math.min(possibilities, 100.0f);
-            sourceOverviewPanel.addVillage(source, ColorGradientHelper.getGradientColor(possibilities, Color.RED, Color.YELLOW));
-            model.addRow(source, possibilities / 100.0f);
+            sourceOverviewPanel.addVillage(entry.getKey(), ColorGradientHelper.getGradientColor(possibilities, Color.RED, Color.YELLOW));
+            model.addRow(entry.getKey(), possibilities / 100.0f);
         }
         model.fireTableDataChanged();
 
         model = (VillageUsageTableModel) jXTable2.getModel();
         model.clear();
-        Enumeration<Village> targetKeys = validTargets.keys();
-        while (targetKeys.hasMoreElements()) {
-            Village target = targetKeys.nextElement();
-            float possibilities = 100f * (float) validTargets.get(target) / (float) sourceElements.length;
-            targetOverviewPanel.addVillage(target, ColorGradientHelper.getGradientColor(possibilities, Color.RED, Color.YELLOW));
-            model.addRow(target, possibilities / 100.0f);
+        for(Entry<Village, Integer> entry: validTargets.entrySet()) {
+            float possibilities = 100f * (float) entry.getValue() / (float) sourceElements.length;
+            targetOverviewPanel.addVillage(entry.getKey(), ColorGradientHelper.getGradientColor(possibilities, Color.RED, Color.YELLOW));
+            model.addRow(entry.getKey(), possibilities / 100.0f);
         }
         model.fireTableDataChanged();
         sourceOverviewPanel.repaint();

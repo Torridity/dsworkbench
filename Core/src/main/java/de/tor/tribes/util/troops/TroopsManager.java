@@ -50,7 +50,7 @@ public class TroopsManager extends GenericManager<VillageTroopsHolder> {
     private static Logger logger = LogManager.getLogger("TroopsManager");
     private static TroopsManager SINGLETON = null;
     private HashMap<String, HashMap<Village, VillageTroopsHolder>> managedElementGroups = new HashMap<>();
-    //  private Hashtable<Village, VillageTroopsHolder> mTroops = null;
+    //  private HashMap<Village, VillageTroopsHolder> mTroops = null;
     private List<Image> mTroopMarkImages = new LinkedList<>();
 
     public static synchronized TroopsManager getSingleton() {

@@ -15,10 +15,6 @@
  */
 package de.tor.tribes.ui.views;
 
-import com.jidesoft.swing.JideTabbedPane;
-import com.jidesoft.swing.TabEditingEvent;
-import com.jidesoft.swing.TabEditingListener;
-import com.jidesoft.swing.TabEditingValidator;
 import de.tor.tribes.control.GenericManagerListener;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.panels.GenericTestPanel;
@@ -107,61 +103,6 @@ public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements 
             buildMenu();
         }
         capabilityInfoPanel1.addActionListener(this);
-        jMarkerTabPane.setTabShape(JideTabbedPane.SHAPE_OFFICE2003);
-        jMarkerTabPane.setTabColorProvider(JideTabbedPane.ONENOTE_COLOR_PROVIDER);
-        jMarkerTabPane.setBoldActiveTab(true);
-        jMarkerTabPane.addTabEditingListener(new TabEditingListener() {
-
-            @Override
-            public void editingStarted(TabEditingEvent tee) {
-            }
-
-            @Override
-            public void editingStopped(TabEditingEvent tee) {
-                MarkerManager.getSingleton().renameGroup(tee.getOldTitle(), tee.getNewTitle());
-            }
-
-            @Override
-            public void editingCanceled(TabEditingEvent tee) {
-            }
-        });
-        jMarkerTabPane.setTabEditingValidator(new TabEditingValidator() {
-
-            @Override
-            public boolean alertIfInvalid(int tabIndex, String tabText) {
-                if (tabText.trim().length() == 0) {
-                    JOptionPaneHelper.showWarningBox(jMarkerTabPane, "'" + tabText + "' ist ein ungültiger Name für ein Markierungsset", "Fehler");
-                    return false;
-                }
-
-                if (MarkerManager.getSingleton().groupExists(tabText)) {
-                    JOptionPaneHelper.showWarningBox(jMarkerTabPane, "Es existiert bereits ein Markierungsset mit dem Namen '" + tabText + "'", "Fehler");
-                    return false;
-                }
-                return true;
-            }
-
-            @Override
-            public boolean isValid(int tabIndex, String tabText) {
-                return tabText.trim().length() != 0 && !MarkerManager.getSingleton().groupExists(tabText);
-
-            }
-
-            @Override
-            public boolean shouldStartEdit(int tabIndex, MouseEvent event) {
-                return !(tabIndex == 0);
-            }
-        });
-        jMarkerTabPane.setCloseAction(new AbstractAction("closeAction") {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                MarkerTableTab tab = (MarkerTableTab) e.getSource();
-                if (JOptionPaneHelper.showQuestionConfirmBox(jMarkerTabPane, "Das Markierungsset '" + tab.getMarkerSet() + "' und alle darin enthaltenen Markierungen wirklich löschen? ", "Löschen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
-                    MarkerManager.getSingleton().removeGroup(tab.getMarkerSet());
-                }
-            }
-        });
 
         jMarkerTabPane.getModel().addChangeListener(new ChangeListener() {
 
@@ -292,7 +233,6 @@ public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements 
         LabelUIResource lr = new LabelUIResource();
         lr.setLayout(new BorderLayout());
         lr.add(jNewPlanPanel, BorderLayout.CENTER);
-        jMarkerTabPane.setTabLeadingComponent(lr);
         String[] plans = MarkerManager.getSingleton().getGroups();
 
         //insert default tab to first place
@@ -300,8 +240,6 @@ public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements 
             MarkerTableTab tab = new MarkerTableTab(plan, this);
             jMarkerTabPane.addTab(plan, tab);
         }
-
-        jMarkerTabPane.setTabClosableAt(0, false);
 
         jMarkerTabPane.setSelectedIndex(0);
         MarkerTableTab tab = getActiveTab();
@@ -321,7 +259,7 @@ public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements 
         java.awt.GridBagConstraints gridBagConstraints;
 
         jXMarkerPanel = new org.jdesktop.swingx.JXPanel();
-        jMarkerTabPane = new com.jidesoft.swing.JideTabbedPane();
+        jMarkerTabPane = new javax.swing.JTabbedPane();
         jNewPlanPanel = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         jMarkerFrameAlwaysOnTop = new javax.swing.JCheckBox();
@@ -329,12 +267,7 @@ public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements 
         capabilityInfoPanel1 = new de.tor.tribes.ui.components.CapabilityInfoPanel();
 
         jXMarkerPanel.setLayout(new java.awt.BorderLayout());
-
-        jMarkerTabPane.setScrollSelectedTabOnWheel(true);
-        jMarkerTabPane.setShowCloseButtonOnTab(true);
-        jMarkerTabPane.setShowGripper(true);
-        jMarkerTabPane.setTabEditingAllowed(true);
-        jXMarkerPanel.add(jMarkerTabPane, java.awt.BorderLayout.CENTER);
+        jXMarkerPanel.add(jMarkerTabPane, java.awt.BorderLayout.PAGE_START);
 
         jNewPlanPanel.setOpaque(false);
         jNewPlanPanel.setLayout(new java.awt.BorderLayout());
@@ -364,7 +297,6 @@ public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements 
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         jMarkerFrameAlwaysOnTop.setText("Immer im Vordergrund");
-        jMarkerFrameAlwaysOnTop.setOpaque(false);
         jMarkerFrameAlwaysOnTop.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 fireMarkerFrameOnTopEvent(evt);
@@ -464,7 +396,7 @@ private void fireCreateMarkerSetEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
     public void fireRenameGestureEvent() {
         int idx = jMarkerTabPane.getSelectedIndex();
         if (idx != 0) {
-            jMarkerTabPane.editTabAt(idx);
+            jMarkerTabPane.setSelectedIndex(idx);
         }
     }
 // </editor-fold>
@@ -472,7 +404,7 @@ private void fireCreateMarkerSetEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
     private de.tor.tribes.ui.components.CapabilityInfoPanel capabilityInfoPanel1;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JCheckBox jMarkerFrameAlwaysOnTop;
-    private com.jidesoft.swing.JideTabbedPane jMarkerTabPane;
+    private javax.swing.JTabbedPane jMarkerTabPane;
     private javax.swing.JPanel jMarkersPanel;
     private javax.swing.JPanel jNewPlanPanel;
     private org.jdesktop.swingx.JXPanel jXMarkerPanel;

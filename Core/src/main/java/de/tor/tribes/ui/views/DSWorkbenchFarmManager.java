@@ -29,6 +29,7 @@ import de.tor.tribes.ui.components.ClickAccountPanel;
 import de.tor.tribes.ui.components.CoordinateSpinner;
 import de.tor.tribes.ui.models.FarmTableModel;
 import de.tor.tribes.ui.panels.GenericTestPanel;
+import de.tor.tribes.ui.panels.TroopSelectionPanel;
 import de.tor.tribes.ui.panels.TroopSelectionPanelDynamic;
 import de.tor.tribes.ui.renderer.*;
 import de.tor.tribes.ui.windows.AbstractDSWorkbenchFrame;
@@ -195,15 +196,15 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
         }, "FarmC", farmC, JComponent.WHEN_IN_FOCUSED_WINDOW);
 
         aTroops = new TroopSelectionPanelDynamic();
-        aTroops.setupFarm(true);
+        aTroops.setupFarm(TroopSelectionPanel.alignType.GROUPED, -1);
         bTroops = new TroopSelectionPanelDynamic();
-        bTroops.setupFarm(true);
+        bTroops.setupFarm(TroopSelectionPanel.alignType.GROUPED, -1);
         kTroops = new TroopSelectionPanelDynamic();
-        kTroops.setupFarm(true);
+        kTroops.setupFarm(TroopSelectionPanel.alignType.GROUPED, -1);
         cTroops = new TroopSelectionPanelDynamic();
-        cTroops.setupFarm(true);
+        cTroops.setupFarm(TroopSelectionPanel.alignType.GROUPED, -1);
         rTroops = new TroopSelectionPanelDynamic();
-        rTroops.setupFarm(true);
+        rTroops.setupFarm(TroopSelectionPanel.alignType.GROUPED, -1);
         jATroopsPanel.add(aTroops, BorderLayout.CENTER);
         jBTroopsPanel.add(bTroops, BorderLayout.CENTER);
         jKTroopsPanel.add(kTroops, BorderLayout.CENTER);
@@ -2169,20 +2170,13 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
 
     @Override
     public void resetView() {
-        aTroops.setupFarm(true);
-        bTroops.setupFarm(true);
-        kTroops.setupFarm(true);
-        cTroops.setupFarm(true);
+        aTroops.setupFarm(TroopSelectionPanel.alignType.GROUPED, -1);
+        bTroops.setupFarm(TroopSelectionPanel.alignType.GROUPED, -1);
+        kTroops.setupFarm(TroopSelectionPanel.alignType.GROUPED, -1);
+        cTroops.setupFarm(TroopSelectionPanel.alignType.GROUPED, -1);
+        rTroops.setupFarm(TroopSelectionPanel.alignType.GROUPED, -1);
     }
-/*
- * private static int SelectedCataTarget = 6;
-    private static String SelectedFarmGroup = "Alle";
     
-    
-        
-    (non-Javadoc)
- * @see de.tor.tribes.ui.windows.AbstractDSWorkbenchFrame#storeCustomProperties(org.apache.commons.configuration2.Configuration)
- */
     @Override
     public void storeCustomProperties(Configuration pConfig) {
         pConfig.setProperty(getPropertyPrefix() + ".menu.visible", centerPanel.isMenuVisible());

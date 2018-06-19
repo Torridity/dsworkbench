@@ -15,7 +15,6 @@
  */
 package de.tor.tribes.ui.views;
 
-import com.jidesoft.swing.JideTabbedPane;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.panels.GenericTestPanel;
 import de.tor.tribes.ui.panels.RankTableTab;
@@ -106,9 +105,6 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame implements Ac
         centerPanel.setChildComponent(jXRankPanel);
         buildMenu();
         capabilityInfoPanel1.addActionListener(this);
-        jRankTabPane.setTabShape(JideTabbedPane.SHAPE_OFFICE2003);
-        jRankTabPane.setTabColorProvider(JideTabbedPane.ONENOTE_COLOR_PROVIDER);
-        jRankTabPane.setBoldActiveTab(true);
         jRankTabPane.getModel().addChangeListener(new ChangeListener() {
             
             @Override
@@ -265,7 +261,7 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame implements Ac
         java.awt.GridBagConstraints gridBagConstraints;
 
         jXRankPanel = new org.jdesktop.swingx.JXPanel();
-        jRankTabPane = new com.jidesoft.swing.JideTabbedPane();
+        jRankTabPane = new javax.swing.JTabbedPane();
         jxSearchPane = new org.jdesktop.swingx.JXPanel();
         jXPanel2 = new org.jdesktop.swingx.JXPanel();
         jButton12 = new javax.swing.JButton();
@@ -281,11 +277,7 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame implements Ac
         capabilityInfoPanel1 = new de.tor.tribes.ui.components.CapabilityInfoPanel();
 
         jXRankPanel.setLayout(new java.awt.BorderLayout());
-
-        jRankTabPane.setScrollSelectedTabOnWheel(true);
-        jRankTabPane.setShowGripper(true);
-        jRankTabPane.setTabEditingAllowed(true);
-        jXRankPanel.add(jRankTabPane, java.awt.BorderLayout.CENTER);
+        jXRankPanel.add(jRankTabPane, java.awt.BorderLayout.PAGE_START);
 
         jxSearchPane.setOpaque(false);
         jxSearchPane.setLayout(new java.awt.GridBagLayout());
@@ -309,7 +301,6 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame implements Ac
         jLabel21.setText("Suchbegriff");
 
         jFilterRows.setText("Nur gefilterte Zeilen anzeigen");
-        jFilterRows.setOpaque(false);
         jFilterRows.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 jFilterRowsfireUpdateFilterEvent(evt);
@@ -317,7 +308,6 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame implements Ac
         });
 
         jFilterCaseSensitive.setText("Groß-/Kleinschreibung beachten");
-        jFilterCaseSensitive.setOpaque(false);
         jFilterCaseSensitive.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 jFilterCaseSensitivefireUpdateFilterEvent(evt);
@@ -383,7 +373,6 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame implements Ac
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         jAlwaysOnTop.setText("Immer im Vordergrund");
-        jAlwaysOnTop.setOpaque(false);
         jAlwaysOnTop.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 fireRankFrameAlwaysOnTopEvent(evt);
@@ -468,7 +457,7 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame implements Ac
     private javax.swing.JLabel jLabel21;
     private javax.swing.JLabel jLabel22;
     private javax.swing.JPanel jRankPanel;
-    private com.jidesoft.swing.JideTabbedPane jRankTabPane;
+    private javax.swing.JTabbedPane jRankTabPane;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextField jTextField1;
     private org.jdesktop.swingx.JXList jXColumnList;

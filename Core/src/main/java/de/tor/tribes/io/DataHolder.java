@@ -926,7 +926,7 @@ public class DataHolder {
         logger.debug("Loading units");
         try {
             Document d = JDomUtils.getDocument(new File(unitFile));
-            List<Element> l = (List<Element>) JDomUtils.getNodes(d, "config");
+            List<Element> l = (List<Element>) JDomUtils.getNodes(d, null);
             for (Element e : l) {
                 try {
                     UnitHolder unit = new UnitHolder(e);
@@ -1178,15 +1178,13 @@ public class DataHolder {
     }
 
     private void fireDataHolderEvents(String pMessage) {
-        DataHolderListener[] listeners = mListeners.toArray(new DataHolderListener[]{});
-        for (DataHolderListener listener : listeners) {
+        for (DataHolderListener listener : mListeners) {
             listener.fireDataHolderEvent(pMessage);
         }
     }
 
     private void fireDataLoadedEvents(boolean pSuccess) {
-        DataHolderListener[] listeners = mListeners.toArray(new DataHolderListener[]{});
-        for (DataHolderListener listener : listeners) {
+        for (DataHolderListener listener : mListeners) {
             listener.fireDataLoadedEvent(pSuccess);
         }
     }

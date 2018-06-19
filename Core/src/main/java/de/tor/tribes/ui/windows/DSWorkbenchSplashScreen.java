@@ -521,8 +521,8 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
     // End of variables declaration                   
 
     @Override
-    public void fireDataHolderEvent(String pText) {
-        jStatusOutput.setString(pText);
+    public void fireDataHolderEvent(String eventMessage) {
+        jStatusOutput.setString(eventMessage);
     }
 
     public void updateStatus() {

@@ -6,15 +6,10 @@
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
       <SubComponents>
-        <Container class="com.jidesoft.swing.JideTabbedPane" name="jRankTabPane">
-          <Properties>
-            <Property name="scrollSelectedTabOnWheel" type="boolean" value="true"/>
-            <Property name="showGripper" type="boolean" value="true"/>
-            <Property name="tabEditingAllowed" type="boolean" value="true"/>
-          </Properties>
+        <Container class="javax.swing.JTabbedPane" name="jRankTabPane">
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
-              <BorderConstraints direction="Center"/>
+              <BorderConstraints direction="First"/>
             </Constraint>
           </Constraints>
 
@@ -121,7 +116,6 @@
             <Component class="javax.swing.JCheckBox" name="jFilterRows">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Nur gefilterte Zeilen anzeigen"/>
-                <Property name="opaque" type="boolean" value="false"/>
               </Properties>
               <Events>
                 <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="jFilterRowsfireUpdateFilterEvent"/>
@@ -130,7 +124,6 @@
             <Component class="javax.swing.JCheckBox" name="jFilterCaseSensitive">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Gro&#xdf;-/Kleinschreibung beachten"/>
-                <Property name="opaque" type="boolean" value="false"/>
               </Properties>
               <Events>
                 <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="jFilterCaseSensitivefireUpdateFilterEvent"/>
@@ -174,6 +167,7 @@
   </Properties>
   <SyntheticProperties>
     <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
+    <SyntheticProperty name="generateCenter" type="boolean" value="false"/>
   </SyntheticProperties>
   <AuxValues>
     <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
@@ -193,7 +187,6 @@
     <Component class="javax.swing.JCheckBox" name="jAlwaysOnTop">
       <Properties>
         <Property name="text" type="java.lang.String" value="Immer im Vordergrund"/>
-        <Property name="opaque" type="boolean" value="false"/>
       </Properties>
       <Events>
         <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="fireRankFrameAlwaysOnTopEvent"/>

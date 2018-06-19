@@ -15,10 +15,6 @@
  */
 package de.tor.tribes.ui.views;
 
-import com.jidesoft.swing.JideTabbedPane;
-import com.jidesoft.swing.TabEditingEvent;
-import com.jidesoft.swing.TabEditingListener;
-import com.jidesoft.swing.TabEditingValidator;
 import de.tor.tribes.control.GenericManagerListener;
 import de.tor.tribes.types.UserProfile;
 import de.tor.tribes.types.ext.Village;
@@ -144,61 +140,6 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         centerPanel.setChildComponent(jXAttackPanel);
         buildMenu();
         capabilityInfoPanel1.addActionListener(this);
-        jAttackTabPane.setCloseAction(new AbstractAction("closeAction") {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                AttackTableTab tab = (AttackTableTab) e.getSource();
-                if (JOptionPaneHelper.showQuestionConfirmBox(jAttackTabPane, "Befehlsplan '" + tab.getAttackPlan() + "' und alle darin enthaltenen Befehle wirklich löschen? ", "Löschen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
-                    AttackManager.getSingleton().removeGroup(tab.getAttackPlan());
-                }
-            }
-        });
-        jAttackTabPane.addTabEditingListener(new TabEditingListener() {
-
-            @Override
-            public void editingStarted(TabEditingEvent tee) {
-            }
-
-            @Override
-            public void editingStopped(TabEditingEvent tee) {
-                AttackManager.getSingleton().renameGroup(tee.getOldTitle(), tee.getNewTitle());
-            }
-
-            @Override
-            public void editingCanceled(TabEditingEvent tee) {
-            }
-        });
-        jAttackTabPane.setTabShape(JideTabbedPane.SHAPE_OFFICE2003);
-        jAttackTabPane.setTabColorProvider(JideTabbedPane.ONENOTE_COLOR_PROVIDER);
-        jAttackTabPane.setBoldActiveTab(true);
-        jAttackTabPane.setTabEditingValidator(new TabEditingValidator() {
-
-            @Override
-            public boolean alertIfInvalid(int tabIndex, String tabText) {
-                if (tabText.trim().length() == 0) {
-                    JOptionPaneHelper.showWarningBox(jAttackTabPane, "'" + tabText + "' ist ein ungültiger Planname", "Fehler");
-                    return false;
-                }
-
-                if (AttackManager.getSingleton().groupExists(tabText)) {
-                    JOptionPaneHelper.showWarningBox(jAttackTabPane, "Es existiert bereits ein Plan mit dem Namen '" + tabText + "'", "Fehler");
-                    return false;
-                }
-                return true;
-            }
-
-            @Override
-            public boolean isValid(int tabIndex, String tabText) {
-                return tabText.trim().length() != 0 && !AttackManager.getSingleton().groupExists(tabText);
-
-            }
-
-            @Override
-            public boolean shouldStartEdit(int tabIndex, MouseEvent event) {
-                return !(tabIndex == 0 || tabIndex == 1);
-            }
-        });
 
         new ColorUpdateThread().start();
         mCountdownThread = new CountdownThread();
@@ -520,7 +461,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         jXColumnList = new org.jdesktop.swingx.JXList();
         jLabel22 = new javax.swing.JLabel();
         jXAttackPanel = new org.jdesktop.swingx.JXPanel();
-        jAttackTabPane = new com.jidesoft.swing.JideTabbedPane();
+        jAttackTabPane = new javax.swing.JTabbedPane();
         jNewPlanPanel = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jAttackPanel = new javax.swing.JPanel();
@@ -549,7 +490,6 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         jLabel21.setText("Suchbegriff");
 
         jFilterRows.setText("Nur gefilterte Zeilen anzeigen");
-        jFilterRows.setOpaque(false);
         jFilterRows.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 fireUpdateFilterEvent(evt);
@@ -557,7 +497,6 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         });
 
         jFilterCaseSensitive.setText("Groß-/Kleinschreibung beachten");
-        jFilterCaseSensitive.setOpaque(false);
         jFilterCaseSensitive.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 fireUpdateFilterEvent(evt);
@@ -620,12 +559,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         jxSearchPane.add(jXPanel2, new java.awt.GridBagConstraints());
 
         jXAttackPanel.setLayout(new java.awt.BorderLayout());
-
-        jAttackTabPane.setScrollSelectedTabOnWheel(true);
-        jAttackTabPane.setShowCloseButtonOnTab(true);
-        jAttackTabPane.setShowGripper(true);
-        jAttackTabPane.setTabEditingAllowed(true);
-        jXAttackPanel.add(jAttackTabPane, java.awt.BorderLayout.CENTER);
+        jXAttackPanel.add(jAttackTabPane, java.awt.BorderLayout.PAGE_START);
 
         jNewPlanPanel.setOpaque(false);
         jNewPlanPanel.setLayout(new java.awt.BorderLayout());
@@ -666,7 +600,6 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         getContentPane().add(jAttackPanel, gridBagConstraints);
 
         jAttackFrameAlwaysOnTop.setText("Immer im Vordergrund");
-        jAttackFrameAlwaysOnTop.setOpaque(false);
         jAttackFrameAlwaysOnTop.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 fireAttackFrameAlwaysOnTopEvent(evt);
@@ -777,7 +710,6 @@ private void fireCreateAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
         LabelUIResource lr = new LabelUIResource();
         lr.setLayout(new BorderLayout());
         lr.add(jNewPlanPanel, BorderLayout.CENTER);
-        jAttackTabPane.setTabLeadingComponent(lr);
         String[] plans = AttackManager.getSingleton().getGroups();
 
         //insert default tab to first place
@@ -789,8 +721,6 @@ private void fireCreateAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
             cnt++;
         }
 
-        jAttackTabPane.setTabClosableAt(0, false);
-        jAttackTabPane.setTabClosableAt(1, false);
         jAttackTabPane.revalidate();
         AttackTableTab tab = getActiveTab();
         if (tab != null) {
@@ -901,7 +831,7 @@ private void fireCreateAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
     public void fireRenameGestureEvent() {
         int idx = jAttackTabPane.getSelectedIndex();
         if (idx != 0 && idx != 1) {
-            jAttackTabPane.editTabAt(idx);
+            jAttackTabPane.setSelectedIndex(idx);
         }
     }
 // </editor-fold>
@@ -909,7 +839,7 @@ private void fireCreateAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
     private de.tor.tribes.ui.components.CapabilityInfoPanel capabilityInfoPanel1;
     private javax.swing.JCheckBox jAttackFrameAlwaysOnTop;
     private javax.swing.JPanel jAttackPanel;
-    private com.jidesoft.swing.JideTabbedPane jAttackTabPane;
+    private javax.swing.JTabbedPane jAttackTabPane;
     private javax.swing.JButton jButton12;
     private javax.swing.JCheckBox jFilterCaseSensitive;
     private javax.swing.JCheckBox jFilterRows;

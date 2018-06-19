@@ -27,6 +27,7 @@ import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.editors.ColorChooserCellEditor;
 import de.tor.tribes.ui.panels.MapPanel;
 import de.tor.tribes.ui.panels.MinimapPanel;
+import de.tor.tribes.ui.panels.TroopSelectionPanel;
 import de.tor.tribes.ui.renderer.ColorCellRenderer;
 import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
 import de.tor.tribes.ui.renderer.map.MapRenderer;
@@ -57,7 +58,6 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
 
     private static Logger logger = LogManager.getLogger("SettingsDialog");
     private static DSWorkbenchSettingsDialog SINGLETON = null;
-    private boolean updating = false;
     private Proxy webProxy;
     private boolean INITIALIZED = false;
     private boolean isBlocked = false;
@@ -75,6 +75,11 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
      */
     DSWorkbenchSettingsDialog() {
         initComponents();
+        troopDensitySelection.setup(new String[]{"spear", "sword", "archer", "heavy"},
+                TroopSelectionPanel.alignType.VERTICAL, -1);
+        sosAttackerSelection.setupOffense(TroopSelectionPanel.alignType.VERTICAL, -1);
+        sosDefenderSelection.setupDefense(TroopSelectionPanel.alignType.VERTICAL, -1);
+
         GlobalOptions.addDataHolderListener(DSWorkbenchSettingsDialog.this);
 
         // <editor-fold defaultstate="collapsed" desc=" General Layout ">
@@ -190,41 +195,19 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
     }
 
     private void setDefense(TroopAmountFixed pDefense) {
-        jDefSpear.setText((pDefense.getAmountForUnit("spear") > 0) ? Integer.toString(pDefense.getAmountForUnit("spear")) : "500");
-        jDefSword.setText((pDefense.getAmountForUnit("sword") > 0) ? Integer.toString(pDefense.getAmountForUnit("sword")) : "500");
-        jDefArcher.setText((pDefense.getAmountForUnit("archer") > 0) ? Integer.toString(pDefense.getAmountForUnit("archer")) : "500");
-        jDefSpy.setText((pDefense.getAmountForUnit("spy") > 0) ? Integer.toString(pDefense.getAmountForUnit("spy")) : "50");
-        jDefHeavy.setText((pDefense.getAmountForUnit("heavy") > 0) ? Integer.toString(pDefense.getAmountForUnit("heavy")) : "0");
+        sosDefenderSelection.setAmounts(pDefense);
     }
 
     public TroopAmountFixed getDefense() {
-        TroopAmountFixed result = new TroopAmountFixed();
-        result.setAmountForUnit("spear", UIHelper.parseIntFromField(jDefSpear, 500));
-        result.setAmountForUnit("sword", UIHelper.parseIntFromField(jDefSword, 500));
-        result.setAmountForUnit("archer", UIHelper.parseIntFromField(jDefArcher, 500));
-        result.setAmountForUnit("spy", UIHelper.parseIntFromField(jDefSpy, 50));
-        result.setAmountForUnit("heavy", UIHelper.parseIntFromField(jDefHeavy, 0));
-        
-        return result;
+        return sosDefenderSelection.getAmounts();
     }
 
     private void setOffense(TroopAmountFixed pOffense) {
-        jOffAxe.setText((pOffense.getAmountForUnit("axe") > 0) ? Integer.toString(pOffense.getAmountForUnit("axe")) : "7000");
-        jOffLight.setText((pOffense.getAmountForUnit("light") > 0) ? Integer.toString(pOffense.getAmountForUnit("light")) : "3000");
-        jOffMarcher.setText((pOffense.getAmountForUnit("marcher") > 0) ? Integer.toString(pOffense.getAmountForUnit("marcher")) : "500");
-        jOffCata.setText((pOffense.getAmountForUnit("catapult") > 0) ? Integer.toString(pOffense.getAmountForUnit("catapult")) : "50");
-        jOffRam.setText((pOffense.getAmountForUnit("ram") > 0) ? Integer.toString(pOffense.getAmountForUnit("ram")) : "300");
+        sosAttackerSelection.setAmounts(pOffense);
     }
 
     public TroopAmountFixed getOffense() {
-        TroopAmountFixed result = new TroopAmountFixed();
-        result.setAmountForUnit("axe", UIHelper.parseIntFromField(jOffAxe, 7000));
-        result.setAmountForUnit("light", UIHelper.parseIntFromField(jOffLight, 3000));
-        result.setAmountForUnit("marcher", UIHelper.parseIntFromField(jOffMarcher, 500));
-        result.setAmountForUnit("catapult", UIHelper.parseIntFromField(jOffCata, 50));
-        result.setAmountForUnit("ram", UIHelper.parseIntFromField(jOffRam, 300));
-        
-        return result;
+        return sosAttackerSelection.getAmounts();
     }
 
     public Proxy getWebProxy() {
@@ -374,10 +357,9 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             }
 
             if (!result) {
-                //profile was probably removed. Get selected entry
-                UserProfile selection = null;
                 try {
-                    selection = (UserProfile) jProfileBox.getSelectedItem();
+                    //profile was probably removed. Get selected entry
+                    UserProfile selection = (UserProfile) jProfileBox.getSelectedItem();
                     if (selection != null) {
                         //set default user for server
                         GlobalOptions.addProperty("default.player", Long.toString(selection.getProfileId()));
@@ -405,10 +387,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jTroopDensitySelectionDialog = new javax.swing.JDialog();
         jDeffStrengthOKButton = new javax.swing.JButton();
         jButton12 = new javax.swing.JButton();
-        jSpearAmount = new com.jidesoft.swing.LabeledTextField();
-        jSwordAmount = new com.jidesoft.swing.LabeledTextField();
-        jArcherAmount = new com.jidesoft.swing.LabeledTextField();
-        jHeavyAmount = new com.jidesoft.swing.LabeledTextField();
+        troopDensitySelection = new de.tor.tribes.ui.panels.TroopSelectionPanelFixed();
         jSettingsTabbedPane = new javax.swing.JTabbedPane();
         jPlayerServerSettings = new javax.swing.JPanel();
         jPanel9 = new javax.swing.JPanel();
@@ -462,13 +441,8 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jExtendedAttackLineDrawing = new javax.swing.JCheckBox();
         jDefenseSettings = new javax.swing.JPanel();
         jSingleSupportPanel = new javax.swing.JPanel();
-        jDefSpear = new com.jidesoft.swing.LabeledTextField();
-        jDefSpy = new com.jidesoft.swing.LabeledTextField();
-        jDefSword = new com.jidesoft.swing.LabeledTextField();
-        jDefHeavy = new com.jidesoft.swing.LabeledTextField();
-        jDefArcher = new com.jidesoft.swing.LabeledTextField();
-        jXLabel2 = new org.jdesktop.swingx.JXLabel();
         jButton4 = new javax.swing.JButton();
+        sosDefenderSelection = new de.tor.tribes.ui.panels.TroopSelectionPanelFixed();
         jPanel15 = new javax.swing.JPanel();
         jLabel25 = new javax.swing.JLabel();
         jMaxSimRounds = new javax.swing.JTextField();
@@ -479,13 +453,8 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jTolerance = new javax.swing.JTextField();
         jLabel29 = new javax.swing.JLabel();
         jStandardAttackerPanel = new javax.swing.JPanel();
-        jOffAxe = new com.jidesoft.swing.LabeledTextField();
-        jOffLight = new com.jidesoft.swing.LabeledTextField();
-        jOffMarcher = new com.jidesoft.swing.LabeledTextField();
-        jOffCata = new com.jidesoft.swing.LabeledTextField();
-        jOffRam = new com.jidesoft.swing.LabeledTextField();
-        jXLabel1 = new org.jdesktop.swingx.JXLabel();
         jButton3 = new javax.swing.JButton();
+        sosAttackerSelection = new de.tor.tribes.ui.panels.TroopSelectionPanelFixed();
         jNetworkSettings = new javax.swing.JPanel();
         jPanel4 = new javax.swing.JPanel();
         jUseStandardBrowser = new javax.swing.JCheckBox();
@@ -578,58 +547,9 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHEAST;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jTroopDensitySelectionDialog.getContentPane().add(jButton12, gridBagConstraints);
-
-        jSpearAmount.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/spear.png"))); // NOI18N
-        jSpearAmount.setLabelText("");
-        jSpearAmount.setPreferredSize(new java.awt.Dimension(215, 24));
-        jSpearAmount.setText("8000");
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
         gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jTroopDensitySelectionDialog.getContentPane().add(jSpearAmount, gridBagConstraints);
-
-        jSwordAmount.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/sword.png"))); // NOI18N
-        jSwordAmount.setLabelText("");
-        jSwordAmount.setPreferredSize(new java.awt.Dimension(215, 24));
-        jSwordAmount.setText("7000");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jTroopDensitySelectionDialog.getContentPane().add(jSwordAmount, gridBagConstraints);
-
-        jArcherAmount.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/archer.png"))); // NOI18N
-        jArcherAmount.setLabelText("");
-        jArcherAmount.setPreferredSize(new java.awt.Dimension(215, 24));
-        jArcherAmount.setText("0");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jTroopDensitySelectionDialog.getContentPane().add(jArcherAmount, gridBagConstraints);
-
-        jHeavyAmount.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/heavy.png"))); // NOI18N
-        jHeavyAmount.setLabelText("");
-        jHeavyAmount.setPreferredSize(new java.awt.Dimension(215, 24));
-        jHeavyAmount.setText("1000");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 3;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jTroopDensitySelectionDialog.getContentPane().add(jHeavyAmount, gridBagConstraints);
+        jTroopDensitySelectionDialog.getContentPane().add(troopDensitySelection, gridBagConstraints);
 
         setTitle("Einstellungen");
         setModal(true);
@@ -740,7 +660,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             .addGroup(jPanel10Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jProfileBox, 0, 300, Short.MAX_VALUE)
+                    .addComponent(jProfileBox, 0, 264, Short.MAX_VALUE)
                     .addGroup(jPanel10Layout.createSequentialGroup()
                         .addComponent(jNewProfileButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -776,7 +696,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel11Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 591, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 552, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel11Layout.setVerticalGroup(
@@ -1012,14 +932,14 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             .addGroup(jMapSettingsLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jMapSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 208, Short.MAX_VALUE)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(36, 36, 36)
                 .addGroup(jMapSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 390, Short.MAX_VALUE)
-                    .addComponent(jDefaultMarkBox, 0, 390, Short.MAX_VALUE)
-                    .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, 390, Short.MAX_VALUE))
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 362, Short.MAX_VALUE)
+                    .addComponent(jDefaultMarkBox, 0, 362, Short.MAX_VALUE)
+                    .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, 362, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jMapSettingsLayout.setVerticalGroup(
@@ -1199,14 +1119,14 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             jAttackSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jAttackSettingsLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel12, javax.swing.GroupLayout.DEFAULT_SIZE, 634, Short.MAX_VALUE)
+                .addComponent(jPanel12, javax.swing.GroupLayout.DEFAULT_SIZE, 600, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jAttackSettingsLayout.setVerticalGroup(
             jAttackSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jAttackSettingsLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel12, javax.swing.GroupLayout.DEFAULT_SIZE, 482, Short.MAX_VALUE)
+                .addComponent(jPanel12, javax.swing.GroupLayout.DEFAULT_SIZE, 446, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -1219,70 +1139,6 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jSingleSupportPanel.setOpaque(false);
         jSingleSupportPanel.setLayout(new java.awt.GridBagLayout());
 
-        jDefSpear.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/spear.png"))); // NOI18N
-        jDefSpear.setText("500");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jSingleSupportPanel.add(jDefSpear, gridBagConstraints);
-
-        jDefSpy.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/spy.png"))); // NOI18N
-        jDefSpy.setText("50");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jSingleSupportPanel.add(jDefSpy, gridBagConstraints);
-
-        jDefSword.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/sword.png"))); // NOI18N
-        jDefSword.setText("500");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jSingleSupportPanel.add(jDefSword, gridBagConstraints);
-
-        jDefHeavy.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/heavy.png"))); // NOI18N
-        jDefHeavy.setText("0");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jSingleSupportPanel.add(jDefHeavy, gridBagConstraints);
-
-        jDefArcher.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/archer.png"))); // NOI18N
-        jDefArcher.setText("500");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jSingleSupportPanel.add(jDefArcher, gridBagConstraints);
-
-        jXLabel2.setForeground(new java.awt.Color(102, 102, 102));
-        jXLabel2.setText("Trage hier die Truppenstärke einer Einzelverteidigung ein. Beachte dabei, dass von diesen Einstellungen die Analyse von SOS-Anfragen abhängt. Änderst du die Einstellungen, musst du alle Verteidigungen manuell erneut analysieren und berechnen.");
-        jXLabel2.setFont(new java.awt.Font("Tahoma", 0, 9)); // NOI18N
-        jXLabel2.setLineWrap(true);
-        jXLabel2.setPreferredSize(new java.awt.Dimension(400, 40));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.gridwidth = 3;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTH;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jSingleSupportPanel.add(jXLabel2, gridBagConstraints);
-
         jButton4.setText("Übernehmen");
         jButton4.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseReleased(java.awt.event.MouseEvent evt) {
@@ -1290,15 +1146,21 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jSingleSupportPanel.add(jButton4, gridBagConstraints);
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jSingleSupportPanel.add(jButton4, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        jSingleSupportPanel.add(sosDefenderSelection, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.0;
@@ -1387,6 +1249,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.0;
@@ -1398,71 +1261,6 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jStandardAttackerPanel.setOpaque(false);
         jStandardAttackerPanel.setLayout(new java.awt.GridBagLayout());
 
-        jOffAxe.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/axe.png"))); // NOI18N
-        jOffAxe.setText("7000");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jStandardAttackerPanel.add(jOffAxe, gridBagConstraints);
-
-        jOffLight.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/light.png"))); // NOI18N
-        jOffLight.setText("3000");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jStandardAttackerPanel.add(jOffLight, gridBagConstraints);
-
-        jOffMarcher.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/marcher.png"))); // NOI18N
-        jOffMarcher.setText("500");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jStandardAttackerPanel.add(jOffMarcher, gridBagConstraints);
-
-        jOffCata.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/catapult.png"))); // NOI18N
-        jOffCata.setText("50");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jStandardAttackerPanel.add(jOffCata, gridBagConstraints);
-
-        jOffRam.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/ram.png"))); // NOI18N
-        jOffRam.setText("300");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jStandardAttackerPanel.add(jOffRam, gridBagConstraints);
-
-        jXLabel1.setForeground(new java.awt.Color(102, 102, 102));
-        jXLabel1.setText("Die hier eingestellten Truppen sollten in der Regel beibehalten werden, da sie eine recht aussagekräftige Off darstellen. Minimale Änderungen beeinflussen das Ergebnis bei der Verteidigungsplanung ohnehin nur unwesentlich.");
-        jXLabel1.setFont(new java.awt.Font("Tahoma", 0, 9)); // NOI18N
-        jXLabel1.setLineWrap(true);
-        jXLabel1.setPreferredSize(new java.awt.Dimension(300, 40));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.gridwidth = 3;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTH;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jStandardAttackerPanel.add(jXLabel1, gridBagConstraints);
-
         jButton3.setText("Übernehmen");
         jButton3.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseReleased(java.awt.event.MouseEvent evt) {
@@ -1470,11 +1268,17 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jStandardAttackerPanel.add(jButton3, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        jStandardAttackerPanel.add(sosAttackerSelection, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -1764,8 +1568,8 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             .addGroup(jNetworkSettingsLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jNetworkSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 634, Short.MAX_VALUE)
-                    .addComponent(jPanel8, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 634, Short.MAX_VALUE))
+                    .addComponent(jPanel4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 588, Short.MAX_VALUE)
+                    .addComponent(jPanel8, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 588, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jNetworkSettingsLayout.setVerticalGroup(
@@ -1774,7 +1578,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 .addContainerGap()
                 .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, 233, Short.MAX_VALUE)
+                .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -1958,7 +1762,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             jTemplateSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jTemplateSettingsLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, 634, Short.MAX_VALUE)
+                .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, 588, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jTemplateSettingsLayout.setVerticalGroup(
@@ -1966,7 +1770,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             .addGroup(jTemplateSettingsLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(367, Short.MAX_VALUE))
+                .addContainerGap(321, Short.MAX_VALUE))
         );
 
         jSettingsTabbedPane.addTab("Templates", new javax.swing.ImageIcon(getClass().getResource("/res/ui/component.png")), jTemplateSettings); // NOI18N
@@ -2269,7 +2073,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 .addContainerGap()
                 .addGroup(jMiscSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jPanel13, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, 634, Short.MAX_VALUE))
+                    .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, 588, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jMiscSettingsLayout.setVerticalGroup(
@@ -2278,7 +2082,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 .addContainerGap()
                 .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jPanel13, javax.swing.GroupLayout.DEFAULT_SIZE, 218, Short.MAX_VALUE)
+                .addComponent(jPanel13, javax.swing.GroupLayout.DEFAULT_SIZE, 162, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -2596,22 +2400,8 @@ private void fireShowBarbarianChangedEvent(java.awt.event.ActionEvent evt) {//GE
 private void fireAcceptDeffStrengthEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireAcceptDeffStrengthEvent
     if (evt.getSource() == jDeffStrengthOKButton) {
         try {
-            double def = 0;
-            UnitHolder h = DataHolder.getSingleton().getUnitByPlainName("spear");
-            int spear = Integer.parseInt(jSpearAmount.getText());
-            def += h.getDefense() * spear;
-            int sword = Integer.parseInt(jSwordAmount.getText());
-            h = DataHolder.getSingleton().getUnitByPlainName("sword");
-            def += h.getDefense() * sword;
-            int archer = Integer.parseInt(jArcherAmount.getText());
-            h = DataHolder.getSingleton().getUnitByPlainName("archer");
-            if (h != null) {
-                def += h.getDefense() * archer;
-            }
-            int heavy = Integer.parseInt(jHeavyAmount.getText());
-            h = DataHolder.getSingleton().getUnitByPlainName("heavy");
-            def += h.getDefense() * heavy;
-            String result = Integer.toString((int) def);
+            TroopAmountFixed troops = troopDensitySelection.getAmounts();
+            String result = Integer.toString((int) troops.getDefValue());
             GlobalOptions.addProperty("max.density.troops", result);
             jMaxTroopDensity.setText(result);
         } catch (Exception e) {
@@ -2797,7 +2587,6 @@ private void fireDownloadLiveDataEvent(java.awt.event.ActionEvent evt) {//GEN-FI
     GlobalOptions.addProperty("default.server", selectedServer);
     GlobalOptions.saveProperties();
 
-    updating = true;
     jOKButton.setEnabled(false);
     jCancelButton.setEnabled(false);
     jDownloadLiveDataButton.setEnabled(false);
@@ -3065,9 +2854,9 @@ private void fireProfileActionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
     }
 
     @Override
-    public void fireDataHolderEvent(String pMessage) {
+    public void fireDataHolderEvent(String eventMessage) {
         SimpleDateFormat f = new SimpleDateFormat("HH:mm:ss");
-        jStatusArea.insert("(" + f.format(new Date(System.currentTimeMillis())) + ") " + pMessage + "\n", jStatusArea.getText().length());
+        jStatusArea.insert("(" + f.format(new Date(System.currentTimeMillis())) + ") " + eventMessage + "\n", jStatusArea.getText().length());
         UIHelper.applyCorrectViewPosition(jStatusArea, jScrollPane1);
     }
 
@@ -3128,8 +2917,6 @@ private void fireProfileActionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
             GlobalOptions.loadUserData();
         }
 
-        updating = false;
-
         jOKButton.setEnabled(true);
         if (!isBlocked) {
             setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
@@ -3143,7 +2930,6 @@ private void fireProfileActionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup connectionTypeGroup;
-    private com.jidesoft.swing.LabeledTextField jArcherAmount;
     private javax.swing.JTable jAttackColorTable;
     private javax.swing.JLabel jAttackMovementLabel;
     private javax.swing.JLabel jAttackMovementLabel2;
@@ -3160,11 +2946,6 @@ private void fireProfileActionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
     private javax.swing.JButton jCancelButton;
     private javax.swing.JCheckBox jCheckForUpdatesBox;
     private javax.swing.JCheckBox jClipboardSound;
-    private com.jidesoft.swing.LabeledTextField jDefArcher;
-    private com.jidesoft.swing.LabeledTextField jDefHeavy;
-    private com.jidesoft.swing.LabeledTextField jDefSpear;
-    private com.jidesoft.swing.LabeledTextField jDefSpy;
-    private com.jidesoft.swing.LabeledTextField jDefSword;
     private javax.swing.JComboBox jDefaultMarkBox;
     private javax.swing.JPanel jDefenseSettings;
     private javax.swing.JButton jDeffStrengthOKButton;
@@ -3178,7 +2959,6 @@ private void fireProfileActionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
     private javax.swing.JTextField jFooterPath;
     private javax.swing.JCheckBox jHalfSizeMainMenu;
     private javax.swing.JTextField jHeaderPath;
-    private com.jidesoft.swing.LabeledTextField jHeavyAmount;
     private javax.swing.JCheckBox jInformOnUpdates;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -3226,11 +3006,6 @@ private void fireProfileActionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
     private javax.swing.JComboBox jNotifyDurationBox;
     private javax.swing.JButton jOKButton;
     private javax.swing.JTextField jObstServer;
-    private com.jidesoft.swing.LabeledTextField jOffAxe;
-    private com.jidesoft.swing.LabeledTextField jOffCata;
-    private com.jidesoft.swing.LabeledTextField jOffLight;
-    private com.jidesoft.swing.LabeledTextField jOffMarcher;
-    private com.jidesoft.swing.LabeledTextField jOffRam;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel10;
     private javax.swing.JPanel jPanel11;
@@ -3277,18 +3052,17 @@ private void fireProfileActionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
     private javax.swing.JCheckBox jShowPopupRanks;
     private javax.swing.JCheckBox jShowSectorsBox;
     private javax.swing.JPanel jSingleSupportPanel;
-    private com.jidesoft.swing.LabeledTextField jSpearAmount;
     private javax.swing.JPanel jStandardAttackerPanel;
     private javax.swing.JTextArea jStatusArea;
-    private com.jidesoft.swing.LabeledTextField jSwordAmount;
     private javax.swing.JPanel jTemplateSettings;
     private javax.swing.JTextField jTolerance;
     private javax.swing.JDialog jTroopDensitySelectionDialog;
     private javax.swing.JCheckBox jUseStandardBrowser;
     private javax.swing.JComboBox jVillageSortTypeChooser;
-    private org.jdesktop.swingx.JXLabel jXLabel1;
-    private org.jdesktop.swingx.JXLabel jXLabel2;
     private org.jdesktop.swingx.JXLabel jXLabel3;
+    private de.tor.tribes.ui.panels.TroopSelectionPanelFixed sosAttackerSelection;
+    private de.tor.tribes.ui.panels.TroopSelectionPanelFixed sosDefenderSelection;
     private javax.swing.ButtonGroup tagMarkerGroup;
+    private de.tor.tribes.ui.panels.TroopSelectionPanelFixed troopDensitySelection;
     // End of variables declaration//GEN-END:variables
 }

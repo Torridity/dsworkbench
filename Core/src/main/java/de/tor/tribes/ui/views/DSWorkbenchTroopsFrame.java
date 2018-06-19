@@ -15,7 +15,6 @@
  */
 package de.tor.tribes.ui.views;
 
-import com.jidesoft.swing.JideTabbedPane;
 import de.tor.tribes.control.GenericManagerListener;
 import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;
@@ -72,7 +71,7 @@ import org.jdesktop.swingx.painter.MattePainter;
 public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements GenericManagerListener, ActionListener, DataHolderListener {
 
   @Override
-  public void fireDataHolderEvent(String pFile) {
+  public void fireDataHolderEvent(String eventMessage) {
   }
 
   @Override
@@ -133,9 +132,6 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
     centerPanel.setChildComponent(jXTroopsPanel);
     buildMenu();
     capabilityInfoPanel1.addActionListener(this);
-    jTroopsTabPane.setTabShape(JideTabbedPane.SHAPE_OFFICE2003);
-    jTroopsTabPane.setTabColorProvider(JideTabbedPane.ONENOTE_COLOR_PROVIDER);
-    jTroopsTabPane.setBoldActiveTab(true);
 
     jTroopsTabPane.getModel().addChangeListener(new ChangeListener() {
       @Override
@@ -391,7 +387,7 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
         java.awt.GridBagConstraints gridBagConstraints;
 
         jXTroopsPanel = new org.jdesktop.swingx.JXPanel();
-        jTroopsTabPane = new com.jidesoft.swing.JideTabbedPane();
+        jTroopsTabPane = new javax.swing.JTabbedPane();
         jxSearchPane = new org.jdesktop.swingx.JXPanel();
         jXPanel2 = new org.jdesktop.swingx.JXPanel();
         jButton12 = new javax.swing.JButton();
@@ -414,12 +410,7 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
         jXTroopsPanel.setMinimumSize(new java.awt.Dimension(700, 500));
         jXTroopsPanel.setPreferredSize(new java.awt.Dimension(700, 500));
         jXTroopsPanel.setLayout(new java.awt.BorderLayout());
-
-        jTroopsTabPane.setScrollSelectedTabOnWheel(true);
-        jTroopsTabPane.setShowGripper(true);
-        jTroopsTabPane.setShowIconsOnTab(false);
-        jTroopsTabPane.setTabEditingAllowed(true);
-        jXTroopsPanel.add(jTroopsTabPane, java.awt.BorderLayout.CENTER);
+        jXTroopsPanel.add(jTroopsTabPane, java.awt.BorderLayout.PAGE_START);
 
         jxSearchPane.setOpaque(false);
         jxSearchPane.setLayout(new java.awt.GridBagLayout());
@@ -455,7 +446,6 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
         jRelationType1.setToolTipText("Verknüpfung der gewählten Dorfgruppen (UND = Dorf muss in allen Gruppen sein, ODER = Dorf muss in mindestens einer Gruppe sein)");
         jRelationType1.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         jRelationType1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/logic_or.png"))); // NOI18N
-        jRelationType1.setOpaque(false);
         jRelationType1.setRolloverEnabled(false);
         jRelationType1.setSelectedIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/logic_and.png"))); // NOI18N
         jRelationType1.addItemListener(new java.awt.event.ItemListener() {
@@ -476,7 +466,7 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jXPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jRelationType1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 215, Short.MAX_VALUE)
-                    .addComponent(jFilterRows, javax.swing.GroupLayout.DEFAULT_SIZE, 215, Short.MAX_VALUE)
+                    .addComponent(jFilterRows, javax.swing.GroupLayout.PREFERRED_SIZE, 215, Short.MAX_VALUE)
                     .addComponent(jButton12))
                 .addContainerGap())
         );
@@ -583,7 +573,6 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         jTroopsInformationAlwaysOnTop.setText("Immer im Vordergrund");
-        jTroopsInformationAlwaysOnTop.setOpaque(false);
         jTroopsInformationAlwaysOnTop.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 fireTroopsFrameOnTopEvent(evt);
@@ -761,7 +750,7 @@ private void fireApplyTroopAddEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
     private javax.swing.JDialog jTroopsAddDialog;
     private javax.swing.JCheckBox jTroopsInformationAlwaysOnTop;
     private javax.swing.JPanel jTroopsPanel;
-    private com.jidesoft.swing.JideTabbedPane jTroopsTabPane;
+    private javax.swing.JTabbedPane jTroopsTabPane;
     private org.jdesktop.swingx.JXList jXGroupsList;
     private org.jdesktop.swingx.JXPanel jXPanel2;
     private org.jdesktop.swingx.JXPanel jXTroopsPanel;

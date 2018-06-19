@@ -15,10 +15,6 @@
  */
 package de.tor.tribes.ui.views;
 
-import com.jidesoft.swing.JideTabbedPane;
-import com.jidesoft.swing.TabEditingEvent;
-import com.jidesoft.swing.TabEditingListener;
-import com.jidesoft.swing.TabEditingValidator;
 import de.tor.tribes.control.GenericManagerListener;
 import de.tor.tribes.types.Note;
 import de.tor.tribes.types.ext.Village;
@@ -123,61 +119,6 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
         centerPanel.setChildComponent(jXNotePanel);
         buildMenu();
         capabilityInfoPanel1.addActionListener(this);
-        jNoteTabbedPane.setTabShape(JideTabbedPane.SHAPE_OFFICE2003);
-        jNoteTabbedPane.setTabColorProvider(JideTabbedPane.ONENOTE_COLOR_PROVIDER);
-        jNoteTabbedPane.setBoldActiveTab(true);
-        jNoteTabbedPane.addTabEditingListener(new TabEditingListener() {
-            
-            @Override
-            public void editingStarted(TabEditingEvent tee) {
-            }
-            
-            @Override
-            public void editingStopped(TabEditingEvent tee) {
-                NoteManager.getSingleton().renameGroup(tee.getOldTitle(), tee.getNewTitle());
-            }
-            
-            @Override
-            public void editingCanceled(TabEditingEvent tee) {
-            }
-        });
-        jNoteTabbedPane.setTabEditingValidator(new TabEditingValidator() {
-            
-            @Override
-            public boolean alertIfInvalid(int tabIndex, String tabText) {
-                if (tabText.trim().length() == 0) {
-                    JOptionPaneHelper.showWarningBox(jNoteTabbedPane, "'" + tabText + "' ist ein ungültiger Name für ein Notizset", "Fehler");
-                    return false;
-                }
-                
-                if (NoteManager.getSingleton().groupExists(tabText)) {
-                    JOptionPaneHelper.showWarningBox(jNoteTabbedPane, "Es existiert bereits ein Notizset mit dem Namen '" + tabText + "'", "Fehler");
-                    return false;
-                }
-                return true;
-            }
-            
-            @Override
-            public boolean isValid(int tabIndex, String tabText) {
-                return tabText.trim().length() != 0 && !NoteManager.getSingleton().groupExists(tabText);
-
-            }
-            
-            @Override
-            public boolean shouldStartEdit(int tabIndex, MouseEvent event) {
-                return !(tabIndex == 0);
-            }
-        });
-        jNoteTabbedPane.setCloseAction(new AbstractAction("closeAction") {
-            
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                NoteTableTab tab = (NoteTableTab) e.getSource();
-                if (JOptionPaneHelper.showQuestionConfirmBox(jNoteTabbedPane, "Das Notizset '" + tab.getNoteSet() + "' und alle darin enthaltenen Notizen wirklich löschen? ", "Löschen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
-                    NoteManager.getSingleton().removeGroup(tab.getNoteSet());
-                }
-            }
-        });
         
         jNoteTabbedPane.getModel().addChangeListener(new ChangeListener() {
             
@@ -327,7 +268,6 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
         LabelUIResource lr = new LabelUIResource();
         lr.setLayout(new BorderLayout());
         lr.add(jNewSetPanel, BorderLayout.CENTER);
-        jNoteTabbedPane.setTabLeadingComponent(lr);
         String[] plans = NoteManager.getSingleton().getGroups();
 
         //insert default tab to first place
@@ -337,7 +277,6 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
             jNoteTabbedPane.addTab(plan, tab);
             cnt++;
         }
-        jNoteTabbedPane.setTabClosableAt(0, false);
         jNoteTabbedPane.revalidate();
         jNoteTabbedPane.setSelectedIndex(0);
         NoteTableTab tab = getActiveTab();
@@ -391,7 +330,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
         java.awt.GridBagConstraints gridBagConstraints;
 
         jXNotePanel = new org.jdesktop.swingx.JXPanel();
-        jNoteTabbedPane = new com.jidesoft.swing.JideTabbedPane();
+        jNoteTabbedPane = new javax.swing.JTabbedPane();
         jNewSetPanel = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
         jxSearchPane = new org.jdesktop.swingx.JXPanel();
@@ -415,12 +354,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
 
         jXNotePanel.setPreferredSize(new java.awt.Dimension(500, 400));
         jXNotePanel.setLayout(new java.awt.BorderLayout());
-
-        jNoteTabbedPane.setShowCloseButton(true);
-        jNoteTabbedPane.setShowCloseButtonOnTab(true);
-        jNoteTabbedPane.setShowGripper(true);
-        jNoteTabbedPane.setTabEditingAllowed(true);
-        jXNotePanel.add(jNoteTabbedPane, java.awt.BorderLayout.CENTER);
+        jXNotePanel.add(jNoteTabbedPane, java.awt.BorderLayout.PAGE_START);
 
         jNewSetPanel.setOpaque(false);
         jNewSetPanel.setLayout(new java.awt.BorderLayout());
@@ -523,7 +457,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
 
         jScrollPane4.setBorder(javax.swing.BorderFactory.createTitledBorder("Vorschau"));
 
-        jTextPane1.setContentType("text/html");
+        jTextPane1.setContentType("text/html"); // NOI18N
         jTextPane1.setEditable(false);
         jScrollPane4.setViewportView(jTextPane1);
 
@@ -577,7 +511,6 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         jAlwaysOnTopBox.setText("Immer im Vordergrund");
-        jAlwaysOnTopBox.setOpaque(false);
         jAlwaysOnTopBox.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 fireAlwaysOnTopChangedEvent(evt);
@@ -718,7 +651,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jNewSetPanel;
-    private com.jidesoft.swing.JideTabbedPane jNoteTabbedPane;
+    private javax.swing.JTabbedPane jNoteTabbedPane;
     private javax.swing.JPanel jNotesPanel;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JTextField jTextField1;

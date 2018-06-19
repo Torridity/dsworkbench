@@ -15,13 +15,13 @@
  */
 package de.tor.tribes.ui.panels;
 
-import com.jidesoft.swing.LabeledTextField;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.TroopAmountFixed;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.StandardAttack;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.UIHelper;
+import javax.swing.JTextField;
 
 /**
  *
@@ -38,7 +38,7 @@ public class TroopSelectionPanelFixed extends TroopSelectionPanel<TroopAmountFix
     }
 
     private int getAmountForUnit(UnitHolder pUnit) {
-        LabeledTextField field = getFieldForUnit(pUnit);
+        JTextField field = getFieldForUnit(pUnit);
         if(field != null) {
             return UIHelper.parseIntFromField(field);
         }
@@ -54,7 +54,7 @@ public class TroopSelectionPanelFixed extends TroopSelectionPanel<TroopAmountFix
 
 
     public void setAmountForUnit(UnitHolder pUnit, int pValue) {
-        LabeledTextField field = getFieldForUnit(pUnit);
+        JTextField field = getFieldForUnit(pUnit);
         if (field != null) {
             field.setText(Integer.toString(pValue));
         }

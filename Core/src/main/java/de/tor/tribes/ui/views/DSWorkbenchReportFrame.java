@@ -15,10 +15,6 @@
  */
 package de.tor.tribes.ui.views;
 
-import com.jidesoft.swing.JideTabbedPane;
-import com.jidesoft.swing.TabEditingEvent;
-import com.jidesoft.swing.TabEditingListener;
-import com.jidesoft.swing.TabEditingValidator;
 import de.tor.tribes.control.GenericManagerListener;
 import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.types.*;
@@ -142,10 +138,6 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         centerPanel.setChildComponent(jXReportsPanel);
         buildMenu();
         capabilityInfoPanel1.addActionListener(this);
-
-        jReportsTabbedPane.setTabShape(JideTabbedPane.SHAPE_OFFICE2003);
-        jReportsTabbedPane.setTabColorProvider(JideTabbedPane.ONENOTE_COLOR_PROVIDER);
-        jReportsTabbedPane.setBoldActiveTab(true);
         KeyStroke bbCopy = KeyStroke.getKeyStroke(KeyEvent.VK_B, ActionEvent.CTRL_MASK, false);
 
         ActionListener resultListener = new ActionListener() {
@@ -158,59 +150,6 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
 
         capabilityInfoPanel2.addActionListener(resultListener);
         jResultTabbedPane.registerKeyboardAction(resultListener, "BBCopy", bbCopy, JComponent.WHEN_IN_FOCUSED_WINDOW);
-
-        jReportsTabbedPane.setCloseAction(new AbstractAction("closeAction") {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                ReportTableTab tab = (ReportTableTab) e.getSource();
-                if (JOptionPaneHelper.showQuestionConfirmBox(jReportsTabbedPane, "Berichtset '" + tab.getReportSet() + "' und alle darin enthaltenen Berichte wirklich löschen? ", "Löschen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
-                    ReportManager.getSingleton().removeGroup(tab.getReportSet());
-                }
-            }
-        });
-        jReportsTabbedPane.addTabEditingListener(new TabEditingListener() {
-
-            @Override
-            public void editingStarted(TabEditingEvent tee) {
-            }
-
-            @Override
-            public void editingStopped(TabEditingEvent tee) {
-                ReportManager.getSingleton().renameGroup(tee.getOldTitle(), tee.getNewTitle());
-            }
-
-            @Override
-            public void editingCanceled(TabEditingEvent tee) {
-            }
-        });
-        jReportsTabbedPane.setTabEditingValidator(new TabEditingValidator() {
-
-            @Override
-            public boolean alertIfInvalid(int tabIndex, String tabText) {
-                if (tabText.trim().length() == 0) {
-                    JOptionPaneHelper.showWarningBox(jReportsTabbedPane, "'" + tabText + "' ist ein ungültiger Setname", "Fehler");
-                    return false;
-                }
-
-                if (ReportManager.getSingleton().groupExists(tabText)) {
-                    JOptionPaneHelper.showWarningBox(jReportsTabbedPane, "Es existiert bereits ein Berichtset mit dem Namen '" + tabText + "'", "Fehler");
-                    return false;
-                }
-                return true;
-            }
-
-            @Override
-            public boolean isValid(int tabIndex, String tabText) {
-                return tabText.trim().length() != 0 && !ReportManager.getSingleton().groupExists(tabText);
-
-            }
-
-            @Override
-            public boolean shouldStartEdit(int tabIndex, MouseEvent event) {
-                return !(tabIndex == 0 || tabIndex == 1);
-            }
-        });
         jReportsTabbedPane.getModel().addChangeListener(new ChangeListener() {
 
             @Override
@@ -516,7 +455,6 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         LabelUIResource lr = new LabelUIResource();
         lr.setLayout(new BorderLayout());
         lr.add(jNewPlanPanel, BorderLayout.CENTER);
-        jReportsTabbedPane.setTabLeadingComponent(lr);
         String[] plans = ReportManager.getSingleton().getGroups();
 
         //insert default tab to first place
@@ -526,8 +464,6 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
             jReportsTabbedPane.addTab(plan, tab);
             cnt++;
         }
-        jReportsTabbedPane.setTabClosableAt(0, false);
-        jReportsTabbedPane.setTabClosableAt(1, false);
         jReportsTabbedPane.revalidate();
         ReportTableTab tab = getActiveTab();
         if (tab != null) {
@@ -580,7 +516,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         jTribeStatsArea = new javax.swing.JTextPane();
         capabilityInfoPanel2 = new de.tor.tribes.ui.components.CapabilityInfoPanel();
         jXReportsPanel = new org.jdesktop.swingx.JXPanel();
-        jReportsTabbedPane = new com.jidesoft.swing.JideTabbedPane();
+        jReportsTabbedPane = new javax.swing.JTabbedPane();
         jNewPlanPanel = new javax.swing.JPanel();
         jLabel10 = new javax.swing.JLabel();
         jxSearchPane = new org.jdesktop.swingx.JXPanel();
@@ -636,7 +572,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         jPanel4.setOpaque(false);
         jPanel4.setLayout(new java.awt.BorderLayout());
 
-        jOverallStatsArea.setContentType("text/html");
+        jOverallStatsArea.setContentType("text/html"); // NOI18N
         jOverallStatsArea.setEditable(false);
         jScrollPane1.setViewportView(jOverallStatsArea);
 
@@ -647,7 +583,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         jPanel5.setBackground(new java.awt.Color(239, 235, 223));
         jPanel5.setLayout(new java.awt.BorderLayout());
 
-        jAllyStatsArea.setContentType("text/html");
+        jAllyStatsArea.setContentType("text/html"); // NOI18N
         jAllyStatsArea.setEditable(false);
         jScrollPane5.setViewportView(jAllyStatsArea);
 
@@ -658,7 +594,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         jPanel6.setBackground(new java.awt.Color(239, 235, 223));
         jPanel6.setLayout(new java.awt.BorderLayout());
 
-        jTribeStatsArea.setContentType("text/html");
+        jTribeStatsArea.setContentType("text/html"); // NOI18N
         jTribeStatsArea.setEditable(false);
         jScrollPane6.setViewportView(jTribeStatsArea);
 
@@ -748,12 +684,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         );
 
         jXReportsPanel.setLayout(new java.awt.BorderLayout());
-
-        jReportsTabbedPane.setShowCloseButton(true);
-        jReportsTabbedPane.setShowCloseButtonOnTab(true);
-        jReportsTabbedPane.setShowGripper(true);
-        jReportsTabbedPane.setTabEditingAllowed(true);
-        jXReportsPanel.add(jReportsTabbedPane, java.awt.BorderLayout.CENTER);
+        jXReportsPanel.add(jReportsTabbedPane, java.awt.BorderLayout.PAGE_START);
 
         jNewPlanPanel.setOpaque(false);
         jNewPlanPanel.setLayout(new java.awt.BorderLayout());
@@ -873,7 +804,6 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
 
         jGuessUnknownLosses.setSelected(true);
         jGuessUnknownLosses.setText("Gegnerische Verluste schätzen, falls unbekannt");
-        jGuessUnknownLosses.setOpaque(false);
         jGuessUnknownLosses.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 fireStatOptionsChangedEvent(evt);
@@ -882,7 +812,6 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
 
         jUseSilentKillsBox.setSelected(true);
         jUseSilentKillsBox.setText("Auswärtige Einheiten bei Adelung als Verlust werten");
-        jUseSilentKillsBox.setOpaque(false);
         jUseSilentKillsBox.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 fireStatOptionsChangedEvent(evt);
@@ -891,7 +820,6 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
 
         jCheckBox3.setSelected(true);
         jCheckBox3.setText("Verluste pro Angreifer/Verteidiger anzeigen");
-        jCheckBox3.setOpaque(false);
         jCheckBox3.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 fireStatOptionsChangedEvent(evt);
@@ -899,7 +827,6 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         });
 
         jShowPercentsBox.setText("Prozentuale Anteile anzeigen");
-        jShowPercentsBox.setOpaque(false);
         jShowPercentsBox.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 fireStatOptionsChangedEvent(evt);
@@ -936,7 +863,6 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         jAlwaysOnTopBox.setText("Immer im Vordergrund");
-        jAlwaysOnTopBox.setOpaque(false);
         jAlwaysOnTopBox.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 fireAlwaysOnTopEvent(evt);
@@ -1213,7 +1139,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
     public void fireRenameGestureEvent() {
         int idx = jReportsTabbedPane.getSelectedIndex();
         if (idx != 0 && idx != 1) {
-            jReportsTabbedPane.editTabAt(idx);
+            jReportsTabbedPane.setSelectedIndex(idx);
         }
     }
     // </editor-fold>
@@ -1246,7 +1172,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
     private javax.swing.JPanel jPanel7;
     private javax.swing.JList jReportSetsForStatsList;
     private javax.swing.JPanel jReportsPanel;
-    private com.jidesoft.swing.JideTabbedPane jReportsTabbedPane;
+    private javax.swing.JTabbedPane jReportsTabbedPane;
     private javax.swing.JTabbedPane jResultTabbedPane;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;

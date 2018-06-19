@@ -25,13 +25,13 @@ import org.jdom2.Element;
 import org.jdom2.input.SAXBuilder;
 
 /**
- *
+ * Utility Class for easier reading / writing of jdom documents
+ * 
  * @author extremeCrazyCoder
  */
 public class JDomUtils {
-    /** Get a JDOM document from a String representation.
-     * @param pDocument a String containing an XML Document
-     * @return an org.jdom2.Document
+    /*
+     * Reading part
      */
     public static Document getDocument(String pDocument) throws Exception {
         return new SAXBuilder().build(new StringReader(pDocument));
@@ -85,6 +85,9 @@ public class JDomUtils {
     }
 
     private static List getList(Element pElement, String xPath) {
+        if(xPath == null) {
+            return pElement.getChildren();
+        }
         if(xPath.indexOf('/') != -1) {
             List<Element> result = new ArrayList<>();
             
@@ -97,6 +100,11 @@ public class JDomUtils {
         }
         return pElement.getChildren(xPath);
     }
+    
+    /*
+     * Writing part
+     */
+    //TODO Create this
 }
 
 

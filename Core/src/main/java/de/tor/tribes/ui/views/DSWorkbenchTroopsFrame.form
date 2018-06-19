@@ -14,16 +14,10 @@
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
       <SubComponents>
-        <Container class="com.jidesoft.swing.JideTabbedPane" name="jTroopsTabPane">
-          <Properties>
-            <Property name="scrollSelectedTabOnWheel" type="boolean" value="true"/>
-            <Property name="showGripper" type="boolean" value="true"/>
-            <Property name="showIconsOnTab" type="boolean" value="false"/>
-            <Property name="tabEditingAllowed" type="boolean" value="true"/>
-          </Properties>
+        <Container class="javax.swing.JTabbedPane" name="jTroopsTabPane">
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
-              <BorderConstraints direction="Center"/>
+              <BorderConstraints direction="First"/>
             </Constraint>
           </Constraints>
 

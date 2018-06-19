@@ -15,8 +15,6 @@
  */
 package de.tor.tribes.ui.wiz.red;
 
-import com.jidesoft.swing.JideBoxLayout;
-import com.jidesoft.swing.JideSplitPane;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.Resource;
 import de.tor.tribes.types.StorageStatus;
@@ -111,35 +109,21 @@ public class ResourceDistributorFinishPanel extends WizardPage {
             }
         });
 
-        JideSplitPane split1 = new JideSplitPane();
-        split1.setOrientation(JideSplitPane.HORIZONTAL_SPLIT);
-        split1.setProportionalLayout(true);
+        JSplitPane split1 = new JSplitPane();
+        jSplitPane1.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
         split1.setDividerSize(5);
-        split1.setShowGripper(true);
         split1.setOneTouchExpandable(true);
-        split1.setDividerStepSize(10);
-        split1.setInitiallyEven(true);
-        split1.add(jFinalDistributionPanel, JideBoxLayout.FLEXIBLE);
-        split1.add(jFinalStatusPanel, JideBoxLayout.VARY);
+        jSplitPane1.setDividerLocation(0.5);
+        split1.add(jFinalDistributionPanel, JSplitPane.LEFT);
+        split1.add(jFinalStatusPanel, JSplitPane.RIGHT);
 
-        jideSplitPane1.setOrientation(JideSplitPane.VERTICAL_SPLIT);
-        jideSplitPane1.setProportionalLayout(true);
-        jideSplitPane1.setDividerSize(5);
-        jideSplitPane1.setShowGripper(true);
-        jideSplitPane1.setOneTouchExpandable(true);
-        jideSplitPane1.setDividerStepSize(10);
-        jideSplitPane1.setInitiallyEven(true);
-        jideSplitPane1.add(split1, JideBoxLayout.FLEXIBLE);
-        jideSplitPane1.add(jTransportsPanel, JideBoxLayout.VARY);
-        jideSplitPane1.getDividerAt(0).addMouseListener(new MouseAdapter() {
+        jSplitPane1.setOrientation(JSplitPane.VERTICAL_SPLIT);
+        jSplitPane1.setDividerSize(5);
+        jSplitPane1.setOneTouchExpandable(true);
+        jSplitPane1.setDividerLocation(0.5);
+        jSplitPane1.add(split1, JSplitPane.LEFT);
+        jSplitPane1.add(jTransportsPanel, JSplitPane.RIGHT);
 
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                if (e.getClickCount() == 2) {
-                    jideSplitPane1.setProportions(new double[]{0.5});
-                }
-            }
-        });
         jXCollapsiblePane2.setLayout(new BorderLayout());
         jXCollapsiblePane2.add(jInfoLabel, BorderLayout.CENTER);
         quickProfilePanel = new ProfileQuickChangePanel();
@@ -210,12 +194,12 @@ public class ResourceDistributorFinishPanel extends WizardPage {
         jClickAccountPanel = new javax.swing.JPanel();
         jQuickProfilePanel = new javax.swing.JPanel();
         jIgnoreSubmitted = new javax.swing.JCheckBox();
-        jideSplitPane1 = new com.jidesoft.swing.JideSplitPane();
+        jSplitPane1 = new javax.swing.JSplitPane();
 
         jInfoScrollPane.setMinimumSize(new java.awt.Dimension(19, 180));
         jInfoScrollPane.setPreferredSize(new java.awt.Dimension(19, 180));
 
-        jInfoTextPane.setContentType("text/html");
+        jInfoTextPane.setContentType("text/html"); // NOI18N
         jInfoTextPane.setEditable(false);
         jInfoTextPane.setText("<html>Du befindest dich im <b>Angriffsmodus</b>. Hier kannst du die Herkunftsd&ouml;rfer ausw&auml;hlen, die f&uuml;r Angriffe verwendet werden d&uuml;rfen. Hierf&uuml;r hast die folgenden M&ouml;glichkeiten:\n<ul>\n<li>Einf&uuml;gen von Dorfkoordinaten aus der Zwischenablage per STRG+V</li>\n<li>Einf&uuml;gen der Herkunftsd&ouml;rfer aus der Gruppen&uuml;bersicht</li>\n<li>Einf&uuml;gen der Herkunftsd&ouml;rfer aus dem SOS-Analyzer</li>\n<li>Einf&uuml;gen der Herkunftsd&ouml;rfer aus Berichten</li>\n<li>Einf&uuml;gen aus der Auswahlübersicht</li>\n<li>Manuelle Eingabe</li>\n</ul>\n</html>\n");
         jInfoScrollPane.setViewportView(jInfoTextPane);
@@ -433,8 +417,7 @@ public class ResourceDistributorFinishPanel extends WizardPage {
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 5, 0);
-        jPanel1.add(jideSplitPane1, gridBagConstraints);
+        jPanel1.add(jSplitPane1, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -691,7 +674,7 @@ public class ResourceDistributorFinishPanel extends WizardPage {
         }
 
         if (result) {
-            jideSplitPane1.setProportions(new double[]{0.0});
+            jSplitPane1.setDividerLocation(0.5);
         }
         return result;
     }
@@ -726,6 +709,7 @@ public class ResourceDistributorFinishPanel extends WizardPage {
     private javax.swing.JPanel jQuickProfilePanel;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JLabel jTransportedClay;
     private javax.swing.JLabel jTransportedIron;
     private javax.swing.JLabel jTransportedWood;
@@ -735,7 +719,6 @@ public class ResourceDistributorFinishPanel extends WizardPage {
     private javax.swing.JLabel jUsedMerchants;
     private org.jdesktop.swingx.JXCollapsiblePane jXCollapsiblePane1;
     private org.jdesktop.swingx.JXCollapsiblePane jXCollapsiblePane2;
-    private com.jidesoft.swing.JideSplitPane jideSplitPane1;
     // End of variables declaration//GEN-END:variables
 
     @Override

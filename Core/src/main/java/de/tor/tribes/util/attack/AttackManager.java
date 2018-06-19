@@ -216,10 +216,10 @@ public class AttackManager extends GenericManager<Attack> {
                 }
 
                 b.append("</attacks>\n");
-                b.append("</plan></data>\n");
+                b.append("</plan>\n");
             }
 
-            b.append("</plans>\n");
+            b.append("</plans></data>\n");
             //write data to file
             FileWriter w = new FileWriter(pFile);
             w.write(b.toString());

@@ -15,13 +15,14 @@
  */
 package de.tor.tribes.ui.panels;
 
-import com.jidesoft.swing.LabeledTextField;
 import de.tor.tribes.control.GenericManagerListener;
 import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.io.DataHolderListener;
 import de.tor.tribes.io.TroopAmount;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.StandardAttack;
+import de.tor.tribes.types.UnknownUnit;
 import de.tor.tribes.ui.ImageManager;
 import de.tor.tribes.util.attack.StandardAttackManager;
 import java.awt.BorderLayout;
@@ -35,17 +36,22 @@ import javax.swing.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-
 /**
  *
  * @author Torridity
  */
 
-public abstract class TroopSelectionPanel<T extends TroopAmount> extends javax.swing.JPanel implements GenericManagerListener {
-    
+public abstract class TroopSelectionPanel<T extends TroopAmount> extends javax.swing.JPanel
+        implements GenericManagerListener, DataHolderListener {
     private Logger logger = LogManager.getLogger("TroopSelectionPanel");
     private HashMap<String, Point> unitCoordinates = new HashMap<>();
-    private LabeledTextField[][] unitFields = new LabeledTextField[20][20];
+    private JTextField[][] unitFields = new JTextField[20][20];
+    private JLabel[][] unitIconFields = new JLabel[20][20];
+
+    private enum panelType { STRING_ARRAY, OFFENSE, DEFENSE, FARM, ALL };
+    public enum alignType { HORIZONTAL, VERTICAL, GROUPED};
+    panelType pType = panelType.ALL; alignType aType = alignType.GROUPED;
+    String unitNames[]; int maxGrouping;
     
     @Override
     public void dataChangedEvent() {
@@ -56,16 +62,25 @@ public abstract class TroopSelectionPanel<T extends TroopAmount> extends javax.s
     public void dataChangedEvent(String pGroup) {
         dataChangedEvent();
     }
+    
+    @Override public void fireDataHolderEvent(String eventMessage) {};
+    @Override
+    public void fireDataLoadedEvent(boolean pSuccess) {
+        if(pSuccess) {
+            setupFromInternal();
+        }
+    }
 
     /**
      * Creates new form TroopSelectionPanel
      */
     public TroopSelectionPanel() {
         initComponents();
-        setup(DataHolder.getSingleton().getSendableUnits());
+        setupFromInternal();
         jXCollapsiblePane1.setLayout(new BorderLayout());
         jXCollapsiblePane1.add(jPanel2, BorderLayout.CENTER);
-        StandardAttackManager.getSingleton().addManagerListener(TroopSelectionPanel.this);
+        StandardAttackManager.getSingleton().addManagerListener(this);
+        DataHolder.getSingleton().addDataHolderListener(this);
         rebuildStandardAttackSelection();
     }
     
@@ -81,81 +96,154 @@ public abstract class TroopSelectionPanel<T extends TroopAmount> extends javax.s
         jStandardAttackBox.setModel(model);
     }
     
-    public final void setup(List<UnitHolder> pUnits) {
-        setup(pUnits, true);
-    }
-    
-    public final void setup(List<UnitHolder> pUnits, boolean pTypeSeparation) {
+    //TODO create auto horizontal grouping
+    private void setup(List<UnitHolder> pUnits) {
         jUnitContainer.removeAll();
         unitCoordinates.clear();
-        unitFields = new LabeledTextField[20][20];
+        unitFields = new JTextField[20][20];
+        unitIconFields = new JLabel[20][20];
         int infantryX = 0;
         int cavallryX = 0;
         int otherX = 0;
         int unitCount = 0;
         for (UnitHolder unit : pUnits) {
-            GridBagConstraints gridBagConstraints = new GridBagConstraints();
-            gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-            gridBagConstraints.weightx = 1.0;
-            gridBagConstraints.weighty = 1.0;
-            gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-            if (unit.isInfantry()) {
-                gridBagConstraints.gridx = (pTypeSeparation) ? infantryX : unitCount;
-                gridBagConstraints.gridy = 0;
-                unitCoordinates.put(unit.getPlainName(), new Point(gridBagConstraints.gridx, gridBagConstraints.gridy));
-                infantryX++;
-            } else if (unit.isCavalry()) {
-                gridBagConstraints.gridx = (pTypeSeparation) ? cavallryX : unitCount;
-                gridBagConstraints.gridy = (pTypeSeparation) ? 1 : 0;
-                unitCoordinates.put(unit.getPlainName(), new Point(gridBagConstraints.gridx, gridBagConstraints.gridy));
-                cavallryX++;
-            } else if (unit.isOther()) {
-                gridBagConstraints.gridx = (pTypeSeparation) ? otherX : unitCount;
-                gridBagConstraints.gridy = (pTypeSeparation) ? 2 : 0;
-                unitCoordinates.put(unit.getPlainName(), new Point(gridBagConstraints.gridx, gridBagConstraints.gridy));
-                otherX++;
+            GridBagConstraints textGridConst = new GridBagConstraints();
+            GridBagConstraints iconGridConst = new GridBagConstraints();
+            textGridConst.insets = new java.awt.Insets(5, 5, 5, 5);
+            textGridConst.weightx = 1.0;
+            textGridConst.weighty = 1.0;
+            textGridConst.fill = java.awt.GridBagConstraints.HORIZONTAL;
+            iconGridConst.insets = new java.awt.Insets(5, 5, 5, 5);
+            iconGridConst.weightx = 1.0;
+            iconGridConst.weighty = 1.0;
+            iconGridConst.fill = java.awt.GridBagConstraints.HORIZONTAL;
+            int x = 0, y = 0;
+            switch(aType) {
+            case GROUPED:
+                if (unit.isInfantry()) {
+                    x = infantryX;
+                    y = 0;
+                    infantryX++;
+                } else if (unit.isCavalry()) {
+                    x = cavallryX;
+                    y = 1;
+                    cavallryX++;
+                } else {
+                    x = otherX;
+                    y = 2;
+                    otherX++;
+                }
+                break;
+            case HORIZONTAL:
+                if(maxGrouping > 0) {
+                    x = unitCount % maxGrouping;
+                    y = unitCount / maxGrouping;
+                } else {
+                    x = unitCount;
+                    y = 0;
+                }
+                break;
+            case VERTICAL:
+                if(maxGrouping > 0) {
+                    x = unitCount / maxGrouping;
+                    y = unitCount % maxGrouping;
+                } else {
+                    x = 0;
+                    y = unitCount;
+                }
+                break;
             }
-            LabeledTextField unitField = new LabeledTextField();
-            unitField.setIcon(ImageManager.getUnitIcon(unit));
-            unitFields[gridBagConstraints.gridx][gridBagConstraints.gridy] = unitField;
+            textGridConst.gridx = x * 2 + 1;
+            textGridConst.gridy = y;
+            iconGridConst.gridx = x * 2;
+            iconGridConst.gridy = y;
+            unitCoordinates.put(unit.getPlainName(), new Point(x, y));
+            unitCoordinates.put(unit.getPlainName(), new Point(x, y));
+            JTextField unitField = new JTextField();
+            JLabel unitIconField = new JLabel("");
+            unitIconField.setIcon(ImageManager.getUnitIcon(unit));
+            unitFields[x][y] = unitField;
+            unitIconFields[x][y] = unitIconField;
             unitField.setMinimumSize(new Dimension(80, 24));
+            unitIconField.setMinimumSize(new Dimension(24, 24));
             unitField.setPreferredSize(new Dimension(80, 24));
+            unitIconField.setPreferredSize(new Dimension(24, 24));
             unitField.setMaximumSize(new Dimension(Integer.MAX_VALUE, 24));
+            unitIconField.setMaximumSize(new Dimension(24, 24));
             unitField.setText("0");
-            jUnitContainer.add(unitField, gridBagConstraints);
+            jUnitContainer.add(unitField, textGridConst);
+            jUnitContainer.add(unitIconField, iconGridConst);
             unitCount++;
         }
         setEnabled(isEnabled());
     }
     
-    public final void setupDefense(boolean pTypeSeparation) {
-        List<UnitHolder> units = new LinkedList<>();
-        for (UnitHolder unit : DataHolder.getSingleton().getSendableUnits()) {
-            if (unit.isDefense()) {
-                units.add(unit);
-            }
-        }
-        setup(units, pTypeSeparation);
+    public final void setupDefense(alignType pAlignType, int pMaxGrouping) {
+        pType = panelType.DEFENSE;
+        aType = pAlignType;
+        maxGrouping = pMaxGrouping;
+        setupFromInternal();
     }
     
-    public final void setupOffense(boolean pTypeSeparation) {
-        List<UnitHolder> units = new LinkedList<>();
-        for (UnitHolder unit : DataHolder.getSingleton().getSendableUnits()) {
-            if (unit.isOffense()) {
-                units.add(unit);
-            }
-        }
-        setup(units, pTypeSeparation);
+    public final void setupOffense(alignType pAlignType, int pMaxGrouping) {
+        pType = panelType.OFFENSE;
+        aType = pAlignType;
+        maxGrouping = pMaxGrouping;
+        setupFromInternal();
     }
     
-    public final void setupFarm(boolean pTypeSeparation) {
+    public final void setupFarm(alignType pAlignType, int pMaxGrouping) {
+        pType = panelType.FARM;
+        aType = pAlignType;
+        maxGrouping = pMaxGrouping;
+        setupFromInternal();
+    }
+    
+    public final void setup(String pUnitNames[], alignType pAlignType, int pMaxGrouping) {
+        pType = panelType.STRING_ARRAY;
+        unitNames = pUnitNames;
+        aType = pAlignType;
+        maxGrouping = pMaxGrouping;
+        setupFromInternal();
+    }
+    
+    private void setupFromInternal() {
         List<UnitHolder> units = new LinkedList<>();
-        for (UnitHolder unit : DataHolder.getSingleton().getSendableUnits()) {
-            if (unit.isFarmUnit()) {
-                units.add(unit);
+        switch(pType) {
+        case ALL:
+            units = DataHolder.getSingleton().getSendableUnits();
+            break;
+        case DEFENSE:
+            for (UnitHolder unit : DataHolder.getSingleton().getSendableUnits()) {
+                if (unit.isDefense()) {
+                    units.add(unit);
+                }
             }
+            break;
+        case OFFENSE:
+            for (UnitHolder unit : DataHolder.getSingleton().getSendableUnits()) {
+                if (unit.isOffense()) {
+                    units.add(unit);
+                }
+            }
+            break;
+        case FARM:
+            for (UnitHolder unit : DataHolder.getSingleton().getSendableUnits()) {
+                if (unit.isFarmUnit()) {
+                    units.add(unit);
+                }
+            }
+            break;
+        case STRING_ARRAY:
+            for(String unit: unitNames) {
+                UnitHolder u = DataHolder.getSingleton().getUnitByPlainName(unit);
+                if(u != UnknownUnit.getSingleton()) {
+                    units.add(u);
+                }
+            }
+            break;
         }
-        setup(units, pTypeSeparation);
+        setup(units);
     }
     
     public abstract T getAmounts();
@@ -223,12 +311,15 @@ public abstract class TroopSelectionPanel<T extends TroopAmount> extends javax.s
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel2.add(jButton3, gridBagConstraints);
 
-        setLayout(new java.awt.BorderLayout());
+        setLayout(new java.awt.GridBagLayout());
 
         jUnitContainer.setMinimumSize(new java.awt.Dimension(73, 23));
-        jUnitContainer.setPreferredSize(new java.awt.Dimension(73, 23));
         jUnitContainer.setLayout(new java.awt.GridBagLayout());
-        add(jUnitContainer, java.awt.BorderLayout.CENTER);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        add(jUnitContainer, gridBagConstraints);
 
         jPanel1.setLayout(new java.awt.GridBagLayout());
 
@@ -254,7 +345,11 @@ public abstract class TroopSelectionPanel<T extends TroopAmount> extends javax.s
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel1.add(jXCollapsiblePane1, gridBagConstraints);
 
-        add(jPanel1, java.awt.BorderLayout.SOUTH);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        add(jPanel1, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
 
     private void fireClick(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireClick
@@ -284,7 +379,7 @@ public abstract class TroopSelectionPanel<T extends TroopAmount> extends javax.s
     private org.jdesktop.swingx.JXCollapsiblePane jXCollapsiblePane1;
     // End of variables declaration//GEN-END:variables
 
-    protected LabeledTextField getFieldForUnit(UnitHolder pUnit) {
+    protected JTextField getFieldForUnit(UnitHolder pUnit) {
         Point location = unitCoordinates.get(pUnit.getPlainName());
         if (location != null) {
             return unitFields[location.x][location.y];

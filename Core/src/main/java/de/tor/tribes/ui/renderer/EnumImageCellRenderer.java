@@ -57,11 +57,11 @@ public class EnumImageCellRenderer extends DefaultTableRenderer {
         };}),
         SiegeStatus(new HashMap<Integer, String>() {{
             put(FarmInformation.SIEGE_STATUS.BOTH_ON_WAY.ordinal(), "/res/ui/both_siege.png");
-            put(FarmInformation.SIEGE_STATUS.CATA_ON_WAY.ordinal(), "/res/ui/unit_catapult.png");
+            put(FarmInformation.SIEGE_STATUS.CATA_ON_WAY.ordinal(), "/res/unit_catapult.png");
             put(FarmInformation.SIEGE_STATUS.RAM_ON_WAY.ordinal(), "/res/ui/rams.png");
-            put(FarmInformation.SIEGE_STATUS.AT_HOME.ordinal(), "/res/ui/checkbox.png");
+            put(FarmInformation.SIEGE_STATUS.AT_HOME.ordinal(), "/res/checkbox.png");
             put(FarmInformation.SIEGE_STATUS.NOT_INITIATED.ordinal(), "/res/ui/spy_needed.png");
-            put(FarmInformation.SIEGE_STATUS.FINAL_FARM.ordinal(), "/res/ui/final_farm.png");
+            put(FarmInformation.SIEGE_STATUS.FINAL_FARM.ordinal(), "/res/final_farm.png");
         };}),
         FightReportStatus(new HashMap<Integer, String>() {{
             put(FightReport.status.LOST_NOTHING.ordinal(), "/res/ui/bullet_ball_green.png");

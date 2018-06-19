@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -147,23 +148,45 @@ public class ReportServer {
             try {
                 BufferedWriter w = new BufferedWriter(new OutputStreamWriter(connectedSocket.getOutputStream()));
                 r = new BufferedReader(new InputStreamReader(connectedSocket.getInputStream()));
-                String line; int tmp;
+                int tmp;
                 String head = "";
-                StringBuilder content = new StringBuilder();
                 logger.debug("Reading content from socket connection.");
-                w.write("Ready.");
-                w.newLine();
-                w.flush();
-                while ((tmp = r.read()) != -1  && head.contains("\r\n\r\n")) {
+                while (!head.contains("\r\n\r\n") && (tmp = r.read()) != -1) {
                         head += ((char) tmp);
                 }
                 logger.debug("Header: " + head);
-                while ((line = r.readLine()) != null) {
-                    logger.debug("Current content line: " + line);
-                        content.append(line).append("\r\n");
+                
+                logger.debug("Trying to parse Header.");
+                //we need the request URI
+                String splited[] = head.replaceAll("\r", "").split("\n");
+                String url = null;
+                for(String part: splited) {
+                    if(part.contains("GET"))
+                        url = part;
                 }
-                logger.debug("Trying to parse content.");
-                if (PluginManager.getSingleton().executeObstReportParser(content.toString())) {
+                
+                if(url == null) {
+                    //not found --> log and return
+                    logger.warn("No URL found:\n {}", head);
+                    try {
+                        connectedSocket.close();
+                    } catch (IOException ignored) {
+                    }
+                    return;
+                }
+                url = url.split(" ")[1];
+                url = url.substring((url.startsWith("/")?1:0));
+                
+                String report = null;
+                splited = url.split("&");
+                for(String part: splited) {
+                    if(part.contains("report"))
+                        report = part.substring(part.indexOf("=") + 1);
+                }
+                report = URLDecoder.decode(report, "UTF-8");
+                logger.debug("Report raw: {}", report);
+
+                if (PluginManager.getSingleton().executeObstReportParser(report)) {
                     logger.debug("Successfully parsed report. Sending response.");
                     w.write("HTTP/1.0 200 OK");
                     w.newLine();
@@ -195,28 +218,17 @@ public class ReportServer {
                 r.close();
                 connectedSocket.close();
                 
-                //Find target Field in Header
-                String target = "";
-                String requestParams[] = head.replaceAll("\r", "").split("\n");
-                for(String requestParam: requestParams) {
-                    if(requestParam.startsWith("GET")) {
-                        target = requestParam.substring(3).trim();
-                    }
-                }
-                
-                logger.debug("Accessing target " + target);
-                if (target.contains("ajax.php?action=parse_report")) {
+                logger.debug("Accessing target " + url);
+                if (url.contains("ajax.php?action=parse_report")) {
                     String obstServer = GlobalOptions.getProperty("obst.server");
                     if (obstServer != null && !obstServer.isEmpty()) {
-                        obstServer += "/" + target;
+                        obstServer += "/" + url;
                         try {
-                            OBSTReportSender.sendReport(new URL(obstServer), content.toString());
+                            OBSTReportSender.sendReport(new URL(obstServer));
                         } catch (Exception e) {
                             logger.error("Failed to forward report to OBST server " + obstServer, e);
                         }
                     }
-                } else if(target.equals("")) {
-                    logger.error("Failed to get Request target " + head);
                 }
             }
             catch(IOException e) {

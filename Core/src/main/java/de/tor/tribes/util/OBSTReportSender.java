@@ -32,13 +32,14 @@ public class OBSTReportSender {
     private static final Logger logger = LogManager.getLogger("OBSTReportSender");
     //TODO check if this works
     //TODO check return of Obst-Server
-    public static void sendReport(URL pTarget, String pData) throws Exception {
+    public static void sendReport(URL pTarget) throws Exception {
         HttpURLConnection connection = null;
 
         try {
             //Create connection
             connection = (HttpURLConnection) pTarget.openConnection();
-            connection.setRequestMethod("POST");
+            connection.setRequestMethod("GET");
+            /*connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type", 
                 "application/x-www-form-urlencoded");
 
@@ -53,7 +54,7 @@ public class OBSTReportSender {
             DataOutputStream wr = new DataOutputStream (
                 connection.getOutputStream());
             wr.writeBytes(pData);
-            wr.close();
+            wr.close(); */
 
             //Get Response  
             InputStream is = connection.getInputStream();

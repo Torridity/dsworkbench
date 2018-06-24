@@ -35,11 +35,11 @@ import org.jdom2.Element;
  */
 public class KnownVillageManager extends GenericManager<KnownVillage> {
 
-    private static Logger logger = LogManager.getLogger("ChurchManager");
+    private static Logger logger = LogManager.getLogger("KnownVillageManager");
     private static KnownVillageManager SINGLETON = null;
 
-    private List<KnownVillage> churchVillages;
-    private List<KnownVillage> watchtowerVillages;
+    private final List<KnownVillage> churchVillages;
+    private final List<KnownVillage> watchtowerVillages;
 
     public static synchronized KnownVillageManager getSingleton() {
         if (SINGLETON == null) {
@@ -280,7 +280,7 @@ public class KnownVillageManager extends GenericManager<KnownVillage> {
         }
     }
 
-    private KnownVillage getKnownVillage(Village pVillage) {
+    public KnownVillage getKnownVillage(Village pVillage) {
         List<ManageableType> elements = getAllElements();
         for (ManageableType elm : elements) {
             if (((KnownVillage) elm).getVillage().equals(pVillage)) {

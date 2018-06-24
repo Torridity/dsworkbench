@@ -16,19 +16,20 @@
 package de.tor.tribes.types;
 
 import de.tor.tribes.control.ManageableType;
-import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.TroopAmountFixed;
 import de.tor.tribes.types.ext.Barbarians;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.views.DSWorkbenchFarmManager;
 import de.tor.tribes.util.BrowserInterface;
 import de.tor.tribes.util.DSCalculator;
+import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.TroopHelper;
 import de.tor.tribes.util.conquer.ConquerManager;
 import de.tor.tribes.util.report.ReportManager;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
 import de.tor.tribes.util.village.KnownVillage;
+import de.tor.tribes.util.village.KnownVillageManager;
 import java.util.*;
 import org.apache.commons.lang3.Range;
 import org.apache.commons.lang3.time.DateUtils;
@@ -57,27 +58,15 @@ public class FarmInformation extends ManageableType {
 
     private SIEGE_STATUS siegeStatus = SIEGE_STATUS.NOT_INITIATED;
     private FARM_STATUS status = FARM_STATUS.NOT_INITIATED;
-    private boolean justCreated = false;
     private boolean spyed = false;
     private boolean inactive = false;
     private boolean isFinal = false;
     private int villageId = 0;
-    private transient Village village = null;
-    private transient FARM_RESULT lastResult = FARM_RESULT.UNKNOWN;
+    private Village village = null;
+    private FARM_RESULT lastResult = FARM_RESULT.UNKNOWN;
     private int ownerId = -1;
     private int attackCount = 0;
-    private int woodLevel = 1;
-    private int clayLevel = 1;
-    private int ironLevel = 1;
-    private int storageLevel = 1;
-    private int hideLevel = 0;
-    private int wallLevel = 0;
-    private int mainLevel = 0;
-    private int barracksLevel = 0;
-    private int stableLevel = 0;
-    private int workshopLevel = 0;
-    private int smithyLevel = 0;
-    private int marketLevel = 0;
+    KnownVillage kVillage = null;
     private int woodInStorage = 0;
     private int clayInStorage = 0;
     private int ironInStorage = 0;
@@ -91,18 +80,20 @@ public class FarmInformation extends ManageableType {
     public TroopAmountFixed siegeTroop;
     public long siegeTroopArrival = -1;
     private TroopAmountFixed farmTroop = null;
-    private transient StorageStatus storageStatus = null;
-    private transient long lastRuntimeUpdate = -1;
+    private StorageStatus storageStatus = null;
+    private long lastRuntimeUpdate = -1;
     private boolean resourcesFoundInLastReport = false;
-    private transient String lastSendInformation = null;
-    private transient DSWorkbenchFarmManager.FARM_CONFIGURATION usedConfig = null;
+    private String lastSendInformation = null;
+    private DSWorkbenchFarmManager.FARM_CONFIGURATION usedConfig = null;
 
     /**
      * Default constructor
      */
     public FarmInformation(Village pVillage) {
+        kVillage = KnownVillageManager.getSingleton().getKnownVillage(pVillage);
         villageId = pVillage.getId();
         ownerId = pVillage.getTribe().getId();
+        village = pVillage;
     }
     
     /**
@@ -116,17 +107,7 @@ public class FarmInformation extends ManageableType {
      * Get the village for this farm
      */
     public Village getVillage() {
-        if (village == null) {
-            village = DataHolder.getSingleton().getVillagesById().get(villageId);
-        }
         return village;
-    }
-
-    /**
-     * Set a flag that indicates, that this info was just created.
-     */
-    public void setJustCreated(boolean justCreated) {
-        this.justCreated = justCreated;
     }
 
     /**
@@ -153,10 +134,10 @@ public class FarmInformation extends ManageableType {
      * Get the storage capacity of this farm excluding hidden resources
      */
     public int getStorageCapacity() {
-        int storageCapacity = DSCalculator.calculateMaxResourcesInStorage(storageLevel);
+        int storageCapacity = DSCalculator.calculateMaxResourcesInStorage(getBuilding("storage"));
         int hiddenResources = 0;
-        if (hideLevel > 0) {
-            hiddenResources = DSCalculator.calculateMaxHiddenResources(hideLevel);
+        if (getBuilding("hide") > 0) {
+            hiddenResources = DSCalculator.calculateMaxHiddenResources(getBuilding("hide"));
         }
         // limit capacity to 0
         return Math.max(0, storageCapacity - hiddenResources);
@@ -181,17 +162,6 @@ public class FarmInformation extends ManageableType {
      */
     public int getHauledIron() {
         return hauledIron;
-    }
-
-    /**
-     * Used to check if this farm info is new
-     */
-    public boolean isJustCreated() {
-        if (justCreated) {
-            justCreated = false;
-            return true;
-        }
-        return false;
     }
 
     /**
@@ -271,7 +241,7 @@ public class FarmInformation extends ManageableType {
      * Get the wood amount in storage at a specific timestamp
      */
     public int getWoodInStorage(long pTimestamp) {
-        return (int) (Math.round(getGeneratedResources(woodInStorage, woodLevel, pTimestamp)));
+        return (int) (Math.round(getGeneratedResources(woodInStorage, getBuilding("timber"), pTimestamp)));
     }
 
     /**
@@ -285,7 +255,7 @@ public class FarmInformation extends ManageableType {
      * Get the clay amount in storage at a specific timestamp
      */
     public int getClayInStorage(long pTimestamp) {
-        return (int) (Math.round(getGeneratedResources(clayInStorage, clayLevel, pTimestamp)));
+        return (int) (Math.round(getGeneratedResources(clayInStorage, getBuilding("clay"), pTimestamp)));
     }
 
     /**
@@ -299,7 +269,7 @@ public class FarmInformation extends ManageableType {
      * Get the iron amount in storage at a specific timestamp
      */
     public int getIronInStorage(long pTimestamp) {
-        return (int) (Math.round(getGeneratedResources(ironInStorage, ironLevel, pTimestamp)));
+        return (int) (Math.round(getGeneratedResources(ironInStorage, getBuilding("iron"), pTimestamp)));
     }
 
     /*
@@ -396,13 +366,13 @@ public class FarmInformation extends ManageableType {
             int resourceBuildingLevel = DSCalculator.calculateEstimatedResourceBuildingLevel(dResource, dt);
             switch (i) {
             case 0:
-                setWoodLevel(Math.max(woodLevel, resourceBuildingLevel));
+                setBuilding("timber", Math.max(getBuilding("timber"), resourceBuildingLevel));
                 break;
             case 1:
-                setClayLevel(Math.max(clayLevel, resourceBuildingLevel));
+                setBuilding("clay", Math.max(getBuilding("clay"), resourceBuildingLevel));
                 break;
             case 2:
-                setIronLevel(Math.max(ironLevel, resourceBuildingLevel));
+                setBuilding("iron", Math.max(getBuilding("iron"), resourceBuildingLevel));
                 break;
             }
         }
@@ -432,9 +402,9 @@ public class FarmInformation extends ManageableType {
         int woodBuildingLevel = DSCalculator.calculateEstimatedResourceBuildingLevel(wood, dt);
         int clayBuildingLevel = DSCalculator.calculateEstimatedResourceBuildingLevel(clay, dt);
         int ironBuildingLevel = DSCalculator.calculateEstimatedResourceBuildingLevel(iron, dt);
-        setWoodLevel(Math.max(woodLevel, woodBuildingLevel));
-        setClayLevel(Math.max(clayLevel, clayBuildingLevel));
-        setIronLevel(Math.max(ironLevel, ironBuildingLevel));
+        setBuilding("timber", Math.max(getBuilding("timber"), woodBuildingLevel));
+        setBuilding("clay", Math.max(getBuilding("clay"), clayBuildingLevel));
+        setBuilding("iron", Math.max(getBuilding("iron"), ironBuildingLevel));
     }
 
     private void guessStorage(FightReport pReport) {
@@ -446,17 +416,7 @@ public class FarmInformation extends ManageableType {
             double resourceInStorage = (double) pReport.getHaul()[i]
                     + ((pReport.getSpyedResources() != null) ? pReport.getSpyedResources()[i] : 0);
             int guessedStorageLevel = DSCalculator.calculateEstimatedStorageLevel(resourceInStorage);
-            switch (i) {
-            case 0:
-                setStorageLevel(Math.max(storageLevel, guessedStorageLevel));
-                break;
-            case 1:
-                setStorageLevel(Math.max(storageLevel, guessedStorageLevel));
-                break;
-            case 2:
-                setStorageLevel(Math.max(storageLevel, guessedStorageLevel));
-                break;
-            }
+            setBuilding("storage", Math.max(getBuilding("storage"), guessedStorageLevel));
         }
     }
 
@@ -469,7 +429,7 @@ public class FarmInformation extends ManageableType {
         } else if (this.getWallLevel() > 1) { // leave the Wall level as is
             return;
         } else {
-            setWallLevel(2); // A primitive guess that indicates a Wall in the Farm
+            setBuilding("wall", 2); // A primitive guess that indicates a Wall in the Farm
         } // sophisticated might be possible with in-build fight simulator
     }
 
@@ -534,8 +494,10 @@ public class FarmInformation extends ManageableType {
             lastResult = FARM_RESULT.UNKNOWN;
             if (!inactive && !isFinal) {
                 setSiegeStatus(SIEGE_STATUS.AT_HOME);
-                if (mainLevel == 1 && smithyLevel == 0 && barracksLevel == 0 && stableLevel == 0 && workshopLevel == 0
-                        && marketLevel == 0 && wallLevel == 0 && this.getVillage().getPoints() >= 500) {
+                if (getBuilding("main") == 1 && getBuilding("smithy") == 0 && getBuilding("barracks") == 0 &&
+                        getBuilding("stable") == 0 && getBuilding("workshop") == 0 &&
+                        getBuilding("market") == 0 && getBuilding("wall") == 0 &&
+                        this.getVillage().getPoints() >= ServerSettings.getSingleton().getBarbarianPoints()) {
                 setSiegeStatus(SIEGE_STATUS.FINAL_FARM);
                 }
             }
@@ -613,24 +575,6 @@ public class FarmInformation extends ManageableType {
             if (remaining < 4)
                 remaining = 0; // Fix for a Bug of DS Where there are Resources displayed in Spy but not hauled
             resourcesFoundInLastReport = remaining > DSWorkbenchFarmManager.getSingleton().getMinHaul(usedConfig);
-        }
-        if (pReport.getSpyLevel() >= pReport.SPY_LEVEL_BUILDINGS) {
-            storageLevel = pReport.getBuilding(KnownVillage.getBuildingIdByName("storage"));
-            woodLevel = pReport.getBuilding(KnownVillage.getBuildingIdByName("timber"));
-            clayLevel = pReport.getBuilding(KnownVillage.getBuildingIdByName("clay"));
-            ironLevel = pReport.getBuilding(KnownVillage.getBuildingIdByName("iron"));
-            hideLevel = pReport.getBuilding(KnownVillage.getBuildingIdByName("hide"));
-            wallLevel = pReport.getBuilding(KnownVillage.getBuildingIdByName("wall"));
-            mainLevel = pReport.getBuilding(KnownVillage.getBuildingIdByName("main"));
-            barracksLevel = pReport.getBuilding(KnownVillage.getBuildingIdByName("barracks"));
-            stableLevel = pReport.getBuilding(KnownVillage.getBuildingIdByName("stable"));
-            workshopLevel = pReport.getBuilding(KnownVillage.getBuildingIdByName("workshop"));
-            smithyLevel = pReport.getBuilding(KnownVillage.getBuildingIdByName("smithy"));
-            marketLevel = pReport.getBuilding(KnownVillage.getBuildingIdByName("market"));
-        } else if (pReport.getWallAfter() != -1) {
-            setSpyed(false);
-            // set wall destruction (works also without spying)
-            wallLevel = pReport.getWallAfter();
         }
     }
 
@@ -984,86 +928,31 @@ public class FarmInformation extends ManageableType {
     }
 
     public int getWoodLevel() {
-        return woodLevel;
-    }
-
-    public void setWoodLevel(int woodLevel) {
-        if (woodLevel >= 1 && woodLevel <= 30) {
-            this.woodLevel = woodLevel;
-        }
+        return getBuilding("timber");
     }
 
     public int getClayLevel() {
-        return clayLevel;
-    }
-
-    public void setClayLevel(int clayLevel) {
-        if (clayLevel >= 1 && clayLevel <= 30) {
-            this.clayLevel = clayLevel;
-        }
+        return getBuilding("clay");
     }
 
     public int getIronLevel() {
-        return ironLevel;
-    }
-
-    public void setIronLevel(int ironLevel) {
-        if (ironLevel >= 1 && ironLevel <= 30) {
-            this.ironLevel = ironLevel;
-        }
+        return getBuilding("iron");
     }
 
     public int getStorageLevel() {
-        return storageLevel;
-    }
-
-    public void setStorageLevel(int storageLevel) {
-        if (storageLevel >= 1 && storageLevel <= 30) {
-            this.storageLevel = storageLevel;
-        }
+        return getBuilding("storage");
     }
 
     public int getHideLevel() {
-        return hideLevel;
-    }
-
-    public void setHideLevel(int hideLevel) {
-        if (hideLevel >= 1 && hideLevel <= 10) {
-            this.hideLevel = hideLevel;
-        }
-    }
-
-    public void setWallLevel(int wallLevel) {
-        this.wallLevel = wallLevel;
+        return getBuilding("hide");
     }
 
     public int getWallLevel() {
-        return wallLevel;
+        return getBuilding("wall");
     }
 
-    public int getCataTargetBuildingLevel(String pname) {
-        int buildingLevel = 0;
-        switch (pname) {
-        case "main":
-            buildingLevel = mainLevel;
-            break;
-        case "barracks":
-            buildingLevel = barracksLevel;
-            break;
-        case "stable":
-            buildingLevel = stableLevel;
-            break;
-        case "workshop":
-            buildingLevel = workshopLevel;
-            break;
-        case "smithy":
-            buildingLevel = smithyLevel;
-            break;
-        case "market":
-            buildingLevel = marketLevel;
-            break;
-        }
-        return buildingLevel;
+    public int getCataTargetBuildingLevel(String pName) {
+        return getBuilding(pName);
     }
 
     /**
@@ -1112,25 +1001,12 @@ public class FarmInformation extends ManageableType {
         str.append("<farmInfo>");
         str.append("<siege_status>").append(siegeStatus.name()).append("</siege_status>");
         str.append("<status>").append(status.name()).append("</status>");
-        str.append("<justCreated>").append(justCreated?1:0).append("</justCreated>");
         str.append("<spyed>").append(spyed?1:0).append("</spyed>");
         str.append("<inactive>").append(inactive?1:0).append("</inactive>");
         str.append("<isFinal>").append(isFinal?1:0).append("</isFinal>");
         str.append("<villageId>").append(villageId).append("</villageId>");
         str.append("<ownerId>").append(ownerId).append("</ownerId>");
         str.append("<attackCount>").append(attackCount).append("</attackCount>");
-        str.append("<woodLevel>").append(woodLevel).append("</woodLevel>");
-        str.append("<clayLevel>").append(clayLevel).append("</clayLevel>");
-        str.append("<ironLevel>").append(ironLevel).append("</ironLevel>");
-        str.append("<storageLevel>").append(storageLevel).append("</storageLevel>");
-        str.append("<hideLevel>").append(hideLevel).append("</hideLevel>");
-        str.append("<wallLevel>").append(wallLevel).append("</wallLevel>");
-        str.append("<mainLevel>").append(mainLevel).append("</mainLevel>");
-        str.append("<barracksLevel>").append(barracksLevel).append("</barracksLevel>");
-        str.append("<stableLevel>").append(stableLevel).append("</stableLevel>");
-        str.append("<workshopLevel>").append(workshopLevel).append("</workshopLevel>");
-        str.append("<smithyLevel>").append(smithyLevel).append("</smithyLevel>");
-        str.append("<marketLevel>").append(marketLevel).append("</marketLevel>");
         str.append("<woodInStorage>").append(woodInStorage).append("</woodInStorage>");
         str.append("<clayInStorage>").append(clayInStorage).append("</clayInStorage>");
         str.append("<ironInStorage>").append(ironInStorage).append("</ironInStorage>");
@@ -1150,5 +1026,13 @@ public class FarmInformation extends ManageableType {
     @Override
     public final void loadFromXml(Element e) {
         //TODO create function
+    }
+
+    private int getBuilding(String pName) {
+        return kVillage.getBuildingLevelByName(pName);
+    }
+
+    private void setBuilding(String pName, int level) {
+        kVillage.setBuildingLevelByName(pName, level);
     }
 }

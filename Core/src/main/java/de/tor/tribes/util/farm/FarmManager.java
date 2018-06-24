@@ -69,10 +69,7 @@ public class FarmManager extends GenericManager<FarmInformation> {
     if (info == null) {
       info = new FarmInformation(pVillage);
       infoMap.put(pVillage, info);
-      info.setJustCreated(true);
       addManagedElement(info);
-    } else {
-      info.setJustCreated(false);
     }
     return info;
   }
@@ -106,7 +103,7 @@ public class FarmManager extends GenericManager<FarmInformation> {
       for (Village farm : villages) {
         if (farm != null && !handled.contains(farm) && farm.getTribe().equals(Barbarians.getSingleton())) {
           FarmInformation info = addFarm(farm);
-          if (info.isJustCreated()) {
+          if (info.getLastReport() < 0) {
             FightReport r = ReportManager.getSingleton().findLastReportForSource(farm);
             if (r != null) {
               info.updateFromReport(r);
@@ -184,7 +181,7 @@ public class FarmManager extends GenericManager<FarmInformation> {
             FarmInformation info = addFarm(target);
             info.updateFromReport(report);
             handled.add(target);
-            if (info.isJustCreated()) {
+            if (info.getLastReport() < 0) {
               addCount++;
             }
           } else {//update to newer report
@@ -224,7 +221,7 @@ public class FarmManager extends GenericManager<FarmInformation> {
               Village farm = DataHolder.getSingleton().getVillages()[x][y];
               if (farm != null && farm.getTribe().equals(Barbarians.getSingleton())) {
                 FarmInformation info = addFarm(farm);
-                if (info.isJustCreated()) {
+                if (info.getLastReport() < 0) {
                   FightReport r = ReportManager.getSingleton().findLastReportForSource(farm);
                   if (r != null) {
                     info.updateFromReport(r);
@@ -258,7 +255,7 @@ public class FarmManager extends GenericManager<FarmInformation> {
             Village v = DataHolder.getSingleton().getVillages()[i][j];
             if (v != null && v.getTribe().equals(Barbarians.getSingleton())) {
               FarmInformation info = addFarm(v);
-              if (info.isJustCreated()) {
+              if (info.getLastReport() < 0) {
                 FightReport r = ReportManager.getSingleton().findLastReportForSource(v);
                 if (r != null) {
                   info.updateFromReport(r);

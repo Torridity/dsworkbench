@@ -39,6 +39,8 @@ import java.util.List;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.netbeans.spi.wizard.Wizard;
 import org.netbeans.spi.wizard.WizardPage;
@@ -50,6 +52,7 @@ import org.netbeans.spi.wizard.WizardPanelNavResult;
  */
 public class ResourceDistributorFinishPanel extends WizardPage {
 
+    private static final Logger logger = LogManager.getLogger("ResourceDistributorFinishPanel");
     private static final String GENERAL_INFO = "<html>Bist du bei diesem Schritt angekommen, hast du abschlie&szlig;end die M&ouml;glichkeit, "
             + "die berechneten Rohstoffe in den Browser zu &uuml;bertragen und abzuschicken. Voraussetzung hierf&uuml;r ist, dass du das "
             + "DS Workbench Userscript in deinem Browser (Firefox oder Opera) installiert hast. Markiere einfach in der unteren Tabelle die Transporte die du "
@@ -440,6 +443,19 @@ public class ResourceDistributorFinishPanel extends WizardPage {
     }//GEN-LAST:event_fireShowHideInfoEvent
 
     private void fireTransferSelectionToBrowserEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireTransferSelectionToBrowserEvent
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    transferToBrowser();
+                } catch(Exception e) {
+                    logger.warn("Error transfering to Browser", e);
+                }
+            }
+        }).start();
+    }//GEN-LAST:event_fireTransferSelectionToBrowserEvent
+
+    private void transferToBrowser() {
         boolean outOfClicks = false;
         boolean browserAccessFailed = false;
         int transferred = 0;
@@ -477,7 +493,7 @@ public class ResourceDistributorFinishPanel extends WizardPage {
             showInfo("Keine Transporte ausgewählt");
         }
 
-        if (transferred + ignored != 0 && transferred + ignored == selectedRows.length) {
+        if (transferred + ignored > 0 && transferred + ignored == selectedRows.length) {
             int last = selectedRows[selectedRows.length - 1];
             if (jTransportsTable.getRowCount() > last) {
                 jTransportsTable.getSelectionModel().addSelectionInterval(last + 1, last + 1);
@@ -492,8 +508,8 @@ public class ResourceDistributorFinishPanel extends WizardPage {
         if (browserAccessFailed) {
             showInfo("Einer oder mehrere Transporte konnten nicht im Browser geöffnet werden.");
         }
-    }//GEN-LAST:event_fireTransferSelectionToBrowserEvent
-
+    }
+    
     private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireHideInfoEvent
         jXCollapsiblePane2.setCollapsed(true);
     }//GEN-LAST:event_fireHideInfoEvent

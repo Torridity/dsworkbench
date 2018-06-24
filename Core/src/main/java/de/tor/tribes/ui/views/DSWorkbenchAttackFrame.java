@@ -559,7 +559,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         jxSearchPane.add(jXPanel2, new java.awt.GridBagConstraints());
 
         jXAttackPanel.setLayout(new java.awt.BorderLayout());
-        jXAttackPanel.add(jAttackTabPane, java.awt.BorderLayout.PAGE_START);
+        jXAttackPanel.add(jAttackTabPane, java.awt.BorderLayout.CENTER);
 
         jNewPlanPanel.setOpaque(false);
         jNewPlanPanel.setLayout(new java.awt.BorderLayout());

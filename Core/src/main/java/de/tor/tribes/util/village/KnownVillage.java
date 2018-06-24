@@ -52,7 +52,8 @@ public class KnownVillage extends ManageableType {
     private long lastUpdate;
 
     public static final int[] CHURCH_RANGE = {0, 4, 6, 8};
-    public static final double[] WATCHTOWER_RANGE = {0, 1.1, 1.3, 1.5, 1.7, 2.0, 2.3, 2.6, 3.0, 3.4, 3.9, 4.4, 5.1, 5.8, 6.7, 7.6, 8.7, 10.0, 11.5, 13.1, 15.0};
+    public static final double[] WATCHTOWER_RANGE = {0, 1.1, 1.3, 1.5, 1.7, 2.0, 2.3,
+            2.6, 3.0, 3.4, 3.9, 4.4, 5.1, 5.8, 6.7, 7.6, 8.7, 10.0, 11.5, 13.1, 15.0};
     
     public KnownVillage(Village pVillage) {
         buildings = new int[Constants.BUILDING_NAMES.length];
@@ -233,7 +234,7 @@ public class KnownVillage extends ManageableType {
         return buildings[id];
     }
 
-    private void setBuildingLevelByName(String pBuilding, int pLevel) {
+    public void setBuildingLevelByName(String pBuilding, int pLevel) {
         int id = getBuildingIdByName(pBuilding);
         if(id == -2) {
             logger.info("Building " + pBuilding + " not found");
@@ -316,15 +317,20 @@ public class KnownVillage extends ManageableType {
     }
 
     void updateInformation(FightReport pReport) {
-        for(int i = 0; i < buildings.length; i++) {
-            if(pReport.getBuilding(i) != -1) {
-                //Building was spyed
-                if(getMaxBuildingLevel(Constants.BUILDING_NAMES[i]) > 0) {
-                    //Building can be build
-                    setBuildingLevelById(i, pReport.getBuilding(i));
-                    updateTime();
+        if (pReport.getSpyLevel() >= pReport.SPY_LEVEL_BUILDINGS) {
+            for(int i = 0; i < buildings.length; i++) {
+                if(pReport.getBuilding(i) != -1) {
+                    //Building was spyed
+                    if(getMaxBuildingLevel(Constants.BUILDING_NAMES[i]) > 0) {
+                        //Building can be build
+                        setBuildingLevelById(i, pReport.getBuilding(i));
+                        updateTime();
+                    }
                 }
             }
+        } else if (pReport.getWallAfter() != -1) {
+            // set wall destruction (works also without spying)
+            setBuildingLevelByName("wall", pReport.getWallAfter());
         }
     }
 }

@@ -42,6 +42,7 @@ public class ServerSettings {
     private boolean millisArrival = true;
     private double speed = 1.0;
     private int resourceConstant = 30;
+    private int barbarianPoints = 500;
 
     private boolean nightBonusActive = true;
     private int nightBonusStartHour = 0;
@@ -58,7 +59,7 @@ public class ServerSettings {
     private int nobleSystem = 0;
     
     private static ServerSettings SINGLETON = null;
-    private List<ServerSettingsListener> listeners = new ArrayList<>();
+    private final List<ServerSettingsListener> listeners = new ArrayList<>();
 
     public static synchronized ServerSettings getSingleton() {
         if (SINGLETON == null) {
@@ -188,10 +189,18 @@ public class ServerSettings {
             
             logger.debug(" - reading resource Production base");
             try {
-                setResourceConstant(Integer.parseInt(JDomUtils.getNodeValue(d, "game/base_production")));
+                this.resourceConstant = Integer.parseInt(JDomUtils.getNodeValue(d, "game/base_production"));
             } catch (Exception inner) {
                 logger.warn("Unable to resource Production base", inner);
-                this.moral = 0;
+                this.resourceConstant = 0;
+            }
+            
+            logger.debug(" - reading resource Production base");
+            try {
+                this.barbarianPoints = Integer.parseInt(JDomUtils.getNodeValue(d, "game/barbarian_max_points"));
+            } catch (Exception inner) {
+                logger.warn("Unable to resource Production base", inner);
+                this.barbarianPoints = 500;
             }
             
         } catch (Exception e) {
@@ -212,7 +221,7 @@ public class ServerSettings {
         return SERVER_ID;
     }
     
-    public void setMapSize(int pMapSize) {
+    private void setMapSize(int pMapSize) {
         if (pMapSize < 50 || pMapSize > 1000) {
             logger.warn("Invalid map size (" + pMapSize + "). Falling back to 1000x1000");
             pMapSize = 1000;
@@ -231,24 +240,12 @@ public class ServerSettings {
         return mapSize;
     }
 
-    public void setNewBonus(int pNewBonus) {
-        BONUS_NEW = pNewBonus;
-    }
-
     public int getNewBonus() {
         return BONUS_NEW;
     }
 
-    public void setSnobRange(int pSnobRange) {
-        SNOB_RANGE = pSnobRange;
-    }
-
     public int getSnobRange() {
         return SNOB_RANGE;
-    }
-
-    public void setChurch(boolean v) {
-        church = v;
     }
 
     public boolean isChurch() {
@@ -263,40 +260,20 @@ public class ServerSettings {
         return fakeLimit;
     }
 
-    public void setMillisArrival(boolean v) {
-        millisArrival = v;
-    }
-
     public boolean isMillisArrival() {
         return millisArrival;
-    }
-
-    public void setSpeed(double speed) {
-        this.speed = speed;
     }
 
     public double getSpeed() {
         return speed;
     }
 
-    public void setNightBonusActive(boolean nightBonusActive) {
-        this.nightBonusActive = nightBonusActive;
-    }
-
     public boolean isNightBonusActive() {
         return nightBonusActive;
     }
 
-    public void setNightBonusStartHour(int nightBonusStartHour) {
-        this.nightBonusStartHour = nightBonusStartHour;
-    }
-
     public int getNightBonusStartHour() {
         return nightBonusStartHour;
-    }
-
-    public void setNightBonusEndHour(int nightBonusEndHour) {
-        this.nightBonusEndHour = nightBonusEndHour;
     }
 
     public int getNightBonusEndHour() {
@@ -307,22 +284,23 @@ public class ServerSettings {
         return moral;
     }
 
-    public void setMoralType(int pMoral) {
+    private void setMoralType(int pMoral) {
         if(pMoral < 0 || pMoral > 3) {
             throw new IllegalArgumentException("Invalid moral type (" + pMoral + ")");
         }
         this.moral = pMoral;
     }
-    private void setResourceConstant(int resourceConstant) {
-        this.resourceConstant = resourceConstant;
-    }
-
+    
     public int getResourceConstant() {
         return resourceConstant;
     }
     
     public int getNobleSystem() {
         return nobleSystem;
+    }
+
+    public int getBarbarianPoints() {
+        return barbarianPoints;
     }
 
     /**

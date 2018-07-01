@@ -922,7 +922,6 @@ public class DataHolder {
         mUnits.clear();
         mUnitsByName.clear();
         String unitFile = getDataDirectory() + "/units.xml";
-        //buildingsFile += "/units.xml";
         logger.debug("Loading units");
         try {
             Document d = JDomUtils.getDocument(new File(unitFile));

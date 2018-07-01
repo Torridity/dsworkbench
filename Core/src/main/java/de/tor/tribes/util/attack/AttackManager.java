@@ -22,14 +22,11 @@ import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.xml.JDomUtils;
-import java.io.File;
-import java.io.FileWriter;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jdom2.Document;
 import org.jdom2.Element;
 
 /**
@@ -79,156 +76,69 @@ public class AttackManager extends GenericManager<Attack> {
         return groups;
     }
 
-    /**
-     *
-     * @param pFile
-     */
     @Override
-    public void loadElements(String pFile) {
-        if (pFile == null) {
-            logger.error("File argument is 'null'");
-            return;
+    public int importData(Element pElm, String pExtension) {
+        if (pElm == null) {
+            logger.error("Element argument is 'null'");
+            return -1;
         }
+        int result = 0;
         invalidate();
-        initialize();
-        File attackFile = new File(pFile);
-        if (attackFile.exists()) {
-            logger.info("Loading troop movements from '" + pFile + "'");
+        logger.info("Loading troop movements");
 
-            try {
-                Document d = JDomUtils.getDocument(attackFile);
-                for (Element e : (List<Element>) JDomUtils.getNodes(d, "plans/plan")) {
-                    String planKey = e.getAttributeValue("key");
-                    planKey = URLDecoder.decode(planKey, "UTF-8");
-                    if (logger.isDebugEnabled()) {
-                        logger.debug("Loading plan '" + planKey + "'");
-                    }
-                    addGroup(planKey);
-                    for (Element e1 : (List<Element>) JDomUtils.getNodes(e, "attacks/attack")) {
-                        Attack a = new Attack();
-                        a.loadFromXml(e1);
-                        
-                        if (a.getSource() != null && a.getTarget() != null) {
-                            addManagedElement(planKey, a);
-                        }
+        try {
+            for (Element e : (List<Element>) JDomUtils.getNodes(pElm, "plans/plan")) {
+                String planKey = e.getAttributeValue("key");
+                planKey = URLDecoder.decode(planKey, "UTF-8");
+                if (pExtension != null) {
+                    planKey += "_" + pExtension;
+                }
+                logger.debug("Loading plan '{}'", planKey);
+                addGroup(planKey);
+                for (Element e1 : (List<Element>) JDomUtils.getNodes(e, "attacks/attack")) {
+                    Attack a = new Attack();
+                    a.loadFromXml(e1);
+
+                    if (a.getSource() != null && a.getTarget() != null) {
+                        addManagedElement(planKey, a);
+                        result++;
                     }
                 }
-                logger.debug("Troop movements loaded successfully");
-            } catch (Exception e) {
-                logger.error("Failed to load troop movements", e);
             }
-        } else {
-            logger.info("No troop movements found under '" + pFile + "'");
-        }
-        revalidate();
-    }
-
-    @Override
-    public boolean importData(File pFile, String pExtension) {
-        invalidate();
-        boolean result = false;
-        if (pFile == null) {
-            logger.error("File argument is 'null'");
-        } else {
-            try {
-                logger.info("Importing attacks");
-                Document d = JDomUtils.getDocument(pFile);
-                for (Element e : (List<Element>) JDomUtils.getNodes(d, "plans/plan")) {
-                    String planKey = e.getAttributeValue("key");
-                    planKey = URLDecoder.decode(planKey, "UTF-8");
-                    if (pExtension != null) {
-                        planKey += "_" + pExtension;
-                    }
-                    addGroup(planKey);
-                    if (logger.isDebugEnabled()) {
-                        logger.debug("Loading plan '" + planKey + "'");
-                    }
-
-                    for (Element e1 : (List<Element>) JDomUtils.getNodes(e, "attacks/attack")) {
-                        Attack a = new Attack();
-                        a.loadFromXml(e1);
-
-                        if (a.getSource() != null && a.getTarget() != null) {
-                            addManagedElement(planKey, a);
-                        }
-                    }
-                }
-
-                logger.debug("Troop movements imported successfully");
-                result = true;
-            } catch (Exception e) {
-                logger.error("Failed to import troop movements", e);
-            }
+            logger.debug("Troop movements loaded successfully");
+        } catch (Exception e) {
+            result = result * (-1) - 1;
+            logger.error("Failed to load troop movements", e);
         }
         revalidate(true);
         return result;
     }
 
-    /**
-     * @param plansToExport
-     * @return
-     */
     @Override
-    public String getExportData(final List<String> plansToExport) {
-        if (plansToExport.isEmpty()) {
-            return "";
+    public Element getExportData(final List<String> pGroupsToExport) {
+        Element plans = new Element("plans");
+        if (pGroupsToExport == null || pGroupsToExport.isEmpty()) {
+            return plans;
         }
-        logger.debug("Generating attacks export data");
-        StringBuilder b = new StringBuilder();
-        b.append("<plans>\n");
+        logger.debug("Generating attacks data");
 
-        for (String plan : plansToExport) {
+        for (String plan : pGroupsToExport) {
             try {
-                b.append("<plan key=\"").append(URLEncoder.encode(plan, "UTF-8")).append("\">\n");
+                Element planE = new Element("plan");
+                planE.setAttribute("key", URLEncoder.encode(plan, "UTF-8"));
 
-                ManageableType[] elements = getAllElements(plan).toArray(new ManageableType[getAllElements(plan).size()]);
-                b.append("<attacks>\n");
-
-                for (ManageableType elem : elements) {
-                    b.append(elem.toXml()).append("\n");
+                Element attacks = new Element("attacks");
+                for (ManageableType elem : getAllElements(plan)) {
+                    attacks.addContent(elem.toXml("attack"));
                 }
-                b.append("</attacks>\n");
-                b.append("</plan>\n");
+                planE.addContent(attacks);
+                plans.addContent(planE);
             } catch (Exception e) {
-                logger.warn("Failed to export plan '" + plan + "'", e);
+                logger.warn("Failed to generate plan '" + plan + "'", e);
             }
         }
-        b.append("</plans>\n");
-        logger.debug("Export data generated successfully");
-        return b.toString();
-    }
-
-    @Override
-    public void saveElements(String pFile) {
-
-        try {
-            StringBuilder b = new StringBuilder();
-            b.append("<data><plans>\n");
-            Iterator<String> plans = getGroupIterator();
-
-            while (plans.hasNext()) {
-                String key = plans.next();
-                b.append("<plan key=\"").append(URLEncoder.encode(key, "UTF-8")).append("\">\n");
-                List<ManageableType> elems = getAllElements(key);
-                b.append("<attacks>\n");
-                for (ManageableType elem : elems) {
-                    b.append(elem.toXml()).append("\n");
-                }
-
-                b.append("</attacks>\n");
-                b.append("</plan>\n");
-            }
-
-            b.append("</plans></data>\n");
-            //write data to file
-            FileWriter w = new FileWriter(pFile);
-            w.write(b.toString());
-            w.flush();
-            w.close();
-        } catch (Exception e) {
-            logger.error("Failed to store attacks", e);
-        }
-
+        logger.debug("Data generated successfully");
+        return plans;
     }
 
     /**

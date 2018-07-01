@@ -149,7 +149,7 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
     private int acceptanceAfter = 100;
     private int[] spyedResources = null;
     private int[] haul = null;
-    private int[] buildingLevels;
+    private int[] buildingLevels = null;
     
     public final int SPY_LEVEL_NONE = 0;
     public final int SPY_LEVEL_RESOURCES = 1;
@@ -170,9 +170,7 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
     }
 
     public static String toInternalRepresentation(FightReport pReport) {
-        String xml = pReport.toXml();
-        xml = xml.replaceAll("\n", "");
-        return xml;
+        return JDomUtils.toShortString(pReport.toXml("report"));
     }
 
     public static FightReport fromInternalRepresentation(String pLine) {
@@ -262,17 +260,21 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
 
             try {
                 Element e = pElement.getChild("wall");
-                this.wallBefore = Byte.parseByte(e.getAttribute("before").getValue());
-                this.wallAfter = Byte.parseByte(e.getAttribute("after").getValue());
+                if(e != null) {
+                    this.wallBefore = Byte.parseByte(e.getAttribute("before").getValue());
+                    this.wallAfter = Byte.parseByte(e.getAttribute("after").getValue());
+                }
             } catch (Exception e) {
                 this.wallBefore = -1;
                 this.wallAfter = -1;
             }
             try {
                 Element e = pElement.getChild("building");
-                this.aimedBuildingId =  Byte.parseByte(e.getAttribute("target").getValue());
-                this.buildingBefore = Byte.parseByte(e.getAttribute("before").getValue());
-                this.buildingAfter = Byte.parseByte(e.getAttribute("after").getValue());
+                if(e != null) {
+                    this.aimedBuildingId =  Byte.parseByte(e.getAttribute("target").getValue());
+                    this.buildingBefore = Byte.parseByte(e.getAttribute("before").getValue());
+                    this.buildingAfter = Byte.parseByte(e.getAttribute("after").getValue());
+                }
             } catch (Exception e) {
                 this.buildingBefore = -1;
                 this.buildingAfter = -1;
@@ -280,8 +282,10 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
             }
             try {
                 Element e = pElement.getChild("acceptance");
-                this.acceptanceBefore = Byte.parseByte(e.getAttribute("before").getValue());
-                this.acceptanceAfter = Byte.parseByte(e.getAttribute("after").getValue());
+                if(e != null) {
+                    this.acceptanceBefore = Byte.parseByte(e.getAttribute("before").getValue());
+                    this.acceptanceAfter = Byte.parseByte(e.getAttribute("after").getValue());
+                }
             } catch (Exception e) {
                 this.acceptanceBefore = 100;
                 this.acceptanceAfter = 100;
@@ -308,84 +312,90 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
     }
 
     @Override
-    public String toXml() {
-        StringBuilder b = new StringBuilder();
+    public Element toXml(String elementName) {
+        Element report = new Element(elementName);
+        
         try {
-            b.append("<report>\n");
             //general part
-            b.append("<timestamp>").append(timestamp).append("</timestamp>\n");
-            b.append("<moral>").append(moral).append("</moral>\n");
-            b.append("<luck>").append(luck).append("</luck>\n");
+            report.addContent(new Element("timestamp").setText(Long.toString(timestamp)));
+            report.addContent(new Element("moral").setText(Double.toString(moral)));
+            report.addContent(new Element("luck").setText(Double.toString(luck)));
+            
             //attacker part
-            b.append("<attacker>\n");
-            b.append("<id>").append(attacker.getId()).append("</id>\n");
-            b.append("<src>").append(sourceVillage.getId()).append("</src>\n");
-            b.append("<before ");
-            b.append(attackers.toXml());
-            b.append(" />\n");
-            b.append("<died ");
-            b.append(diedAttackers.toXml());
-            b.append(" />\n");
-            b.append("</attacker>\n");
+            Element attackerE = new Element("attacker");
+            attackerE.addContent(new Element("id").setText(Integer.toString(attacker.getId())));
+            attackerE.addContent(new Element("src").setText(Integer.toString(sourceVillage.getId())));
+            attackerE.addContent(attackers.toXml("before"));
+            attackerE.addContent(diedAttackers.toXml("died"));
+            report.addContent(attackerE);
 
             //defender part
-            b.append("<defender>\n");
-            b.append("<id>").append(defender.getId()).append("</id>\n");
-            b.append("<trg>").append(targetVillage.getId()).append("</trg>\n");
-            b.append("<before ");
-            b.append(defenders.toXml());
-            b.append(" />\n");
-            b.append("<died ");
-            b.append(diedDefenders.toXml());
-            b.append(" />\n");
+            Element defenderE = new Element("defender");
+            defenderE.addContent(new Element("id").setText(Integer.toString(defender.getId())));
+            defenderE.addContent(new Element("trg").setText(Integer.toString(targetVillage.getId())));
+            defenderE.addContent(defenders.toXml("before"));
+            defenderE.addContent(diedDefenders.toXml("died"));
+            
             if (whereDefendersOnTheWay()) {
-                b.append("<otw ");
-                b.append(defendersOnTheWay.toXml());
-                b.append(" />\n");
+                defenderE.addContent(defendersOnTheWay.toXml("otw"));
             }
             if (whereDefendersOutside()) {
-                b.append("<outside>\n");
-                Set<Village> targetVillages = defendersOutside.keySet();
-                for (Village target: targetVillages) {
-                    b.append("<target id=\"").append(target.getId()).append("\" ");
-                    b.append(defendersOutside.get(target).toXml());
-                    b.append(" />\n");
+                Element outsideE = new Element("outside");
+                for (Village target: defendersOutside.keySet()) {
+                    Element defOutside = defendersOutside.get(target).toXml("target");
+                    defOutside.setAttribute("id", Integer.toString(target.getId()));
+                    outsideE.addContent(defOutside);
                 }
-                b.append("</outside>\n");
+                defenderE.addContent(outsideE);
             }
-
-            b.append("</defender>\n");
-
+            report.addContent(defenderE);
+            
             if (wasWallDamaged()) {
-                b.append("<wall before=\"").append(getWallBefore()).append("\" after=\"").append(getWallAfter()).append("\"/>\n");
+                Element wall = new Element("wall");
+                wall.setAttribute("before", Integer.toString(getWallBefore()));
+                wall.setAttribute("after", Integer.toString(getWallAfter()));
+                report.addContent(wall);
             }
             if (wasBuildingDamaged()) {
-                b.append("<building target=\"").append(aimedBuildingId).append("\" before=\"").append(getBuildingBefore()).append("\" after=\"").append(getBuildingAfter()).append("\"/>\n");
+                Element building = new Element("building");
+                building.setAttribute("target", Integer.toString(aimedBuildingId));
+                building.setAttribute("before", Integer.toString(getBuildingBefore()));
+                building.setAttribute("after", Integer.toString(getBuildingAfter()));
+                report.addContent(building);
             }
             if (wasSnobAttack()) {
-                b.append("<acceptance before=\"").append(getAcceptanceBefore()).append("\" after=\"").append(getAcceptanceAfter()).append("\"/>\n");
+                Element building = new Element("acceptance");
+                building.setAttribute("before", Integer.toString(getAcceptanceBefore()));
+                building.setAttribute("after", Integer.toString(getAcceptanceAfter()));
+                report.addContent(building);
             }
 
             if (haul != null) {
-                b.append("<haul wood=\"").append(haul[0]).append("\" clay=\"").append(haul[1]).append("\" iron=\"").append(haul[2]).append("\"/>\n");
+                Element haulE = new Element("haul");
+                haulE.setAttribute("wood", Integer.toString(haul[0]));
+                haulE.setAttribute("clay", Integer.toString(haul[1]));
+                haulE.setAttribute("iron", Integer.toString(haul[2]));
+                report.addContent(haulE);
             }
 
             if (spyedResources != null) {
-                b.append("<spy wood=\"").append(spyedResources[0]).append("\" clay=\"").append(spyedResources[1]).append("\" iron=\"").append(spyedResources[2]).append("\"/>\n");
+                Element spy = new Element("haul");
+                spy.setAttribute("wood", Integer.toString(spyedResources[0]));
+                spy.setAttribute("clay", Integer.toString(spyedResources[1]));
+                spy.setAttribute("iron", Integer.toString(spyedResources[2]));
+                report.addContent(spy);
             }
 
-            b.append("<spyBuildings");
+            Element spyBuildings = new Element("spyBuildings");
             for(int i = 0; i < buildingLevels.length; i++) {
-                b.append(" ").append(Constants.BUILDING_NAMES[i]).append("=\"");
-                b.append(buildingLevels[i]).append("\"");
+                spyBuildings.setAttribute(Constants.BUILDING_NAMES[i], Integer.toString(buildingLevels[i]));
             }
-            b.append("/>\n");
+            report.addContent(spyBuildings);
             
-            b.append("<spyLevel>").append(spyLevel).append("</spyLevel>\n");
-            
-            b.append("</report>");
-            return b.toString();
+            report.addContent(new Element("spyLevel").setText(Integer.toString(spyLevel)));
+            return report;
         } catch (Exception e) {
+            logger.info("Exception during xml export", e);
             return null;
         }
     }
@@ -998,21 +1008,6 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
     }
 
     @Override
-    public String getElementIdentifier() {
-        return "fightReport";
-    }
-
-    @Override
-    public String getElementGroupIdentifier() {
-        return "reportSet";
-    }
-
-    @Override
-    public String getGroupNameAttributeIdentifier() {
-        return "name";
-    }
-
-    @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof FightReport)) {
             return false;
@@ -1090,7 +1085,7 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
         because buildings with level 0 are not shown by DS
     */
     public void fillMissingSpyInformation() {
-        logger.debug(toXml());
+        logger.debug(JDomUtils.toShortString(toXml("report")));
         if (spyedResources != null) {
             if(spyedResources[0] != 0) spyLevel = SPY_LEVEL_RESOURCES;
             if(spyedResources[1] != 0) spyLevel = SPY_LEVEL_RESOURCES;
@@ -1123,7 +1118,7 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
                     spyedResources = new int[]{0, 0, 0};
             default:
         }
-        logger.debug(toXml());
+        logger.debug(JDomUtils.toShortString(toXml("report")));
     }
 
     public void setDefendersOutside(HashMap<Village, TroopAmountFixed> pDefendersOutside) {

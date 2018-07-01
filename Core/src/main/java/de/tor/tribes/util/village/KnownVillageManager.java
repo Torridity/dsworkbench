@@ -21,13 +21,10 @@ import de.tor.tribes.types.FightReport;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.panels.MinimapPanel;
 import de.tor.tribes.util.xml.JDomUtils;
-import java.io.File;
-import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jdom2.Document;
 import org.jdom2.Element;
 
 /**
@@ -55,60 +52,16 @@ public class KnownVillageManager extends GenericManager<KnownVillage> {
     }
 
     @Override
-    public void loadElements(String pFile) {
-        if (pFile == null) {
-            logger.error("File argument is 'null'");
-            return;
+    public int importData(Element pElm, String pExtension) {
+        if (pElm == null) {
+            logger.error("Element argument is 'null'");
+            return -1;
         }
+        int result = 0;
         invalidate();
-        initialize();
-        File villageFile = new File(pFile);
-        if (villageFile.exists()) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("Reading KnownVillages from '" + pFile + "'");
-            }
-            try {
-                Document d = JDomUtils.getDocument(villageFile);
-                for (Element e : (List<Element>) JDomUtils.getNodes(d, "villages/village")) {
-                    try {
-                        KnownVillage v = new KnownVillage(e);
-                        if (getKnownVillage(v.getVillage()) == null) {
-                            addManagedElement(v);
-                        } else {
-                            //somehow this village appears twice in saved data
-                            //this should never happen
-                            KnownVillage merge = getKnownVillage(v.getVillage());
-                            merge.updateInformation(v);
-                        }
-                    } catch (Exception inner) {
-                        logger.debug("invaid line", inner);
-                    }
-                }
-                logger.debug("KnownVillages successfully loaded");
-            } catch (Exception e) {
-                logger.error("Failed to load KnownVillages", e);
-            }
-        } else {
-            if (logger.isInfoEnabled()) {
-                logger.info("KnownVillages file not found under '" + pFile + "'");
-            }
-        }
-        rebuildWatchtowerChurchCache();
-        revalidate(true);
-    }
-
-    @Override
-    public boolean importData(File pFile, String pExtension) {
-        if (pFile == null) {
-            logger.error("File argument is 'null'");
-            return false;
-        }
-        boolean result = false;
-        invalidate();
-        logger.debug("Importing KnownVillages");
+        logger.debug("Reading KnownVillages");
         try {
-            Document d = JDomUtils.getDocument(pFile);
-            for (Element e : (List<Element>) JDomUtils.getNodes(d, "villages/village")) {
+            for (Element e : (List<Element>) JDomUtils.getNodes(pElm, "villages/village")) {
                 try {
                     KnownVillage v = new KnownVillage(e);
                     if (getKnownVillage(v.getVillage()) == null) {
@@ -118,16 +71,16 @@ public class KnownVillageManager extends GenericManager<KnownVillage> {
                         KnownVillage merge = getKnownVillage(v.getVillage());
                         merge.updateInformation(v);
                     }
+                    result++;
                 } catch (Exception inner) {
                     //ignored, marker invalid
                 }
             }
-            logger.debug("KnownVillages imported successfully");
-            result = true;
+            logger.debug("KnownVillages successfully loaded");
         } catch (Exception e) {
-            logger.error("Failed to import KnownVillages", e);
+            result = result * (-1) - 1;
+            logger.error("Failed to load KnownVillages", e);
             MinimapPanel.getSingleton().redraw();
-            result = false;
         }
         rebuildWatchtowerChurchCache();
         revalidate(true);
@@ -135,55 +88,15 @@ public class KnownVillageManager extends GenericManager<KnownVillage> {
     }
 
     @Override
-    public String getExportData(List<String> pGroupsToExport) {
-        logger.debug("Generating KnownVillages export data");
-
-        String result = "<villages>\n";
-        ManageableType[] elements = getAllElements().toArray(new ManageableType[getAllElements().size()]);
-
-        for (ManageableType t : elements) {
-            KnownVillage v = (KnownVillage) t;
-            result += v.toXml() + "\n";
+    public Element getExportData(final List<String> pGroupsToExport) {
+        Element villages = new Element("villages");
+        
+        logger.debug("Generating KnownVillages data");
+        for (ManageableType t : getAllElements()) {
+            villages.addContent(t.toXml("village"));
         }
-        result += "</villages>\n";
-        logger.debug("Export data generated successfully");
-        return result;
-    }
-
-    @Override
-    public void saveElements(String pFile) {
-        if (pFile == null) {
-            logger.error("File argument is 'null'");
-            return;
-        }
-
-        if (logger.isDebugEnabled()) {
-            logger.debug("Writing KnownVillages to '" + pFile + "'");
-        }
-        try {
-            StringBuilder b = new StringBuilder();
-
-            b.append("<data><villages>\n");
-            for (ManageableType t : getAllElements()) {
-                KnownVillage c = (KnownVillage) t;
-                b.append(c.toXml()).append("\n");
-            }
-            b.append("</villages></data>");
-            //write data to file
-            FileWriter w = new FileWriter(pFile);
-            w.write(b.toString());
-            w.flush();
-            w.close();
-            logger.debug("KnownVillages successfully saved");
-        } catch (Exception e) {
-            if (!new File(pFile).getParentFile().exists()) {
-                //server directory obviously does not exist yet
-                //this should only happen at the first start
-                logger.info("Ignoring error, server directory does not exists yet");
-            } else {
-                logger.error("Failed to save churches", e);
-            }
-        }
+        logger.debug("Data generated successfully");
+        return villages;
     }
 
     public List<KnownVillage> getChurchVillages() {

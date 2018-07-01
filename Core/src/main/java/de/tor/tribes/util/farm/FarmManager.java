@@ -38,7 +38,6 @@ import java.util.LinkedList;
 import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jdom2.Document;
 import org.jdom2.Element;
 
 /**
@@ -284,97 +283,45 @@ public class FarmManager extends GenericManager<FarmInformation> {
   }
 
   @Override
-  public void loadElements(String pFile) {
-    if (pFile == null) {
-      logger.error("File argument is 'null'");
-      return;
+  public int importData(Element pElm, String pExtension) {
+    if (pElm == null) {
+        logger.error("Element argument is 'null'");
+        return -1;
     }
     invalidate();
-    initialize();
-    File farmFile = new File(pFile);
-    infoMap.clear();
-    if (farmFile.exists()) {
-      logger.debug("Reading farm information from file " + pFile);
-      try {
-        Document d = JDomUtils.getDocument(farmFile);
-        for (Element e : (List<Element>) JDomUtils.getNodes(d, "farmInfos/farmInfo")) {
-          FarmInformation element = new FarmInformation(e);
-          if (element.getVillage() != null) {
-            //just add valid information
-            element.revalidate();
-            addManagedElement(element);
-            infoMap.put(element.getVillage(), element);
-          }
+    int result = 0;
+    logger.debug("Reading farm information");
+    try {
+      for (Element e : (List<Element>) JDomUtils.getNodes(pElm, "farmInfos/farmInfo")) {
+        FarmInformation element = new FarmInformation(e);
+        if (element.getVillage() != null) {
+          //just add valid information
+          element.revalidate();
+          addManagedElement(element);
+          infoMap.put(element.getVillage(), element);
+          result++;
         }
-        logger.debug("Farm information successfully read");
-      } catch (Exception e) {
-        logger.error("Failed to read farm information", e);
       }
-    } else {
-        logger.info("No FarmInformation found under '" + pFile + "'");
-    }
-    revalidate(true);
-  }
-
-  @Override
-  public void saveElements(String pFile) {
-    logger.debug("Writing farm information to file " + pFile);
-    try (FileWriter w = new FileWriter(pFile)) {
-      w.write("<data><farmInfos>\n");
-      for (ManageableType element : getAllElements()) {
-        w.write(element.toXml());
-      }
-      w.write("</farmInfos></data>\n");
-      w.flush();
-      w.close();
+      logger.debug("Farm information successfully read");
     } catch (Exception e) {
-      logger.error("Failed to write farm information", e);
-    }
-  }
-
-  @Override
-  public String getExportData(List<String> pGroupsToExport) {
-      StringBuilder expData = new StringBuilder();
-      expData.append("<farmInfos>\n");
-      for (ManageableType element : getAllElements()) {
-        expData.append(element.toXml());
-      }
-      expData.append("</farmInfos>\n");
-    return expData.toString();
-  }
-
-  @Override
-  public boolean importData(File pFile, String pExtension) {
-    if (pFile == null) {
-      logger.error("File argument is 'null'");
-      return false;
-    }
-    invalidate();
-    if (pFile.exists()) {
-      logger.debug("Reading farm information from file " + pFile);
-      try {
-        Document d = JDomUtils.getDocument(pFile);
-        for (Element e : (List<Element>) JDomUtils.getNodes(d, "farmInfos/farmInfo")) {
-          FarmInformation element = new FarmInformation(e);
-          if (element.getVillage() != null) {
-            //just add valid information
-            element.revalidate();
-            addManagedElement(element);
-            infoMap.put(element.getVillage(), element);
-          }
-        }
-        logger.debug("Farm information successfully read");
-      } catch (Exception e) {
-        logger.error("Failed to read farm information", e);
-        revalidate(true);
-        return false;
-      }
-    } else {
-      logger.info("No FarmInformation found under '" + pFile + "'");
-      revalidate(true);
-      return false;
+      result = result * (-1) - 1;
+      logger.error("Failed to read farm information", e);
     }
     revalidate(true);
-    return true;
+    return result;
+  }
+
+  @Override
+  public Element getExportData(final List<String> pGroupsToExport) {
+    Element farmInfos = new Element("farmInfos");
+    if (pGroupsToExport == null || pGroupsToExport.isEmpty()) {
+        return farmInfos;
+    }
+    
+    for (ManageableType element : getAllElements()) {
+      farmInfos.addContent(element.toXml("farmInfo"));
+    }
+    
+    return farmInfos;
   }
 }

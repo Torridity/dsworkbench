@@ -39,14 +39,9 @@ import org.apache.logging.log4j.Logger;
 
 
 /**
- * This does not work currently due to the missing HTTPS support of the internal
- * server implementation. First steps are made, but getting and parsing the data
- * from HTTPs stream was never finished.
- *
  * @author Torridity
  */
 public class ReportServer {
-    //TODO check if this thing works
     private static Logger logger = LogManager.getLogger("ReportServer");
     private static ReportServer SINGLETON = null;
     private SSLWorkerThread sslWorkerThread;

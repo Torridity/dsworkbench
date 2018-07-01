@@ -20,6 +20,8 @@ import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.BBSupport;
 import java.awt.*;
+import java.io.IOException;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +51,6 @@ public abstract class AbstractForm extends ManageableType implements BBSupport {
     }
 
     public enum FORM_TYPE {
-
         LINE, ARROW, RECTANGLE, CIRCLE, TEXT, FREEFORM
     }
     private static Logger logger = LogManager.getLogger("AbstractForm");
@@ -66,103 +67,86 @@ public abstract class AbstractForm extends ManageableType implements BBSupport {
 
     public abstract void renderForm(Graphics2D g2d);
 
-    /**
-     *
-     * @param e
-     * @return
-     */
     public static AbstractForm fromXml(Element e) {
-        String formType = e.getAttributeValue("type");
-        switch (formType) {
-            case "line":
-                logger.debug("Loading 'line'");
-                Line l = new Line();
-                l.loadFromXml(e);
-                return l;
-            case "arrow":
-                logger.debug("Loading 'arrow'");
-                Arrow a = new Arrow();
-                a.loadFromXml(e);
-                return a;
-            case "rectangle":
-                logger.debug("Loading 'rectangle'");
-                Rectangle r = new Rectangle();
-                r.loadFromXml(e);
-                return r;
-            case "circle":
-                logger.debug("Loading 'circle'");
-                Circle c = new Circle();
-                c.loadFromXml(e);
-                return c;
-            case "text":
-                logger.debug("Loading 'text'");
-                Text t = new Text();
-                t.loadFromXml(e);
-                return t;
-            case "freeform":
-                logger.debug("Loading 'freeform'");
-                FreeForm f = new FreeForm();
-                f.loadFromXml(e);
-                return f;
-            default:
-                return null;
-        }
-    }
-
-    public FORM_TYPE getTypeForString(String formType) {
-        switch (formType) {
-            case "line":
-                return FORM_TYPE.LINE;
-            case "arrow":
-                return FORM_TYPE.ARROW;
-            case "rectangle":
-                return FORM_TYPE.RECTANGLE;
-            case "circle":
-                return FORM_TYPE.CIRCLE;
-            case "text":
-                return FORM_TYPE.TEXT;
-            case "freeform":
-                return FORM_TYPE.FREEFORM;
-            default:
-                return null;
-        }
-    }
-
-    public String getTypeAsString(FORM_TYPE formType) {
-        switch (formType) {
-            case ARROW:
-                return "arrow";
-            case CIRCLE:
-                return "circle";
-            case FREEFORM:
-                return "freeform";
+        FORM_TYPE type = FORM_TYPE.valueOf(e.getAttributeValue("type"));
+        AbstractForm form;
+        switch (type) {
             case LINE:
-                return "line";
+                logger.debug("Loading 'line'");
+                form = new Line();
+                break;
+            case ARROW:
+                logger.debug("Loading 'arrow'");
+                form = new Arrow();
+                break;
             case RECTANGLE:
-                return "rectangle";
+                logger.debug("Loading 'rectangle'");
+                form = new Rectangle();
+                break;
+            case CIRCLE:
+                logger.debug("Loading 'circle'");
+                form= new Circle();
+                break;
+            case TEXT:
+                logger.debug("Loading 'text'");
+                form = new Text();
+                break;
+            case FREEFORM:
+                logger.debug("Loading 'freeform'");
+                form = new FreeForm();
+                break;
             default:
-                return "text";
+                return null;
+        }
+        form.loadFromXml(e);
+        return form;
+    }
+    
+    @Override
+    public final void loadFromXml(Element e) {
+        try {
+            setFormName(URLDecoder.decode(e.getChild("name").getTextTrim(), "UTF-8"));
+            Element elem = e.getChild("pos");
+            setXPos(Double.parseDouble(elem.getAttributeValue("x")));
+            setYPos(Double.parseDouble(elem.getAttributeValue("y")));
+            elem = e.getChild("textColor");
+            setTextColor(new Color(Integer.parseInt(elem.getAttributeValue("r")),
+                    Integer.parseInt(elem.getAttributeValue("g")),
+                    Integer.parseInt(elem.getAttributeValue("b"))));
+            setTextAlpha(Float.parseFloat(elem.getAttributeValue("a")));
+            setTextSize(Integer.parseInt(e.getChild("textSize").getTextTrim()));
+            setTextSize(Integer.parseInt(e.getChildText("textSize")));
+            
+            formFromXml(e.getChild("extra"));
+        } catch (IOException ignored) {
         }
     }
+    
+    protected abstract void formFromXml(Element elm);
 
     @Override
-    public String toXml() {
+    public Element toXml(String elementName) {
+        Element form = new Element(elementName);
         try {
-            StringBuilder b = new StringBuilder();
-            b.append("<form type=\"").append(getTypeAsString(getFormType())).append("\">\n");
-            b.append("<name><![CDATA[").append(URLEncoder.encode(formName, "UTF-8")).append("]]></name>\n");
-            b.append("<pos x=\"").append(getXPos()).append("\" y=\"").append(getYPos()).append("\"/>\n");// rot=\"" + getRotation() + "\"/>\n");
-            b.append("<textColor r=\"").append(textColor.getRed()).append("\" g=\"").append(textColor.getGreen()).append("\" b=\"").append(textColor.getBlue()).append("\" a=\"").append(textAlpha).append("\"/>\n");
-            b.append("<textSize>").append(textSize).append("</textSize>\n");
-            b.append(getFormXml());
-            b.append("</form>\n");
-            return b.toString();
-        } catch (Exception e) {
-            return "\n";
+            form.setAttribute("type", getFormType().name());
+            form.addContent(new Element("name").setText("<![CDATA[" + URLEncoder.encode(formName, "UTF-8") + "]]>"));
+            form.addContent(new Element("pos").setAttribute("x", Double.toString(getXPos()))
+                    .setAttribute("y", Double.toString(getYPos())));
+            
+            Element color = new Element("textColor");
+            color.setAttribute("r", Integer.toString(textColor.getRed()));
+            color.setAttribute("g", Integer.toString(textColor.getGreen()));
+            color.setAttribute("b", Integer.toString(textColor.getBlue()));
+            color.setAttribute("a", Integer.toString(textColor.getAlpha()));
+            form.addContent(color);
+            form.addContent(new Element("textSize").setText(Integer.toString(textSize)));
+            form.addContent(formToXml("extra"));
+        } catch (Exception ignored) {
         }
+        return form;
     }
 
-    protected abstract String getFormXml();
+    protected abstract Element formToXml(String elementName);
 
     public abstract java.awt.Rectangle getBounds();
 
@@ -252,18 +236,6 @@ public abstract class AbstractForm extends ManageableType implements BBSupport {
      */
     public abstract FORM_TYPE getFormType();
 
-    /*
-      @return the rotation
-     */
-    /*  public double getRotation() {
-    return rotation;
-    }*/
-    /*
-      @param rotation the rotation to set
-     */
-    /*  public void setRotation(double rotation) {
-    this.rotation = rotation;
-    }*/
     /**
      * @return the alpha
      */
@@ -311,7 +283,7 @@ public abstract class AbstractForm extends ManageableType implements BBSupport {
 
     @Override
     public String toString() {
-        return formName + " (" + getTypeAsString(getFormType()) + ")";
+        return formName + " (" + getFormType().name() + ")";
     }
 
     /**
@@ -340,20 +312,5 @@ public abstract class AbstractForm extends ManageableType implements BBSupport {
      */
     public void setShowMode(boolean showMode) {
         this.showMode = showMode;
-    }
-
-    @Override
-    public String getElementIdentifier() {
-        return "";
-    }
-
-    @Override
-    public String getElementGroupIdentifier() {
-        return "";
-    }
-
-    @Override
-    public String getGroupNameAttributeIdentifier() {
-        return "";
     }
 }

@@ -97,46 +97,24 @@ public class Conquer extends ManageableType {
   }
 
   @Override
-  public String getElementIdentifier() {
-    return "conquer";
+  public Element toXml(String elementName) {
+    Element attack = new Element(elementName);
+    attack.addContent(new Element("villageID").setText(Integer.toString(village.getId())));
+    attack.addContent(new Element("timestamp").setText(Long.toString(timestamp)));
+    attack.addContent(new Element("winner").setText(Integer.toString(winner.getId())));
+    attack.addContent(new Element("loser").setText(Integer.toString(loser.getId())));
+    return attack;
   }
 
   @Override
-  public String getElementGroupIdentifier() {
-    return "conquers";
-  }
-
-  @Override
-  public String getGroupNameAttributeIdentifier() {
-    return "";
-  }
-
-  @Override
-  public String toXml() {
-    try {
-      StringBuilder b = new StringBuilder();
-      b.append("<conquer>\n");
-        b.append("<villageID>").append(village.getId()).append("</villageID>\n");
-        b.append("<timestamp>").append(timestamp).append("</timestamp>\n");
-        b.append("<winner>").append(winner.getId()).append("</winner>\n");
-        b.append("<loser>").append(loser.getId()).append("</loser>\n");
-      b.append("</conquer>");
-      return b.toString();
-    } catch (Throwable t) {
-      //getting xml data failed
-    }
-    return null;
-  }
-
-  @Override
-  public void loadFromXml(Element pElement) {
-    int villageId = Integer.parseInt(pElement.getChild("villageID").getText());
-    int timestamp = Integer.parseInt(pElement.getChild("timestamp").getText());
-    int winner = Integer.parseInt(pElement.getChild("winner").getText());
-    int loser = Integer.parseInt(pElement.getChild("loser").getText());
-    this.village = DataHolder.getSingleton().getVillagesById().get(villageId);
-    this.timestamp = (long) timestamp;
-    this.loser = DataHolder.getSingleton().getTribes().get(loser);
-    this.winner = DataHolder.getSingleton().getTribes().get(winner);
+    public void loadFromXml(Element pElement) {
+    int pVillageId = Integer.parseInt(pElement.getChild("villageID").getText());
+    long pTimestamp = Long.parseLong(pElement.getChild("timestamp").getText());
+    int pWinner = Integer.parseInt(pElement.getChild("winner").getText());
+    int pLoser = Integer.parseInt(pElement.getChild("loser").getText());
+    this.village = DataHolder.getSingleton().getVillagesById().get(pVillageId);
+    this.timestamp = pTimestamp;
+    this.loser = DataHolder.getSingleton().getTribes().get(pLoser);
+    this.winner = DataHolder.getSingleton().getTribes().get(pWinner);
   }
 }

@@ -23,14 +23,11 @@ import de.tor.tribes.types.SOSRequest;
 import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.xml.JDomUtils;
-import java.io.File;
-import java.io.FileWriter;
 import java.util.List;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.Predicate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jdom2.Document;
 import org.jdom2.Element;
 
 /**
@@ -53,86 +50,48 @@ public class SOSManager extends GenericManager<SOSRequest> {
     super(false);
   }
 
+
   @Override
-  public void loadElements(String pFile) {
-    if (pFile == null) {
-      logger.error("File argument is 'null'");
-      return;
+    public int importData(Element pElm, String pExtension) {
+    if (pElm == null) {
+        logger.error("Element argument is 'null'");
+        return -1;
     }
+    int result = 0;
     invalidate();
-    initialize();
-    File sosFile = new File(pFile);
-    if (sosFile.exists()) {
-      logger.info("Loading SOS information from '" + pFile + "'");
-
-      try {
-        Document d = JDomUtils.getDocument(sosFile);
-        for (Element e : (List<Element>) JDomUtils.getNodes(d, "sosRequests/sosRequest")) {
-          SOSRequest s = new SOSRequest();
-          s.loadFromXml(e);
-          addManagedElement(s);
-        }
-        logger.debug("SOS requests loaded successfully");
-      } catch (Exception e) {
-        logger.error("Failed to load SOS requests", e);
-      }
-    } else {
-      logger.info("No SOS information found under '" + pFile + "'");
-    }
-    revalidate();
-  }
-
-  @Override
-  public void saveElements(String pFile) {
-    if (pFile == null) {
-      logger.error("File argument is 'null'");
-      return;
-    }
-
-    if (logger.isDebugEnabled()) {
-      logger.debug("Writing SOS information to '" + pFile + "'");
-    }
+    logger.info("Loading SOS information");
 
     try {
-      StringBuilder b = new StringBuilder();
-      b.append("<data><sosRequests>\n");
-      for (ManageableType t : getAllElements()) {
-        SOSRequest s = (SOSRequest) t;
-        if (s != null) {
-          String xml = s.toXml();
-          if (xml != null) {
-            b.append(xml).append("\n");
-          }
-        }
+      for (Element e : (List<Element>) JDomUtils.getNodes(pElm, "sosRequests/sosRequest")) {
+        SOSRequest s = new SOSRequest();
+        s.loadFromXml(e);
+        addManagedElement(s);
+        result++;
       }
-      b.append("</sosRequests></data>");
-      FileWriter w = new FileWriter(pFile);
-      w.write(b.toString());
-      w.flush();
-      w.close();
-      logger.debug("SOS information successfully saved");
-    } catch (Throwable t) {
-      if (!new File(pFile).getParentFile().exists()) {
-                //server directory obviously does not exist yet
-        //this should only happen at the first start
-        logger.info("Ignoring error, server directory does not exists yet");
-      } else {
-        logger.error("Failed to save SOS information", t);
-      }
-      //try to delete errornous file
-      new File(pFile).delete();
+      logger.debug("SOS requests loaded successfully");
+    } catch (Exception e) {
+      result = result * (-1) - 1;
+      logger.error("Failed to load SOS requests", e);
     }
-
+    revalidate(true);
+    return result;
   }
 
   @Override
-  public String getExportData(List<String> pGroupsToExport) {
-    return null;
-  }
+  public Element getExportData(final List<String> pGroupsToExport) {
+    Element sosRequests = new Element("sosRequests");
 
-  @Override
-  public boolean importData(File pFile, String pExtension) {
-    return false;
+    logger.debug("Generating SOS information");
+    try {
+      for (ManageableType t : getAllElements()) {
+        sosRequests.addContent(t.toXml("sosRequest"));
+      }
+      logger.debug("SOS information generated");
+    } catch (Exception e) {
+      logger.warn("Failed to generate SOS XML", e);
+    }
+    
+    return sosRequests;
   }
 
   public SOSRequest getRequest(final Tribe pTribe) {

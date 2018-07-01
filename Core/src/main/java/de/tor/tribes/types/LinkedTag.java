@@ -67,25 +67,26 @@ public class LinkedTag extends Tag {
     }
 
     @Override
-    public String toXml() {
+    public Element toXml(String elementName) {
+        Element tag = new Element(elementName);
+        
         try {
-            StringBuilder b = new StringBuilder();
-            b.append("<tag shownOnMap=\"").append(isShowOnMap()).append("\">\n");
-            b.append("<name><![CDATA[").append(URLEncoder.encode(getName(), "UTF-8")).append("]]></name>\n");
+            tag.setAttribute("shownOnMap", Boolean.toString(isShowOnMap()));
+            tag.addContent(new Element("name").setText("<![CDATA[" + URLEncoder.encode(getName(), "UTF-8") + "]]>"));
             Color c = getTagColor();
             if (c != null) {
-                b.append("<color r=\"").append(c.getRed()).append("\" g=\"").append(c.getGreen()).append("\" b=\"").append(c.getBlue()).append("\"/>\n");
+                Element color = new Element("color");
+                color.setAttribute("r", Integer.toString(c.getRed()));
+                color.setAttribute("g", Integer.toString(c.getGreen()));
+                color.setAttribute("b", Integer.toString(c.getBlue()));
+                tag.addContent(color);
             }
-            b.append("<icon>").append(getTagIcon()).append("</icon>\n");
-            b.append("<villages/>\n");
-            b.append("<equation>\n");
-            b.append(URLEncoder.encode(sEquation, "UTF-8")).append("\n");
-            b.append("</equation>\n");
-            b.append("</tag>\n");
-            return b.toString();
+            tag.addContent(new Element("icon").setText(Integer.toString(getTagIcon())));
+            tag.addContent(new Element("villages"));
+            tag.addContent(new Element("equation").setText(URLEncoder.encode(sEquation, "UTF-8")));
         } catch (Exception e) {
-            return "\n";
         }
+        return tag;
     }
 
     public LinkedTag() {
@@ -110,6 +111,7 @@ public class LinkedTag extends Tag {
     }
 
     public void updateVillageList() {
+        //TODO find a better way for that (maybe whith implementation of real Dynamic groups)
         clearTaggedVillages();
         List<ManageableType> elements = TagManager.getSingleton().getAllElements();
         List<Tag> lTags = new ArrayList<>();

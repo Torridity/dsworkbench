@@ -19,7 +19,6 @@ import de.tor.tribes.ui.panels.MapPanel;
 import de.tor.tribes.util.GlobalOptions;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
-import java.net.URLDecoder;
 import org.jdom2.Element;
 
 /**
@@ -31,20 +30,12 @@ public class Text extends AbstractForm {
     private java.awt.Rectangle mBounds = null;
 
     @Override
-    public void loadFromXml(Element e) {
-        try {
-            Element elem = e.getChild("name");
-            setFormName(URLDecoder.decode(elem.getTextTrim(), "UTF-8"));
-            elem = e.getChild("pos");
-            setXPos(Double.parseDouble(elem.getAttributeValue("x")));
-            setYPos(Double.parseDouble(elem.getAttributeValue("y")));
-            elem = e.getChild("textColor");
-            setTextColor(new Color(Integer.parseInt(elem.getAttributeValue("r")), Integer.parseInt(elem.getAttributeValue("g")), Integer.parseInt(elem.getAttributeValue("b"))));
-            setTextAlpha(Float.parseFloat(elem.getAttributeValue("a")));
-            elem = e.getChild("textSize");
-            setTextSize(Integer.parseInt(elem.getTextTrim()));
-        } catch (Exception ignored) {
-        }
+    public void formFromXml(Element e) {
+    }
+
+    @Override
+    protected Element formToXml(String elementName) {
+        return new Element(elementName);
     }
 
     @Override
@@ -122,11 +113,6 @@ public class Text extends AbstractForm {
             return new java.awt.Rectangle(0, 0, 0, 0);
         }
         return mBounds;
-    }
-
-    @Override
-    protected String getFormXml() {
-        return "";
     }
 
     @Override

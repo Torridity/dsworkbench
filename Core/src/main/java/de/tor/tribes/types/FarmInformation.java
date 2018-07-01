@@ -16,6 +16,7 @@
 package de.tor.tribes.types;
 
 import de.tor.tribes.control.ManageableType;
+import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.TroopAmountFixed;
 import de.tor.tribes.types.ext.Barbarians;
 import de.tor.tribes.types.ext.Village;
@@ -673,7 +674,6 @@ public class FarmInformation extends ManageableType {
      *            The troops used for farming or 'null' if the needed amount of
      *            troops should be calculated
      */
-
     public FARM_RESULT farmFarm(DSWorkbenchFarmManager.FARM_CONFIGURATION pConfig) {
         StringBuilder info = new StringBuilder();
         if (inactive) {
@@ -981,51 +981,59 @@ public class FarmInformation extends ManageableType {
     }
 
     @Override
-    public String getElementIdentifier() {
-        return "farmInfo";
-    }
-
-    @Override
-    public String getElementGroupIdentifier() {
-        return "farmInfos";
-    }
-
-    @Override
-    public String getGroupNameAttributeIdentifier() {
-        return "";
-    }
-
-    @Override
-    public String toXml() {
-        StringBuilder str = new StringBuilder();
-        str.append("<farmInfo>");
-        str.append("<siege_status>").append(siegeStatus.name()).append("</siege_status>");
-        str.append("<status>").append(status.name()).append("</status>");
-        str.append("<spyed>").append(spyed?1:0).append("</spyed>");
-        str.append("<inactive>").append(inactive?1:0).append("</inactive>");
-        str.append("<isFinal>").append(isFinal?1:0).append("</isFinal>");
-        str.append("<villageId>").append(villageId).append("</villageId>");
-        str.append("<ownerId>").append(ownerId).append("</ownerId>");
-        str.append("<attackCount>").append(attackCount).append("</attackCount>");
-        str.append("<woodInStorage>").append(woodInStorage).append("</woodInStorage>");
-        str.append("<clayInStorage>").append(clayInStorage).append("</clayInStorage>");
-        str.append("<ironInStorage>").append(ironInStorage).append("</ironInStorage>");
-        str.append("<hauledWood>").append(hauledWood).append("</hauledWood>");
-        str.append("<hauledClay>").append(hauledClay).append("</hauledClay>");
-        str.append("<hauledIron>").append(hauledIron).append("</hauledIron>");
-        str.append("<expectedHaul>").append(expectedHaul).append("</expectedHaul>");
-        str.append("<actualHaul>").append(actualHaul).append("</actualHaul>");
-        str.append("<lastReport>").append(lastReport).append("</lastReport>");
-        str.append("<farmTroopArrive>").append(farmTroopArrive).append("</farmTroopArrive>");
-        str.append("<siegeTroopArrival>").append(siegeTroopArrival).append("</siegeTroopArrival>");
-        str.append("<resourcesFoundInLastReport>").append(resourcesFoundInLastReport?1:0).append("</resourcesFoundInLastReport>");
-        str.append("</farmInfo>");
-        return str.toString();
+    public Element toXml(String elementName) {
+        Element farmInfo = new Element(elementName);
+        farmInfo.addContent(new Element("siege_status").setText(siegeStatus.name()));
+        farmInfo.addContent(new Element("status").setText(status.name()));
+        farmInfo.addContent(new Element("spyed").setText(Boolean.toString(spyed)));
+        farmInfo.addContent(new Element("inactive").setText(Boolean.toString(inactive)));
+        farmInfo.addContent(new Element("isFinal").setText(Boolean.toString(isFinal)));
+        farmInfo.addContent(new Element("villageId").setText(Integer.toString(villageId)));
+        farmInfo.addContent(new Element("lastResult").setText(lastResult.name()));
+        farmInfo.addContent(new Element("ownerId").setText(Integer.toString(ownerId)));
+        farmInfo.addContent(new Element("attackCount").setText(Integer.toString(attackCount)));
+        farmInfo.addContent(new Element("woodInStorage").setText(Integer.toString(woodInStorage)));
+        farmInfo.addContent(new Element("clayInStorage").setText(Integer.toString(clayInStorage)));
+        farmInfo.addContent(new Element("ironInStorage").setText(Integer.toString(ironInStorage)));
+        farmInfo.addContent(new Element("hauledWood").setText(Integer.toString(hauledWood)));
+        farmInfo.addContent(new Element("hauledClay").setText(Integer.toString(hauledClay)));
+        farmInfo.addContent(new Element("hauledIron").setText(Integer.toString(hauledIron)));
+        farmInfo.addContent(new Element("expectedHaul").setText(Integer.toString(expectedHaul)));
+        farmInfo.addContent(new Element("actualHaul").setText(Integer.toString(actualHaul)));
+        farmInfo.addContent(new Element("lastReport").setText(Long.toString(lastReport)));
+        farmInfo.addContent(new Element("farmTroopArrive").setText(Long.toString(farmTroopArrive)));
+        farmInfo.addContent(new Element("siegeTroopArrival").setText(Long.toString(siegeTroopArrival)));
+        farmInfo.addContent(farmTroop.toXml("farmTroop"));
+        farmInfo.addContent(new Element("resourcesFoundInLastReport").setText(Boolean.toString(resourcesFoundInLastReport)));
+        return farmInfo;
     }
 
     @Override
     public final void loadFromXml(Element e) {
-        //TODO create function
+        this.siegeStatus = SIEGE_STATUS.valueOf(e.getChild("siege_status").getText());
+        this.status = FARM_STATUS.valueOf(e.getChild("status").getText());
+        this.spyed = Boolean.parseBoolean(e.getChild("spyed").getText());
+        this.inactive = Boolean.parseBoolean(e.getChild("inactive").getText());
+        this.isFinal = Boolean.parseBoolean(e.getChild("isFinal").getText());
+        this.villageId = Integer.parseInt(e.getChild("villageId").getText());
+        this.village = DataHolder.getSingleton().getVillagesById().get(villageId);
+        this.kVillage = KnownVillageManager.getSingleton().getKnownVillage(village);
+        this.lastResult = FARM_RESULT.valueOf(e.getChild("lastResult").getText());
+        this.ownerId = Integer.parseInt(e.getChild("ownerId").getText());
+        this.attackCount = Integer.parseInt(e.getChild("attackCount").getText());
+        this.woodInStorage = Integer.parseInt(e.getChild("woodInStorage").getText());
+        this.clayInStorage = Integer.parseInt(e.getChild("clayInStorage").getText());
+        this.ironInStorage = Integer.parseInt(e.getChild("ironInStorage").getText());
+        this.hauledWood = Integer.parseInt(e.getChild("hauledWood").getText());
+        this.hauledClay = Integer.parseInt(e.getChild("hauledClay").getText());
+        this.hauledIron = Integer.parseInt(e.getChild("hauledIron").getText());
+        this.expectedHaul = Integer.parseInt(e.getChild("expectedHaul").getText());
+        this.actualHaul = Integer.parseInt(e.getChild("actualHaul").getText());
+        this.lastReport = Long.parseLong(e.getChild("lastReport").getText());
+        this.farmTroopArrive = Long.parseLong(e.getChild("farmTroopArrive").getText());
+        this.siegeTroopArrival = Long.parseLong(e.getChild("siegeTroopArrival").getText());
+        this.farmTroop = new TroopAmountFixed(e.getChild("farmTroop"));
+        this.resourcesFoundInLastReport = Boolean.parseBoolean(e.getChild("resourcesFoundInLastReport").getText());
     }
 
     private int getBuilding(String pName) {

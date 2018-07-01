@@ -31,8 +31,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -190,18 +188,13 @@ public class ClockFrame extends javax.swing.JFrame implements ActionListener {
     }
 
     private void storeTimers() {
-        try {
-            FileWriter w = new FileWriter("timers.xml");
-            w.write("<timers\n>");
-            for (TimerPanel p : timers) {
-                w.write(p.toXml());
-            }
-            w.write("</timers>");
-            w.flush();
-            w.close();
-        } catch (IOException ioe) {
-            logger.error("Failed to store timers", ioe);
+        Document timerDoc = JDomUtils.createDocument();
+        Element timersElm = new Element("timers");
+        for (TimerPanel p : timers) {
+            timersElm.addContent(p.toXml("timer"));
         }
+        timerDoc.getRootElement().addContent(timersElm);
+        JDomUtils.saveDocument(timerDoc, "timers.xml");
     }
 
     private void restoreTimers() {

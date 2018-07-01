@@ -29,21 +29,6 @@ import org.apache.logging.log4j.Logger;
 
 public abstract class TroopAmount extends ManageableType implements Cloneable {
     private static final Logger logger = LogManager.getLogger("TroopAmount");
-
-    @Override
-    public String getElementIdentifier() {
-        return "trpAmount";
-    }
-
-    @Override
-    public String getElementGroupIdentifier() {
-        return "trpAmount";
-    }
-
-    @Override
-    public String getGroupNameAttributeIdentifier() {
-        return "";
-    }
     
     public abstract void addAmount(TroopAmount pTroops);
     public abstract void removeAmount(TroopAmount pRemove);

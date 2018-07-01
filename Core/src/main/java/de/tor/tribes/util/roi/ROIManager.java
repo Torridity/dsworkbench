@@ -17,7 +17,6 @@ package de.tor.tribes.util.roi;
 
 import de.tor.tribes.util.xml.JDomUtils;
 import java.io.File;
-import java.io.FileWriter;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.LinkedList;
@@ -97,19 +96,15 @@ public class ROIManager {
             logger.debug("Writing ROIs to '" + pFile + "'");
         }
         try {
-
-            StringBuilder b = new StringBuilder();
-            b.append("<data><rois>\n");
+            Document roiDoc = JDomUtils.createDocument();
+            Element roiElm = new Element("rois");
 
             for (String r : rois) {
-                String text = URLEncoder.encode(r, "UTF-8");
-                b.append("<roi>").append(text).append("</roi>\n");
+                roiElm.addContent(new Element("roi").setText(URLEncoder.encode(r, "UTF-8")));
             }
-            b.append("</rois></data>");
-            FileWriter w = new FileWriter(pFile);
-            w.write(b.toString());
-            w.flush();
-            w.close();
+            
+            roiDoc.getRootElement().addContent(roiElm);
+            JDomUtils.saveDocument(roiDoc, pFile);
             logger.debug("ROIs successfully saved");
         } catch (Exception e) {
             if (!new File(pFile).getParentFile().exists()) {

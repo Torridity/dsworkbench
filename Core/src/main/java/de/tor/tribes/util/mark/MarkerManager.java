@@ -27,24 +27,20 @@ import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.panels.MinimapPanel;
 import de.tor.tribes.util.xml.JDomUtils;
 import java.awt.Color;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jdom2.Document;
 import org.jdom2.Element;
 
 /**
- * Manager implementation to handle markers for tribes and allies.<BR> The global MarkerManager can be accessed using the getSingleton()
- * method.<BR> Markers can either be hold in files as well as in a database (not implemented yet).<BR> The graphical representation can be
- * realized by a table using the getTableModel() method.
+ * Manager implementation to handle markers for tribes and allies.<BR>
+ * The global MarkerManager can be accessed using the getSingleton() method.<BR>
+ * The graphical representation can be realized by a table using the getTableModel() method.
  *
  * @author Torridity
  */
@@ -68,68 +64,23 @@ public class MarkerManager extends GenericManager<Marker> {
     }
 
     @Override
-    public void loadElements(String pFile) {
-        if (pFile == null) {
-            logger.error("File argument is 'null'");
-            return;
+    public int importData(Element pElm, String pExtension) {
+        if (pElm == null) {
+            logger.error("Element argument is 'null'");
+            return -1;
         }
-        invalidate();
-        initialize();
-        File markerFile = new File(pFile);
-        if (markerFile.exists()) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("Reading markers from '" + pFile + "'");
-            }
-            try {
-                Document d = JDomUtils.getDocument(markerFile);
-                for (Element e : (List<Element>) JDomUtils.getNodes(d, "markerSets/markerSet")) {
-                    String setKey = e.getAttributeValue("name");
-                    setKey = URLDecoder.decode(setKey, "UTF-8");
-                    if (logger.isDebugEnabled()) {
-                        logger.debug("Loading marker set '" + setKey + "'");
-                    }
-                    addGroup(setKey);
-                    for (Element e1 : (List<Element>) JDomUtils.getNodes(e, "markers/marker")) {
-                        Marker m = new Marker();
-                        m.loadFromXml(e1);
-                        if (!groupExists(setKey)) {
-                            addGroup(setKey);
-                        }
-                        addManagedElement(setKey, m);
-                    }
-                }
-                logger.debug("Markers successfully loaded");
-            } catch (Exception e) {
-                logger.error("Failed to load markers", e);
-            }
-        } else {
-            if (logger.isInfoEnabled()) {
-                logger.info("Marker file not found under '" + pFile + "'");
-            }
-        }
-        revalidate();
-    }
-
-    @Override
-    public boolean importData(File pFile, String pExtension) {
-        if (pFile == null) {
-            logger.error("File argument is 'null'");
-            return false;
-        }
-        logger.debug("Importing markers");
-        boolean result = false;
+        int result = 0;
+        logger.debug("Reading marker");
         invalidate();
         try {
-            Document d = JDomUtils.getDocument(pFile);
-            for (Element e : (List<Element>) JDomUtils.getNodes(d, "markerSets/markerSet")) {
+            for (Element e : (List<Element>) JDomUtils.getNodes(pElm, "markerSets/markerSet")) {
                 String setKey = e.getAttributeValue("name");
                 setKey = URLDecoder.decode(setKey, "UTF-8");
                 if (pExtension != null) {
                     setKey += "_" + pExtension;
                 }
-                if (logger.isDebugEnabled()) {
-                    logger.debug("Loading marker set '" + setKey + "'");
-                }
+                
+                logger.debug("Loading marker set '{}'", setKey);
                 for (Element e1 : (List<Element>) JDomUtils.getNodes(e, "markers/marker")) {
                     Marker m = new Marker();
                     m.loadFromXml(e1);
@@ -137,88 +88,42 @@ public class MarkerManager extends GenericManager<Marker> {
                         addGroup(setKey);
                     }
                     addManagedElement(setKey, m);
+                    result++;
                 }
             }
-            logger.debug("Markers imported successfully");
-            result = true;
+            logger.debug("Markers successfully loaded");
         } catch (Exception e) {
-            logger.error("Failed to import markers", e);
+            result = result * (-1) - 1;
+            logger.error("Failed to load markers", e);
             MinimapPanel.getSingleton().redraw();
-
         }
         revalidate(true);
         return result;
     }
 
     @Override
-    public String getExportData(List<String> pGroupsToExport) {
-        logger.debug("Generating marker export data");
-
-        StringBuilder b = new StringBuilder();
-        b.append("<markerSets>\n");
+    public Element getExportData(final List<String> pGroupsToExport) {
+        Element markerSets = new Element("markerSets");
+        logger.debug("Generating marker data");
+        
         for (String set : pGroupsToExport) {
             try {
-                b.append("<markerSet name=\"").append(URLEncoder.encode(set, "UTF-8")).append("\">\n");
-                b.append("<markers>\n");
-                ManageableType[] elements = getAllElements(set).toArray(new ManageableType[getAllElements(set).size()]);
-
-                for (ManageableType t : elements) {
-                    Marker m = (Marker) t;
-                    b.append(m.toXml()).append("\n");
+                Element markerSet = new Element("markerSet");
+                markerSet.setAttribute("name", URLEncoder.encode(set, "UTF-8"));
+                
+                Element markers = new Element("markers");
+                for (ManageableType t : getAllElements(set)) {
+                    markers.addContent(t.toXml("marker"));
                 }
-                b.append("</markers>\n");
-                b.append("</markerSet>\n");
+                markerSet.addContent(markers);
+                markerSets.addContent(markerSet);
             } catch (UnsupportedEncodingException e) {
-                logger.error("Failed to export marker set '" + set + "'", e);
+                logger.error("Failed to generate marker set '" + set + "'", e);
             }
         }
-        b.append("</markerSets>\n");
-        logger.debug("Export data generated successfully");
-        return b.toString();
-    }
-
-    @Override
-    public void saveElements(String pFile) {
-        if (pFile == null) {
-            logger.error("File argument is 'null'");
-            return;
-        }
-
-        if (logger.isDebugEnabled()) {
-            logger.debug("Writing markers to '" + pFile + "'");
-        }
-        try {
-            StringBuilder b = new StringBuilder();
-            b.append("<data><markerSets>\n");
-            Iterator<String> setKeys = getGroupIterator();
-            while (setKeys.hasNext()) {
-                String group = setKeys.next();
-
-                b.append("<markerSet name=\"").append(URLEncoder.encode(group, "UTF-8")).append("\">\n");
-                b.append("<markers>\n");
-                for (ManageableType t : getAllElements(group)) {
-                    Marker m = (Marker) t;
-                    b.append(m.toXml()).append("\n");
-                }
-                b.append("</markers>\n");
-                b.append("</markerSet>\n");
-
-            }
-            b.append("</markerSets></data>");
-            FileWriter w = new FileWriter(pFile);
-            w.write(b.toString());
-            w.flush();
-            w.close();
-            logger.debug("Markers successfully saved");
-        } catch (Exception e) {
-            if (!new File(pFile).getParentFile().exists()) {
-                //server directory obviously does not exist yet
-                //this should only happen at the first start
-                logger.info("Ignoring error, server directory does not exists yet");
-            } else {
-                logger.error("Failed to save markers", e);
-            }
-        }
+        
+        logger.debug("Data generated successfully");
+        return markerSets;
     }
 
     @Override

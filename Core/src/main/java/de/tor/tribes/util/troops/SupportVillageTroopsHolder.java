@@ -70,40 +70,25 @@ public class SupportVillageTroopsHolder extends VillageTroopsHolder {
     }
 
     @Override
-    public String toXml() {
-        StringBuilder result = new StringBuilder();
-        result.append("<troopInfo type=\"support\">\n");
-        result.append("<id>").append(getVillage().getId()).append("</id>\n");
-        result.append("<state>").append(getState().getTime()).append("</state>\n");
-        result.append("<troops ");
-        result.append(getTroops().toXml());
-        result.append(" />\n");
-        Set<Village> keys = outgoingSupports.keySet();
-        StringBuilder supportTargets = new StringBuilder();
-        supportTargets.append("<supportTargets>\n");
-        for (Village key: keys) {
-            StringBuilder support = new StringBuilder();
-            support.append("<supportTarget village=\"").append(key.getId()).append("\" ");
-            support.append(outgoingSupports.get(key).toXml());
-            support.append(" />\n");
-            supportTargets.append(support.toString());
+    public Element toXml(String elementName) {
+        Element support = super.toXml(elementName);
+        
+        Element supportTargets = new Element("supportTargets");
+        for (Village key: outgoingSupports.keySet()) {
+            Element target = outgoingSupports.get(key).toXml("supportTarget");
+            target.setAttribute("village", Integer.toString(key.getId()));
+            supportTargets.addContent(target);
         }
-        supportTargets.append("</supportTargets>\n");
+        support.addContent(supportTargets);
 
-        keys = incomingSupports.keySet();
-        StringBuilder supportSources = new StringBuilder();
-        supportSources.append("<supportSources>\n");
-        for (Village key: keys) {
-            StringBuilder support = new StringBuilder();
-            support.append("<supportSource village=\"").append(key.getId()).append("\" ");
-            support.append(incomingSupports.get(key).toXml());
-            support.append(" />\n");
-            supportSources.append(support.toString());
+        Element supportSources = new Element("supportSources");
+        for (Village key: incomingSupports.keySet()) {
+            Element target = incomingSupports.get(key).toXml("supportSource");
+            target.setAttribute("village", Integer.toString(key.getId()));
+            supportSources.addContent(target);
         }
-        supportSources.append("</supportSources>\n");
-        result.append(supportTargets.toString()).append(supportSources.toString());
-        result.append("</troopInfo>");
-        return result.toString();
+        support.addContent(supportSources);
+        return support;
     }
 
     @Override
@@ -181,21 +166,6 @@ public class SupportVillageTroopsHolder extends VillageTroopsHolder {
             return getVillage().toString();
         }
         return "Ungültiges Dorf";
-    }
-
-    @Override
-    public String getElementIdentifier() {
-        return "village";
-    }
-
-    @Override
-    public String getElementGroupIdentifier() {
-        return "villages";
-    }
-
-    @Override
-    public String getGroupNameAttributeIdentifier() {
-        return "";
     }
 
     @Override

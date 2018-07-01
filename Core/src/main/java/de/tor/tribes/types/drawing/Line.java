@@ -23,7 +23,6 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
-import java.net.URLDecoder;
 import java.util.List;
 import org.jdom2.Element;
 
@@ -43,17 +42,9 @@ public class Line extends AbstractForm {
     private boolean endArrow = false;
 
     @Override
-    public void loadFromXml(Element e) {
+    public void formFromXml(Element e) {
         try {
-            Element elem = e.getChild("name");
-            setFormName(URLDecoder.decode(elem.getTextTrim(), "UTF-8"));
-            elem = e.getChild("pos");
-            setXPos(Double.parseDouble(elem.getAttributeValue("x")));
-            setYPos(Double.parseDouble(elem.getAttributeValue("y")));
-            elem = e.getChild("textColor");
-            setTextColor(new Color(Integer.parseInt(elem.getAttributeValue("r")), Integer.parseInt(elem.getAttributeValue("g")), Integer.parseInt(elem.getAttributeValue("b"))));
-            setTextAlpha(Float.parseFloat(elem.getAttributeValue("a")));
-            elem = e.getChild("drawColor");
+            Element elem = e.getChild("drawColor");
             this.drawColor = new Color(Integer.parseInt(elem.getAttributeValue("r")), Integer.parseInt(elem.getAttributeValue("g")), Integer.parseInt(elem.getAttributeValue("b")));
             this.drawAlpha = Float.parseFloat(elem.getAttributeValue("a"));
             elem = e.getChild("stroke");
@@ -64,12 +55,38 @@ public class Line extends AbstractForm {
             elem = e.getChild("end");
             this.xPosEnd = Double.parseDouble(elem.getAttributeValue("x"));
             this.yPosEnd = Double.parseDouble(elem.getAttributeValue("y"));
-            elem = e.getChild("textSize");
-            setTextSize(Integer.parseInt(elem.getTextTrim()));
             elem = e.getChild("drawName");
             this.drawName = Boolean.parseBoolean(elem.getTextTrim());
         } catch (Exception ignored) {
         }
+    }
+
+    @Override
+    protected Element formToXml(String elementName) {
+        Element line = new Element(elementName);
+        try {
+            line.addContent(new Element("stroke").setAttribute("width", Float.toString(strokeWidth)));
+            line.addContent(new Element("drawName").setText(Boolean.toString(drawName)));
+            
+            Element elm = new Element("end");
+            elm.setAttribute("x", Double.toString(xPosEnd));
+            elm.setAttribute("y", Double.toString(yPosEnd));
+            line.addContent(elm);
+            
+            elm = new Element("drawColor");
+            elm.setAttribute("r", Integer.toString(drawColor.getRed()));
+            elm.setAttribute("g", Integer.toString(drawColor.getGreen()));
+            elm.setAttribute("b", Integer.toString(drawColor.getBlue()));
+            elm.setAttribute("a", Float.toString(drawAlpha));
+            line.addContent(elm);
+            
+            elm = new Element("arrow");
+            elm.setAttribute("start", Boolean.toString(startArrow));
+            elm.setAttribute("end", Boolean.toString(endArrow));
+            line.addContent(elm);
+        } catch (Exception ignored) {
+        }
+        return line;
     }
 
     @Override
@@ -235,16 +252,6 @@ public class Line extends AbstractForm {
             g2d.setColor(getTextColor());
             g2d.drawString(getFormName(), (int) s.x, (int) s.y);
         }
-    }
-
-    @Override
-    protected String getFormXml() {
-        String xml = "<end x=\"" + xPosEnd + "\" y=\"" + yPosEnd + "\"/>\n";
-        xml += "<drawColor r=\"" + drawColor.getRed() + "\" g=\"" + drawColor.getGreen() + "\" b=\"" + drawColor.getBlue() + "\" a=\"" + drawAlpha + "\"/>\n";
-        xml += "<stroke width=\"" + strokeWidth + "\"/>\n";
-        xml += "<arrow start=\"" + startArrow + "\" end=\"" + endArrow + "\"/>\n";
-        xml += "<drawName>" + drawName + "</drawName>\n";
-        return xml;
     }
 
     @Override

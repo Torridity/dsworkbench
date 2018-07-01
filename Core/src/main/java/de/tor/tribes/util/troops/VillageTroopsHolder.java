@@ -46,6 +46,15 @@ public class VillageTroopsHolder extends ManageableType implements BBSupport {
         setTroops(hTroops);
     }
 
+    @Override
+    public Element toXml(String elementName) {
+        Element troopInfo = new Element(elementName);
+        troopInfo.addContent(new Element("id").setText(Integer.toString(village.getId())));
+        troopInfo.addContent(new Element("state").setText(Long.toString(state.getTime())));
+        troopInfo.addContent(troops.toXml("troops"));
+        return troopInfo;
+    }
+
     public VillageTroopsHolder() {
         this(null, null);
     }
@@ -54,19 +63,6 @@ public class VillageTroopsHolder extends ManageableType implements BBSupport {
         troops = new TroopAmountFixed(0);
         this.village = pVillage;
         this.state = pState;
-    }
-
-    @Override
-    public String toXml() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("<troopInfo>\n");
-        builder.append("<id>").append(village.getId()).append("</id>\n");
-        builder.append("<state>").append(state.getTime()).append("</state>\n");
-        builder.append("<troops ");
-        builder.append(troops.toXml());
-        builder.append(" />\n");
-        builder.append("</troopInfo>");
-        return builder.toString();
     }
 
     public void clear() {
@@ -116,21 +112,6 @@ public class VillageTroopsHolder extends ManageableType implements BBSupport {
             result += unit.getName() + " " + troops.getAmountForUnit(unit) + "\n";
         }
         return result;
-    }
-
-    @Override
-    public String getElementIdentifier() {
-        return "troopInfo";
-    }
-
-    @Override
-    public String getElementGroupIdentifier() {
-        return "troopInfos";
-    }
-
-    @Override
-    public String getGroupNameAttributeIdentifier() {
-        return "name";
     }
 
     @Override

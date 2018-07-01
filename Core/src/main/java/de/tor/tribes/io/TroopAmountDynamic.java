@@ -104,24 +104,16 @@ public class TroopAmountDynamic extends TroopAmount {
      * @return converted xml
      */
     @Override
-    public String toXml() {
-        StringBuilder xml = new StringBuilder();
-        boolean first = true;
+    public Element toXml(String elementName) {
+        Element amount = new Element(elementName);
+        
         for(UnitHolder unit: DataHolder.getSingleton().getUnits()) {
             TroopAmountElement elm = getElementForUnit(unit);
             if(!elm.isFixed() || elm.getTroopsAmount(null) >=0) {
-                //Information stored in sub element
-                if(!first)
-                    xml.append(" ");
-                else
-                    first = false;
-
-                xml.append(unit.getPlainName()).append("=\"");
-                //base 64 encode to ensure everything can be saved
-                xml.append(elm.toBase64()).append("\"");
+                amount.setAttribute(unit.getPlainName(), elm.toBase64());
             }
         }
-        return xml.toString();
+        return amount;
     }
     
     public TroopAmountDynamic loadFromProperty(String pProperty) {

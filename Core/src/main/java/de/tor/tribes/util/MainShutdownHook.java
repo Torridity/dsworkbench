@@ -30,6 +30,16 @@ import org.apache.logging.log4j.Logger;
 public class MainShutdownHook extends Thread {
 
     private static Logger logger = LogManager.getLogger("ShutdownHook");
+    private static MainShutdownHook SINGLETON = null;
+    
+    private boolean hasRun = false;
+
+    public static synchronized MainShutdownHook getSingleton() {
+        if (SINGLETON == null) {
+            SINGLETON = new MainShutdownHook();
+        }
+        return SINGLETON;
+    }
 
     public MainShutdownHook() {
         setName("ShutdownHook");
@@ -37,7 +47,11 @@ public class MainShutdownHook extends Thread {
     }
 
     @Override
-    public void run() {
+    public synchronized void run() {
+        if(hasRun) {
+            return;
+        }
+        hasRun = true;
         try {
             logger.info("Performing ShutdownHook");
             if (!DataHolder.getSingleton().isDataValid()) {
@@ -56,5 +70,6 @@ public class MainShutdownHook extends Thread {
         } catch (Throwable t) {
             logger.error("Shutdown failed", t);
         }
+        System.exit(0);
     }
 }

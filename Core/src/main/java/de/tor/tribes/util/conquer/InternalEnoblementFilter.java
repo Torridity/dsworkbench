@@ -15,7 +15,6 @@
  */
 package de.tor.tribes.util.conquer;
 
-import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.Conquer;
 import de.tor.tribes.types.ext.Ally;
 import de.tor.tribes.types.ext.Tribe;
@@ -39,8 +38,8 @@ public class InternalEnoblementFilter implements ConquerFilterInterface {
 
     @Override
     public boolean isValid(Conquer pConquer) {
-        Tribe winner = DataHolder.getSingleton().getTribes().get(pConquer.getWinner());
-        Tribe loser = DataHolder.getSingleton().getTribes().get(pConquer.getLoser());
+        Tribe winner = pConquer.getWinner();
+        Tribe loser = pConquer.getLoser();
         if ((winner == null) || (loser == null)) {
             return true;
         }

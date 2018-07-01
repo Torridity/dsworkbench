@@ -27,6 +27,7 @@ import de.tor.tribes.util.UIHelper;
 import de.tor.tribes.util.farm.FarmManager;
 import de.tor.tribes.util.report.ReportManager;
 import de.tor.tribes.util.village.KnownVillage;
+import de.tor.tribes.util.xml.JDomUtils;
 import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -492,7 +493,7 @@ public class ReportGenerator extends javax.swing.JFrame {
         }
 
         System.out.println("---Adding generated report (Valid:" + r.isValid() + ")----");
-        System.out.println(r.toXml());
+        System.out.println(JDomUtils.toShortString(r.toXml("report")));
         ReportManager.getSingleton().addManagedElement(r);
         System.out.println("----Done----");
     }

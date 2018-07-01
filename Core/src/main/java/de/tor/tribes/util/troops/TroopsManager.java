@@ -22,7 +22,6 @@ import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.xml.JDomUtils;
 import java.awt.*;
 import java.io.File;
-import java.io.FileWriter;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.*;
@@ -30,7 +29,6 @@ import java.util.List;
 import javax.imageio.ImageIO;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jdom2.Document;
 import org.jdom2.Element;
 
 /**
@@ -50,7 +48,6 @@ public class TroopsManager extends GenericManager<VillageTroopsHolder> {
     private static Logger logger = LogManager.getLogger("TroopsManager");
     private static TroopsManager SINGLETON = null;
     private HashMap<String, HashMap<Village, VillageTroopsHolder>> managedElementGroups = new HashMap<>();
-    //  private HashMap<Village, VillageTroopsHolder> mTroops = null;
     private List<Image> mTroopMarkImages = new LinkedList<>();
 
     public static synchronized TroopsManager getSingleton() {
@@ -415,67 +412,21 @@ public class TroopsManager extends GenericManager<VillageTroopsHolder> {
     }
 
     @Override
-    public void loadElements(String pFile) {
+    public int importData(Element pElm, String pExtension) {
+        if (pElm == null) {
+            logger.error("Element argument is 'null'");
+            return -1;
+        }
+        int result = 0;
         invalidate();
-        initialize();
-        if (pFile == null) {
-            logger.error("File argument is 'null'");
-            revalidate();
-            return;
-        }
 
-        File troopsFile = new File(pFile);
-        if (troopsFile.exists()) {
-            logger.info("Loading troops from '" + pFile + "'");
-            try {
-                Document d = JDomUtils.getDocument(troopsFile);
-                for (Element e : (List<Element>) JDomUtils.getNodes(d, "troopGroups/troopGroup")) {
-                    String groupKey = e.getAttributeValue("name");
-                    groupKey = URLDecoder.decode(groupKey, "UTF-8");
-                    if (logger.isDebugEnabled()) {
-                        logger.debug("Loading troops from group '" + groupKey + "'");
-                    }
-                    for (Element e1 : (List<Element>) JDomUtils.getNodes(e, "troopInfos/troopInfo")) {
-                        String type = e1.getAttributeValue("type");
-                        if (type != null && type.equals("support")) {
-                            SupportVillageTroopsHolder holder = new SupportVillageTroopsHolder();
-                            holder.loadFromXml(e1);
-                            addManagedElement(groupKey, holder);
-                        } else {
-                            VillageTroopsHolder holder = new VillageTroopsHolder();
-                            holder.loadFromXml(e1);
-                            addManagedElement(groupKey, holder);
-                        }
-                    }
-                }
-                logger.debug("Troops loaded successfully");
-            } catch (Exception e) {
-                logger.error("Failed to load troops", e);
-            }
-        } else {
-            logger.info("No troops found under '" + pFile + "'");
-        }
-        revalidate();
-    }
-
-    @Override
-    public boolean importData(File pFile, String pExtension) {
-        invalidate();
-        boolean result = false;
-        if (pFile == null) {
-            logger.error("File argument is 'null'");
-            return false;
-        }
-
-        logger.info("Importing troops");
+        logger.info("Loading troops");
         try {
-            Document d = JDomUtils.getDocument(pFile);
-            for (Element e : (List<Element>) JDomUtils.getNodes(d, "troopGroups/troopGroup")) {
+            for (Element e : (List<Element>) JDomUtils.getNodes(pElm, "troopGroups/troopGroup")) {
                 String groupKey = e.getAttributeValue("name");
                 groupKey = URLDecoder.decode(groupKey, "UTF-8");
-                if (logger.isDebugEnabled()) {
-                    logger.debug("Loading troops from group '" + groupKey + "'");
-                }
+                logger.debug("Loading troops from group '" + groupKey + "'");
+                
                 for (Element e1 : (List<Element>) JDomUtils.getNodes(e, "troopInfos/troopInfo")) {
                     String type = e1.getAttributeValue("type");
                     VillageTroopsHolder holder = null;
@@ -486,12 +437,13 @@ public class TroopsManager extends GenericManager<VillageTroopsHolder> {
                     }
                     holder.loadFromXml(e1);
                     addManagedElement(groupKey, holder);
+                    result++;
                 }
             }
-            logger.debug("Troops imported successfully");
-            result = true;
+            logger.debug("Troops loaded successfully");
         } catch (Exception e) {
-            logger.error("Failed to import troops", e);
+            result = result * (-1) - 1;
+            logger.error("Failed to load troops", e);
         }
         revalidate(true);
         return result;
@@ -499,53 +451,26 @@ public class TroopsManager extends GenericManager<VillageTroopsHolder> {
     }
 
     @Override
-    public String getExportData(List<String> pGroupsToExport) {
-        try {
-            logger.debug("Generating troop export data");
-            StringBuilder result = new StringBuilder();
-            result.append("<troopGroups>\n");
-            for (String group : getGroups()) {
-                result.append("<troopGroup name=\"").append(URLEncoder.encode(group, "UTF-8")).append("\">\n");
-                result.append("<troopInfos>\n");
-
-                ManageableType[] elements = getAllElements(group).toArray(new ManageableType[getAllElements(group).size()]);
-
-                for (ManageableType t : elements) {
-                    result.append(t.toXml()).append("\n");
-                }
-                result.append("</troopInfos>\n");
-                result.append("</troopGroup>\n");
-            }
-            result.append("</troopGroups>\n\n");
-            logger.debug("Export data generated successfully");
-            return result.toString();
-        } catch (Exception e) {
-            logger.error("Failed to generate troop export data", e);
-            return "";
+    public Element getExportData(final List<String> pGroupsToExport) {
+        Element troopGroups = new Element("troopGroups");
+        if (pGroupsToExport == null || pGroupsToExport.isEmpty()) {
+            return troopGroups;
         }
-    }
-
-    @Override
-    public void saveElements(String pFile) {
         try {
-            StringBuilder b = new StringBuilder();
-            b.append("<data><troopGroups>\n");
-            for (String group : getGroups()) {
-                b.append("<troopGroup name=\"").append(URLEncoder.encode(group, "UTF-8")).append("\">\n");
-                b.append("<troopInfos>\n");
+            logger.debug("Generating troop data");
+            for (String group : pGroupsToExport) {
+                Element troopGroup = new Element("troopGroup");
+                troopGroup.setAttribute("name", URLEncoder.encode(group, "UTF-8"));
+                
+                Element troopInfos = new Element("troopInfos");
                 for (ManageableType t : getAllElements(group)) {
-                    b.append(t.toXml()).append("\n");
+                    troopInfos.addContent(t.toXml("troopInfo"));
                 }
-                b.append("</troopInfos>\n");
-                b.append("</troopGroup>\n");
             }
-            b.append("</troopGroups></data>\n\n");
-            FileWriter w = new FileWriter(pFile);
-            w.write(b.toString());
-            w.flush();
-            w.close();
+            logger.debug("Data generated successfully");
         } catch (Exception e) {
-            logger.error("Failed to store troops", e);
+            logger.error("Failed to generate troop data", e);
         }
+        return troopGroups;
     }
 }

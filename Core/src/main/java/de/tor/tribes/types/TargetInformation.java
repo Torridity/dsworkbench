@@ -311,18 +311,25 @@ public class TargetInformation {
         return result;
     }
     
-    public String toXml() {
-        StringBuilder b = new StringBuilder();
-        b.append("<wall>").append(iWallLevel).append("</wall>\n");
-        b.append("<troops ").append(troops.toXml()).append("< />\n");
-        b.append("<attacks>\n");
+    public Element toXml(String elementName) {
+        Element targetInfo = new Element(elementName);
+        targetInfo.setAttribute("target", Integer.toString(target.getId()));
+        
+        targetInfo.addContent(new Element("wall").setText(Integer.toString(iWallLevel)));
+        targetInfo.addContent(troops.toXml("troops"));
+        
+        Element atts = new Element("attacks");
         for (TimedAttack a : getAttacks()) {
-            b.append("<attack source=\"").append(a.getSource().getId()).append("\" arrive=\"").append(a.getlArriveTime()).append("\"").
-                    append(" fake=\"").append(a.isPossibleFake()).append("\" snob=\"").append(a.isPossibleSnob()).
-                    append("\"/>\n");
+            Element timedAtt = new Element("attack");
+            timedAtt.setAttribute("source", Integer.toString(a.getSource().getId()));
+            timedAtt.setAttribute("arrive", Long.toString(a.getlArriveTime()));
+            timedAtt.setAttribute("fake", Boolean.toString(a.isPossibleFake()));
+            timedAtt.setAttribute("snob", Boolean.toString(a.isPossibleSnob()));
+            atts.addContent(timedAtt);
         }
-        b.append("</attacks>\n");
-        return b.toString();
+        targetInfo.addContent(atts);
+        
+        return targetInfo;
     }
     
     public void loadFromXml(Element e) {

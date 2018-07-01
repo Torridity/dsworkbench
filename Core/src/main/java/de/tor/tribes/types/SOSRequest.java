@@ -329,56 +329,33 @@ public class SOSRequest extends ManageableType implements BBSupport {
     }
 
     @Override
-    public String getElementIdentifier() {
-        return "sosRequest";
-    }
-
-    @Override
-    public String getElementGroupIdentifier() {
-        return "sosRequests";
-    }
-
-    @Override
-    public String getGroupNameAttributeIdentifier() {
-        return "";
-    }
-
-    @Override
-    public String toXml() {
+    public Element toXml(String elementName) {
+        Element request = new Element(elementName);
+        
         try {
-            StringBuilder b = new StringBuilder();
-            b.append("<").append(getElementIdentifier()).append(" defender=\"").append(mDefender.getId()).append("\">\n");
-            b.append("<targetInformations>\n");
+            request.setAttribute("defender", Integer.toString(mDefender.getId()));
+            
+            Element targetInfos = new Element("targetInformations");
             for(Village target: getTargets()) {
                 TargetInformation targetInfo = getTargetInformation(target);
                 if (targetInfo != null) {
-                    b.append("<targetInformation target=\"").append(target.getId()).append("\">\n");
-                    b.append(targetInfo.toXml());
-                    b.append("</targetInformation>\n");
+                    targetInfos.addContent(targetInfo.toXml("targetInformation"));
                 }
             }
-            b.append("</targetInformations>\n");
-            b.append("<defenseInformations>\n");
+            request.addContent(targetInfos);
+            
+            Element defInfos = new Element("defenseInformations");
             for(Village target: getTargets()) {
                 DefenseInformation defense = getDefenseInformation(target);
                 if (defense != null) {
-                    b.append("<defenseInformation target=\"").
-                            append(target.getId()).
-                            append("\" analyzed=\"").
-                            append(defense.isAnalyzed()).
-                            append("\" ignored=\"").
-                            append(defense.isIgnored()).append("\">\n");
-                    b.append(defense.toXml());
-                    b.append("</defenseInformation>\n");
+                    defInfos.addContent(defense.toXml("defenseInformation"));
                 }
             }
-            b.append("</defenseInformations>\n");
-            b.append("</").append(getElementIdentifier()).append(">");
-            return b.toString();
+            request.addContent(defInfos);
         } catch (Throwable t) {
             //getting xml data failed
         }
-        return null;
+        return request;
     }
 
     @Override

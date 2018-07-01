@@ -116,24 +116,22 @@ public class Note extends ManageableType implements BBSupport {
     }
 
     @Override
-    public String toXml() {
-        StringBuilder result = new StringBuilder();
+    public Element toXml(String elementName) {
+        Element note = new Element(elementName);
         try {
-            result.append("<note>\n");
-            result.append("<timestamp>").append(timestamp).append("</timestamp>\n");
-            result.append("<mapMarker>").append(mapMarker).append("</mapMarker>\n");
-            result.append("<noteSymbol>").append(noteSymbol).append("</noteSymbol>\n");
-            result.append("<text>").append(URLEncoder.encode(getNoteText(), "UTF-8")).append("</text>\n");
-            result.append("<villages>\n");
+            note.addContent(new Element("timestamp").setText(Long.toString(timestamp)));
+            note.addContent(new Element("mapMarker").setText(Integer.toString(mapMarker)));
+            note.addContent(new Element("noteSymbol").setText(Integer.toString(noteSymbol)));
+            note.addContent(new Element("text").setText(URLEncoder.encode(getNoteText(), "UTF-8")));
+            
+            Element villages = new Element("villages");
             for (Integer id : villageIds) {
-                result.append("<village>").append(id).append("</village>\n");
+                villages.addContent(new Element("village").setText(Integer.toString(id)));
             }
-            result.append("</villages>\n");
-            result.append("</note>\n");
-            return result.toString();
-        } catch (UnsupportedEncodingException usee) {
-            return null;
+            note.addContent(villages);
+        } catch (UnsupportedEncodingException ignored) {
         }
+        return note;
     }
 
     public String toBBCode() {
@@ -250,21 +248,6 @@ public class Note extends ManageableType implements BBSupport {
     public void setNoteSymbol(int noteSymbol) {
         this.noteSymbol = noteSymbol;
         timestamp = System.currentTimeMillis();
-    }
-
-    @Override
-    public String getElementIdentifier() {
-        return "note";
-    }
-
-    @Override
-    public String getElementGroupIdentifier() {
-        return "notes";
-    }
-
-    @Override
-    public String getGroupNameAttributeIdentifier() {
-        return "name";
     }
 
     @Override

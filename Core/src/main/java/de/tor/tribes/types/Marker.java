@@ -158,45 +158,31 @@ public class Marker extends ManageableType implements BBSupport {
     }
 
     @Override
-    public String toXml() {
+    public Element toXml(String elementName) {
+        Element marker = new Element(elementName);
+        
         try {
-            StringBuilder b = new StringBuilder();
-            b.append("<marker>\n");
-            b.append("<type>").append(type==MarkerType.ALLY?1:0).append("</type>\n");
-            b.append("<id>").append(markerID).append("</id>\n");
-            int red = markerColor.getRed();
-            int green = markerColor.getGreen();
-            int blue = markerColor.getBlue();
-            int alpha = markerColor.getAlpha();
-            b.append("<color r=\"").append(red).append("\" g=\"").append(green).append("\" b=\"").append(blue).append("\" a=\"").append(alpha).append("\"/>\n");
-            b.append("<shownOnMap>").append(shownOnMap).append("</shownOnMap>\n");
-            b.append("</marker>");
-            return b.toString();
+            marker.addContent(new Element("type").setText(type.name()));
+            marker.addContent(new Element("id").setText(Integer.toString(markerID)));
+            
+            Element color = new Element("color");
+            color.setAttribute("r", Integer.toString(markerColor.getRed()));
+            color.setAttribute("g", Integer.toString(markerColor.getGreen()));
+            color.setAttribute("b", Integer.toString(markerColor.getBlue()));
+            color.setAttribute("a", Integer.toString(markerColor.getAlpha()));
+            marker.addContent(color);
+            
+            marker.addContent(new Element("shownOnMap").setText(Boolean.toString(shownOnMap)));
         } catch (Exception e) {
-            return null;
         }
-    }
-
-    @Override
-    public String getElementIdentifier() {
-        return "marker";
-    }
-
-    @Override
-    public String getElementGroupIdentifier() {
-        return "markers";
-    }
-
-    @Override
-    public String getGroupNameAttributeIdentifier() {
-        return "name";
+        
+        return marker;
     }
 
     @Override
     public void loadFromXml(Element pElement) {
         try {
-            setMarkerType((Integer.parseInt(pElement.getChild("type").getText()) == 1)
-                    ?(MarkerType.ALLY):(MarkerType.TRIBE));
+            setMarkerType(MarkerType.valueOf(pElement.getChild("type").getText()));
             setMarkerID(Integer.parseInt(pElement.getChild("id").getText()));
             
             Element e = pElement.getChild("color");

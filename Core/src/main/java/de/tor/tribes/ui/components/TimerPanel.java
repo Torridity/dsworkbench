@@ -19,6 +19,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
 import org.apache.commons.lang3.time.DurationFormatUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jdom2.Element;
 
 /**
@@ -26,6 +28,7 @@ import org.jdom2.Element;
  * @author Torridity
  */
 public class TimerPanel extends javax.swing.JPanel {
+    private final Logger logger = LogManager.getLogger("TimerPanel");
 
     private final SimpleDateFormat FORMAT = new SimpleDateFormat("HH:mm:ss:SSS");
     private ActionListener listener = null;
@@ -145,14 +148,12 @@ public class TimerPanel extends javax.swing.JPanel {
         return expires - System.currentTimeMillis() <= 0;
     }
 
-    public String toXml() {
-        StringBuilder b = new StringBuilder();
-        b.append("<timer>\n");
-        b.append("<name>").append(name).append("</name>\n");
-        b.append("<expires>").append(expires).append("</expires>\n");
-        b.append("<alert>").append(sound).append("</alert>\n");
-        b.append("</timer>\n");
-        return b.toString();
+    public Element toXml(String elementName) {
+        Element timer = new Element(elementName);
+        timer.addContent(new Element("name").setText(name));
+        timer.addContent(new Element("expires").setText(Long.toString(expires)));
+        timer.addContent(new Element("alert").setText(sound));
+        return timer;
     }
 
     public boolean fromXml(Element e) {
@@ -161,7 +162,7 @@ public class TimerPanel extends javax.swing.JPanel {
             expires = Long.parseLong(e.getChild("expires").getValue());
             sound = e.getChild("alert").getValue();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            logger.debug("Couldn't load", e);
             return false;
         }
         return true;

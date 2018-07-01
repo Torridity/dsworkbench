@@ -33,6 +33,7 @@ import de.tor.tribes.ui.wiz.tap.TacticsPlanerWizard;
 import de.tor.tribes.util.*;
 import de.tor.tribes.util.ServerSettings.ServerSettingsListener;
 import de.tor.tribes.util.attack.AttackManager;
+import de.tor.tribes.util.attack.StandardAttackManager;
 import de.tor.tribes.util.conquer.ConquerManager;
 import de.tor.tribes.util.dist.DistanceManager;
 import de.tor.tribes.util.dsreal.DSRealManager;
@@ -45,10 +46,12 @@ import de.tor.tribes.util.mark.MarkerManager;
 import de.tor.tribes.util.note.NoteManager;
 import de.tor.tribes.util.report.ReportManager;
 import de.tor.tribes.util.roi.ROIManager;
+import de.tor.tribes.util.sos.SOSManager;
 import de.tor.tribes.util.stat.StatManager;
 import de.tor.tribes.util.tag.TagManager;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.village.KnownVillageManager;
+import de.tor.tribes.util.xml.JDomUtils;
 import java.awt.AWTEvent;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -79,6 +82,8 @@ import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jdesktop.swingx.painter.MattePainter;
+import org.jdom2.Document;
+import org.jdom2.Element;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonFrame;
 
 /**
@@ -168,9 +173,9 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         return "JPEG Image (*.jpeg)";
       }
     });
-    // <editor-fold defaultstate="collapsed" desc=" Schedule Backup">
+    
+    //Schedule Backup
     new Timer("BackupTimer", true).schedule(new BackupTask(), 60 * 10000, 60 * 10000);
-        // </editor-fold>
 
     //give focus to map panel if mouse enters map
     jMapPanelHolder.addMouseListener(new MouseAdapter() {
@@ -721,7 +726,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
       if (JOptionPaneHelper.showQuestionConfirmBox(this, "Offenbar wurde DS Workbench nicht korrekt beendet, daher kann es möglicherweise zu Datenverlust gekommen sein.\n"
               + "Für das aktuelle Profil existiert ein Backup (Erstellt: " + lastBackup + "). Möchtest du dieses wiederherstellen?", "Absturz?", "Nein", "Ja") == JOptionPane.YES_OPTION) {
         showInfo("Wiederherstellung läuft, bitte warten...");
-        if (performImport(backupFile, "backup").equals("Import beendet.\n")) {
+        if (performImport(backupFile, "backup").startsWith("Import erfolgreich beendet")) {
           showSuccess("Wiederherstellung abgeschlossen.");
           JOptionPaneHelper.showInformationBox(this, "Das Backup wurde erfolgreich eingespielt. Wiederhergestellte Pläne und Sets tragen die Erweiterung '_backup'.", "Backup wiederhergestellt");
         } else {
@@ -2357,7 +2362,7 @@ private void fireDSWorkbenchClosingEvent(java.awt.event.WindowEvent evt) {//GEN-
     logger.error("Failed to store profile settings on shutdown");
   }
   dispose();
-  System.exit(0);
+  MainShutdownHook.getSingleton().run();
 }//GEN-LAST:event_fireDSWorkbenchClosingEvent
 
 private void fireGraphicPackChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireGraphicPackChangedEvent
@@ -2564,42 +2569,52 @@ private void fireChangeClipboardWatchEvent(java.awt.event.MouseEvent evt) {//GEN
   }
 
   private String performImport(File pSource, String pExtension) {
-    boolean attackImported = AttackManager.getSingleton().importData(pSource, pExtension);
-    boolean markersImported = MarkerManager.getSingleton().importData(pSource, pExtension);
-    boolean reportsImported = ReportManager.getSingleton().importData(pSource, pExtension);
-    boolean tagImported = TagManager.getSingleton().importData(pSource, pExtension);
-    boolean troopsImported = TroopsManager.getSingleton().importData(pSource, null);
-    boolean formsImported = FormManager.getSingleton().importData(pSource, pExtension);
-    boolean notesImported = NoteManager.getSingleton().importData(pSource, pExtension);
-    boolean villagesImported = KnownVillageManager.getSingleton().importData(pSource, pExtension);
+    int importedNum[] = new int[20];
+    Element data;
+    try {
+        Document doc = JDomUtils.getDocument(pSource);
+        data = doc.getRootElement();
+    } catch(Exception e) {
+        logger.error("Es ist ein Fehler aufgetreten", e);
+        return("Fehler " + e.getMessage());
+    }
+    importedNum[0] = AttackManager.getSingleton().importData(data, pExtension);
+    importedNum[1] = StandardAttackManager.getSingleton().importData(data, pExtension);
+    importedNum[2] = FarmManager.getSingleton().importData(data, pExtension);
+    importedNum[3] = FormManager.getSingleton().importData(data, pExtension);
+    importedNum[4] = MarkerManager.getSingleton().importData(data, pExtension);
+    importedNum[5] = NoteManager.getSingleton().importData(data, pExtension);
+    importedNum[6] = ReportManager.getSingleton().importData(data, pExtension);
+    importedNum[7] = SOSManager.getSingleton().importData(data, pExtension);
+    importedNum[8] = TagManager.getSingleton().importData(data, pExtension);
+    importedNum[9] = TroopsManager.getSingleton().importData(data, null);
+    importedNum[10] = KnownVillageManager.getSingleton().importData(data, pExtension);
+    importedNum[11] = SplitSetHelper.importData(data, pExtension);
+    
+    String names[] = new String[]{"Angriffe", "Standard-Angriffe", "Farmen",
+        "Formen", "Markierungen", "Notizen", "Berichte", "SOS-Infos", "Gruppen",
+        "Truppen", "Dorfinfos", "Splits"};
+    boolean allOk = true;
+    int sum = 0;
+    for(int i = 0; i < names.length; i++) {
+        if(importedNum[i] < 0) {
+            allOk = false;
+            sum += (-1) * importedNum[i] - 1;
+        } else {
+            sum += importedNum[i];
+        }
+    }
+    
+    StringBuilder message = new StringBuilder();
+    message.append("Import ").append(allOk?"erfolgreich ":"").append("beendet.\n");
 
-    String message = "Import beendet.\n";
-    if (!attackImported) {
-      message += "  * Fehler beim Import der Angriffe\n";
+    for(int i = 0; i < names.length; i++) {
+        if(importedNum[i] < 0) {
+           message.append("Trotz fehler ");
+        }
+        message.append(importedNum[i]).append(" ").append(names[i]).append(" erfolgreich eingelesen\n");
     }
-    if (!markersImported) {
-      message += "  * Fehler beim Import der Markierungen\n";
-    }
-    if (!reportsImported) {
-      message += "  * Fehler beim Import der Berichte\n";
-    }
-    if (!tagImported) {
-      message += "  * Fehler beim Import der Tags\n";
-    }
-    if (!troopsImported) {
-      message += "  * Fehler beim Import der Truppen\n";
-    }
-
-    if (!formsImported) {
-      message += "  * Fehler beim Import der Formen\n";
-    }
-    if (!notesImported) {
-      message += "  * Fehler beim Import der Notizen\n";
-    }
-    if (!villagesImported) {
-      message += "  * Fehler beim Import der Dorfinfos\n";
-    }
-    return message;
+    return message.toString();
   }
 
   public void planMapshot() {
@@ -2964,31 +2979,35 @@ class BackupTask extends TimerTask {
   public void run() {
     try {
       logger.debug("Starting backup");
-      String exportString = "<export>\n";
+      Document doc = JDomUtils.createDocument();
+      Element backup = doc.getRootElement();
       logger.debug(" - Backing up attacks");
-      exportString += AttackManager.getSingleton().getExportData(Arrays.asList(AttackManager.getSingleton().getGroups()));
-      logger.debug(" - Backing up markers");
-      exportString += MarkerManager.getSingleton().getExportData(Arrays.asList(MarkerManager.getSingleton().getGroups()));
-      logger.debug(" - Backing up reports");
-      exportString += ReportManager.getSingleton().getExportData(Arrays.asList(ReportManager.getSingleton().getGroups()));
-      logger.debug(" - Backing up tags");
-      exportString += TagManager.getSingleton().getExportData(null);
-      logger.debug(" - Backing up troops");
-      exportString += TroopsManager.getSingleton().getExportData(Arrays.asList(TroopsManager.getSingleton().getGroups()));
-      logger.debug(" - Backing up forms");
-      exportString += FormManager.getSingleton().getExportData(null);
-      logger.debug(" - Backing up notes");
-      exportString += NoteManager.getSingleton().getExportData(Arrays.asList(NoteManager.getSingleton().getGroups()));
-      logger.debug(" - Backing up churches");
-      exportString += KnownVillageManager.getSingleton().getExportData(null);
+      backup.addContent(AttackManager.getSingleton().getExportData(Arrays.asList(AttackManager.getSingleton().getGroups())));
+      logger.debug(" - Backing up std-attacks");
+      backup.addContent(StandardAttackManager.getSingleton().getExportData(null));
       logger.debug(" - Backing up farms");
-      exportString += FarmManager.getSingleton().getExportData(null);
-      exportString += "</export>";
+      backup.addContent(FarmManager.getSingleton().getExportData(null));
+      logger.debug(" - Backing up forms");
+      backup.addContent(FormManager.getSingleton().getExportData(null));
+      logger.debug(" - Backing up markers");
+      backup.addContent(MarkerManager.getSingleton().getExportData(Arrays.asList(MarkerManager.getSingleton().getGroups())));
+      logger.debug(" - Backing up notes");
+      backup.addContent(NoteManager.getSingleton().getExportData(Arrays.asList(NoteManager.getSingleton().getGroups())));
+      logger.debug(" - Backing up reports");
+      backup.addContent(ReportManager.getSingleton().getExportData(Arrays.asList(ReportManager.getSingleton().getGroups())));
+      logger.debug(" - Backing up sos-infos");
+      backup.addContent(SOSManager.getSingleton().getExportData(null));
+      logger.debug(" - Backing up tags");
+      backup.addContent(TagManager.getSingleton().getExportData(null));
+      logger.debug(" - Backing up troops");
+      backup.addContent(TroopsManager.getSingleton().getExportData(Arrays.asList(TroopsManager.getSingleton().getGroups())));
+      logger.debug(" - Backing up known-villages");
+      backup.addContent(KnownVillageManager.getSingleton().getExportData(null));
+      logger.debug(" - Backing up split-sets");
+      backup.addContent(SplitSetHelper.getExportData());
+      
       logger.debug("Writing backup data to disk");
-      FileWriter w = new FileWriter(GlobalOptions.getSelectedProfile().getProfileDirectory() + "/backup.xml");
-      w.write(exportString);
-      w.flush();
-      w.close();
+      JDomUtils.saveDocument(doc, GlobalOptions.getSelectedProfile().getProfileDirectory() + "/backup.xml");
       logger.debug("Backup finished successfully");
     } catch (Exception e) {
       logger.error("Failed to create backup", e);

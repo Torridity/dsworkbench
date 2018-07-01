@@ -69,50 +69,32 @@ public class KnownVillage extends ManageableType {
     }
 
     @Override
-    public String toXml() {
-        try {
-            StringBuilder xml = new StringBuilder();
-            xml.append("<village>");
-            xml.append("<id>").append(village.getId()).append("</id>");
-            xml.append("<update>").append(lastUpdate).append("</update>");
-            
-            for(int i = 0; i < Constants.BUILDING_NAMES.length; i++) {
-                xml.append("<").append(Constants.BUILDING_NAMES[i]).append(">")
-                        .append(buildings[i])
-                        .append("</").append(Constants.BUILDING_NAMES[i]).append(">");
-            }
-            
-            xml.append("</village>");
-            return xml.toString();
-        } catch (Exception e) {
-            return null;
-        }
-
-    }
-
-    @Override
-    public String getElementIdentifier() {
-        return "knownVillage";
-    }
-
-    @Override
-    public String getElementGroupIdentifier() {
-        return "knownVillages";
-    }
-
-    @Override
-    public String getGroupNameAttributeIdentifier() {
-        return "";
-    }
-
-    @Override
-    public void loadFromXml(Element pElement) {
+    public final void loadFromXml(Element pElement) {
         this.village = DataHolder.getSingleton().getVillagesById().get(Integer.parseInt(pElement.getChild("id").getText()));
         this.lastUpdate = Long.parseLong(pElement.getChild("update").getText());
         
         for(int i = 0; i < Constants.BUILDING_NAMES.length; i++) {
             this.buildings[i] = Integer.parseInt(pElement.getChild(Constants.BUILDING_NAMES[i]).getText());
         }
+    }
+
+    @Override
+    public Element toXml(String elementName) {
+        Element kVillage = new Element(elementName);
+        try {
+            kVillage.addContent(new Element("id").setText(Integer.toString(village.getId())));
+            kVillage.addContent(new Element("update").setText(Long.toString(lastUpdate)));
+            
+            Element buildingsE = new Element("buildings");
+            for(int i = 0; i < Constants.BUILDING_NAMES.length; i++) {
+                buildingsE.setAttribute(Constants.BUILDING_NAMES[i], Integer.toString(buildings[i]));
+            }
+            kVillage.addContent(buildingsE);
+        } catch (Exception e) {
+            return null;
+        }
+        
+        return kVillage;
     }
 
     public Village getVillage() {

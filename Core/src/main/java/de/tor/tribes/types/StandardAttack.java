@@ -58,21 +58,6 @@ public class StandardAttack extends ManageableType {
     }
 
     @Override
-    public String getElementIdentifier() {
-        return "stdAttack";
-    }
-
-    @Override
-    public String getElementGroupIdentifier() {
-        return "stdAttacks";
-    }
-
-    @Override
-    public String getGroupNameAttributeIdentifier() {
-        return "";
-    }
-
-    @Override
     public int hashCode() {
         int hash = 3;
         hash = 97 * hash + this.name.hashCode();
@@ -97,18 +82,15 @@ public class StandardAttack extends ManageableType {
     }
 
     @Override
-    public String toXml() {
-        StringBuilder b = new StringBuilder();
+    public Element toXml(String elementName) {
+        Element stdAtt = new Element(elementName);
         try {
-            b.append("<").append(getElementIdentifier()).append(" name=\"").append(URLEncoder.encode(name, "UTF-8")).append("\" icon=\"").append(icon).append("\">\n");
-            b.append("<attackElements ");
-            b.append(troops.toXml());
-            b.append(" />\n");
-            b.append("</").append(getElementIdentifier()).append(">\n");
-        } catch (IOException ioe) {
-            return "\n";
+            stdAtt.setAttribute("name", URLEncoder.encode(name, "UTF-8"));
+            stdAtt.setAttribute("icon", Integer.toString(icon));
+            stdAtt.addContent(troops.toXml("attackElements"));
+        } catch (IOException ignored) {
         }
-        return b.toString();
+        return stdAtt;
     }
 
     @Override

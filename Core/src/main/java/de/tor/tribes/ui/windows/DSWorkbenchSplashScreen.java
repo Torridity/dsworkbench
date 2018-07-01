@@ -559,7 +559,7 @@ class HideSplashTask extends TimerTask {
                 }
                 default: {
                     //finally, add the shutdown hook to guarantee a proper termination
-                    Runtime.getRuntime().addShutdownHook(new MainShutdownHook());
+                    Runtime.getRuntime().addShutdownHook(MainShutdownHook.getSingleton());
                     GlobalOptions.setStarted();
                     break;
                 }

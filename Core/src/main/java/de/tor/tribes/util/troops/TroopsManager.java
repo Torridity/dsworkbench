@@ -466,6 +466,8 @@ public class TroopsManager extends GenericManager<VillageTroopsHolder> {
                 for (ManageableType t : getAllElements(group)) {
                     troopInfos.addContent(t.toXml("troopInfo"));
                 }
+                troopGroup.addContent(troopInfos);
+                troopGroups.addContent(troopGroup);
             }
             logger.debug("Data generated successfully");
         } catch (Exception e) {

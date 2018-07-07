@@ -299,9 +299,9 @@ public class Attack extends ManageableType implements Serializable, Comparable<A
 
         Element extensions = new Element("extensions");
         extensions.addContent(amounts.toXml("amounts"));
-        attack.addContent(new Element("showOnMap").setText(Boolean.toString(showOnMap)));
-        attack.addContent(new Element("type").setText(Integer.toString(type)));
-        attack.addContent(new Element("transferredToBrowser").setText(Boolean.toString(transferredToBrowser)));
+        extensions.addContent(new Element("showOnMap").setText(Boolean.toString(showOnMap)));
+        extensions.addContent(new Element("type").setText(Integer.toString(type)));
+        extensions.addContent(new Element("transferredToBrowser").setText(Boolean.toString(transferredToBrowser)));
         
         attack.addContent(extensions);
         return attack;

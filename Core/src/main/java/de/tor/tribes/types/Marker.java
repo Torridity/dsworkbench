@@ -212,4 +212,21 @@ public class Marker extends ManageableType implements BBSupport {
     public void setShownOnMap(boolean shownOnMap) {
         this.shownOnMap = shownOnMap;
     }
+    
+    @Override
+    public boolean equals(Object other) {
+        if(!(other instanceof Marker)) return false;
+        
+        Marker o = (Marker) other;
+        
+        if(type != o.getMarkerType()) return false;
+        if(markerID != o.getMarkerID()) return false;
+        if(markerColor != o.getMarkerColor()) return false;
+        if(type == MarkerType.ALLY) {
+            if(mAlly != o.getAlly()) return false;
+        } else if(type == MarkerType.TRIBE) {
+            if(mTribe != o.getTribe()) return false;
+        }
+        return true;
+    }
 }

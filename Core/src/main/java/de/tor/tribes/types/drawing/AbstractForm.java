@@ -129,7 +129,7 @@ public abstract class AbstractForm extends ManageableType implements BBSupport {
         Element form = new Element(elementName);
         try {
             form.setAttribute("type", getFormType().name());
-            form.addContent(new Element("name").setText("<![CDATA[" + URLEncoder.encode(formName, "UTF-8") + "]]>"));
+            form.addContent(new Element("name").setText(URLEncoder.encode(formName, "UTF-8")));
             form.addContent(new Element("pos").setAttribute("x", Double.toString(getXPos()))
                     .setAttribute("y", Double.toString(getYPos())));
             

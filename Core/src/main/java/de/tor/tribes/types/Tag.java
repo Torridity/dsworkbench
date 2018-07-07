@@ -221,7 +221,7 @@ public class Tag extends ManageableType implements Comparable<Tag>, BBSupport {
         try {
             tag.setAttribute("shownOnMap", Boolean.toString(showOnMap));
             
-            tag.addContent(new Element("name").setText("<![CDATA[" + URLEncoder.encode(sName, "UTF-8") + "]]>"));
+            tag.addContent(new Element("name").setText(URLEncoder.encode(sName, "UTF-8")));
             
             Color c = getTagColor();
             if (c != null) {

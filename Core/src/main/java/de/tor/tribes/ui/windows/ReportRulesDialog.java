@@ -16,19 +16,30 @@
 package de.tor.tribes.ui.windows;
 
 import de.tor.tribes.control.GenericManagerListener;
+import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.types.ext.Ally;
+import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.util.JOptionPaneHelper;
-import de.tor.tribes.util.report.*;
+import de.tor.tribes.util.report.ReportRule;
+import de.tor.tribes.util.report.ReportManager;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.event.ItemEvent;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
+import org.apache.commons.lang3.Range;
+import org.apache.commons.lang3.time.DateUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  *
  * @author Torridity
  */
 public class ReportRulesDialog extends javax.swing.JDialog implements GenericManagerListener {
+    Logger logger = LogManager.getLogger("ReportRulesDialog");
 
     @Override
     public void dataChangedEvent() {
@@ -54,10 +65,10 @@ public class ReportRulesDialog extends javax.swing.JDialog implements GenericMan
     }
 
     public void rebuildRuleList() {
-        ReportManager.RuleEntry[] entries = ReportManager.getSingleton().getRuleEntries();
+        ReportRule entries[] = ReportManager.getSingleton().getRuleEntries();
         DefaultListModel model = new DefaultListModel();
 
-        for (ReportManager.RuleEntry entry : entries) {
+        for (ReportRule entry : entries) {
             model.addElement(entry);
         }
 
@@ -262,7 +273,7 @@ public class ReportRulesDialog extends javax.swing.JDialog implements GenericMan
 
         jLabel7.setForeground(new java.awt.Color(153, 153, 153));
         jLabel7.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel7.setText("Nur Stammestags zulässig, mehrere Einträge per ; trennen");
+        jLabel7.setText("Nur Stammesnamen zulässig, mehrere Einträge per ; trennen");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
@@ -289,7 +300,7 @@ public class ReportRulesDialog extends javax.swing.JDialog implements GenericMan
 
         jLabel12.setForeground(new java.awt.Color(153, 153, 153));
         jLabel12.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel12.setText("Nur Stammestags zulässig, mehrere Einträge per ; trennen");
+        jLabel12.setText("Nur Stammesnamen zulässig, mehrere Einträge per ; trennen");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
@@ -543,40 +554,100 @@ public class ReportRulesDialog extends javax.swing.JDialog implements GenericMan
             return;
         }
         try {
+            ReportRule rule;
             if (c == jReportColorPanel) {
-                ReportManager.getSingleton().addRule(createRule(ColorFilter.class), targetReportSet);
-            } else if (c == jDatePanel) {
-                ReportManager.getSingleton().addRule(createRule(DateFilter.class), targetReportSet);
-            } else if (c == jAgePanel) {
-                ReportManager.getSingleton().addRule(createRule(AgeFilter.class), targetReportSet);
-            } else if (c == jAttackerPanel) {
-                ReportManager.getSingleton().addRule(createRule(AttackerFilter.class), targetReportSet);
-            } else if (c == jDefenderPanel) {
-                ReportManager.getSingleton().addRule(createRule(DefenderFilter.class), targetReportSet);
-            } else if (c == jAttackerAllyPanel) {
-                ReportManager.getSingleton().addRule(createRule(AttackerAllyFilter.class), targetReportSet);
-            } else if (c == jDefenderAllyPanel) {
-                ReportManager.getSingleton().addRule(createRule(DefenderAllyFilter.class), targetReportSet);
-            } else {
+                Integer value = 0;
+                value += (jGreyBox.isSelected()) ? ReportRule.GREY : 0;
+                value += (jBlueBox.isSelected()) ? ReportRule.BLUE : 0;
+                value += (jGreenBox.isSelected()) ? ReportRule.GREEN : 0;
+                value += (jYellowBox.isSelected()) ? ReportRule.YELLOW : 0;
+                value += (jRedBox.isSelected()) ? ReportRule.RED : 0;
+                rule = new ReportRule(ReportRule.RuleType.COLOR, value, targetReportSet);
+            }
+            else if (c == jDatePanel) {
+                Range<Long> span = Range.between(jMinDate.getDate().getTime(),
+                        jMaxDate.getDate().getTime() + DateUtils.MILLIS_PER_DAY);
+                rule = new ReportRule(ReportRule.RuleType.DATE, span, targetReportSet);
+            }
+            else if (c == jAgePanel) {
+                long val;
+                try {
+                    val = Long.parseLong(jMaxAge.getText());
+                } catch (Exception e) {
+                    val = 365;
+                }
+                val = val * DateUtils.MILLIS_PER_DAY;
+                rule = new ReportRule(ReportRule.RuleType.AGE, val, targetReportSet);
+            }
+            else if (c == jAttackerPanel) {
+                List<Tribe> tribeList = new ArrayList<>();
+                
+                for(String tribe: jAttackerTextArea.getText().split(";")) {
+                    Tribe t = DataHolder.getSingleton().getTribeByName(tribe);
+                    if(t != null) {
+                        tribeList.add(t);
+                    }
+                }
+                rule = new ReportRule(ReportRule.RuleType.ATTACKER_TRIBE, tribeList, targetReportSet);
+            }
+            else if (c == jDefenderPanel) {
+                List<Tribe> tribeList = new ArrayList<>();
+                
+                for(String tribe: jDefenderTextArea.getText().split(";")) {
+                    Tribe t = DataHolder.getSingleton().getTribeByName(tribe);
+                    if(t != null) {
+                        tribeList.add(t);
+                    }
+                }
+                rule = new ReportRule(ReportRule.RuleType.DEFENDER_TRIBE, tribeList, targetReportSet);
+            }
+            else if (c == jAttackerAllyPanel) {
+                List<Ally> allyList = new ArrayList<>();
+                
+                for(String ally: jAttackerAllyTextArea.getText().split(";")) {
+                    Ally a = DataHolder.getSingleton().getAllyByName(ally);
+                    if(a != null) {
+                        allyList.add(a);
+                    }
+                }
+                rule = new ReportRule(ReportRule.RuleType.ATTACKER_ALLY, allyList, targetReportSet);
+            }
+            else if (c == jDefenderAllyPanel) {
+                List<Ally> allyList = new ArrayList<>();
+                
+                for(String ally: jDefenderAllyTextArea.getText().split(";")) {
+                    Ally a = DataHolder.getSingleton().getAllyByName(ally);
+                    if(a != null) {
+                        allyList.add(a);
+                    }
+                }
+                rule = new ReportRule(ReportRule.RuleType.DEFENDER_ALLY, allyList, targetReportSet);
+            }
+            else {
                 //no settings panel
                 if (jNoSettingsType.getText().equals("OFF")) {
-                    ReportManager.getSingleton().addRule(createRule(OffFilter.class), targetReportSet);
+                    rule = new ReportRule(ReportRule.RuleType.OFF, null, targetReportSet);
                 } else if (jNoSettingsType.getText().equals("FAKE")) {
-                    ReportManager.getSingleton().addRule(createRule(FakeFilter.class), targetReportSet);
+                    rule = new ReportRule(ReportRule.RuleType.FAKE, null, targetReportSet);
                 } else if (jNoSettingsType.getText().equals("SNOB")) {
-                    ReportManager.getSingleton().addRule(createRule(ConqueredFilter.class), targetReportSet);
-                }else if (jNoSettingsType.getText().equals("WALL")) {
-                    ReportManager.getSingleton().addRule(createRule(WallFilter.class), targetReportSet);
-                }else if (jNoSettingsType.getText().equals("BUILDING")) {
-                    ReportManager.getSingleton().addRule(createRule(CataFilter.class), targetReportSet);
+                    rule = new ReportRule(ReportRule.RuleType.CONQUERED, null, targetReportSet);
+                } else if (jNoSettingsType.getText().equals("WALL")) {
+                    rule = new ReportRule(ReportRule.RuleType.WALL, null, targetReportSet);
+                } else if (jNoSettingsType.getText().equals("BUILDING")) {
+                    rule = new ReportRule(ReportRule.RuleType.CATA, null, targetReportSet);
+                } else {
+                    logger.warn("Reached unreachable code part");
+                    return;
                 }
             }
-
+            
+            ReportManager.getSingleton().addRule(rule);
             rebuildRuleList();
-        } catch (ReportRuleConfigurationException rrce) {
+        } catch (IllegalArgumentException e) {
+            logger.debug("Failed to create Rule", e);
             String message = "Regel konnte nicht erstellt werden.\nBitte prüfe die Einstellungen.";
-            if (rrce.getMessage() != null) {
-                message += "\n\nFehler: " + rrce.getMessage();
+            if (e.getMessage() != null) {
+                message += "\n\nFehler: " + e.getMessage();
             }
             JOptionPaneHelper.showWarningBox(this, message, "Warnung");
         }
@@ -584,18 +655,18 @@ public class ReportRulesDialog extends javax.swing.JDialog implements GenericMan
 
     private void fireDeleteRuleEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireDeleteRuleEvent
 
-        ReportManager.RuleEntry selection = (ReportManager.RuleEntry) jRuleList.getSelectedValue();
+        ReportRule selection = (ReportRule) jRuleList.getSelectedValue();
         if (selection == null) {
             return;
         }
 
-        if (selection.getRule() instanceof FarmReportFilter) {
+        if (selection.getType() == ReportRule.RuleType.FARM) {
             JOptionPaneHelper.showWarningBox(this, "Diese Regel kann nicht gelöscht werden.", "Warnung");
             return;
         }
 
-        if (JOptionPaneHelper.showQuestionConfirmBox(this, "Regel '" + selection.getRule().getStringRepresentation() + "' wirklich löschen?", "Regel löschen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
-            ReportManager.getSingleton().removeRule(selection.getRule());
+        if (JOptionPaneHelper.showQuestionConfirmBox(this, "Regel '" + selection.getStringRepresentation() + "' wirklich löschen?", "Regel löschen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
+            ReportManager.getSingleton().removeRule(selection);
             rebuildRuleList();
         }
     }//GEN-LAST:event_fireDeleteRuleEvent
@@ -603,58 +674,6 @@ public class ReportRulesDialog extends javax.swing.JDialog implements GenericMan
     private void fireCloseDialogEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCloseDialogEvent
         setVisible(false);
     }//GEN-LAST:event_fireCloseDialogEvent
-
-    public ReportRuleInterface createRule(Class pRuleClass) throws ReportRuleConfigurationException {
-        ReportRuleInterface result = null;
-        Object configuration = null;
-        if (ColorFilter.class.equals(pRuleClass)) {
-            result = new ColorFilter();
-            int value = 0;
-            value += (jGreyBox.isSelected()) ? ColorFilter.GREY : 0;
-            value += (jBlueBox.isSelected()) ? ColorFilter.BLUE : 0;
-            value += (jGreenBox.isSelected()) ? ColorFilter.GREEN : 0;
-            value += (jYellowBox.isSelected()) ? ColorFilter.YELLOW : 0;
-            value += (jRedBox.isSelected()) ? ColorFilter.RED : 0;
-            configuration = value;
-        } else if (DateFilter.class.equals(pRuleClass)) {
-            result = new DateFilter();
-            configuration = new Long[]{jMinDate.getDate().getTime(), jMaxDate.getDate().getTime()};
-        } else if (AgeFilter.class.equals(pRuleClass)) {
-            result = new AgeFilter();
-            long val;
-            try {
-                val = Long.parseLong(jMaxAge.getText());
-            } catch (Exception e) {
-                val = 365;
-            }
-            configuration = val;
-        } else if (AttackerFilter.class.equals(pRuleClass)) {
-            result = new AttackerFilter();
-            configuration = jAttackerTextArea.getText();
-        } else if (DefenderFilter.class.equals(pRuleClass)) {
-            result = new DefenderFilter();
-            configuration = jDefenderTextArea.getText();
-        } else if (AttackerAllyFilter.class.equals(pRuleClass)) {
-            result = new AttackerAllyFilter();
-            configuration = jAttackerAllyTextArea.getText();
-        } else if (DefenderAllyFilter.class.equals(pRuleClass)) {
-            result = new DefenderAllyFilter();
-            configuration = jDefenderAllyTextArea.getText();
-        } else if (OffFilter.class.equals(pRuleClass)) {
-            result = new OffFilter();
-        } else if (FakeFilter.class.equals(pRuleClass)) {
-            result = new FakeFilter();
-        } else if (ConqueredFilter.class.equals(pRuleClass)) {
-            result = new ConqueredFilter();
-        }else if (WallFilter.class.equals(pRuleClass)) {
-            result = new WallFilter();
-        }else if (CataFilter.class.equals(pRuleClass)) {
-            result = new CataFilter();
-        }
-
-        result.setup(configuration);
-        return result;
-    }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel jAgePanel;

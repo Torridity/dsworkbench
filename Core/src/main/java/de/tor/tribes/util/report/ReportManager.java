@@ -39,8 +39,8 @@ public class ReportManager extends GenericManager<FightReport> {
   private static Logger logger = LogManager.getLogger("ReportManager");
   private static ReportManager SINGLETON = null;
   public final static String FARM_SET = "Farmberichte";
-  private List<RuleEntry> rules = new LinkedList<>();
-  private final FarmReportFilter farmFilter = new FarmReportFilter();
+  private List<ReportRule> rules = new LinkedList<>();
+  private final ReportRule farmFilter = new ReportRule(ReportRule.RuleType.FARM, null, FARM_SET);
 
   public static synchronized ReportManager getSingleton() {
     if (SINGLETON == null) {
@@ -79,21 +79,16 @@ public class ReportManager extends GenericManager<FightReport> {
     return groups;
   }
 
-  public RuleEntry[] getRuleEntries() {
-    return rules.toArray(new RuleEntry[rules.size()]);
+  public ReportRule[] getRuleEntries() {
+    return rules.toArray(new ReportRule[rules.size()]);
   }
 
-  public void addRule(ReportRuleInterface pFilter, String pToSet) {
-    rules.add(new RuleEntry(pFilter, pToSet));
+  public void addRule(ReportRule pRule) {
+    rules.add(pRule);
   }
 
-  public void removeRule(ReportRuleInterface pFilter) {
-    for (RuleEntry rule : rules.toArray(new RuleEntry[rules.size()])) {
-      if (rule.getRule().equals(pFilter)) {
-        rules.remove(rule);
-        break;
-      }
-    }
+  public void removeRule(ReportRule pRule) {
+    rules.remove(pRule);
   }
 
   @Override
@@ -108,8 +103,8 @@ public class ReportManager extends GenericManager<FightReport> {
       FarmManager.getSingleton().updateFarmInfoFromReport(pElement);
       addManagedElement(FARM_SET, pElement, false);
     } else {
-      for (RuleEntry entry : getRuleEntries()) {
-        if (entry.getRule().isValid(pElement)) {
+      for (ReportRule entry : getRuleEntries()) {
+        if (entry.isValid(pElement)) {
           super.addManagedElement(entry.getTargetSet(), pElement);
           filtered = true;
           break;
@@ -136,8 +131,8 @@ public class ReportManager extends GenericManager<FightReport> {
         FarmManager.getSingleton().updateFarmInfoFromReport(pElement);
         addManagedElement(FARM_SET, pElement, false);
       } else {
-        for (RuleEntry entry : getRuleEntries()) {
-          if (entry.getRule().isValid(pElement)) {
+        for (ReportRule entry : getRuleEntries()) {
+          if (entry.isValid(pElement)) {
             addManagedElement(entry.getTargetSet(), pElement);
             filtered = true;
             break;
@@ -159,8 +154,8 @@ public class ReportManager extends GenericManager<FightReport> {
       HashMap<FightReport, String> newGroups = new HashMap<>();
       for (ManageableType t : getAllElements(pGroup)) {
         FightReport report = (FightReport) t;
-        for (RuleEntry entry : getRuleEntries()) {
-          if (entry.getRule().isValid(report)) {
+        for (ReportRule entry : getRuleEntries()) {
+          if (entry.isValid(report)) {
             if (!entry.getTargetSet().equals(pGroup)) {
               //only move report, if the filter points to a new group...
               //...otherwise, report stays in this group as the current filter is the first fits
@@ -216,7 +211,7 @@ public class ReportManager extends GenericManager<FightReport> {
       logger.debug("Reports successfully loaded");
       
       for (Element e : (List<Element>) JDomUtils.getNodes(pElm, "rules/rule")) {
-        RuleEntry r = new RuleEntry(e);
+        ReportRule r = new ReportRule(e);
         rules.add(r);
       }
       logger.debug("Report Rules successfully loaded");
@@ -249,8 +244,8 @@ public class ReportManager extends GenericManager<FightReport> {
     }
     
     Element rulesE = new Element("rules");
-    for(RuleEntry r: rules) {
-      rulesE.addContent(r.getRule().toXml());
+    for(ReportRule r: rules) {
+      rulesE.addContent(r.toXml("rule"));
     }
     
     logger.debug("Data generated successfully");
@@ -334,41 +329,5 @@ public class ReportManager extends GenericManager<FightReport> {
       }
     }
     return current;
-  }
-
-  public static class RuleEntry {
-
-    private ReportRuleInterface rule = null;
-    private String targetSet = null;
-
-    public RuleEntry(ReportRuleInterface pRule, String pTargetSet) {
-      rule = pRule;
-      targetSet = pTargetSet;
-    }
-
-    private RuleEntry(Element e) {
-        //TODO create function
-    }
-
-    public void setRule(ReportRuleInterface rule) {
-      this.rule = rule;
-    }
-
-    public ReportRuleInterface getRule() {
-      return rule;
-    }
-
-    public void setTargetSet(String targetSet) {
-      this.targetSet = targetSet;
-    }
-
-    public String getTargetSet() {
-      return targetSet;
-    }
-
-    @Override
-    public String toString() {
-      return rule.getStringRepresentation() + " -> " + targetSet;
-    }
   }
 }

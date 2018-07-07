@@ -297,25 +297,29 @@ public abstract class GenericManager<C extends ManageableType> {
      * @param pElement
      */
     public void addManagedElement(String pGroup, C pElement) {
-        //TODO check if element exists
-        boolean changed;
+        boolean changed = false;
         boolean structureChanged = false;
         if (pElement == null) {
             return;
         }
+        
+        List<ManageableType> elems;
         if (!groupable || pGroup == null) {
-            managedElementGroups.get(DEFAULT_GROUP).add(pElement);
-            changed = true;
+            elems = managedElementGroups.get(DEFAULT_GROUP);
         } else {
-            List<ManageableType> elems = managedElementGroups.get(pGroup);
+            elems = managedElementGroups.get(pGroup);
             if (elems == null) {
                 elems = new ArrayList<>();
                 managedElementGroups.put(pGroup, elems);
                 structureChanged = true;
             }
+        }
+        
+        if(!elems.contains(pElement)) {
             elems.add(pElement);
             changed = true;
         }
+
         if (changed && !structureChanged) {
             fireDataChangedEvents(pGroup);
         } else if (changed && structureChanged) {

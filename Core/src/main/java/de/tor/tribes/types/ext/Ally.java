@@ -251,4 +251,11 @@ public class Ally implements Comparable<Ally>, Serializable {
             return StringHelper.compareByStringRepresentations(s1, s2);
         }
     }
+    
+    @Override
+    public boolean equals(Object other) {
+        if(!(other instanceof Ally)) return false;
+        
+        return this.id == ((Ally) other).getId();
+    }
 }

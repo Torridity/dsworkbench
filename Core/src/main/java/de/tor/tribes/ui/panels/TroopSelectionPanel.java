@@ -96,7 +96,6 @@ public abstract class TroopSelectionPanel<T extends TroopAmount> extends javax.s
         jStandardAttackBox.setModel(model);
     }
     
-    //TODO create auto horizontal grouping
     private void setup(List<UnitHolder> pUnits) {
         jUnitContainer.removeAll();
         unitCoordinates.clear();

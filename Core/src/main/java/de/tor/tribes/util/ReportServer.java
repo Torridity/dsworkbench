@@ -173,11 +173,9 @@ public class ReportServer {
                 url = url.substring((url.startsWith("/")?1:0));
                 
                 String report = null;
-                splited = url.split("&");
-                for(String part: splited) {
-                    if(part.contains("report"))
-                        report = part.substring(part.indexOf("=") + 1);
-                }
+                //workaround for finding start & end because "&", "/" are not escaped in URL
+                report = url.substring(url.indexOf("&report=") + 8, url.indexOf("&user="));
+                
                 report = URLDecoder.decode(report, "UTF-8");
                 logger.debug("Report raw: {}", report);
 

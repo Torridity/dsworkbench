@@ -64,11 +64,10 @@ public class ReportRulesDialog extends javax.swing.JDialog implements GenericMan
         rebuildRuleList();
     }
 
-    public void rebuildRuleList() {
-        ReportRule entries[] = ReportManager.getSingleton().getRuleEntries();
+    public final void rebuildRuleList() {
         DefaultListModel model = new DefaultListModel();
 
-        for (ReportRule entry : entries) {
+        for (ReportRule entry : ReportManager.getSingleton().getRules()) {
             model.addElement(entry);
         }
 
@@ -654,9 +653,9 @@ public class ReportRulesDialog extends javax.swing.JDialog implements GenericMan
     }//GEN-LAST:event_fireAddRuleEvent
 
     private void fireDeleteRuleEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireDeleteRuleEvent
-
         ReportRule selection = (ReportRule) jRuleList.getSelectedValue();
         if (selection == null) {
+            logger.debug("no rule selected");
             return;
         }
 
@@ -666,6 +665,7 @@ public class ReportRulesDialog extends javax.swing.JDialog implements GenericMan
         }
 
         if (JOptionPaneHelper.showQuestionConfirmBox(this, "Regel '" + selection.getStringRepresentation() + "' wirklich löschen?", "Regel löschen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
+            logger.debug("Deleting Rule {}", selection.getStringRepresentation());
             ReportManager.getSingleton().removeRule(selection);
             rebuildRuleList();
         }

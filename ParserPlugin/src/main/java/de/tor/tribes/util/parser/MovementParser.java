@@ -16,6 +16,7 @@
 package de.tor.tribes.util.parser;
 
 import de.tor.tribes.control.ManageableType;
+import de.tor.tribes.util.xml.JDomUtils;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.TroopAmountFixed;
 import de.tor.tribes.io.UnitHolder;
@@ -208,7 +209,7 @@ public class MovementParser implements SilentParserInterface {
                 attStr.append("\ntime:");
                 attStr.append(dateFormat.format(parsed.getArriveTime()));
                 attStr.append("\nunits: ");
-                attStr.append(units.toXml());
+                attStr.append(JDomUtils.toShortString(units.toXml("troops")));
                 attStr.append(" \ns:"); attStr.append(parsed.getType());
                 attStr.append("\nu:"); attStr.append(parsed.getUnit().getPlainName());
                 logger.info(attStr.toString());

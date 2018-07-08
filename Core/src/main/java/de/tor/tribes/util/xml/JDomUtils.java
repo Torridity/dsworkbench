@@ -127,7 +127,9 @@ public class JDomUtils {
     }
     
     public static String toShortString(Element pElm) {
-        return toShortString(createDocument().addContent(pElm));
+        Document doc = createDocument();
+        doc.getRootElement().addContent(pElm);
+        return toShortString(doc);
     }
     
     public static String toShortString(Document pDoc) {

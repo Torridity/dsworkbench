@@ -26,6 +26,7 @@ import de.tor.tribes.util.xml.JDomUtils;
 import java.net.URLDecoder;
 import java.util.*;
 import java.util.Map.Entry;
+import org.apache.commons.collections4.ListUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jdom2.Element;
@@ -79,8 +80,8 @@ public class ReportManager extends GenericManager<FightReport> {
     return groups;
   }
 
-  public ReportRule[] getRuleEntries() {
-    return rules.toArray(new ReportRule[rules.size()]);
+  public List<ReportRule> getRules() {
+    return ListUtils.unmodifiableList(rules);
   }
 
   public void addRule(ReportRule pRule) {
@@ -88,6 +89,7 @@ public class ReportManager extends GenericManager<FightReport> {
   }
 
   public void removeRule(ReportRule pRule) {
+    logger.trace("Deleting Rule {} contains: {}", pRule.getStringRepresentation(), rules.contains(pRule));
     rules.remove(pRule);
   }
 
@@ -95,7 +97,7 @@ public class ReportManager extends GenericManager<FightReport> {
   public void addManagedElement(final FightReport pElement) {
     boolean filtered = false;
     
-    //update information of the VIllages
+    //update information of the Villages
     KnownVillageManager.getSingleton().updateInformation(pElement);
     
     if (farmFilter.isValid(pElement)) {
@@ -103,7 +105,7 @@ public class ReportManager extends GenericManager<FightReport> {
       FarmManager.getSingleton().updateFarmInfoFromReport(pElement);
       addManagedElement(FARM_SET, pElement, false);
     } else {
-      for (ReportRule entry : getRuleEntries()) {
+      for (ReportRule entry : getRules()) {
         if (entry.isValid(pElement)) {
           super.addManagedElement(entry.getTargetSet(), pElement);
           filtered = true;
@@ -131,7 +133,7 @@ public class ReportManager extends GenericManager<FightReport> {
         FarmManager.getSingleton().updateFarmInfoFromReport(pElement);
         addManagedElement(FARM_SET, pElement, false);
       } else {
-        for (ReportRule entry : getRuleEntries()) {
+        for (ReportRule entry : getRules()) {
           if (entry.isValid(pElement)) {
             addManagedElement(entry.getTargetSet(), pElement);
             filtered = true;
@@ -154,7 +156,7 @@ public class ReportManager extends GenericManager<FightReport> {
       HashMap<FightReport, String> newGroups = new HashMap<>();
       for (ManageableType t : getAllElements(pGroup)) {
         FightReport report = (FightReport) t;
-        for (ReportRule entry : getRuleEntries()) {
+        for (ReportRule entry : getRules()) {
           if (entry.isValid(report)) {
             if (!entry.getTargetSet().equals(pGroup)) {
               //only move report, if the filter points to a new group...
@@ -190,7 +192,7 @@ public class ReportManager extends GenericManager<FightReport> {
 
     logger.debug("Loading reports");
     try {
-      for (Element e : (List<Element>) JDomUtils.getNodes(pElm, "reportSets/reportSet")) {
+      for (Element e : (List<Element>) JDomUtils.getNodes(pElm, "reportData/reportSet")) {
         String setKey = e.getAttributeValue("name");
         setKey = URLDecoder.decode(setKey, "UTF-8");
         if (pExtension != null) {
@@ -210,7 +212,7 @@ public class ReportManager extends GenericManager<FightReport> {
       }
       logger.debug("Reports successfully loaded");
       
-      for (Element e : (List<Element>) JDomUtils.getNodes(pElm, "rules/rule")) {
+      for (Element e : (List<Element>) JDomUtils.getNodes(pElm, "reportData/rule")) {
         ReportRule r = new ReportRule(e);
         rules.add(r);
       }
@@ -226,9 +228,9 @@ public class ReportManager extends GenericManager<FightReport> {
 
   @Override
   public Element getExportData(final List<String> pGroupsToExport) {
-    Element reportSets = new Element("reportSets");
+    Element reportData = new Element("reportData");
     if (pGroupsToExport == null || pGroupsToExport.isEmpty()) {
-        return reportSets;
+        return reportData;
     }
     logger.debug("Generating report data");
     
@@ -240,16 +242,15 @@ public class ReportManager extends GenericManager<FightReport> {
         reports.addContent(t.toXml("report"));
       }
       reportSet.addContent(reports);
-      reportSets.addContent(reportSet);
+      reportData.addContent(reportSet);
     }
     
-    Element rulesE = new Element("rules");
     for(ReportRule r: rules) {
-      rulesE.addContent(r.toXml("rule"));
+      reportData.addContent(r.toXml("rule"));
     }
     
     logger.debug("Data generated successfully");
-    return reportSets;
+    return reportData;
   }
 
   public boolean createReportSet(String pName) {

@@ -98,12 +98,14 @@ public class Conquer extends ManageableType {
 
   @Override
   public Element toXml(String elementName) {
-    Element attack = new Element(elementName);
-    attack.addContent(new Element("villageID").setText(Integer.toString(village.getId())));
-    attack.addContent(new Element("timestamp").setText(Long.toString(timestamp)));
-    attack.addContent(new Element("winner").setText(Integer.toString(winner.getId())));
-    attack.addContent(new Element("loser").setText(Integer.toString(loser.getId())));
-    return attack;
+    Element conquer = new Element(elementName);
+    conquer.addContent(new Element("villageID").setText(Integer.toString(village.getId())));
+    conquer.addContent(new Element("timestamp").setText(Long.toString(timestamp)));
+    conquer.addContent(new Element("winner").setText(Integer.toString(winner.getId())));
+    if(loser != null) {
+        conquer.addContent(new Element("loser").setText(Integer.toString(loser.getId())));
+    }
+    return conquer;
   }
 
   @Override
@@ -114,7 +116,11 @@ public class Conquer extends ManageableType {
     int pLoser = Integer.parseInt(pElement.getChild("loser").getText());
     this.village = DataHolder.getSingleton().getVillagesById().get(pVillageId);
     this.timestamp = pTimestamp;
-    this.loser = DataHolder.getSingleton().getTribes().get(pLoser);
+    try {
+        this.loser = DataHolder.getSingleton().getTribes().get(pLoser);
+    } catch(Exception e) {
+        this.loser = null;
+    }
     this.winner = DataHolder.getSingleton().getTribes().get(pWinner);
   }
 }

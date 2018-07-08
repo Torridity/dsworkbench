@@ -262,7 +262,8 @@ public class ReportTableTab extends javax.swing.JPanel implements ListSelectionL
     }
 
     public void closeAllReportDialogs() {
-        for(Integer key: showDialogs.keySet()) {
+        //transform to array, because hashmap is changed during this
+        for(Integer key: showDialogs.keySet().toArray(new Integer[showDialogs.keySet().size()])) {
             closeReportLayer(key);
         }
     }

@@ -323,7 +323,8 @@ public class ReportRule implements Filter<FightReport> {
         }
     }
     
-    public String getDescription() {
+    @Override
+    public String toString() {
         switch(type) {
         case AGE:
             return "Filterung nach Alter";
@@ -424,7 +425,7 @@ public class ReportRule implements Filter<FightReport> {
     }
 
     public Object getComponent() {
-      return type;
+      return filterComponent;
     }
     
     @Override
@@ -432,8 +433,11 @@ public class ReportRule implements Filter<FightReport> {
         if(!(other instanceof ReportRule)) return false;
         
         ReportRule o = (ReportRule) other;
+        logger.trace("checking equal {},{}", this.getStringRepresentation(), o.getStringRepresentation());
         if(o.getType() != type) return false;
-        if(o.getComponent() != null && !o.getComponent().equals(other)) return false;
+        logger.trace("1");
+        if(o.getComponent() != null && !o.getComponent().equals(filterComponent)) return false;
+        logger.trace("2, {}", o.getTargetSet().equals(targetSet));
         
         return o.getTargetSet().equals(targetSet);
     }

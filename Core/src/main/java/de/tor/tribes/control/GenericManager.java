@@ -297,7 +297,6 @@ public abstract class GenericManager<C extends ManageableType> {
      * @param pElement
      */
     public void addManagedElement(String pGroup, C pElement) {
-        boolean changed = false;
         boolean structureChanged = false;
         if (pElement == null) {
             return;
@@ -315,15 +314,17 @@ public abstract class GenericManager<C extends ManageableType> {
             }
         }
         
-        if(!elems.contains(pElement)) {
-            elems.add(pElement);
-            changed = true;
+        if(elems.contains(pElement)) {
+            //don't allow duplicates
+            elems.remove(pElement);
         }
+        
+        elems.add(pElement);
 
-        if (changed && !structureChanged) {
-            fireDataChangedEvents(pGroup);
-        } else if (changed && structureChanged) {
+        if (structureChanged) {
             fireDataChangedEvents();
+        } else {
+            fireDataChangedEvents(pGroup);
         }
     }
 
@@ -457,6 +458,7 @@ public abstract class GenericManager<C extends ManageableType> {
             }
         } catch (Exception ex) {
             logger.debug("Failed loading data", ex);
+            checkValues();
         }
     }
 
@@ -468,6 +470,11 @@ public abstract class GenericManager<C extends ManageableType> {
         JDomUtils.saveDocument(doc, pFile);
         logger.debug("Finished");
     }
+    
+    /**
+     * optional method to validate internal Data in case of errorr during loading
+     */
+    protected void checkValues() {};
 
     /////////////////////////////////////////////
     ////Abstract methods that must be implemented

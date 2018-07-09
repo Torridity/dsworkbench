@@ -684,7 +684,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         );
 
         jXReportsPanel.setLayout(new java.awt.BorderLayout());
-        jXReportsPanel.add(jReportsTabbedPane, java.awt.BorderLayout.PAGE_START);
+        jXReportsPanel.add(jReportsTabbedPane, java.awt.BorderLayout.CENTER);
 
         jNewPlanPanel.setOpaque(false);
         jNewPlanPanel.setLayout(new java.awt.BorderLayout());

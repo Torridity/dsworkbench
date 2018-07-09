@@ -213,7 +213,13 @@ public class Attack extends ManageableType implements Serializable, Comparable<A
             return;
         }
         
-        TroopAmountDynamic typeAmount = StandardAttackManager.getSingleton().getElementByIcon(this.type).getTroops();
+        StandardAttack byType = StandardAttackManager.getSingleton().getElementByIcon(this.type);
+        if(byType == null) {
+            //no StandardAttack exists for that type
+            return;
+        }
+        
+        TroopAmountDynamic typeAmount = byType.getTroops();
 
         for(UnitHolder u: DataHolder.getSingleton().getUnits()) {
             if(u.getSpeed() <= unit.getSpeed()) {

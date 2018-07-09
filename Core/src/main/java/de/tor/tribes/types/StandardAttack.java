@@ -76,7 +76,8 @@ public class StandardAttack extends ManageableType {
             return troops.transformToFixed(null).equals(pOther);
         }
         if(pOther instanceof StandardAttack) {
-            return pOther.hashCode() == this.hashCode();
+            //only icon needs to be same
+            return ((StandardAttack) pOther).getIcon() == this.getIcon();
         }
         return false;
     }

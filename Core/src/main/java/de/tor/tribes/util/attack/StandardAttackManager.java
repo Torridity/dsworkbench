@@ -51,7 +51,8 @@ public class StandardAttackManager extends GenericManager<StandardAttack> {
         super(false);
     }
 
-    private void checkValues() {
+    @Override
+    protected void checkValues() {
         if (getElementByName(NO_TYPE_NAME) == null) {
             addManagedElement(new StandardAttack(NO_TYPE_NAME, StandardAttack.NO_ICON));
         }

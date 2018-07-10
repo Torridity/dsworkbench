@@ -354,7 +354,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
 
         jXNotePanel.setPreferredSize(new java.awt.Dimension(500, 400));
         jXNotePanel.setLayout(new java.awt.BorderLayout());
-        jXNotePanel.add(jNoteTabbedPane, java.awt.BorderLayout.PAGE_START);
+        jXNotePanel.add(jNoteTabbedPane, java.awt.BorderLayout.CENTER);
 
         jNewSetPanel.setOpaque(false);
         jNewSetPanel.setLayout(new java.awt.BorderLayout());

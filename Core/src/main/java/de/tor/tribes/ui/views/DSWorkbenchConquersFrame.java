@@ -17,6 +17,7 @@ package de.tor.tribes.ui.views;
 
 import de.tor.tribes.control.GenericManagerListener;
 import de.tor.tribes.types.Conquer;
+import de.tor.tribes.types.ext.Barbarians;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.models.ConquerTableModel;
 import de.tor.tribes.ui.panels.GenericTestPanel;
@@ -713,7 +714,7 @@ class ConquerPredicate implements HighlightPredicate {
     public boolean isHighlighted(Component renderer, ComponentAdapter adapter) {
         switch(type) {
             case BARBARIAN:
-                return adapter.getValue(4).equals("Barbaren");
+                return adapter.getValue(4).equals(Barbarians.getSingleton());
             case ALLY:
                 //Ally same, but tribes not
                 return adapter.getValue(5).equals(adapter.getValue(7))

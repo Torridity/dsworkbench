@@ -113,10 +113,10 @@ public class Conquer extends ManageableType {
     int pVillageId = Integer.parseInt(pElement.getChild("villageID").getText());
     long pTimestamp = Long.parseLong(pElement.getChild("timestamp").getText());
     int pWinner = Integer.parseInt(pElement.getChild("winner").getText());
-    int pLoser = Integer.parseInt(pElement.getChild("loser").getText());
     this.village = DataHolder.getSingleton().getVillagesById().get(pVillageId);
     this.timestamp = pTimestamp;
     try {
+        int pLoser = Integer.parseInt(pElement.getChild("loser").getText());
         this.loser = DataHolder.getSingleton().getTribes().get(pLoser);
     } catch(Exception e) {
         this.loser = null;

@@ -267,7 +267,7 @@ public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements 
         capabilityInfoPanel1 = new de.tor.tribes.ui.components.CapabilityInfoPanel();
 
         jXMarkerPanel.setLayout(new java.awt.BorderLayout());
-        jXMarkerPanel.add(jMarkerTabPane, java.awt.BorderLayout.PAGE_START);
+        jXMarkerPanel.add(jMarkerTabPane, java.awt.BorderLayout.CENTER);
 
         jNewPlanPanel.setOpaque(false);
         jNewPlanPanel.setLayout(new java.awt.BorderLayout());

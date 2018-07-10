@@ -573,7 +573,6 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
 
         jShowPoints.setSelected(true);
         jShowPoints.setText("Punkte anzeigen");
-        jShowPoints.setOpaque(false);
         jShowPoints.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 fireUpdateChartEvent(evt);
@@ -581,7 +580,6 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
         });
 
         jShowRank.setText("Rang anzeigen");
-        jShowRank.setOpaque(false);
         jShowRank.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 fireUpdateChartEvent(evt);
@@ -589,7 +587,6 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
         });
 
         jShowVillages.setText("Dörfer anzeigen");
-        jShowVillages.setOpaque(false);
         jShowVillages.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 fireUpdateChartEvent(evt);
@@ -597,7 +594,6 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
         });
 
         jShowKillsOff.setText("Kills (Off) anzeigen");
-        jShowKillsOff.setOpaque(false);
         jShowKillsOff.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 fireUpdateChartEvent(evt);
@@ -605,7 +601,6 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
         });
 
         jShowRankOff.setText("Rang (Off) anzeigen");
-        jShowRankOff.setOpaque(false);
         jShowRankOff.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 fireUpdateChartEvent(evt);
@@ -613,7 +608,6 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
         });
 
         jShowKillsDef.setText("Kills (Deff) anzeigen");
-        jShowKillsDef.setOpaque(false);
         jShowKillsDef.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 fireUpdateChartEvent(evt);
@@ -621,7 +615,6 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
         });
 
         jShowRankDef.setText("Rang (Deff) anzeigen");
-        jShowRankDef.setOpaque(false);
         jShowRankDef.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 fireUpdateChartEvent(evt);
@@ -630,7 +623,6 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
 
         jShowItemValues.setText("Werte anzeigen");
         jShowItemValues.setToolTipText("Zeigt die Werte der Datenpunkte im Diagramm an");
-        jShowItemValues.setOpaque(false);
         jShowItemValues.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 fireUpdateChartEvent(evt);
@@ -639,7 +631,6 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
 
         jShowLegend.setSelected(true);
         jShowLegend.setText("Legende anzeigen");
-        jShowLegend.setOpaque(false);
         jShowLegend.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 fireUpdateChartEvent(evt);
@@ -648,7 +639,6 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
 
         jShowLines.setSelected(true);
         jShowLines.setText("Linien anzeigen");
-        jShowLines.setOpaque(false);
         jShowLines.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 fireUpdateChartEvent(evt);
@@ -657,7 +647,6 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
 
         jShowDataPoints.setSelected(true);
         jShowDataPoints.setText("Datenpunkte anzeigen");
-        jShowDataPoints.setOpaque(false);
         jShowDataPoints.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 fireUpdateChartEvent(evt);
@@ -675,25 +664,25 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
 
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Auswertung"));
 
-        jPointsPane.setContentType("text/html");
+        jPointsPane.setContentType("text/html"); // NOI18N
         jPointsPane.setEditable(false);
         jScrollPane7.setViewportView(jPointsPane);
 
         jTabbedPane1.addTab("Punkte", new javax.swing.ImageIcon(getClass().getResource("/res/goblet_gold.png")), jScrollPane7); // NOI18N
 
-        jBashOffPane.setContentType("text/html");
+        jBashOffPane.setContentType("text/html"); // NOI18N
         jBashOffPane.setEditable(false);
         jScrollPane10.setViewportView(jBashOffPane);
 
         jTabbedPane1.addTab("Bash (Off)", new javax.swing.ImageIcon(getClass().getResource("/res/barracks.png")), jScrollPane10); // NOI18N
 
-        jBashDefPane.setContentType("text/html");
+        jBashDefPane.setContentType("text/html"); // NOI18N
         jBashDefPane.setEditable(false);
         jScrollPane11.setViewportView(jBashDefPane);
 
         jTabbedPane1.addTab("Bash (Deff)", new javax.swing.ImageIcon(getClass().getResource("/res/ally.png")), jScrollPane11); // NOI18N
 
-        jWinnerLoserPane.setContentType("text/html");
+        jWinnerLoserPane.setContentType("text/html"); // NOI18N
         jWinnerLoserPane.setEditable(false);
         jScrollPane12.setViewportView(jWinnerLoserPane);
 
@@ -789,7 +778,6 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
         jPanel11.add(jMonthlyStats, gridBagConstraints);
 
         jUseTop10Box.setText("Nur Top-10 anzeigen");
-        jUseTop10Box.setOpaque(false);
 
         javax.swing.GroupLayout jStatCreatePanelLayout = new javax.swing.GroupLayout(jStatCreatePanel);
         jStatCreatePanel.setLayout(jStatCreatePanelLayout);
@@ -833,7 +821,6 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         jAlwaysOnTopBox.setText("Immer im Vordergrund");
-        jAlwaysOnTopBox.setOpaque(false);
         jAlwaysOnTopBox.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 fireAlwaysOnTopEvent(evt);
@@ -1234,7 +1221,7 @@ private void fireAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRS
     private javax.swing.JPanel jStatCreatePanel;
     private org.jdesktop.swingx.JXPanel jStatsPanel;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JList<Tribe> jTribeList;
+    private javax.swing.JList jTribeList;
     private javax.swing.JCheckBox jUseTop10Box;
     private javax.swing.JComboBox jViewSelectionBox;
     private javax.swing.JButton jWeeklyStats;

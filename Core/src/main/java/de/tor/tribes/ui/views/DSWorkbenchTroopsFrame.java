@@ -410,7 +410,7 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
         jXTroopsPanel.setMinimumSize(new java.awt.Dimension(700, 500));
         jXTroopsPanel.setPreferredSize(new java.awt.Dimension(700, 500));
         jXTroopsPanel.setLayout(new java.awt.BorderLayout());
-        jXTroopsPanel.add(jTroopsTabPane, java.awt.BorderLayout.PAGE_START);
+        jXTroopsPanel.add(jTroopsTabPane, java.awt.BorderLayout.CENTER);
 
         jxSearchPane.setOpaque(false);
         jxSearchPane.setLayout(new java.awt.GridBagLayout());

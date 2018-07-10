@@ -112,21 +112,6 @@ public class ResourceDistributorFinishPanel extends WizardPage {
             }
         });
 
-        JSplitPane split1 = new JSplitPane();
-        jSplitPane1.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
-        split1.setDividerSize(5);
-        split1.setOneTouchExpandable(true);
-        jSplitPane1.setDividerLocation(0.5);
-        split1.add(jFinalDistributionPanel, JSplitPane.LEFT);
-        split1.add(jFinalStatusPanel, JSplitPane.RIGHT);
-
-        jSplitPane1.setOrientation(JSplitPane.VERTICAL_SPLIT);
-        jSplitPane1.setDividerSize(5);
-        jSplitPane1.setOneTouchExpandable(true);
-        jSplitPane1.setDividerLocation(0.5);
-        jSplitPane1.add(split1, JSplitPane.LEFT);
-        jSplitPane1.add(jTransportsPanel, JSplitPane.RIGHT);
-
         jXCollapsiblePane2.setLayout(new BorderLayout());
         jXCollapsiblePane2.add(jInfoLabel, BorderLayout.CENTER);
         quickProfilePanel = new ProfileQuickChangePanel();
@@ -170,6 +155,15 @@ public class ResourceDistributorFinishPanel extends WizardPage {
 
         jInfoScrollPane = new javax.swing.JScrollPane();
         jInfoTextPane = new javax.swing.JTextPane();
+        jInfoLabel = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
+        jXCollapsiblePane1 = new org.jdesktop.swingx.JXCollapsiblePane();
+        jPanel1 = new javax.swing.JPanel();
+        jFinalActionPanel = new javax.swing.JPanel();
+        jButton1 = new javax.swing.JButton();
+        jClickAccountPanel = new javax.swing.JPanel();
+        jQuickProfilePanel = new javax.swing.JPanel();
+        jIgnoreSubmitted = new javax.swing.JCheckBox();
         jTransportsPanel = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTransportsTable = new org.jdesktop.swingx.JXTable();
@@ -177,7 +171,6 @@ public class ResourceDistributorFinishPanel extends WizardPage {
         jFinalDistributionPanel = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jDistributionTable = new org.jdesktop.swingx.JXTable();
-        jInfoLabel = new javax.swing.JLabel();
         jFinalStatusPanel = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jTransports = new javax.swing.JLabel();
@@ -189,15 +182,6 @@ public class ResourceDistributorFinishPanel extends WizardPage {
         jTransportedClay = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
         jTransportedIron = new javax.swing.JLabel();
-        jLabel1 = new javax.swing.JLabel();
-        jXCollapsiblePane1 = new org.jdesktop.swingx.JXCollapsiblePane();
-        jPanel1 = new javax.swing.JPanel();
-        jFinalActionPanel = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
-        jClickAccountPanel = new javax.swing.JPanel();
-        jQuickProfilePanel = new javax.swing.JPanel();
-        jIgnoreSubmitted = new javax.swing.JCheckBox();
-        jSplitPane1 = new javax.swing.JSplitPane();
 
         jInfoScrollPane.setMinimumSize(new java.awt.Dimension(19, 180));
         jInfoScrollPane.setPreferredSize(new java.awt.Dimension(19, 180));
@@ -207,124 +191,12 @@ public class ResourceDistributorFinishPanel extends WizardPage {
         jInfoTextPane.setText("<html>Du befindest dich im <b>Angriffsmodus</b>. Hier kannst du die Herkunftsd&ouml;rfer ausw&auml;hlen, die f&uuml;r Angriffe verwendet werden d&uuml;rfen. Hierf&uuml;r hast die folgenden M&ouml;glichkeiten:\n<ul>\n<li>Einf&uuml;gen von Dorfkoordinaten aus der Zwischenablage per STRG+V</li>\n<li>Einf&uuml;gen der Herkunftsd&ouml;rfer aus der Gruppen&uuml;bersicht</li>\n<li>Einf&uuml;gen der Herkunftsd&ouml;rfer aus dem SOS-Analyzer</li>\n<li>Einf&uuml;gen der Herkunftsd&ouml;rfer aus Berichten</li>\n<li>Einf&uuml;gen aus der Auswahlübersicht</li>\n<li>Manuelle Eingabe</li>\n</ul>\n</html>\n");
         jInfoScrollPane.setViewportView(jInfoTextPane);
 
-        jTransportsPanel.setLayout(new java.awt.BorderLayout());
-
-        jScrollPane1.setBorder(javax.swing.BorderFactory.createTitledBorder("Errechnete Transporte"));
-
-        jTransportsTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
-        ));
-        jScrollPane1.setViewportView(jTransportsTable);
-
-        jTransportsPanel.add(jScrollPane1, java.awt.BorderLayout.CENTER);
-
-        jXCollapsiblePane2.setCollapsed(true);
-        jTransportsPanel.add(jXCollapsiblePane2, java.awt.BorderLayout.SOUTH);
-
-        jFinalDistributionPanel.setLayout(new java.awt.BorderLayout());
-
-        jScrollPane2.setBorder(javax.swing.BorderFactory.createTitledBorder("Resultierende Rohstoffverteilung"));
-
-        jDistributionTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
-        ));
-        jScrollPane2.setViewportView(jDistributionTable);
-
-        jFinalDistributionPanel.add(jScrollPane2, java.awt.BorderLayout.CENTER);
-
         jInfoLabel.setText("jLabel2");
         jInfoLabel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireHideInfoEvent(evt);
             }
         });
-
-        jFinalStatusPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Sonstige Informationen"));
-        jFinalStatusPanel.setLayout(new java.awt.GridBagLayout());
-
-        jLabel2.setText("Errechnete Transporte");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jFinalStatusPanel.add(jLabel2, gridBagConstraints);
-
-        jTransports.setText("0");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jFinalStatusPanel.add(jTransports, gridBagConstraints);
-
-        jLabel4.setText("Verwendete Händler");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jFinalStatusPanel.add(jLabel4, gridBagConstraints);
-
-        jUsedMerchants.setText("0");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jFinalStatusPanel.add(jUsedMerchants, gridBagConstraints);
-
-        jLabel6.setText("Transportiertes Holz");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jFinalStatusPanel.add(jLabel6, gridBagConstraints);
-
-        jTransportedWood.setText("0");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jFinalStatusPanel.add(jTransportedWood, gridBagConstraints);
-
-        jLabel8.setText("Transportierter Lehm");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridy = 3;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jFinalStatusPanel.add(jLabel8, gridBagConstraints);
-
-        jTransportedClay.setText("0");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridy = 3;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jFinalStatusPanel.add(jTransportedClay, gridBagConstraints);
-
-        jLabel10.setText("Transportiertes Eisen");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridy = 4;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jFinalStatusPanel.add(jLabel10, gridBagConstraints);
-
-        jTransportedIron.setText("0");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridy = 4;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jFinalStatusPanel.add(jTransportedIron, gridBagConstraints);
 
         setLayout(new java.awt.GridBagLayout());
 
@@ -411,16 +283,150 @@ public class ResourceDistributorFinishPanel extends WizardPage {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 0, 0, 0);
         jPanel1.add(jFinalActionPanel, gridBagConstraints);
+
+        jTransportsPanel.setLayout(new java.awt.BorderLayout());
+
+        jScrollPane1.setBorder(javax.swing.BorderFactory.createTitledBorder("Errechnete Transporte"));
+
+        jTransportsTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane1.setViewportView(jTransportsTable);
+
+        jTransportsPanel.add(jScrollPane1, java.awt.BorderLayout.CENTER);
+
+        jXCollapsiblePane2.setCollapsed(true);
+        jTransportsPanel.add(jXCollapsiblePane2, java.awt.BorderLayout.SOUTH);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 0.7;
+        jPanel1.add(jTransportsPanel, gridBagConstraints);
+
+        jFinalDistributionPanel.setPreferredSize(new java.awt.Dimension(314, 100));
+        jFinalDistributionPanel.setLayout(new java.awt.BorderLayout());
+
+        jScrollPane2.setBorder(javax.swing.BorderFactory.createTitledBorder("Resultierende Rohstoffverteilung"));
+
+        jDistributionTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane2.setViewportView(jDistributionTable);
+
+        jFinalDistributionPanel.add(jScrollPane2, java.awt.BorderLayout.CENTER);
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 1.0;
-        jPanel1.add(jSplitPane1, gridBagConstraints);
+        gridBagConstraints.weighty = 0.3;
+        jPanel1.add(jFinalDistributionPanel, gridBagConstraints);
+
+        jFinalStatusPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Sonstige Informationen"));
+        jFinalStatusPanel.setMinimumSize(new java.awt.Dimension(195, 100));
+        jFinalStatusPanel.setPreferredSize(new java.awt.Dimension(195, 100));
+        jFinalStatusPanel.setLayout(new java.awt.GridBagLayout());
+
+        jLabel2.setText("Errechnete Transporte");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jFinalStatusPanel.add(jLabel2, gridBagConstraints);
+
+        jTransports.setText("0");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jFinalStatusPanel.add(jTransports, gridBagConstraints);
+
+        jLabel4.setText("Verwendete Händler");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jFinalStatusPanel.add(jLabel4, gridBagConstraints);
+
+        jUsedMerchants.setText("0");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jFinalStatusPanel.add(jUsedMerchants, gridBagConstraints);
+
+        jLabel6.setText("Transportiertes Holz");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jFinalStatusPanel.add(jLabel6, gridBagConstraints);
+
+        jTransportedWood.setText("0");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jFinalStatusPanel.add(jTransportedWood, gridBagConstraints);
+
+        jLabel8.setText("Transportierter Lehm");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jFinalStatusPanel.add(jLabel8, gridBagConstraints);
+
+        jTransportedClay.setText("0");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jFinalStatusPanel.add(jTransportedClay, gridBagConstraints);
+
+        jLabel10.setText("Transportiertes Eisen");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jFinalStatusPanel.add(jLabel10, gridBagConstraints);
+
+        jTransportedIron.setText("0");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jFinalStatusPanel.add(jTransportedIron, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+        gridBagConstraints.weighty = 0.3;
+        jPanel1.add(jFinalStatusPanel, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -688,10 +694,6 @@ public class ResourceDistributorFinishPanel extends WizardPage {
                 }
             }
         }
-
-        if (result) {
-            jSplitPane1.setDividerLocation(0.5);
-        }
         return result;
     }
 
@@ -725,7 +727,6 @@ public class ResourceDistributorFinishPanel extends WizardPage {
     private javax.swing.JPanel jQuickProfilePanel;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JLabel jTransportedClay;
     private javax.swing.JLabel jTransportedIron;
     private javax.swing.JLabel jTransportedWood;

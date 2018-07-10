@@ -277,7 +277,7 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame implements Ac
         capabilityInfoPanel1 = new de.tor.tribes.ui.components.CapabilityInfoPanel();
 
         jXRankPanel.setLayout(new java.awt.BorderLayout());
-        jXRankPanel.add(jRankTabPane, java.awt.BorderLayout.PAGE_START);
+        jXRankPanel.add(jRankTabPane, java.awt.BorderLayout.CENTER);
 
         jxSearchPane.setOpaque(false);
         jxSearchPane.setLayout(new java.awt.GridBagLayout());

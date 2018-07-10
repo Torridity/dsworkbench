@@ -48,7 +48,6 @@ import java.util.List;
 import java.util.Map;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
-import javax.swing.JSplitPane;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
@@ -92,13 +91,6 @@ public class SupportRefillSettingsPanel extends WizardPage implements ActionList
         KeyStroke bbCopy = KeyStroke.getKeyStroke(KeyEvent.VK_B, ActionEvent.CTRL_MASK, false);
         jVillageTable.registerKeyboardAction(SupportRefillSettingsPanel.this, "BBCopy", bbCopy, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         capabilityInfoPanel1.addActionListener(SupportRefillSettingsPanel.this);
-
-        jSplitPane1.setOrientation(JSplitPane.VERTICAL_SPLIT);
-        jSplitPane1.setDividerSize(5);
-        jSplitPane1.setOneTouchExpandable(true);
-        jSplitPane1.setDividerLocation(0.5);
-        jSplitPane1.add(jDataPanel, JSplitPane.LEFT);
-        jSplitPane1.add(jVillageTablePanel, JSplitPane.RIGHT);
         
         jVillageTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
@@ -249,16 +241,6 @@ public class SupportRefillSettingsPanel extends WizardPage implements ActionList
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
 
-        jVillageTablePanel = new javax.swing.JPanel();
-        jTableScrollPane = new javax.swing.JScrollPane();
-        jVillageTable = new org.jdesktop.swingx.JXTable();
-        jPanel2 = new javax.swing.JPanel();
-        jToggleButton1 = new javax.swing.JToggleButton();
-        jStatusLabel = new javax.swing.JLabel();
-        capabilityInfoPanel1 = new de.tor.tribes.ui.components.CapabilityInfoPanel();
-        jPanel3 = new javax.swing.JPanel();
-        jAddAttackButton = new javax.swing.JButton();
-        jRemoveAttackButton = new javax.swing.JButton();
         jInfoScrollPane = new javax.swing.JScrollPane();
         jInfoTextPane = new javax.swing.JTextPane();
         jXCollapsiblePane1 = new org.jdesktop.swingx.JXCollapsiblePane();
@@ -270,8 +252,130 @@ public class SupportRefillSettingsPanel extends WizardPage implements ActionList
         jSplitSizePanel = new javax.swing.JPanel();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
-        jSplitPane1 = new javax.swing.JSplitPane();
+        jVillageTablePanel = new javax.swing.JPanel();
+        jTableScrollPane = new javax.swing.JScrollPane();
+        jVillageTable = new org.jdesktop.swingx.JXTable();
+        jPanel2 = new javax.swing.JPanel();
+        jToggleButton1 = new javax.swing.JToggleButton();
+        jStatusLabel = new javax.swing.JLabel();
+        capabilityInfoPanel1 = new de.tor.tribes.ui.components.CapabilityInfoPanel();
+        jPanel3 = new javax.swing.JPanel();
+        jAddAttackButton = new javax.swing.JButton();
+        jRemoveAttackButton = new javax.swing.JButton();
 
+        jInfoScrollPane.setMinimumSize(new java.awt.Dimension(19, 180));
+        jInfoScrollPane.setPreferredSize(new java.awt.Dimension(19, 180));
+
+        jInfoTextPane.setContentType("text/html"); // NOI18N
+        jInfoTextPane.setEditable(false);
+        jInfoTextPane.setText("<html>Du befindest dich im <b>Angriffsmodus</b>. Hier kannst du die Herkunftsd&ouml;rfer ausw&auml;hlen, die f&uuml;r Angriffe verwendet werden d&uuml;rfen. Hierf&uuml;r hast die folgenden M&ouml;glichkeiten:\n<ul>\n<li>Einf&uuml;gen von Dorfkoordinaten aus der Zwischenablage per STRG+V</li>\n<li>Einf&uuml;gen der Herkunftsd&ouml;rfer aus der Gruppen&uuml;bersicht</li>\n<li>Einf&uuml;gen der Herkunftsd&ouml;rfer aus dem SOS-Analyzer</li>\n<li>Einf&uuml;gen der Herkunftsd&ouml;rfer aus Berichten</li>\n<li>Einf&uuml;gen aus der Auswahlübersicht</li>\n<li>Manuelle Eingabe</li>\n</ul>\n</html>\n");
+        jInfoScrollPane.setViewportView(jInfoTextPane);
+
+        setLayout(new java.awt.GridBagLayout());
+
+        jXCollapsiblePane1.setCollapsed(true);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        add(jXCollapsiblePane1, gridBagConstraints);
+
+        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel1.setText("Informationen einblenden");
+        jLabel1.setToolTipText("Blendet Informationen zu dieser Ansicht und zu den Datenquellen ein/aus");
+        jLabel1.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+        jLabel1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireHideInfoEvent(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        add(jLabel1, gridBagConstraints);
+
+        jDataPanel.setMinimumSize(new java.awt.Dimension(600, 200));
+        jDataPanel.setPreferredSize(new java.awt.Dimension(600, 300));
+        jDataPanel.setLayout(new java.awt.GridBagLayout());
+
+        jPanel1.setLayout(new java.awt.GridBagLayout());
+
+        jTargetAmountsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Gewünschte Truppenstärke"));
+        jTargetAmountsPanel.setLayout(new java.awt.BorderLayout());
+
+        jAllowSimilarTroops.setSelected(true);
+        jAllowSimilarTroops.setText("Gleichwertige Truppenstärke zulassen");
+        jAllowSimilarTroops.setToolTipText("<html>Ist diese Option aktiviert, so werden nicht zwingend die vorgegebenen Truppen aufgef&uuml;llt.<br/>Stattdessen wird versucht, unter Ber&uuml;cksichtigung der bereits \nstationierten Truppen,<br/>die vorgegebene St&auml;rke der Verteidigung zu erreichen.</html>");
+        jAllowSimilarTroops.setMaximumSize(new java.awt.Dimension(150, 23));
+        jAllowSimilarTroops.setMinimumSize(new java.awt.Dimension(150, 23));
+        jAllowSimilarTroops.setPreferredSize(new java.awt.Dimension(150, 23));
+        jTargetAmountsPanel.add(jAllowSimilarTroops, java.awt.BorderLayout.SOUTH);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        jPanel1.add(jTargetAmountsPanel, gridBagConstraints);
+
+        jSplitSizePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Einzelunterstützung"));
+        jSplitSizePanel.setLayout(new java.awt.BorderLayout());
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        jPanel1.add(jSplitSizePanel, gridBagConstraints);
+
+        jButton1.setText("<html>Notwendige Unterstützungen<br/>berechnen</html>");
+        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                fireCalculateNeededSupportsEvent(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel1.add(jButton1, gridBagConstraints);
+
+        jButton2.setText("<html>Notwendige Truppen als<br/>BB-Code exportieren</html>");
+        jButton2.setToolTipText("Exportiert die Differenz zur gewünschten Truppenstärke für alle Dörfer in die Zwischenablage");
+        jButton2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                fireCalculateAndExportRequiredTroopsEvent(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel1.add(jButton2, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jDataPanel.add(jPanel1, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 0.5;
+        add(jDataPanel, gridBagConstraints);
+
+        jVillageTablePanel.setPreferredSize(new java.awt.Dimension(400, 232));
         jVillageTablePanel.setLayout(new java.awt.GridBagLayout());
 
         jTableScrollPane.setBorder(javax.swing.BorderFactory.createTitledBorder("Berücksichtigte Dörfer"));
@@ -368,18 +472,19 @@ public class SupportRefillSettingsPanel extends WizardPage implements ActionList
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(10, 10, 10)
+                .addContainerGap()
                 .addComponent(jAddAttackButton)
                 .addGap(4, 4, 4)
-                .addComponent(jRemoveAttackButton))
+                .addComponent(jRemoveAttackButton)
+                .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(10, 10, 10)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jAddAttackButton)
-                    .addComponent(jRemoveAttackButton)))
+                    .addComponent(jRemoveAttackButton)
+                    .addComponent(jAddAttackButton))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -389,116 +494,13 @@ public class SupportRefillSettingsPanel extends WizardPage implements ActionList
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jVillageTablePanel.add(jPanel3, gridBagConstraints);
 
-        jInfoScrollPane.setMinimumSize(new java.awt.Dimension(19, 180));
-        jInfoScrollPane.setPreferredSize(new java.awt.Dimension(19, 180));
-
-        jInfoTextPane.setContentType("text/html"); // NOI18N
-        jInfoTextPane.setEditable(false);
-        jInfoTextPane.setText("<html>Du befindest dich im <b>Angriffsmodus</b>. Hier kannst du die Herkunftsd&ouml;rfer ausw&auml;hlen, die f&uuml;r Angriffe verwendet werden d&uuml;rfen. Hierf&uuml;r hast die folgenden M&ouml;glichkeiten:\n<ul>\n<li>Einf&uuml;gen von Dorfkoordinaten aus der Zwischenablage per STRG+V</li>\n<li>Einf&uuml;gen der Herkunftsd&ouml;rfer aus der Gruppen&uuml;bersicht</li>\n<li>Einf&uuml;gen der Herkunftsd&ouml;rfer aus dem SOS-Analyzer</li>\n<li>Einf&uuml;gen der Herkunftsd&ouml;rfer aus Berichten</li>\n<li>Einf&uuml;gen aus der Auswahlübersicht</li>\n<li>Manuelle Eingabe</li>\n</ul>\n</html>\n");
-        jInfoScrollPane.setViewportView(jInfoTextPane);
-
-        setLayout(new java.awt.GridBagLayout());
-
-        jXCollapsiblePane1.setCollapsed(true);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        add(jXCollapsiblePane1, gridBagConstraints);
-
-        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
-        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("Informationen einblenden");
-        jLabel1.setToolTipText("Blendet Informationen zu dieser Ansicht und zu den Datenquellen ein/aus");
-        jLabel1.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
-        jLabel1.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireHideInfoEvent(evt);
-            }
-        });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        add(jLabel1, gridBagConstraints);
-
-        jDataPanel.setMinimumSize(new java.awt.Dimension(0, 130));
-        jDataPanel.setPreferredSize(new java.awt.Dimension(0, 130));
-        jDataPanel.setLayout(new java.awt.GridBagLayout());
-
-        jPanel1.setLayout(new java.awt.GridBagLayout());
-
-        jTargetAmountsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Gewünschte Truppenstärke"));
-        jTargetAmountsPanel.setLayout(new java.awt.BorderLayout());
-
-        jAllowSimilarTroops.setSelected(true);
-        jAllowSimilarTroops.setText("Gleichwertige Truppenstärke zulassen");
-        jAllowSimilarTroops.setToolTipText("<html>Ist diese Option aktiviert, so werden nicht zwingend die vorgegebenen Truppen aufgef&uuml;llt.<br/>Stattdessen wird versucht, unter Ber&uuml;cksichtigung der bereits \nstationierten Truppen,<br/>die vorgegebene St&auml;rke der Verteidigung zu erreichen.</html>");
-        jAllowSimilarTroops.setMaximumSize(new java.awt.Dimension(150, 23));
-        jAllowSimilarTroops.setMinimumSize(new java.awt.Dimension(150, 23));
-        jAllowSimilarTroops.setPreferredSize(new java.awt.Dimension(150, 23));
-        jTargetAmountsPanel.add(jAllowSimilarTroops, java.awt.BorderLayout.SOUTH);
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridy = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 1.0;
-        jPanel1.add(jTargetAmountsPanel, gridBagConstraints);
-
-        jSplitSizePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Einzelunterstützung"));
-        jSplitSizePanel.setLayout(new java.awt.BorderLayout());
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 1.0;
-        jPanel1.add(jSplitSizePanel, gridBagConstraints);
-
-        jButton1.setText("<html>Notwendige Unterstützungen<br/>berechnen</html>");
-        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                fireCalculateNeededSupportsEvent(evt);
-            }
-        });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel1.add(jButton1, gridBagConstraints);
-
-        jButton2.setText("<html>Notwendige Truppen als<br/>BB-Code exportieren</html>");
-        jButton2.setToolTipText("Exportiert die Differenz zur gewünschten Truppenstärke für alle Dörfer in die Zwischenablage");
-        jButton2.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                fireCalculateAndExportRequiredTroopsEvent(evt);
-            }
-        });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel1.add(jButton2, gridBagConstraints);
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jDataPanel.add(jPanel1, gridBagConstraints);
-
-        add(jDataPanel, new java.awt.GridBagConstraints());
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 1.0;
-        add(jSplitPane1, gridBagConstraints);
+        gridBagConstraints.weighty = 0.5;
+        add(jVillageTablePanel, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
 
     private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireHideInfoEvent
@@ -675,7 +677,6 @@ public class SupportRefillSettingsPanel extends WizardPage implements ActionList
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JButton jRemoveAttackButton;
-    private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JPanel jSplitSizePanel;
     private javax.swing.JLabel jStatusLabel;
     private javax.swing.JScrollPane jTableScrollPane;

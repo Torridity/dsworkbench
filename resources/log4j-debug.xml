@@ -9,7 +9,7 @@
       <PatternLayout pattern="%d - %-5p [%t] - (%C [%L]) - %m%n"/>
       <Policies>
         <OnStartupTriggeringPolicy />
-        <SizeBasedTriggeringPolicy size="10 MB" />
+        <SizeBasedTriggeringPolicy size="50 MB" />
       </Policies>
       <DefaultRolloverStrategy>
         <Delete basePath="${baseDir}" maxDepth="1">

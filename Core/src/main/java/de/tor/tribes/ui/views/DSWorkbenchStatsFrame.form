@@ -1,4 +1,4 @@
-<?xml version="1.1" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 
 <Form version="1.5" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JFrameFormInfo">
   <NonVisualComponents>
@@ -123,7 +123,6 @@
       <Properties>
         <Property name="selected" type="boolean" value="true"/>
         <Property name="text" type="java.lang.String" value="Punkte anzeigen"/>
-        <Property name="opaque" type="boolean" value="false"/>
       </Properties>
       <Events>
         <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="fireUpdateChartEvent"/>
@@ -132,7 +131,6 @@
     <Component class="javax.swing.JCheckBox" name="jShowRank">
       <Properties>
         <Property name="text" type="java.lang.String" value="Rang anzeigen"/>
-        <Property name="opaque" type="boolean" value="false"/>
       </Properties>
       <Events>
         <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="fireUpdateChartEvent"/>
@@ -141,7 +139,6 @@
     <Component class="javax.swing.JCheckBox" name="jShowVillages">
       <Properties>
         <Property name="text" type="java.lang.String" value="D&#xf6;rfer anzeigen"/>
-        <Property name="opaque" type="boolean" value="false"/>
       </Properties>
       <Events>
         <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="fireUpdateChartEvent"/>
@@ -150,7 +147,6 @@
     <Component class="javax.swing.JCheckBox" name="jShowKillsOff">
       <Properties>
         <Property name="text" type="java.lang.String" value="Kills (Off) anzeigen"/>
-        <Property name="opaque" type="boolean" value="false"/>
       </Properties>
       <Events>
         <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="fireUpdateChartEvent"/>
@@ -159,7 +155,6 @@
     <Component class="javax.swing.JCheckBox" name="jShowRankOff">
       <Properties>
         <Property name="text" type="java.lang.String" value="Rang (Off) anzeigen"/>
-        <Property name="opaque" type="boolean" value="false"/>
       </Properties>
       <Events>
         <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="fireUpdateChartEvent"/>
@@ -168,7 +163,6 @@
     <Component class="javax.swing.JCheckBox" name="jShowKillsDef">
       <Properties>
         <Property name="text" type="java.lang.String" value="Kills (Deff) anzeigen"/>
-        <Property name="opaque" type="boolean" value="false"/>
       </Properties>
       <Events>
         <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="fireUpdateChartEvent"/>
@@ -177,7 +171,6 @@
     <Component class="javax.swing.JCheckBox" name="jShowRankDef">
       <Properties>
         <Property name="text" type="java.lang.String" value="Rang (Deff) anzeigen"/>
-        <Property name="opaque" type="boolean" value="false"/>
       </Properties>
       <Events>
         <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="fireUpdateChartEvent"/>
@@ -187,7 +180,6 @@
       <Properties>
         <Property name="text" type="java.lang.String" value="Werte anzeigen"/>
         <Property name="toolTipText" type="java.lang.String" value="Zeigt die Werte der Datenpunkte im Diagramm an"/>
-        <Property name="opaque" type="boolean" value="false"/>
       </Properties>
       <Events>
         <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="fireUpdateChartEvent"/>
@@ -197,7 +189,6 @@
       <Properties>
         <Property name="selected" type="boolean" value="true"/>
         <Property name="text" type="java.lang.String" value="Legende anzeigen"/>
-        <Property name="opaque" type="boolean" value="false"/>
       </Properties>
       <Events>
         <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="fireUpdateChartEvent"/>
@@ -207,7 +198,6 @@
       <Properties>
         <Property name="selected" type="boolean" value="true"/>
         <Property name="text" type="java.lang.String" value="Linien anzeigen"/>
-        <Property name="opaque" type="boolean" value="false"/>
       </Properties>
       <Events>
         <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="fireUpdateChartEvent"/>
@@ -217,7 +207,6 @@
       <Properties>
         <Property name="selected" type="boolean" value="true"/>
         <Property name="text" type="java.lang.String" value="Datenpunkte anzeigen"/>
-        <Property name="opaque" type="boolean" value="false"/>
       </Properties>
       <Events>
         <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="fireUpdateChartEvent"/>
@@ -350,7 +339,7 @@
                   <SubComponents>
                     <Component class="javax.swing.JEditorPane" name="jPointsPane">
                       <Properties>
-                        <Property name="contentType" type="java.lang.String" value="text/html"/>
+                        <Property name="contentType" type="java.lang.String" value="text/html" noResource="true"/>
                         <Property name="editable" type="boolean" value="false"/>
                       </Properties>
                     </Component>
@@ -375,7 +364,7 @@
                   <SubComponents>
                     <Component class="javax.swing.JEditorPane" name="jBashOffPane">
                       <Properties>
-                        <Property name="contentType" type="java.lang.String" value="text/html"/>
+                        <Property name="contentType" type="java.lang.String" value="text/html" noResource="true"/>
                         <Property name="editable" type="boolean" value="false"/>
                       </Properties>
                     </Component>
@@ -400,7 +389,7 @@
                   <SubComponents>
                     <Component class="javax.swing.JEditorPane" name="jBashDefPane">
                       <Properties>
-                        <Property name="contentType" type="java.lang.String" value="text/html"/>
+                        <Property name="contentType" type="java.lang.String" value="text/html" noResource="true"/>
                         <Property name="editable" type="boolean" value="false"/>
                       </Properties>
                     </Component>
@@ -425,7 +414,7 @@
                   <SubComponents>
                     <Component class="javax.swing.JEditorPane" name="jWinnerLoserPane">
                       <Properties>
-                        <Property name="contentType" type="java.lang.String" value="text/html"/>
+                        <Property name="contentType" type="java.lang.String" value="text/html" noResource="true"/>
                         <Property name="editable" type="boolean" value="false"/>
                       </Properties>
                     </Component>
@@ -561,7 +550,6 @@
         <Component class="javax.swing.JCheckBox" name="jUseTop10Box">
           <Properties>
             <Property name="text" type="java.lang.String" value="Nur Top-10 anzeigen"/>
-            <Property name="opaque" type="boolean" value="false"/>
           </Properties>
         </Component>
       </SubComponents>
@@ -572,6 +560,7 @@
   </Properties>
   <SyntheticProperties>
     <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
+    <SyntheticProperty name="generateCenter" type="boolean" value="false"/>
   </SyntheticProperties>
   <AuxValues>
     <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
@@ -591,7 +580,6 @@
     <Component class="javax.swing.JCheckBox" name="jAlwaysOnTopBox">
       <Properties>
         <Property name="text" type="java.lang.String" value="Immer im Vordergrund"/>
-        <Property name="opaque" type="boolean" value="false"/>
       </Properties>
       <Events>
         <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="fireAlwaysOnTopEvent"/>

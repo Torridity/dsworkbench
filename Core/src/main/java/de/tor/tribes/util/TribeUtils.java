@@ -15,19 +15,44 @@
  */
 package de.tor.tribes.util;
 
+import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.ext.Barbarians;
 import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Village;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.Predicate;
 
 /**
  *
  * @author Torridity
  */
 public class TribeUtils {
+
+    public static List<Tribe> filterTribes(List<Tribe> input, final String pFilter, Comparator<Tribe> pComparator) {
+        if (pFilter == null) {
+            return new ArrayList<>();
+        }
+        final String filter = pFilter.toLowerCase();
+
+        if (filter.length() > 0) {
+            CollectionUtils.filter(input, new Predicate() {
+                @Override
+                public boolean evaluate(Object o) {
+                    return ((Tribe) o).getName().toLowerCase().contains(filter);
+                }
+            });
+        }
+
+        if (pComparator != null) {
+            Collections.sort(input, pComparator);
+        }
+        return input;
+    }
     
     public static Tribe[] getTribeByVillage(Village pVillage, boolean pUseBarbarians, Comparator<Tribe> pComparator) {
         return getTribeByVillage(new Village[]{pVillage}, pUseBarbarians, pComparator);

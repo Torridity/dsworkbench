@@ -256,6 +256,6 @@ public class Ally implements Comparable<Ally>, Serializable {
     public boolean equals(Object other) {
         if(!(other instanceof Ally)) return false;
         
-        return this.id == ((Ally) other).getId();
+        return this.getId() == ((Ally) other).getId();
     }
 }

@@ -821,6 +821,10 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         jExportTags = new javax.swing.JCheckBox();
         jExportForms = new javax.swing.JCheckBox();
         jExportVillageInformation = new javax.swing.JCheckBox();
+        jExportStdAttacks = new javax.swing.JCheckBox();
+        jExportFarminfos = new javax.swing.JCheckBox();
+        jExportSplits = new javax.swing.JCheckBox();
+        jExportSOS = new javax.swing.JCheckBox();
         jAddROIDialog = new javax.swing.JDialog();
         jLabel7 = new javax.swing.JLabel();
         jROIRegion = new javax.swing.JTextField();
@@ -889,11 +893,13 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         jSettingsScrollPane = new javax.swing.JScrollPane();
 
         jExportDialog.setTitle("Export");
-        jExportDialog.setMinimumSize(new java.awt.Dimension(560, 370));
+        jExportDialog.setMinimumSize(new java.awt.Dimension(560, 500));
+        jExportDialog.setPreferredSize(new java.awt.Dimension(560, 500));
+        jExportDialog.setResizable(false);
         jExportDialog.getContentPane().setLayout(new java.awt.GridBagLayout());
 
-        jScrollPane1.setMinimumSize(new java.awt.Dimension(100, 100));
-        jScrollPane1.setPreferredSize(new java.awt.Dimension(100, 100));
+        jScrollPane1.setMinimumSize(new java.awt.Dimension(260, 100));
+        jScrollPane1.setPreferredSize(new java.awt.Dimension(260, 100));
 
         jAttackExportTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -925,33 +931,33 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         jExportDialog.getContentPane().add(jScrollPane1, gridBagConstraints);
 
         jExportButton.setText("Exportieren");
-        jExportButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
+        jExportButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 fireExportEvent(evt);
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 3;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHEAST;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LAST_LINE_END;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jExportDialog.getContentPane().add(jExportButton, gridBagConstraints);
 
         jCancelExportButton.setText("Abbrechen");
-        jCancelExportButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
+        jCancelExportButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 fireExportEvent(evt);
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 3;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LAST_LINE_START;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jExportDialog.getContentPane().add(jCancelExportButton, gridBagConstraints);
 
-        jScrollPane4.setMinimumSize(new java.awt.Dimension(100, 100));
-        jScrollPane4.setPreferredSize(new java.awt.Dimension(100, 100));
+        jScrollPane4.setMinimumSize(new java.awt.Dimension(260, 100));
+        jScrollPane4.setPreferredSize(new java.awt.Dimension(260, 100));
 
         jMarkerSetExportTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -975,6 +981,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.0;
@@ -982,8 +989,8 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jExportDialog.getContentPane().add(jScrollPane4, gridBagConstraints);
 
-        jScrollPane5.setMinimumSize(new java.awt.Dimension(100, 100));
-        jScrollPane5.setPreferredSize(new java.awt.Dimension(100, 100));
+        jScrollPane5.setMinimumSize(new java.awt.Dimension(260, 100));
+        jScrollPane5.setPreferredSize(new java.awt.Dimension(260, 100));
 
         jReportSetExportTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -1014,8 +1021,8 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jExportDialog.getContentPane().add(jScrollPane5, gridBagConstraints);
 
-        jScrollPane6.setMinimumSize(new java.awt.Dimension(100, 100));
-        jScrollPane6.setPreferredSize(new java.awt.Dimension(100, 100));
+        jScrollPane6.setMinimumSize(new java.awt.Dimension(260, 100));
+        jScrollPane6.setPreferredSize(new java.awt.Dimension(260, 100));
 
         jNoteSetExportTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -1039,6 +1046,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.0;
@@ -1046,8 +1054,8 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jExportDialog.getContentPane().add(jScrollPane6, gridBagConstraints);
 
-        jScrollPane7.setMinimumSize(new java.awt.Dimension(100, 100));
-        jScrollPane7.setPreferredSize(new java.awt.Dimension(100, 100));
+        jScrollPane7.setMinimumSize(new java.awt.Dimension(260, 100));
+        jScrollPane7.setPreferredSize(new java.awt.Dimension(260, 100));
 
         jTroopSetExportTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -1078,42 +1086,100 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jExportDialog.getContentPane().add(jScrollPane7, gridBagConstraints);
 
-        jPanel5.setPreferredSize(new java.awt.Dimension(100, 100));
+        jPanel5.setPreferredSize(new java.awt.Dimension(260, 100));
+        jPanel5.setLayout(new java.awt.GridBagLayout());
 
-        jExportTags.setText("Gruppen exportieren");
+        jExportTags.setText("Gruppen");
+        jExportTags.setMaximumSize(new java.awt.Dimension(2147483647, 2147483647));
+        jExportTags.setMinimumSize(new java.awt.Dimension(130, 24));
+        jExportTags.setPreferredSize(new java.awt.Dimension(130, 24));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.PAGE_START;
+        gridBagConstraints.weightx = 1.0;
+        jPanel5.add(jExportTags, gridBagConstraints);
 
-        jExportForms.setText("Zeichnungen exportieren");
+        jExportForms.setText("Zeichnungen");
+        jExportForms.setMaximumSize(new java.awt.Dimension(2147483647, 2147483647));
+        jExportForms.setMinimumSize(new java.awt.Dimension(130, 24));
+        jExportForms.setPreferredSize(new java.awt.Dimension(130, 24));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.PAGE_START;
+        gridBagConstraints.weightx = 1.0;
+        jPanel5.add(jExportForms, gridBagConstraints);
 
-        jExportVillageInformation.setText("Dorfinfos exportieren");
+        jExportVillageInformation.setText("Dorfinfos");
         jExportVillageInformation.setToolTipText("Enthält Gebäudeinfos (z.B. Kichrche, Wachturm)");
+        jExportVillageInformation.setMaximumSize(new java.awt.Dimension(2147483647, 2147483647));
+        jExportVillageInformation.setMinimumSize(new java.awt.Dimension(130, 24));
+        jExportVillageInformation.setPreferredSize(new java.awt.Dimension(130, 24));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.PAGE_START;
+        gridBagConstraints.weightx = 1.0;
+        jPanel5.add(jExportVillageInformation, gridBagConstraints);
 
-        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
-        jPanel5.setLayout(jPanel5Layout);
-        jPanel5Layout.setHorizontalGroup(
-            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel5Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jExportForms, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jExportTags, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jExportVillageInformation, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
-        );
-        jPanel5Layout.setVerticalGroup(
-            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel5Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jExportTags)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jExportForms)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jExportVillageInformation)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
+        jExportStdAttacks.setText("Standardangriffe");
+        jExportStdAttacks.setMaximumSize(new java.awt.Dimension(2147483647, 2147483647));
+        jExportStdAttacks.setMinimumSize(new java.awt.Dimension(130, 24));
+        jExportStdAttacks.setPreferredSize(new java.awt.Dimension(130, 24));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.PAGE_START;
+        gridBagConstraints.weightx = 1.0;
+        jPanel5.add(jExportStdAttacks, gridBagConstraints);
+
+        jExportFarminfos.setText("Farminfos");
+        jExportFarminfos.setMaximumSize(new java.awt.Dimension(2147483647, 2147483647));
+        jExportFarminfos.setMinimumSize(new java.awt.Dimension(130, 24));
+        jExportFarminfos.setPreferredSize(new java.awt.Dimension(130, 24));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.PAGE_START;
+        gridBagConstraints.weightx = 1.0;
+        jPanel5.add(jExportFarminfos, gridBagConstraints);
+
+        jExportSplits.setText("Split Sets");
+        jExportSplits.setToolTipText("Enthält Gebäudeinfos (z.B. Kichrche, Wachturm)");
+        jExportSplits.setMaximumSize(new java.awt.Dimension(2147483647, 2147483647));
+        jExportSplits.setMinimumSize(new java.awt.Dimension(130, 24));
+        jExportSplits.setPreferredSize(new java.awt.Dimension(130, 24));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.PAGE_START;
+        gridBagConstraints.weightx = 1.0;
+        jPanel5.add(jExportSplits, gridBagConstraints);
+
+        jExportSOS.setText("SOS Requests");
+        jExportSOS.setMaximumSize(new java.awt.Dimension(2147483647, 2147483647));
+        jExportSOS.setMinimumSize(new java.awt.Dimension(130, 24));
+        jExportSOS.setPreferredSize(new java.awt.Dimension(130, 24));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.PAGE_START;
+        gridBagConstraints.weightx = 1.0;
+        jPanel5.add(jExportSOS, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.0;
@@ -2118,7 +2184,7 @@ private void fireCreateMapShotEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
 
 }//GEN-LAST:event_fireCreateMapShotEvent
 
-private void fireExportEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireExportEvent
+private void fireExportEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireExportEvent
   if (evt.getSource() == jExportButton) {
     //do export
     logger.debug("Building export data");
@@ -2181,6 +2247,10 @@ private void fireExportEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_f
     needExport |= jExportForms.isSelected();
     needExport |= !noteSetsToExport.isEmpty();
     needExport |= jExportVillageInformation.isSelected();
+    needExport |= jExportFarminfos.isSelected();
+    needExport |= jExportSOS.isSelected();
+    needExport |= jExportSplits.isSelected();
+    needExport |= jExportStdAttacks.isSelected();
 
     if (!needExport) {
       JOptionPaneHelper.showWarningBox(jExportDialog, "Keine Daten für den Export gewählt", "Export");
@@ -2192,7 +2262,7 @@ private void fireExportEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_f
       dir = ".";
     }
 
-    JFileChooser chooser = null;
+    JFileChooser chooser;
     try {
       chooser = new JFileChooser(dir);
     } catch (Exception e) {
@@ -2229,44 +2299,56 @@ private void fireExportEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_f
             return;
           }
         }
-
-        String exportString = "<export>\n";
+        
+        Document doc = JDomUtils.createDocument();
+        Element backup = doc.getRootElement();
         if (!plansToExport.isEmpty()) {
-          exportString += AttackManager.getSingleton().getExportData(plansToExport);
+          backup.addContent(AttackManager.getSingleton().getExportData(plansToExport));
         }
         if (!setsToExport.isEmpty()) {
-          exportString += MarkerManager.getSingleton().getExportData(setsToExport);
+          backup.addContent(MarkerManager.getSingleton().getExportData(setsToExport));
         }
         if (!reportsToExport.isEmpty()) {
-          exportString += ReportManager.getSingleton().getExportData(reportsToExport);
+          backup.addContent(ReportManager.getSingleton().getExportData(reportsToExport));
         }
         if (jExportTags.isSelected()) {
-          exportString += TagManager.getSingleton().getExportData(null);
+          backup.addContent(TagManager.getSingleton().getExportData(null));
         }
 
         if (!troopSetsToExport.isEmpty()) {
-          exportString += TroopsManager.getSingleton().getExportData(troopSetsToExport);
+          backup.addContent(TroopsManager.getSingleton().getExportData(troopSetsToExport));
         }
 
         if (jExportForms.isSelected()) {
-          exportString += FormManager.getSingleton().getExportData(null);
+          backup.addContent(FormManager.getSingleton().getExportData(null));
         }
 
         if (!noteSetsToExport.isEmpty()) {
-          exportString += NoteManager.getSingleton().getExportData(noteSetsToExport);
+          backup.addContent(NoteManager.getSingleton().getExportData(noteSetsToExport));
         }
 
         if (jExportVillageInformation.isSelected()) {
-          exportString += KnownVillageManager.getSingleton().getExportData(null);
+          backup.addContent(KnownVillageManager.getSingleton().getExportData(null));
         }
 
-        exportString += "</export>";
+        if (jExportFarminfos.isSelected()) {
+          backup.addContent(FarmManager.getSingleton().getExportData(null));
+        }
+
+        if (jExportSOS.isSelected()) {
+          backup.addContent(SOSManager.getSingleton().getExportData(null));
+        }
+
+        if (jExportSplits.isSelected()) {
+          backup.addContent(SplitSetHelper.getExportData());
+        }
+
+        if (jExportStdAttacks.isSelected()) {
+          backup.addContent(StandardAttackManager.getSingleton().getExportData(null));
+        }
+
         logger.debug("Writing data to disk");
-        FileWriter w = new FileWriter(target);
-        w.write(exportString);
-        logger.debug("Finalizing writer");
-        w.flush();
-        w.close();
+        JDomUtils.saveDocument(doc, file);
         logger.debug("Export finished successfully");
         JOptionPaneHelper.showInformationBox(jExportDialog, "Export erfolgreich beendet.", "Export");
       } catch (Exception e) {
@@ -2881,7 +2963,11 @@ private void fireChangeClipboardWatchEvent(java.awt.event.MouseEvent evt) {//GEN
     private javax.swing.JButton jEnableClipboardWatchButton;
     private javax.swing.JButton jExportButton;
     private javax.swing.JDialog jExportDialog;
+    private javax.swing.JCheckBox jExportFarminfos;
     private javax.swing.JCheckBox jExportForms;
+    private javax.swing.JCheckBox jExportSOS;
+    private javax.swing.JCheckBox jExportSplits;
+    private javax.swing.JCheckBox jExportStdAttacks;
     private javax.swing.JCheckBox jExportTags;
     private javax.swing.JCheckBox jExportVillageInformation;
     private javax.swing.JComboBox jGraphicPacks;

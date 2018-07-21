@@ -2334,7 +2334,8 @@ class FarmPredicate implements HighlightPredicate {
     
     @Override
     public boolean isHighlighted(Component renderer, ComponentAdapter adapter) {
-        FarmInformation elem = (FarmInformation) FarmManager.getSingleton().getAllElements().get(adapter.row);
+        int row = adapter.convertRowIndexToModel(adapter.row);
+        FarmInformation elem = (FarmInformation) FarmManager.getSingleton().getAllElements().get(row);
         switch(type) {
             case BARBARIAN:
                 return elem.getVillage().getTribe().equals(Barbarians.getSingleton());

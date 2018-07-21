@@ -20,6 +20,7 @@ import de.tor.tribes.io.DataHolderListener;
 import de.tor.tribes.io.WorldDecorationHolder;
 import de.tor.tribes.types.UserProfile;
 import de.tor.tribes.ui.views.*;
+import de.tor.tribes.ui.windows.AbstractDSWorkbenchFrame;
 import de.tor.tribes.util.attack.AttackManager;
 import de.tor.tribes.util.attack.StandardAttackManager;
 import de.tor.tribes.util.conquer.ConquerManager;
@@ -244,25 +245,7 @@ public class GlobalOptions {
 
     public static void storeViewStates() {
         logger.debug("Saving view state");
-        DSWorkbenchAttackFrame.getSingleton().storeProperties();
-        DSWorkbenchChurchFrame.getSingleton().storeProperties();
-        DSWorkbenchWatchtowerFrame.getSingleton().storeProperties();
-        DSWorkbenchDistanceFrame.getSingleton().storeProperties();
-        DSWorkbenchDoItYourselfAttackPlaner.getSingleton().storeProperties();
-        DSWorkbenchMarkerFrame.getSingleton().storeProperties();
-        // DSWorkbenchMerchantDistibutor.getSingleton().storeProperties();
-        //DSWorkbenchReTimerFrame.getSingleton().storeProperties();
-        DSWorkbenchSOSRequestAnalyzer.getSingleton().storeProperties();
-        DSWorkbenchStatsFrame.getSingleton().storeProperties();
-        DSWorkbenchTagFrame.getSingleton().storeProperties();
-        DSWorkbenchConquersFrame.getSingleton().storeProperties();
-        DSWorkbenchFormFrame.getSingleton().storeProperties();
-        DSWorkbenchRankFrame.getSingleton().storeProperties();
-        DSWorkbenchNotepad.getSingleton().storeProperties();
-        DSWorkbenchTroopsFrame.getSingleton().storeProperties();
-        DSWorkbenchSelectionFrame.getSingleton().storeProperties();
-        DSWorkbenchReportFrame.getSingleton().storeProperties();
-        DSWorkbenchFarmManager.getSingleton().storeProperties();
+        AbstractDSWorkbenchFrame.saveAllProperties();
     }
 
     /**

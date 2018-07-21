@@ -15,6 +15,7 @@
  */
 package de.tor.tribes.util.algo;
 
+import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.TroopMovement;
@@ -49,9 +50,9 @@ public class Iterix extends AbstractAttackAlgorithm {
     //list where the unit type ids are obtained from
     private List<UnitHolder> troops;
     
-    int selectedSource = 0;
-    int selectedTarget = 0;
-    int round = 0;
+    private int selectedSource = 0;
+    private int selectedTarget = 0;
+    private int round = 0;
 
     @Override
     public List<TroopMovement> calculateAttacks(
@@ -78,7 +79,6 @@ public class Iterix extends AbstractAttackAlgorithm {
         // <editor-fold defaultstate="collapsed" desc=" Assign Offs">
         //list where the source an target ids are obtained from
         List<Village> offSources = new LinkedList<>();
-        List<Village> allOffSources = new LinkedList<>();
         
         //generate a list with all source Villages
         for(UnitHolder unit: pSources.keySet()) {
@@ -86,11 +86,6 @@ public class Iterix extends AbstractAttackAlgorithm {
             logInfo(" - Starte Vorbereiten für Einheit '" + unit.getName() + "' (1/2)");
  
             if(unitSources != null && !unitSources.isEmpty()) {
-                //off sources are available
-                for(Village v: unitSources) {
-                    if(!allOffSources.contains(v)) allOffSources.add(v);
-                }
-                
                 //remove non-working sources if we use a fixed arrive time
                 logText(" - Entferne Herkunftsdörfer, die keins der Ziel erreichen können");
                 removeImpossibleSources(unitSources, pTargets, pTimeFrame, unit);
@@ -162,7 +157,8 @@ public class Iterix extends AbstractAttackAlgorithm {
                         movements.put(target, movementForTarget);
                     }
                     
-                    if (result[i][j] != 0) {
+                    while(result[i][j] > 0) {
+                        result[i][j]--;
                         cnt++;
                         Village source = offSources.get(i % offSources.size());
                         movementForTarget.addOff(troops.get((int) (i / offSources.size())), source);
@@ -524,18 +520,19 @@ public class Iterix extends AbstractAttackAlgorithm {
             pMappings[i][targetID] = (newValue > 0) ? newValue : 0;
             
             if(i == sourceIdx) {
-                //block source-target combination for additional attacks
-                pResults[sourceIdx][targetID]++;
-                pMappings[sourceIdx][targetID] = 0;
+                pResults[i][targetID]++;
                 
-                for (int j = 0; j < pMappings[i].length; j++) {
-                    //last selected source positions
-                    if (j != targetID) {
+                //block source-target combination for additional attacks
+                if(!multipleSameSnobsAllowed() || !troops.get((int) (i / pSources.size())).equals(DataHolder.getSingleton().getUnitByPlainName("snob"))) {
+                    //only if unit is not snob
+                    pMappings[i][targetID] = 0;
+                }
+                
+                if (resultSourceMappings[i] == sourceAmounts[(int) i / pSources.size()][i % pSources.size()] - 1) {
+                    //all attacks from this village are planned, block all remaining source-target combinations
+                    for (int j = 0; j < pMappings[i].length; j++) {
                         //update entire source row
-                        if (resultSourceMappings[i] == sourceAmounts[(int) i / pSources.size()][i % pSources.size()] - 1) {
-                            //all attacks from this village are planned, block all remaining source-target combinations
-                            pMappings[i][j] = 0;
-                        }
+                        pMappings[i][j] = 0;
                     }
                 }
             }

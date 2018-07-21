@@ -42,7 +42,8 @@ public abstract class AbstractAttackAlgorithm extends Thread {
     private List<Village> fakeTargets = null;
     private HashMap<Village, Integer> maxAttacksTable;
     private TimeFrame timeFrame = null;
-    boolean fakeOffTargets = false;
+    private boolean fakeOffTargets = false;
+    private boolean multiSnobAllowed = false;
     private AlgorithmListener mListener = null;
     private boolean running = false;
     private boolean aborted = false;
@@ -61,7 +62,8 @@ public abstract class AbstractAttackAlgorithm extends Thread {
             List<Village> pFakedTargets,
             HashMap<Village, Integer> pMaxAttacksTable,
             TimeFrame pTimeFrame,
-            boolean pFakeOffTargets) {
+            boolean pFakeOffTargets,
+            boolean pMultiSnobAllowed) {
         sources = pSources;
         fakes = pFakes;
         targets = pTargets;
@@ -69,6 +71,7 @@ public abstract class AbstractAttackAlgorithm extends Thread {
         maxAttacksTable = pMaxAttacksTable;
         timeFrame = pTimeFrame;
         fakeOffTargets = pFakeOffTargets;
+        multiSnobAllowed = pMultiSnobAllowed;
     }
     
     public void setLogListener(LogListener pListener) {
@@ -87,6 +90,10 @@ public abstract class AbstractAttackAlgorithm extends Thread {
             HashMap<Village, Integer> pMaxAttacksTable,
             TimeFrame pTimeFrame,
             boolean pFakeOffTargets);
+    
+    protected boolean multipleSameSnobsAllowed() {
+        return multiSnobAllowed;
+    }
     
     public void logText(String pText) {
         if (listener != null) {

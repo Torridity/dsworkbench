@@ -469,7 +469,7 @@ public class SupportRefillCalculationPanel extends WizardPage {
             targets.add(element.getVillage());
             maxSupports.put(element.getVillage(), element.getNeededSupports());
         }
-        calculator.initialize(sources, new HashMap<UnitHolder, List<Village>>(), targets, new LinkedList<Village>(), maxSupports, f, false);
+        calculator.initialize(sources, new HashMap<UnitHolder, List<Village>>(), targets, new LinkedList<Village>(), maxSupports, f, false, false);
         jProgressBar1.setValue(0);
         calculator.setLogListener(new AbstractAttackAlgorithm.LogListener() {
             

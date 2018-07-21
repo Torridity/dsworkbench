@@ -67,7 +67,7 @@ public class FarmInformation extends ManageableType {
     private FARM_RESULT lastResult = FARM_RESULT.UNKNOWN;
     private int ownerId = -1;
     private int attackCount = 0;
-    KnownVillage kVillage = null;
+    private KnownVillage kVillage = null;
     private int woodInStorage = 0;
     private int clayInStorage = 0;
     private int ironInStorage = 0;
@@ -1003,7 +1003,7 @@ public class FarmInformation extends ManageableType {
         farmInfo.addContent(new Element("lastReport").setText(Long.toString(lastReport)));
         farmInfo.addContent(new Element("farmTroopArrive").setText(Long.toString(farmTroopArrive)));
         farmInfo.addContent(new Element("siegeTroopArrival").setText(Long.toString(siegeTroopArrival)));
-        farmInfo.addContent(farmTroop.toXml("farmTroop"));
+        if(farmTroop != null) farmInfo.addContent(farmTroop.toXml("farmTroop"));
         farmInfo.addContent(new Element("resourcesFoundInLastReport").setText(Boolean.toString(resourcesFoundInLastReport)));
         return farmInfo;
     }
@@ -1032,7 +1032,11 @@ public class FarmInformation extends ManageableType {
         this.lastReport = Long.parseLong(e.getChild("lastReport").getText());
         this.farmTroopArrive = Long.parseLong(e.getChild("farmTroopArrive").getText());
         this.siegeTroopArrival = Long.parseLong(e.getChild("siegeTroopArrival").getText());
-        this.farmTroop = new TroopAmountFixed(e.getChild("farmTroop"));
+        try {
+            this.farmTroop = new TroopAmountFixed(e.getChild("farmTroop"));
+        } catch(NullPointerException ignored) {
+            this.farmTroop = null;
+        }
         this.resourcesFoundInLastReport = Boolean.parseBoolean(e.getChild("resourcesFoundInLastReport").getText());
     }
 

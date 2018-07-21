@@ -311,7 +311,7 @@ public class ConquerManager extends GenericManager<Conquer> {
         if (pVillage == null) {
             return null;
         }
-        for (ManageableType t : getAllElements().toArray(new ManageableType[getElementCount()])) {
+        for (ManageableType t : getAllElements()) {
             Conquer c = (Conquer) t;
             if (c != null && c.getVillage() != null && c.getVillage().getId() == pVillage.getId()) {
                 return c;

@@ -15,6 +15,7 @@
  */
 package de.tor.tribes.util.algo;
 
+import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.TroopMovement;
@@ -119,7 +120,8 @@ public class BruteForce extends AbstractAttackAlgorithm {
                                     //max number of attacks neither for villages nor for player reached
                                     List<Village> attsPerUnit = attacksForVillage.get(unit);
                                     if (attsPerUnit != null) {
-                                        if (!attsPerUnit.contains(source)) {
+                                        if (!attsPerUnit.contains(source) || 
+                                                (unit.equals(DataHolder.getSingleton().getUnitByPlainName("snob")) && multipleSameSnobsAllowed())) {
                                             //only add source if it does not attack current target yet
                                             added = true;
                                             logInfo("   * Neue Truppenbewegung: " + source + " -> " + v);

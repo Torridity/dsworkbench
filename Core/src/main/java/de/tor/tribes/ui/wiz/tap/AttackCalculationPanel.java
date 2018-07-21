@@ -97,6 +97,7 @@ public class AttackCalculationPanel extends WizardPage {
         }
         profile.addProperty("tap.calculation.algo", algo);
         profile.addProperty("tap.calculation.fake.off", jAllowFakeOffs.isSelected());
+        profile.addProperty("tap.calculation.multi.snob", jAllowMultiSnob.isSelected());
     }
 
     public void restoreProperties() {
@@ -115,6 +116,7 @@ public class AttackCalculationPanel extends WizardPage {
             jSystematicCalculation.setSelected(true);
         }
         jAllowFakeOffs.setSelected(Boolean.parseBoolean(profile.getProperty("tap.calculation.fake.off")));
+        jAllowMultiSnob.setSelected(Boolean.parseBoolean(profile.getProperty("tap.calculation.multi.snob")));
     }
 
     /**
@@ -136,6 +138,7 @@ public class AttackCalculationPanel extends WizardPage {
         jAllowFakeOffs = new javax.swing.JCheckBox();
         jBruteForce = new javax.swing.JRadioButton();
         jSystematicCalculation = new javax.swing.JRadioButton();
+        jAllowMultiSnob = new javax.swing.JCheckBox();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextPane1 = new javax.swing.JTextPane();
         jCalculateButton = new javax.swing.JButton();
@@ -198,7 +201,6 @@ public class AttackCalculationPanel extends WizardPage {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
-        gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel3.add(jAllowFakeOffs, gridBagConstraints);
@@ -221,6 +223,16 @@ public class AttackCalculationPanel extends WizardPage {
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel3.add(jSystematicCalculation, gridBagConstraints);
+
+        jAllowMultiSnob.setText("Mehrfachangriffe mit AGs erlauben");
+        jAllowMultiSnob.setToolTipText("<html>Erlaubt, dass ein Herkunftsdorf öfters dasselbe Zieldorf angreift, falls es sich dabei um AG Angriffe handelt</html>");
+        jAllowMultiSnob.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel3.add(jAllowMultiSnob, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -469,7 +481,8 @@ public class AttackCalculationPanel extends WizardPage {
         }
 
         TimeFrame timeFrame = TimeSettingsPanel.getSingleton().getTimeFrame();
-        calculator.initialize(sources, fakeSources, targets, fakeTargets, maxAttacks, timeFrame, jAllowFakeOffs.isSelected());
+        calculator.initialize(sources, fakeSources, targets, fakeTargets, maxAttacks,
+                timeFrame, jAllowFakeOffs.isSelected(), jAllowMultiSnob.isSelected());
         jProgressBar1.setValue(0);
         calculator.setLogListener(new AbstractAttackAlgorithm.LogListener() {
 
@@ -562,6 +575,7 @@ public class AttackCalculationPanel extends WizardPage {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JCheckBox jAllowFakeOffs;
+    private javax.swing.JCheckBox jAllowMultiSnob;
     private javax.swing.JRadioButton jBruteForce;
     private javax.swing.JButton jCalculateButton;
     private javax.swing.JScrollPane jInfoScrollPane;

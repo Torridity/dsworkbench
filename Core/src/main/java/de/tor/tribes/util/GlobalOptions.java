@@ -19,11 +19,10 @@ import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.DataHolderListener;
 import de.tor.tribes.io.WorldDecorationHolder;
 import de.tor.tribes.types.UserProfile;
-import de.tor.tribes.types.test.DummyUserProfile;
 import de.tor.tribes.ui.views.*;
+import de.tor.tribes.ui.windows.AbstractDSWorkbenchFrame;
 import de.tor.tribes.util.attack.AttackManager;
 import de.tor.tribes.util.attack.StandardAttackManager;
-import de.tor.tribes.util.village.KnownVillageManager;
 import de.tor.tribes.util.conquer.ConquerManager;
 import de.tor.tribes.util.farm.FarmManager;
 import de.tor.tribes.util.map.FormManager;
@@ -35,19 +34,23 @@ import de.tor.tribes.util.sos.SOSManager;
 import de.tor.tribes.util.stat.StatManager;
 import de.tor.tribes.util.tag.TagManager;
 import de.tor.tribes.util.troops.TroopsManager;
-import org.apache.log4j.Logger;
-
+import de.tor.tribes.util.village.KnownVillageManager;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.net.URL;
+import java.util.*;
 import javax.help.CSH;
 import javax.help.HelpBroker;
 import javax.help.HelpSet;
 import javax.help.HelpSetException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.net.URL;
-import java.util.*;
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.PropertiesConfiguration;
+import jdk.nashorn.api.scripting.URLReader;
+import org.apache.commons.configuration2.PropertiesConfiguration;
+import org.apache.commons.configuration2.ex.ConfigurationException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 /**
  * Global settings used by almost all components. e.g. WorldData or UI specific objects
@@ -56,7 +59,7 @@ import org.apache.commons.configuration.PropertiesConfiguration;
  */
 public class GlobalOptions {
 
-    private static Logger logger = Logger.getLogger("GlobalSettings");
+    private static Logger logger = LogManager.getLogger("GlobalSettings");
     private static boolean INITIALIZED = false;
     private static boolean STARTED = false;
     /**
@@ -217,9 +220,9 @@ public class GlobalOptions {
         GLOBAL_PROPERTIES = new DSPropertiesConfiguration();
         if (new File("global.properties").exists()) {
             logger.debug("Loading existing properties file");
-            FileInputStream fin = new FileInputStream("global.properties");
-            GLOBAL_PROPERTIES.load(fin);
-            fin.close();
+            try (FileReader fin = new FileReader(new File("global.properties"))) {
+                GLOBAL_PROPERTIES.load(fin);
+            }
         } else {
             logger.debug("Creating empty properties file");
             saveProperties();
@@ -231,11 +234,9 @@ public class GlobalOptions {
      */
     public static void saveProperties() {
         logger.debug("Saving global properties");
-        try {
-            FileOutputStream fout = new FileOutputStream("global.properties");
+        try (FileWriter fout = new FileWriter(new File("global.properties"))) {
             GLOBAL_PROPERTIES.save(fout);
             fout.flush();
-            fout.close();
         } catch (Exception e) {
             logger.error("Failed to write properties", e);
         }
@@ -244,25 +245,7 @@ public class GlobalOptions {
 
     public static void storeViewStates() {
         logger.debug("Saving view state");
-        DSWorkbenchAttackFrame.getSingleton().storeProperties();
-        DSWorkbenchChurchFrame.getSingleton().storeProperties();
-        DSWorkbenchWatchtowerFrame.getSingleton().storeProperties();
-        DSWorkbenchDistanceFrame.getSingleton().storeProperties();
-        DSWorkbenchDoItYourselfAttackPlaner.getSingleton().storeProperties();
-        DSWorkbenchMarkerFrame.getSingleton().storeProperties();
-        // DSWorkbenchMerchantDistibutor.getSingleton().storeProperties();
-        //DSWorkbenchReTimerFrame.getSingleton().storeProperties();
-        DSWorkbenchSOSRequestAnalyzer.getSingleton().storeProperties();
-        DSWorkbenchStatsFrame.getSingleton().storeProperties();
-        DSWorkbenchTagFrame.getSingleton().storeProperties();
-        DSWorkbenchConquersFrame.getSingleton().storeProperties();
-        DSWorkbenchFormFrame.getSingleton().storeProperties();
-        DSWorkbenchRankFrame.getSingleton().storeProperties();
-        DSWorkbenchNotepad.getSingleton().storeProperties();
-        DSWorkbenchTroopsFrame.getSingleton().storeProperties();
-        DSWorkbenchSelectionFrame.getSingleton().storeProperties();
-        DSWorkbenchReportFrame.getSingleton().storeProperties();
-        DSWorkbenchFarmManager.getSingleton().storeProperties();
+        AbstractDSWorkbenchFrame.saveAllProperties();
     }
 
     /**
@@ -310,9 +293,7 @@ public class GlobalOptions {
      * Load user data (attacks, markers...)
      */
     public static void loadUserData() {
-        if (SELECTED_SERVER != null
-                && mSelectedProfile != null
-                && !mSelectedProfile.equals(DummyUserProfile.getSingleton())) {
+        if (SELECTED_SERVER != null && mSelectedProfile != null) {
             logger.debug("Loading markers");
             fireDataHolderEvent("Lade Markierungen");
             MarkerManager.getSingleton().loadElements(mSelectedProfile.getProfileDirectory() + "/markers.xml");
@@ -367,10 +348,7 @@ public class GlobalOptions {
      * Load user data (attacks, markers...)
      */
     public static void saveUserData() {
-        if (SELECTED_SERVER != null
-                && mSelectedProfile != null
-                && !mSelectedProfile.equals(DummyUserProfile.getSingleton())
-                && !internalDataDamaged) {
+        if (SELECTED_SERVER != null && mSelectedProfile != null && !internalDataDamaged) {
             logger.debug("Saving markers");
             MarkerManager.getSingleton().saveElements(mSelectedProfile.getProfileDirectory() + "/markers.xml");
             logger.debug("Saving attacks");
@@ -462,23 +440,33 @@ public class GlobalOptions {
 }
         
         public DSPropertiesConfiguration(String fileName) throws ConfigurationException {
-            GLOBAL_PROPERTIES = new PropertiesConfiguration(fileName);
+            this(new File(fileName));
         }
         
         public DSPropertiesConfiguration(File file) throws ConfigurationException {
-            GLOBAL_PROPERTIES = new PropertiesConfiguration(file);
+            this();
+            try {
+                GLOBAL_PROPERTIES.read(new FileReader(file));
+            } catch (IOException ex) {
+                logger.error("Can't read Global options", ex);
+            }
         }
         
         public DSPropertiesConfiguration(URL url) throws ConfigurationException {
-            GLOBAL_PROPERTIES = new PropertiesConfiguration(url);
+            this();
+            try {
+                GLOBAL_PROPERTIES.read(new URLReader(url));
+            } catch (IOException ex) {
+                logger.error("Can't read Global options", ex);
+            }
         }
         
-        public synchronized void load(FileInputStream in) throws ConfigurationException {
-            GLOBAL_PROPERTIES.load(in);
+        public synchronized void load(FileReader in) throws ConfigurationException, IOException {
+            GLOBAL_PROPERTIES.read(in);
         }
         
-        public void save(FileOutputStream write) throws ConfigurationException {
-            GLOBAL_PROPERTIES.save(write);
+        public void save(FileWriter write) throws ConfigurationException, IOException {
+            GLOBAL_PROPERTIES.write(write);
         }
         
         /**

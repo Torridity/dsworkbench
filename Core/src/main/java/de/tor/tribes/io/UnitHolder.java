@@ -15,11 +15,10 @@
  */
 package de.tor.tribes.io;
 
-import org.jdom.Element;
-
 import java.io.Serializable;
 import java.util.Comparator;
 import java.util.Objects;
+import org.jdom2.Element;
 
 /**
  *
@@ -41,6 +40,8 @@ public class UnitHolder implements Serializable {
     private double buildTime = 0;
 
     public UnitHolder() {
+        name = "";
+        plainName = "";
     }
 
     public UnitHolder(Element pElement) throws Exception {

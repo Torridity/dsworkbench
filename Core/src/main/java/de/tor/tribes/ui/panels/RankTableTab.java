@@ -25,15 +25,12 @@ import de.tor.tribes.util.BrowserInterface;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.dsreal.DSRealManager;
-import org.apache.log4j.Logger;
-import org.jdesktop.swingx.JXTable;
-import org.jdesktop.swingx.decorator.HighlightPredicate;
-import org.jdesktop.swingx.decorator.HighlighterFactory;
-import org.jdesktop.swingx.decorator.PainterHighlighter;
-import org.jdesktop.swingx.decorator.PatternPredicate;
-import org.jdesktop.swingx.painter.MattePainter;
-import org.jdesktop.swingx.table.TableColumnExt;
-
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.regex.Matcher;
 import javax.swing.*;
 import javax.swing.RowSorter.SortKey;
 import javax.swing.event.ListSelectionEvent;
@@ -41,13 +38,15 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.Enumeration;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.regex.Matcher;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jdesktop.swingx.JXTable;
+import org.jdesktop.swingx.decorator.HighlightPredicate;
+import org.jdesktop.swingx.decorator.HighlighterFactory;
+import org.jdesktop.swingx.decorator.PainterHighlighter;
+import org.jdesktop.swingx.decorator.PatternPredicate;
+import org.jdesktop.swingx.painter.MattePainter;
+import org.jdesktop.swingx.table.TableColumnExt;
 
 /**
  *
@@ -59,7 +58,7 @@ public class RankTableTab extends javax.swing.JPanel implements ListSelectionLis
 
         TRIBE, ALLY, TRIBE_BASH, ALLY_BASH
     }
-    private static Logger logger = Logger.getLogger("RankTableTab");
+    private static Logger logger = LogManager.getLogger("RankTableTab");
     private RANK_TYPE eType = null;
     private JXTable jxRankTable = new JXTable();
     private DefaultTableModel theModel = null;
@@ -89,9 +88,7 @@ public class RankTableTab extends javax.swing.JPanel implements ListSelectionLis
             }
         };
 
-        Enumeration<Integer> tIDs = DataHolder.getSingleton().getTribes().keys();
-        while (tIDs.hasMoreElements()) {
-            Tribe next = DataHolder.getSingleton().getTribes().get(tIDs.nextElement());
+        for(Tribe next: DataHolder.getSingleton().getTribes().values()) {
             Ally nextAlly = NoAlly.getSingleton();
             if (next.getAlly() != null) {
                 nextAlly = next.getAlly();
@@ -128,9 +125,7 @@ public class RankTableTab extends javax.swing.JPanel implements ListSelectionLis
             }
         };
 
-        Enumeration<Integer> tIDs = DataHolder.getSingleton().getAllies().keys();
-        while (tIDs.hasMoreElements()) {
-            Ally next = DataHolder.getSingleton().getAllies().get(tIDs.nextElement());
+        for(Ally next: DataHolder.getSingleton().getAllies().values()) {
             double pointPerTribe = 0.0;
             int m = next.getMembers();
             if (m > 0) {
@@ -165,10 +160,7 @@ public class RankTableTab extends javax.swing.JPanel implements ListSelectionLis
             }
         };
 
-
-        Enumeration<Integer> tIDs = DataHolder.getSingleton().getTribes().keys();
-        while (tIDs.hasMoreElements()) {
-            Tribe next = DataHolder.getSingleton().getTribes().get(tIDs.nextElement());
+        for(Tribe next: DataHolder.getSingleton().getTribes().values()) {
             double p = next.getPoints();
             if (p > 0) {
                 double killsPerPointOff = 100 * next.getKillsAtt() / p;
@@ -210,10 +202,7 @@ public class RankTableTab extends javax.swing.JPanel implements ListSelectionLis
             }
         };
 
-
-        Enumeration<Integer> tIDs = DataHolder.getSingleton().getAllies().keys();
-        while (tIDs.hasMoreElements()) {
-            Ally next = DataHolder.getSingleton().getAllies().get(tIDs.nextElement());
+        for(Ally next: DataHolder.getSingleton().getAllies().values()) {
             double p = next.getAll_points();
             if (p > 0) {
                 long killsOff = 0;

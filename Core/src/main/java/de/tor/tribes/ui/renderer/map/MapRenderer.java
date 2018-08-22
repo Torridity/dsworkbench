@@ -28,9 +28,6 @@ import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ImageUtils;
 import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.village.KnownVillage;
-import org.apache.log4j.Logger;
-
-import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.*;
 import java.awt.image.BufferedImage;
@@ -39,6 +36,10 @@ import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
 import java.util.*;
 import java.util.List;
+import javax.swing.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 /**
  * Map Renderer which supports "dirty layers" defining which layer has to be
@@ -57,7 +58,7 @@ import java.util.List;
  */
 public class MapRenderer {
 
-    private static Logger logger = Logger.getLogger("MapRenderer");
+    private static Logger logger = LogManager.getLogger("MapRenderer");
     public static final int ALL_LAYERS = 0;
     public static final int MAP_LAYER = 1;
     public static final int MARKER_LAYER = 2;
@@ -86,9 +87,9 @@ public class MapRenderer {
     private Popup mInfoPopup = null;
     private Village mPopupVillage = null;
     private BufferedImage mBackBuffer = null;
-    private Hashtable<Ally, Integer> mAllyCount = new Hashtable<>();
-    private Hashtable<Tribe, Integer> mTribeCount = new Hashtable<>();
-    private Hashtable<Village, AnimatedVillageInfoRenderer> mAnimators = new Hashtable<>();
+    private HashMap<Ally, Integer> mAllyCount = new HashMap<>();
+    private HashMap<Tribe, Integer> mTribeCount = new HashMap<>();
+    private HashMap<Village, AnimatedVillageInfoRenderer> mAnimators = new HashMap<>();
     //rendering layers
     private final MapLayerRenderer mMapLayer = new MapLayerRenderer();
     private final TroopDensityLayerRenderer mTroopDensityLayer = new TroopDensityLayerRenderer();
@@ -112,9 +113,7 @@ public class MapRenderer {
             layerVector.add("");
         }
 
-        Enumeration<String> values = Constants.LAYERS.keys();
-        while (values.hasMoreElements()) {
-            String layer = values.nextElement();
+        for(String layer: Constants.LAYERS.keySet()) {
             layerVector.set(Constants.LAYERS.get(layer), layer);
         }
 
@@ -469,12 +468,12 @@ public class MapRenderer {
         return dCurrentZoom;
     }
 
-    public Hashtable<Tribe, Integer> getTribeCount() {
-        return (Hashtable<Tribe, Integer>) mTribeCount.clone();
+    public HashMap<Tribe, Integer> getTribeCount() {
+        return (HashMap<Tribe, Integer>) mTribeCount.clone();
     }
 
-    public Hashtable<Ally, Integer> getAllyCount() {
-        return (Hashtable<Ally, Integer>) mAllyCount.clone();
+    public HashMap<Ally, Integer> getAllyCount() {
+        return (HashMap<Ally, Integer>) mAllyCount.clone();
     }
 
     /**
@@ -670,9 +669,7 @@ public class MapRenderer {
             animator.update(mouseVillage, rect, g2d);
         }
 
-        Enumeration<Village> iterator = mAnimators.keys();
-        while (iterator.hasMoreElements()) {
-            Village next = iterator.nextElement();
+        for(Village next: mAnimators.keySet()) {
             AnimatedVillageInfoRenderer animator = mAnimators.get(next);
             if (animator.isFinished()) {
                 mAnimators.remove(next);

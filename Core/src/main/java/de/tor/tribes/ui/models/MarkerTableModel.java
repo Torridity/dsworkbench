@@ -16,7 +16,6 @@
 package de.tor.tribes.ui.models;
 
 import de.tor.tribes.types.Marker;
-import de.tor.tribes.ui.MarkerCell;
 import de.tor.tribes.util.mark.MarkerManager;
 import java.awt.Color;
 import javax.swing.table.AbstractTableModel;
@@ -28,7 +27,7 @@ import javax.swing.table.AbstractTableModel;
 public class MarkerTableModel extends AbstractTableModel {
     
     private String sMarkerSet = null;
-    private final Class[] types = new Class[]{MarkerCell.class, Color.class, Boolean.class};
+    private final Class[] types = new Class[]{Marker.class, Color.class, Boolean.class};
     private final String colNames[] = new String[]{"Name", "Markierung", "Sichtbar"};
     
     public MarkerTableModel(String pMarkerSet) {
@@ -81,7 +80,7 @@ public class MarkerTableModel extends AbstractTableModel {
         Marker m = ((Marker) MarkerManager.getSingleton().getAllElements(sMarkerSet).get(rowIndex));
         switch (columnIndex) {
             case 0: {
-                return m.getView();
+                return m;
             }
             case 1: {
                 return m.getMarkerColor();

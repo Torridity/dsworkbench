@@ -18,17 +18,17 @@ package de.tor.tribes.ui.panels;
 import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.Marker;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
-import de.tor.tribes.util.mark.MarkerManager;
-import java.awt.geom.Rectangle2D;
 import de.tor.tribes.util.Constants;
+import de.tor.tribes.util.mark.MarkerManager;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Composite;
+import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.SwingUtilities;
@@ -96,15 +96,16 @@ public class ScreenshotPanel extends javax.swing.JPanel {
             for (ManageableType elem : allElements) {
 
                 Marker m = (Marker) elem;
-                String value = "";
+                String value;
                 switch (m.getMarkerType()) {
-                    case Marker.TRIBE_MARKER_TYPE: {
+                    case TRIBE:
                         value = DataHolder.getSingleton().getTribes().get(m.getMarkerID()).getName();
                         break;
-                    }
-                    default: {
+                    case ALLY:
                         value = DataHolder.getSingleton().getAllies().get(m.getMarkerID()).getName();
-                    }
+                        break;
+                    default:
+                        value = "";
                 }
 
                 Rectangle2D bounds = b.getGraphics().getFontMetrics().getStringBounds(value, b.getGraphics());
@@ -123,15 +124,16 @@ public class ScreenshotPanel extends javax.swing.JPanel {
             for (int i = 0; i < allElements.size(); i++) {
                 g2d.setColor(Color.BLACK);
                 Marker m = (Marker) allElements.get(i);
-                String value = "";
+                String value;
                 switch (m.getMarkerType()) {
-                    case Marker.TRIBE_MARKER_TYPE: {
+                    case TRIBE:
                         value = DataHolder.getSingleton().getTribes().get(m.getMarkerID()).getName();
                         break;
-                    }
-                    default: {
+                    case ALLY:
                         value = DataHolder.getSingleton().getAllies().get(m.getMarkerID()).getName();
-                    }
+                        break;
+                    default:
+                        value = "";
                 }
 
                 Color c = m.getMarkerColor();

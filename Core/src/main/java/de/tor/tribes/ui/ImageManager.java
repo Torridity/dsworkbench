@@ -32,7 +32,9 @@ import java.util.LinkedList;
 import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 /**
  * Class for loading and holding all cursors needed for DS Workbench
@@ -41,7 +43,7 @@ import org.apache.log4j.Logger;
  */
 public class ImageManager {
 
-    private static Logger logger = Logger.getLogger("TextureManager");    //mappanel default
+    private static Logger logger = LogManager.getLogger("TextureManager");    //mappanel default
     private static URL[] NOTE_URLS = null;
     // <editor-fold defaultstate="collapsed" desc="Basic map tool IDs">
     public final static int CURSOR_DEFAULT = 0;

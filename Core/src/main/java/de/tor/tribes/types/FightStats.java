@@ -15,14 +15,13 @@
  */
 package de.tor.tribes.types;
 
-import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Ally;
-import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.types.ext.NoAlly;
+import de.tor.tribes.types.ext.Tribe;
+import de.tor.tribes.types.ext.Village;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -41,10 +40,10 @@ public class FightStats {
     private long startTime = Long.MAX_VALUE;
     private long endTime = Long.MIN_VALUE;
     private int reportCount = 0;
-    private Hashtable<Tribe, SingleAttackerStat> attackerList = null;
+    private HashMap<Tribe, SingleAttackerStat> attackerList = null;
 
     public FightStats() {
-        attackerList = new Hashtable<>();
+        attackerList = new HashMap<>();
         attackingAllies = new LinkedList<>();
         defendingAllies = new LinkedList<>();
         defendingTribes = new LinkedList<>();
@@ -197,13 +196,12 @@ public class FightStats {
     }
 
     public Tribe[] getAttackingTribes(Ally pAlly) {
-        Enumeration<Tribe> tribes = attackerList.keys();
+        if(pAlly == null) return new Tribe[]{};
+        
         List<Tribe> result = new LinkedList<>();
-        while (tribes.hasMoreElements()) {
-            Tribe next = tribes.nextElement();
-            if (next != null && next.getAlly() != null && next.getAlly().equals(pAlly)) {
-                result.add(next);
-            } else if (pAlly != null && next.getAlly() == null && pAlly.equals(NoAlly.getSingleton())) {
+        for(Tribe next: attackerList.keySet()) {
+            if(next != null && ((next.getAlly() != null && next.getAlly().equals(pAlly))
+                    || (next.getAlly() == null && pAlly.equals(NoAlly.getSingleton())))) {
                 result.add(next);
             }
         }
@@ -237,14 +235,12 @@ public class FightStats {
         res += "ConqueredVillages: " + conqueredVillages.size() + "\n";
         res += "-----------------------\n";
         res += " Involved Tribes\n";
-        Enumeration<Tribe> keys = attackerList.keys();
         long overallLosses = 0;
         long overallKills = 0;
-        while (keys.hasMoreElements()) {
-            Tribe t = keys.nextElement();
-            res += attackerList.get(t).toString();
-            overallLosses += attackerList.get(t).getSummedLosses();
-            overallKills += attackerList.get(t).getSummedKills();
+        for(SingleAttackerStat s: attackerList.values()) {
+            res += s.toString();
+            overallLosses += s.getSummedLosses();
+            overallKills += s.getSummedKills();
         }
 
         res += "=====\n";

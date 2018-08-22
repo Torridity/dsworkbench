@@ -32,12 +32,6 @@ import de.tor.tribes.util.bb.AttackListFormatter;
 import de.tor.tribes.util.tag.TagManager;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
-import org.apache.log4j.Logger;
-import org.jdesktop.swingx.decorator.HighlighterFactory;
-import org.jdesktop.swingx.painter.MattePainter;
-
-import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
@@ -47,6 +41,12 @@ import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jdesktop.swingx.decorator.HighlighterFactory;
+import org.jdesktop.swingx.painter.MattePainter;
 
 /**
  * @author Charon
@@ -72,7 +72,7 @@ public class VillageSupportFrame extends javax.swing.JFrame implements ActionLis
         }
 
     }
-    private static Logger logger = Logger.getLogger("SupportDialog");
+    private static Logger logger = LogManager.getLogger("SupportDialog");
     private static VillageSupportFrame SINGLETON = null;
     private Village mCurrentVillage = null;
 
@@ -638,12 +638,7 @@ public class VillageSupportFrame extends javax.swing.JFrame implements ActionLis
 
         jSupportTable.setModel(model);
         jSupportTable.getTableHeader().setDefaultRenderer(new DefaultTableHeaderRenderer());
-
-        if (ServerSettings.getSingleton().isMillisArrival()) {
-            jSupportTable.setDefaultRenderer(Date.class, new DateCellRenderer("dd.MM.yy HH:mm:ss.SSS"));
-        } else {
-            jSupportTable.setDefaultRenderer(Date.class, new DateCellRenderer("dd.MM.yy HH:mm:ss"));
-        }
+        jSupportTable.setDefaultRenderer(Date.class, new DateCellRenderer());
         jSupportTable.setHighlighters(HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B));
         jSupportTable.setColumnControlVisible(false);
         jSupportTable.setDefaultRenderer(UnitHolder.class, new UnitCellRenderer());
@@ -685,7 +680,7 @@ public class VillageSupportFrame extends javax.swing.JFrame implements ActionLis
             }
         });
 
-        Hashtable<UnitHolder, Integer> forceTable = new Hashtable<>();
+        HashMap<UnitHolder, Integer> forceTable = new HashMap<>();
         for (int i = 0; i < jSupportTable.getRowCount(); i++) {
             Village v = (Village) jSupportTable.getValueAt(i, 0);
             UnitHolder u = (UnitHolder) jSupportTable.getValueAt(i, 1);

@@ -19,23 +19,21 @@ import de.tor.tribes.control.GenericManager;
 import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.types.LinkedTag;
 import de.tor.tribes.types.Tag;
-import java.util.List;
-import org.apache.log4j.Logger;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.TagUtils;
-import de.tor.tribes.util.xml.JaxenUtils;
-import java.io.File;
-import java.io.FileWriter;
+import de.tor.tribes.util.xml.JDomUtils;
 import java.util.LinkedList;
-import org.jdom.Document;
-import org.jdom.Element;
+import java.util.List;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jdom2.Element;
 
 /**Manager for village tags. Tags can be stored in files or in a database (not implemented yet)
  * @author Torridity
  */
 public class TagManager extends GenericManager<Tag> {
 
-    private static Logger logger = Logger.getLogger("TagManager");
+    private static Logger logger = LogManager.getLogger("TagManager");
     private static TagManager SINGLETON = null;
 
     public static synchronized TagManager getSingleton() {
@@ -50,41 +48,53 @@ public class TagManager extends GenericManager<Tag> {
     }
 
     @Override
-    public void loadElements(String pFile) {
-        if (pFile == null) {
-            logger.error("File argument is 'null'");
-            return;
+    public int importData(Element pElm, String pExtension) {
+        if (pElm == null) {
+            logger.error("Element argument is 'null'");
+            return -1;
         }
+        int result = 0;
         invalidate();
-        initialize();
-        File tagFile = new File(pFile);
-        if (tagFile.exists()) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("Loading tags from '" + pFile + "'");
-            }
-            try {
-                Document d = JaxenUtils.getDocument(tagFile);
-                for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//tags/tag")) {
-                    Tag t = null;
-                    if (e.getChild("equation") != null) {
-                        t = new LinkedTag();
-                        t.loadFromXml(e);
-                    } else {
-                        t = new Tag();
-                        t.loadFromXml(e);
-                    }
-                    addManagedElement(t);
+        logger.debug("Loading tags");
+        
+        try {
+            for (Element e : JDomUtils.getNodes(pElm, "tags/tag")) {
+                Tag t = null;
+                if (e.getChild("equation") != null) {
+                    t = new LinkedTag();
+                    t.loadFromXml(e);
+                } else {
+                    t = new Tag();
+                    t.loadFromXml(e);
                 }
-                logger.debug("Tags loaded successfully");
-            } catch (Exception e) {
-                logger.error("Failed to load tags", e);
+                addManagedElement(t);
+                result++;
             }
-        } else {
-            if (logger.isInfoEnabled()) {
-                logger.info("No tags found under '" + pFile + "'");
-            }
+            logger.debug("Tags loaded successfully");
+        } catch (Exception e) {
+            result = result * (-1) - 1;
+            logger.error("Failed to load tags", e);
         }
         revalidate(true);
+        
+        return result;
+    }
+
+    @Override
+    public Element getExportData(final List<String> pGroupsToExport) {
+        Element tags = new Element("tags");
+        
+        try {
+            logger.debug("Generating tag data");
+
+            for (ManageableType e : getAllElements()) {
+                tags.addContent(e.toXml("tag"));
+            }
+            logger.debug("Data generated successfully");
+        } catch (Exception e) {
+            logger.error("Failed to generate export data for tags", e);
+        }
+        return tags;
     }
 
     public void updateLinkedTags() {
@@ -96,97 +106,6 @@ public class TagManager extends GenericManager<Tag> {
             }
         }
         revalidate();
-    }
-
-    @Override
-    public boolean importData(File pFile, String pExtension) {
-        invalidate();
-        boolean result = false;
-        if (pFile == null) {
-            logger.error("File argument is 'null'");
-            return false;
-        }
-        logger.debug("Importing tags");
-        try {
-            Document d = JaxenUtils.getDocument(pFile);
-            for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//tags/tag")) {
-                Tag t = null;
-                if (e.getChild("equation") != null) {
-                    t = new LinkedTag();
-                    t.loadFromXml(e);
-                } else {
-                    t = new Tag();
-                    t.loadFromXml(e);
-                }
-
-                if (pExtension != null) {
-                    t.setName(t.getName() + "_" + pExtension);
-                }
-                Tag existing = getTagByName(t.getName());
-                if (existing == null) {
-                    //add new tag
-                    addManagedElement(t);
-                } else {
-                    //set tag for new villages
-                    for (Integer villageID : t.getVillageIDs()) {
-                        existing.tagVillage(villageID);
-                    }
-                }
-            }
-
-            logger.debug("Tags imported successfully");
-            result = true;
-        } catch (Exception e) {
-            logger.error("Failed to load tags", e);
-        }
-        revalidate(true);
-        return result;
-    }
-
-    @Override
-    public String getExportData(List<String> pGroupsToExport) {
-        try {
-            logger.debug("Generating tag export data");
-
-            String result = "<tags>\n";
-            ManageableType[] elements = getAllElements().toArray(new ManageableType[getAllElements().size()]);
-
-            for (ManageableType e : elements) {
-                Tag t = (Tag) e;
-                result += t.toXml();
-            }
-            result += "</tags>\n";
-            logger.debug("Export data generated successfully");
-            return result;
-        } catch (Exception e) {
-            logger.error("Failed to generate export data for tags", e);
-            return "";
-        }
-    }
-
-    @Override
-    public void saveElements(String pFile) {
-        if (pFile == null) {
-            logger.error("File argument is 'null'");
-        }
-        try {
-            logger.debug("Writing tags to '" + pFile + "'");
-
-            StringBuilder b = new StringBuilder();
-            b.append("<tags>\n");
-            for (ManageableType e : getAllElements()) {
-                Tag t = (Tag) e;
-                b.append(t.toXml());
-            }
-            b.append("</tags>\n");
-            FileWriter w = new FileWriter(pFile);
-            w.write(b.toString());
-            w.flush();
-            w.close();
-            logger.debug("Tags successfully saved");
-        } catch (Exception e) {
-            logger.error("Failed to store tags", e);
-        }
     }
 
     /**Get all tags for a village*/

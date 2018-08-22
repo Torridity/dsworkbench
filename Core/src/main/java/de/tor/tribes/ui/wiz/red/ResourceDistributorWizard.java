@@ -15,19 +15,14 @@
  */
 package de.tor.tribes.ui.wiz.red;
 
-import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
-import de.tor.tribes.util.ProfileManager;
 import java.awt.BorderLayout;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Map;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
-import javax.swing.UIManager;
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.Logger;
 import org.netbeans.api.wizard.WizardDisplayer;
 import org.netbeans.api.wizard.WizardResultReceiver;
 import org.netbeans.spi.wizard.Wizard;
@@ -127,24 +122,5 @@ public class ResourceDistributorWizard extends WizardPanelProvider {
         }       // </editor-fold>
 
         parent.setVisible(true);
-    }
-
-    public static void main(String[] args) {
-        try {
-            // UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-        } catch (Exception ignored) {
-        }
-
-        Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
-        GlobalOptions.setSelectedServer("de43");
-        ProfileManager.getSingleton().loadProfiles();
-        GlobalOptions.setSelectedProfile(ProfileManager.getSingleton().getProfiles("de43")[0]);
-        DataHolder.getSingleton().loadData(false);
-        GlobalOptions.loadUserData();
-
-        //  Wizard wizard = new ResourceDistributorBranchController().createWizard();
-        new ResourceDistributorWizard().show();
-        //  System.out.println("RES: " + WizardDisplayer.showWizard(wizard));
     }
 }

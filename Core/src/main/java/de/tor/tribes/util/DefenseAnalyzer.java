@@ -32,18 +32,19 @@ import de.tor.tribes.util.sos.SOSManager;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Set;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 /**
  *
  * @author Torridity
  */
 public class DefenseAnalyzer extends Thread {
-    private static Logger logger = Logger.getLogger("DefenseAnalyzer");
+    private static Logger logger = LogManager.getLogger("DefenseAnalyzer");
 
     private TroopAmountFixed standardOff = null;
     private TroopAmountFixed standardDefSplit = null;
@@ -72,14 +73,12 @@ public class DefenseAnalyzer extends Thread {
     }
 
     public interface DefenseAnalyzerListener {
-
         void fireProceedEvent(double pStatus);
-
         void fireFinishedEvent();
     }
 
-    private Hashtable<UnitHolder, AbstractUnitElement> dswbUnitsToSimulatorUnits(TroopAmountFixed pInput) {
-        Hashtable<UnitHolder, AbstractUnitElement> result = new Hashtable<>();
+    private HashMap<UnitHolder, AbstractUnitElement> dswbUnitsToSimulatorUnits(TroopAmountFixed pInput) {
+        HashMap<UnitHolder, AbstractUnitElement> result = new HashMap<>();
         for (de.tor.tribes.io.UnitHolder unit : DataHolder.getSingleton().getUnits()) {
             int value = pInput.getAmountForUnit(unit);
             result.put(UnitManager.getSingleton().getUnitByPlainName(unit.getPlainName()), new AbstractUnitElement(UnitManager.getSingleton().getUnitByPlainName(unit.getPlainName()), value, 10));
@@ -95,6 +94,7 @@ public class DefenseAnalyzer extends Thread {
         aborted = true;
     }
 
+    @Override
     public void run() {
         running = true;
         try {
@@ -111,14 +111,12 @@ public class DefenseAnalyzer extends Thread {
         int currentTarget = 0;
         for (ManageableType e : SOSManager.getSingleton().getAllElements()) {
             SOSRequest request = (SOSRequest) e;
-            Enumeration<Village> targets = request.getTargets();
-            while (targets.hasMoreElements()) {
+            for(Village target: request.getTargets()) {
                 if (aborted) {
                     return;
                 }
                 currentTarget++;
                 listener.fireProceedEvent((double) currentTarget / (double) targetCount);
-                Village target = targets.nextElement();
                 TargetInformation targetInfo = request.getTargetInformation(target);
                 DefenseInformation info = request.getDefenseInformation(target);
                 int attCount = targetInfo.getOffs();
@@ -126,15 +124,13 @@ public class DefenseAnalyzer extends Thread {
                 
                 try {
                     if (reAnalyze || !info.isAnalyzed()) {//re-analyze info
-                        Hashtable<UnitHolder, AbstractUnitElement> off = dswbUnitsToSimulatorUnits(standardOff);
-                        Hashtable<UnitHolder, AbstractUnitElement> def = getDefense(targetInfo, info, info.getSupports().length);
+                        HashMap<UnitHolder, AbstractUnitElement> off = dswbUnitsToSimulatorUnits(standardOff);
+                        HashMap<UnitHolder, AbstractUnitElement> def = getDefense(targetInfo, info, info.getSupports().length);
 
                         int pop = 0;
-                        Enumeration<UnitHolder> units = def.keys();
-                        while (units.hasMoreElements()) {
-                            UnitHolder h = units.nextElement();
-                            AbstractUnitElement elem = def.get(h);
-                            pop += elem.getCount() * DataHolder.getSingleton().getUnitByPlainName(h.getPlainName()).getPop();
+                        for(Entry<UnitHolder, AbstractUnitElement> entry: def.entrySet()) {
+                            pop += entry.getValue().getCount() * DataHolder.getSingleton()
+                                .getUnitByPlainName(entry.getKey().getPlainName()).getPop();
                         }
 
                         NewSimulator sim = new NewSimulator();
@@ -154,11 +150,8 @@ public class DefenseAnalyzer extends Thread {
                         if (!noAttack) {
                             if (!result.isWin()) {
                                 double survive = 0;
-                                Enumeration<UnitHolder> keys = result.getSurvivingDef().keys();
-                                while (keys.hasMoreElements()) {
-                                    UnitHolder key = keys.nextElement();
-                                    int amount = result.getSurvivingDef().get(key).getCount();
-                                    survive += (double) amount * key.getPop();
+                                for(Entry<UnitHolder, AbstractUnitElement> entry: result.getSurvivingDef().entrySet()) {
+                                    survive += (double) entry.getValue().getCount() * entry.getKey().getPop();
                                 }
                                 lossPercent = 100 - (100.0 * survive / (double) pop);
                                 if (Math.max(75.0, lossPercent) == lossPercent) {
@@ -190,7 +183,7 @@ public class DefenseAnalyzer extends Thread {
         }
     }
 
-    private Hashtable<UnitHolder, AbstractUnitElement> getDefense(TargetInformation pTargetInfo, DefenseInformation pInfo, int pAdditionalSplits) {
+    private HashMap<UnitHolder, AbstractUnitElement> getDefense(TargetInformation pTargetInfo, DefenseInformation pInfo, int pAdditionalSplits) {
         int supportCount = pInfo.getSupports().length;
         TroopAmountFixed units = new TroopAmountFixed();
         VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(pTargetInfo.getTarget(), TroopsManager.TROOP_TYPE.IN_VILLAGE);
@@ -199,7 +192,7 @@ public class DefenseAnalyzer extends Thread {
         } else {
             units = pTargetInfo.getTroops();
         }
-        Hashtable<UnitHolder, AbstractUnitElement> result = dswbUnitsToSimulatorUnits(units);
+        HashMap<UnitHolder, AbstractUnitElement> result = dswbUnitsToSimulatorUnits(units);
 
         for (de.tor.tribes.io.UnitHolder unit : DataHolder.getSingleton().getUnits()) {
             int value = standardDefSplit.getAmountForUnit(unit);
@@ -224,8 +217,8 @@ public class DefenseAnalyzer extends Thread {
                 if (aborted) {
                     return;
                 }
-                Hashtable<UnitHolder, AbstractUnitElement> off = dswbUnitsToSimulatorUnits(standardOff);
-                Hashtable<UnitHolder, AbstractUnitElement> def = getDefense(pTargetInfo, pInfo, factor);
+                HashMap<UnitHolder, AbstractUnitElement> off = dswbUnitsToSimulatorUnits(standardOff);
+                HashMap<UnitHolder, AbstractUnitElement> def = getDefense(pTargetInfo, pInfo, factor);
                 double troops = 0;
                 Set<Entry<UnitHolder, AbstractUnitElement>> entries = def.entrySet();
                 for (Entry<UnitHolder, AbstractUnitElement> entry : entries) {
@@ -242,11 +235,8 @@ public class DefenseAnalyzer extends Thread {
                 }
 
                 double survive = 0;
-                Enumeration<UnitHolder> keys = result.getSurvivingDef().keys();
-                while (keys.hasMoreElements()) {
-                    UnitHolder key = keys.nextElement();
-                    int amount = result.getSurvivingDef().get(key).getCount();
-                    survive += (double) amount * key.getPop();
+                for(Entry<UnitHolder, AbstractUnitElement> entry: result.getSurvivingDef().entrySet()) {
+                    survive += (double) entry.getValue().getCount() * entry.getKey().getPop();
                 }
                 double lossesPercent = 100 - (100.0 * survive / troops);
                 if (!result.isWin() && lossesPercent < maxLossRatio) {

@@ -15,8 +15,8 @@
  */
 package de.tor.tribes.io;
 
-import de.tor.tribes.util.Constants;
 import de.tor.tribes.dssim.util.ConfigManager;
+import de.tor.tribes.util.Constants;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -29,7 +29,8 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.lorecraft.phparser.SerializedPhpParser;
 
 /**
@@ -37,8 +38,8 @@ import org.lorecraft.phparser.SerializedPhpParser;
  */
 public class ServerManager {
 
-    private static Logger logger = Logger.getLogger("ServerManager");
-    // private static Hashtable<String, URL> SERVER_LIST = null;
+    private static Logger logger = LogManager.getLogger("ServerManager");
+    // private static HashMap<String, URL> SERVER_LIST = null;
     // private static List<DatabaseServerEntry> SERVERS = null;
     private static LinkedHashMap<String, String> SERVERS = null;
 
@@ -88,7 +89,7 @@ public class ServerManager {
                 logger.info("Read " + regCnt + " regions and " + cnt + " servers");
             }
         } catch (Throwable e) {
-            logger.warn("Failed to read servers. Skipping it.", e);
+            logger.error("Failed to read servers. Skipping it.", e);
         } finally {
             if (r != null) {
                 try {

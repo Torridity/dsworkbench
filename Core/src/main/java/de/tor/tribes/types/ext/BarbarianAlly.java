@@ -32,6 +32,7 @@ public class BarbarianAlly extends Ally {
         return SINGLETON;
     }
 
+    @Override
     public int getId() {
         return 0;
     }
@@ -41,30 +42,37 @@ public class BarbarianAlly extends Ally {
         return "Barbaren";
     }
 
+    @Override
     public String getName() {
         return "Barbaren";
     }
 
+    @Override
     public String getTag() {
         return "-";
     }
 
+    @Override
     public short getMembers() {
         return 0;
     }
 
+    @Override
     public double getPoints() {
         return 0;
     }
 
+    @Override
     public int getRank() {
         return 0;
     }
 
+    @Override
     public Tribe[] getTribes() {
         return new Tribe[]{Barbarians.getSingleton()};
     }
 
+    @Override
     public String toString() {
         return "Barbaren";
     }
@@ -74,6 +82,7 @@ public class BarbarianAlly extends Ally {
         //do nothing
     }
 
+    @Override
     public String getToolTipText() {
         NumberFormat nf = NumberFormat.getInstance();
         nf.setMinimumFractionDigits(0);

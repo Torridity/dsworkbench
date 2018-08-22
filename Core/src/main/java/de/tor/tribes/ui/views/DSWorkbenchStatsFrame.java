@@ -15,7 +15,6 @@
  */
 package de.tor.tribes.ui.views;
 
-import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.TribeStatsElement;
 import de.tor.tribes.types.TribeStatsElement.Stats;
 import de.tor.tribes.types.ext.Ally;
@@ -32,10 +31,18 @@ import de.tor.tribes.util.bb.KillStatsFormatter;
 import de.tor.tribes.util.bb.PointStatsFormatter;
 import de.tor.tribes.util.bb.WinnerLoserStatsFormatter;
 import de.tor.tribes.util.stat.StatManager;
-import org.apache.commons.configuration.Configuration;
-import org.apache.commons.lang.time.DateUtils;
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.Logger;
+import java.awt.*;
+import java.awt.datatransfer.StringSelection;
+import java.awt.event.*;
+import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.List;
+import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import org.apache.commons.configuration2.Configuration;
+import org.apache.commons.lang3.time.DateUtils;
 import org.jdesktop.swingx.JXButton;
 import org.jdesktop.swingx.JXTaskPane;
 import org.jfree.chart.ChartFactory;
@@ -48,22 +55,11 @@ import org.jfree.chart.labels.StandardXYToolTipGenerator;
 import org.jfree.chart.plot.ValueMarker;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
+import org.jfree.chart.ui.RectangleInsets;
 import org.jfree.data.time.Second;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 import org.jfree.data.xy.XYDataset;
-import org.jfree.ui.RectangleInsets;
-
-import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import java.awt.*;
-import java.awt.datatransfer.StringSelection;
-import java.awt.event.*;
-import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.List;
 
 /**
  * @author Torridity
@@ -167,11 +163,13 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
         super.toBack();
     }
     
+    @Override
     public void storeCustomProperties(Configuration pConfig) {
         pConfig.setProperty(getPropertyPrefix() + ".menu.visible", centerPanel.isMenuVisible());
         pConfig.setProperty(getPropertyPrefix() + ".alwaysOnTop", jAlwaysOnTopBox.isSelected());
     }
     
+    @Override
     public void restoreCustomProperties(Configuration pConfig) {
         centerPanel.setMenuVisible(pConfig.getBoolean(getPropertyPrefix() + ".menu.visible", true));
         
@@ -184,6 +182,7 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
         
     }
     
+    @Override
     public String getPropertyPrefix() {
         return "stats.view";
     }
@@ -388,6 +387,7 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
         
         SwingUtilities.invokeLater(new Runnable() {
             
+            @Override
             public void run() {
                 jChartPanel.updateUI();
             }
@@ -416,9 +416,9 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
             plot.setRenderer(i, renderer);
         }
         
-        renderer.setBaseItemLabelsVisible(jShowItemValues.isSelected());
-        renderer.setBaseItemLabelGenerator(new org.jfree.chart.labels.StandardXYItemLabelGenerator());
-        renderer.setBaseToolTipGenerator(new StandardXYToolTipGenerator(StandardXYToolTipGenerator.DEFAULT_TOOL_TIP_FORMAT, new SimpleDateFormat("dd.MM.yyyy HH:mm:ss"), NumberFormat.getInstance()));
+        renderer.setDefaultItemLabelsVisible(jShowItemValues.isSelected());
+        renderer.setDefaultItemLabelGenerator(new org.jfree.chart.labels.StandardXYItemLabelGenerator());
+        renderer.setDefaultToolTipGenerator(new StandardXYToolTipGenerator(StandardXYToolTipGenerator.DEFAULT_TOOL_TIP_FORMAT, new SimpleDateFormat("dd.MM.yyyy HH:mm:ss"), NumberFormat.getInstance()));
         int lastDataset = plot.getDatasetCount() - 1;
         if (lastDataset > 0) {
             plot.getRangeAxis().setAxisLinePaint(plot.getLegendItems().get(lastDataset).getLinePaint());
@@ -453,9 +453,9 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
             renderer.setSeriesLinesVisible(0, jShowLines.isSelected());
             renderer.setSeriesShapesVisible(0, jShowDataPoints.isSelected());
             plot.setRenderer(plot.getDatasetCount() - 1, renderer);
-            renderer.setBaseItemLabelsVisible(jShowItemValues.isSelected());
-            renderer.setBaseItemLabelGenerator(new org.jfree.chart.labels.StandardXYItemLabelGenerator());
-            renderer.setBaseToolTipGenerator(new StandardXYToolTipGenerator(StandardXYToolTipGenerator.DEFAULT_TOOL_TIP_FORMAT, new SimpleDateFormat("dd.MM.yyyy HH:mm:ss"), NumberFormat.getInstance()));
+            renderer.setDefaultItemLabelsVisible(jShowItemValues.isSelected());
+            renderer.setDefaultItemLabelGenerator(new org.jfree.chart.labels.StandardXYItemLabelGenerator());
+            renderer.setDefaultToolTipGenerator(new StandardXYToolTipGenerator(StandardXYToolTipGenerator.DEFAULT_TOOL_TIP_FORMAT, new SimpleDateFormat("dd.MM.yyyy HH:mm:ss"), NumberFormat.getInstance()));
             axis.setAxisLinePaint(plot.getLegendItems().get(plot.getDatasetCount() - 1).getLinePaint());
             axis.setLabelPaint(plot.getLegendItems().get(plot.getDatasetCount() - 1).getLinePaint());
             axis.setTickLabelPaint(plot.getLegendItems().get(plot.getDatasetCount() - 1).getLinePaint());
@@ -573,7 +573,6 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
 
         jShowPoints.setSelected(true);
         jShowPoints.setText("Punkte anzeigen");
-        jShowPoints.setOpaque(false);
         jShowPoints.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 fireUpdateChartEvent(evt);
@@ -581,7 +580,6 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
         });
 
         jShowRank.setText("Rang anzeigen");
-        jShowRank.setOpaque(false);
         jShowRank.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 fireUpdateChartEvent(evt);
@@ -589,7 +587,6 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
         });
 
         jShowVillages.setText("Dörfer anzeigen");
-        jShowVillages.setOpaque(false);
         jShowVillages.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 fireUpdateChartEvent(evt);
@@ -597,7 +594,6 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
         });
 
         jShowKillsOff.setText("Kills (Off) anzeigen");
-        jShowKillsOff.setOpaque(false);
         jShowKillsOff.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 fireUpdateChartEvent(evt);
@@ -605,7 +601,6 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
         });
 
         jShowRankOff.setText("Rang (Off) anzeigen");
-        jShowRankOff.setOpaque(false);
         jShowRankOff.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 fireUpdateChartEvent(evt);
@@ -613,7 +608,6 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
         });
 
         jShowKillsDef.setText("Kills (Deff) anzeigen");
-        jShowKillsDef.setOpaque(false);
         jShowKillsDef.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 fireUpdateChartEvent(evt);
@@ -621,7 +615,6 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
         });
 
         jShowRankDef.setText("Rang (Deff) anzeigen");
-        jShowRankDef.setOpaque(false);
         jShowRankDef.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 fireUpdateChartEvent(evt);
@@ -630,7 +623,6 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
 
         jShowItemValues.setText("Werte anzeigen");
         jShowItemValues.setToolTipText("Zeigt die Werte der Datenpunkte im Diagramm an");
-        jShowItemValues.setOpaque(false);
         jShowItemValues.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 fireUpdateChartEvent(evt);
@@ -639,7 +631,6 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
 
         jShowLegend.setSelected(true);
         jShowLegend.setText("Legende anzeigen");
-        jShowLegend.setOpaque(false);
         jShowLegend.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 fireUpdateChartEvent(evt);
@@ -648,7 +639,6 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
 
         jShowLines.setSelected(true);
         jShowLines.setText("Linien anzeigen");
-        jShowLines.setOpaque(false);
         jShowLines.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 fireUpdateChartEvent(evt);
@@ -657,7 +647,6 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
 
         jShowDataPoints.setSelected(true);
         jShowDataPoints.setText("Datenpunkte anzeigen");
-        jShowDataPoints.setOpaque(false);
         jShowDataPoints.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 fireUpdateChartEvent(evt);
@@ -675,25 +664,25 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
 
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Auswertung"));
 
-        jPointsPane.setContentType("text/html");
+        jPointsPane.setContentType("text/html"); // NOI18N
         jPointsPane.setEditable(false);
         jScrollPane7.setViewportView(jPointsPane);
 
         jTabbedPane1.addTab("Punkte", new javax.swing.ImageIcon(getClass().getResource("/res/goblet_gold.png")), jScrollPane7); // NOI18N
 
-        jBashOffPane.setContentType("text/html");
+        jBashOffPane.setContentType("text/html"); // NOI18N
         jBashOffPane.setEditable(false);
         jScrollPane10.setViewportView(jBashOffPane);
 
         jTabbedPane1.addTab("Bash (Off)", new javax.swing.ImageIcon(getClass().getResource("/res/barracks.png")), jScrollPane10); // NOI18N
 
-        jBashDefPane.setContentType("text/html");
+        jBashDefPane.setContentType("text/html"); // NOI18N
         jBashDefPane.setEditable(false);
         jScrollPane11.setViewportView(jBashDefPane);
 
         jTabbedPane1.addTab("Bash (Deff)", new javax.swing.ImageIcon(getClass().getResource("/res/ally.png")), jScrollPane11); // NOI18N
 
-        jWinnerLoserPane.setContentType("text/html");
+        jWinnerLoserPane.setContentType("text/html"); // NOI18N
         jWinnerLoserPane.setEditable(false);
         jScrollPane12.setViewportView(jWinnerLoserPane);
 
@@ -789,7 +778,6 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
         jPanel11.add(jMonthlyStats, gridBagConstraints);
 
         jUseTop10Box.setText("Nur Top-10 anzeigen");
-        jUseTop10Box.setOpaque(false);
 
         javax.swing.GroupLayout jStatCreatePanelLayout = new javax.swing.GroupLayout(jStatCreatePanel);
         jStatCreatePanel.setLayout(jStatCreatePanelLayout);
@@ -833,7 +821,6 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         jAlwaysOnTopBox.setText("Immer im Vordergrund");
-        jAlwaysOnTopBox.setOpaque(false);
         jAlwaysOnTopBox.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 fireAlwaysOnTopEvent(evt);
@@ -878,6 +865,7 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
                 jChartPanel.removeAll();
                 SwingUtilities.invokeLater(new Runnable() {
                     
+                    @Override
                     public void run() {
                         jChartPanel.updateUI();
                     }
@@ -904,6 +892,7 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
                 jChartPanel.removeAll();
                 SwingUtilities.invokeLater(new Runnable() {
                     
+                    @Override
                     public void run() {
                         jChartPanel.updateUI();
                     }
@@ -1193,26 +1182,6 @@ private void fireAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRS
     public void fireVillagesDraggedEvent(List<Village> pVillages, Point pDropLocation) {
     }
     
-    public static void main(String args[]) {
-        
-        Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
-        try {
-            //  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-            //  UIManager.setLookAndFeel(new SubstanceBusinessBlackSteelLookAndFeel());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        GlobalOptions.setSelectedServer("de68");
-        DataHolder.getSingleton().loadData(false);
-        StatManager.getSingleton().setup();
-        
-        DSWorkbenchStatsFrame.getSingleton().setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        
-        DSWorkbenchStatsFrame.getSingleton().resetView();
-        DSWorkbenchStatsFrame.getSingleton().setVisible(true);
-        
-    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private de.tor.tribes.ui.components.CapabilityInfoPanel capabilityInfoPanel1;
     private javax.swing.JList jAllyList;
@@ -1252,7 +1221,7 @@ private void fireAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRS
     private javax.swing.JPanel jStatCreatePanel;
     private org.jdesktop.swingx.JXPanel jStatsPanel;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JList<Tribe> jTribeList;
+    private javax.swing.JList jTribeList;
     private javax.swing.JCheckBox jUseTop10Box;
     private javax.swing.JComboBox jViewSelectionBox;
     private javax.swing.JButton jWeeklyStats;

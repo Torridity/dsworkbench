@@ -16,7 +16,6 @@
 package de.tor.tribes.util.js;
 
 import de.tor.tribes.types.Attack;
-import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.ServerSettings;
 import java.awt.Color;
 import java.io.BufferedReader;
@@ -24,16 +23,17 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 /**
  * @author Charon
  */
 public class AttackScriptWriter {
 
-    private static Logger logger = Logger.getLogger("AttackScriptWriter");
+    private static Logger logger = LogManager.getLogger("AttackScriptWriter");
 
     public static boolean writeAttackScript(List<Attack> pAttacks,
             boolean pDrawAttacks,

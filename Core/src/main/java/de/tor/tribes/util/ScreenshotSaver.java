@@ -15,8 +15,8 @@
  */
 package de.tor.tribes.util;
 
-import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
 import de.tor.tribes.ui.panels.MapPanel;
+import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.FontMetrics;
@@ -49,6 +49,7 @@ public class ScreenshotSaver extends Thread {
         mScreen = pScreen;
     }
 
+    @Override
     public void run() {
         while (true) {
             if (mScreen != null) {

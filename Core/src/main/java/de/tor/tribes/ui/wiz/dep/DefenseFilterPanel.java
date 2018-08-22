@@ -372,6 +372,7 @@ public class DefenseFilterPanel extends WizardPage {
             jPanel4.add(overviewPanel, BorderLayout.CENTER);
             SwingUtilities.invokeLater(new Runnable() {
 
+                @Override
                 public void run() {
                     jPanel4.updateUI();
                 }

@@ -17,11 +17,10 @@ package de.tor.tribes.util;
 
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.ext.*;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
-
 import java.util.*;
 import java.util.Map.Entry;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.Predicate;
 
 /**
  *
@@ -36,7 +35,7 @@ public class AllyUtils {
         final String filter = pFilter.toLowerCase();
 
         List<Ally> allies = new LinkedList<>();
-        CollectionUtils.addAll(allies, DataHolder.getSingleton().getAllies().elements());
+        CollectionUtils.addAll(allies, DataHolder.getSingleton().getAllies().values());
 
         if (filter.length() > 0) {
             CollectionUtils.filter(allies, new Predicate() {
@@ -82,11 +81,7 @@ public class AllyUtils {
             return new Tribe[0];
         } else if (pAlly.equals(NoAlly.getSingleton())) {
             List<Tribe> tribes = new LinkedList<>();
-            Enumeration<Tribe> keys = DataHolder.getSingleton().getTribes().elements();
-            while (keys.hasMoreElements()) {
-                tribes.add(keys.nextElement());
-            }
-
+            CollectionUtils.addAll(tribes, DataHolder.getSingleton().getTribes().values());
             CollectionUtils.filter(tribes, new Predicate() {
 
                 @Override

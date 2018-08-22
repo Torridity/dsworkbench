@@ -20,11 +20,9 @@ import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.TroopHelper;
 import de.tor.tribes.util.algo.types.TimeFrame;
-
 import java.util.Comparator;
 import java.util.Date;
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -34,7 +32,7 @@ import java.util.List;
  */
 public class TroopMovement {
   private Village mTarget = null;
-  private Hashtable<UnitHolder, List<Village>> mOffs = null;
+  private HashMap<UnitHolder, List<Village>> mOffs = null;
   private int iMaxOffs = 0;
   public final static AttackRuntimeSort RUNTIME_SORT = new AttackRuntimeSort();
   private List<Attack> finalizedAttacks = null;
@@ -42,7 +40,7 @@ public class TroopMovement {
 
   public TroopMovement(Village pTarget, int pMaxOffs, int pType) {
     mTarget = pTarget;
-    mOffs = new Hashtable<>();
+    mOffs = new HashMap<>();
     iMaxOffs = pMaxOffs;
     type = pType;
   }
@@ -59,7 +57,7 @@ public class TroopMovement {
     TroopHelper.fillSourcesWithAttacksForUnit(mSource, mOffs, null, pUnit);
   }
 
-  public Hashtable<UnitHolder, List<Village>> getOffs() {
+  public HashMap<UnitHolder, List<Village>> getOffs() {
     return mOffs;
   }
   
@@ -68,11 +66,9 @@ public class TroopMovement {
   }
   
   public int getOffCount() {
-    Enumeration<UnitHolder> unitKeys = mOffs.keys();
     int offs = 0;
-    while (unitKeys.hasMoreElements()) {
-      UnitHolder unit = unitKeys.nextElement();
-      offs += mOffs.get(unit).size();
+    for(List<Village> offList: mOffs.values()) {
+      offs += offList.size();
     }
     return offs;
   }
@@ -98,12 +94,9 @@ public class TroopMovement {
    */
   public void finalizeMovement(TimeFrame pTimeFrame, List<Long> pUsedSendTimes) {
     List<Attack> result = new LinkedList<>();
-    Enumeration<UnitHolder> unitKeys = getOffs().keys();
     Village target = getTarget();
 
-    while (unitKeys.hasMoreElements()) {
-        UnitHolder unit = unitKeys.nextElement();
-
+    for(UnitHolder unit: getOffs().keySet()) {
         List<Village> sources = getOffs().get(unit);
         for (Village offSource : sources) {
             long runtime = Math.round(DSCalculator.calculateMoveTimeInSeconds(offSource, target, unit.getSpeed()) * 1000);

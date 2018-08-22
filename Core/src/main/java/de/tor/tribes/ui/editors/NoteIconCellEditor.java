@@ -35,7 +35,6 @@ import javax.swing.table.TableCellEditor;
 public class NoteIconCellEditor extends AbstractCellEditor implements TableCellEditor {
 
     public enum ICON_TYPE {
-
         NOTE, MAP
     }
     private JComboBox mEditor = new JComboBox();

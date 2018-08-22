@@ -18,20 +18,21 @@ package de.tor.tribes.ui.models;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.TroopAmountElement;
 import de.tor.tribes.io.UnitHolder;
-import de.tor.tribes.types.ext.Ally;
 import de.tor.tribes.types.Attack;
+import de.tor.tribes.types.ext.Ally;
 import de.tor.tribes.types.ext.BarbarianAlly;
 import de.tor.tribes.types.ext.Barbarians;
 import de.tor.tribes.types.ext.NoAlly;
 import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Village;
-import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.attack.AttackManager;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 /**
  *
@@ -39,7 +40,7 @@ import org.apache.log4j.Logger;
  */
 public class AttackTableModel extends AbstractTableModel {
 
-    private static Logger logger = Logger.getLogger("AttackTableModel");
+    private static Logger logger = LogManager.getLogger("AttackTableModel");
 
     private String sPlan = null;
     private final List<String> columnNames = new LinkedList<>();

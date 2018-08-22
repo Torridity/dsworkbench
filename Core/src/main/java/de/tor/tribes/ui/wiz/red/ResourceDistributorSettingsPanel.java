@@ -15,8 +15,6 @@
  */
 package de.tor.tribes.ui.wiz.red;
 
-import com.jidesoft.swing.JideBoxLayout;
-import com.jidesoft.swing.JideSplitPane;
 import de.tor.tribes.types.StorageStatus;
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.UserProfile;
@@ -24,9 +22,9 @@ import de.tor.tribes.types.VillageMerchantInfo;
 import de.tor.tribes.ui.components.GroupSelectionList;
 import de.tor.tribes.ui.models.REDExtendedMerchantTableModel;
 import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
+import de.tor.tribes.ui.renderer.EnumImageCellRenderer;
 import de.tor.tribes.ui.renderer.NumberFormatCellRenderer;
 import de.tor.tribes.ui.renderer.StorageCellRenderer;
-import de.tor.tribes.ui.renderer.TradeDirectionCellRenderer;
 import de.tor.tribes.util.*;
 import java.awt.BorderLayout;
 import java.awt.event.*;
@@ -79,7 +77,7 @@ public class ResourceDistributorSettingsPanel extends WizardPage {
         jDataTable.getTableHeader().setDefaultRenderer(new DefaultTableHeaderRenderer());
         jDataTable.setHighlighters(HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B));
         jDataTable.setDefaultRenderer(StorageStatus.class, new StorageCellRenderer());
-        jDataTable.setDefaultRenderer(VillageMerchantInfo.Direction.class, new TradeDirectionCellRenderer());
+        jDataTable.setDefaultRenderer(VillageMerchantInfo.Direction.class, new EnumImageCellRenderer(EnumImageCellRenderer.LayoutStyle.TradeDirection));
         jDataTable.setDefaultRenderer(Integer.class, new NumberFormatCellRenderer());
         TableSortController sorter = (TableSortController) jDataTable.getRowSorter();
         SlashComparator splitComparator = new SlashComparator();
@@ -97,25 +95,6 @@ public class ResourceDistributorSettingsPanel extends WizardPage {
         KeyStroke delete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, false);
         jDataTable.registerKeyboardAction(actionListener, "Delete", delete, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         capabilityInfoPanel1.addActionListener(actionListener);
-
-        jideSplitPane1.setOrientation(JideSplitPane.VERTICAL_SPLIT);
-        jideSplitPane1.setProportionalLayout(true);
-        jideSplitPane1.setDividerSize(5);
-        jideSplitPane1.setShowGripper(true);
-        jideSplitPane1.setOneTouchExpandable(true);
-        jideSplitPane1.setDividerStepSize(10);
-        jideSplitPane1.setInitiallyEven(true);
-        jideSplitPane1.add(jFilterPanel, JideBoxLayout.FLEXIBLE);
-        jideSplitPane1.add(jVillagePanel, JideBoxLayout.VARY);
-        jideSplitPane1.getDividerAt(0).addMouseListener(new MouseAdapter() {
-
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                if (e.getClickCount() == 2) {
-                    jideSplitPane1.setProportions(new double[]{0.5});
-                }
-            }
-        });
 
         jDataTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 
@@ -176,6 +155,8 @@ public class ResourceDistributorSettingsPanel extends WizardPage {
 
         jInfoScrollPane = new javax.swing.JScrollPane();
         jInfoTextPane = new javax.swing.JTextPane();
+        jLabel1 = new javax.swing.JLabel();
+        jXCollapsiblePane1 = new org.jdesktop.swingx.JXCollapsiblePane();
         jFilterPanel = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         jEnableFarmSettingsBox = new javax.swing.JCheckBox();
@@ -199,21 +180,45 @@ public class ResourceDistributorSettingsPanel extends WizardPage {
         jChangeToBoth = new javax.swing.JButton();
         capabilityInfoPanel1 = new de.tor.tribes.ui.components.CapabilityInfoPanel();
         jStatusLabel = new javax.swing.JLabel();
-        jLabel1 = new javax.swing.JLabel();
-        jXCollapsiblePane1 = new org.jdesktop.swingx.JXCollapsiblePane();
-        jPanel1 = new javax.swing.JPanel();
-        jideSplitPane1 = new com.jidesoft.swing.JideSplitPane();
 
         jInfoScrollPane.setMinimumSize(new java.awt.Dimension(19, 180));
         jInfoScrollPane.setPreferredSize(new java.awt.Dimension(19, 180));
 
-        jInfoTextPane.setContentType("text/html");
+        jInfoTextPane.setContentType("text/html"); // NOI18N
         jInfoTextPane.setEditable(false);
         jInfoTextPane.setText("<html>Du befindest dich im <b>Angriffsmodus</b>. Hier kannst du die Herkunftsd&ouml;rfer ausw&auml;hlen, die f&uuml;r Angriffe verwendet werden d&uuml;rfen. Hierf&uuml;r hast die folgenden M&ouml;glichkeiten:\n<ul>\n<li>Einf&uuml;gen von Dorfkoordinaten aus der Zwischenablage per STRG+V</li>\n<li>Einf&uuml;gen der Herkunftsd&ouml;rfer aus der Gruppen&uuml;bersicht</li>\n<li>Einf&uuml;gen der Herkunftsd&ouml;rfer aus dem SOS-Analyzer</li>\n<li>Einf&uuml;gen der Herkunftsd&ouml;rfer aus Berichten</li>\n<li>Einf&uuml;gen aus der Auswahlübersicht</li>\n<li>Manuelle Eingabe</li>\n</ul>\n</html>\n");
         jInfoScrollPane.setViewportView(jInfoTextPane);
 
-        jFilterPanel.setMinimumSize(new java.awt.Dimension(520, 320));
-        jFilterPanel.setPreferredSize(new java.awt.Dimension(529, 320));
+        setLayout(new java.awt.GridBagLayout());
+
+        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel1.setText("Informationen einblenden");
+        jLabel1.setToolTipText("Blendet Informationen zu dieser Ansicht und zu den Datenquellen ein/aus");
+        jLabel1.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+        jLabel1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireShowHideInfoEvent(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        add(jLabel1, gridBagConstraints);
+
+        jXCollapsiblePane1.setCollapsed(true);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        add(jXCollapsiblePane1, gridBagConstraints);
+
+        jFilterPanel.setMinimumSize(new java.awt.Dimension(400, 200));
+        jFilterPanel.setPreferredSize(new java.awt.Dimension(400, 200));
         jFilterPanel.setLayout(new java.awt.GridBagLayout());
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Bauernhof"));
@@ -222,7 +227,6 @@ public class ResourceDistributorSettingsPanel extends WizardPage {
         jPanel2.setLayout(new java.awt.GridBagLayout());
 
         jEnableFarmSettingsBox.setText("Aktiviert");
-        jEnableFarmSettingsBox.setOpaque(false);
         jEnableFarmSettingsBox.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 fireEnableFarmSettingsEvent(evt);
@@ -266,7 +270,7 @@ public class ResourceDistributorSettingsPanel extends WizardPage {
         jLabel4.setEnabled(false);
         jLabel4.setMaximumSize(new java.awt.Dimension(80, 14));
         jLabel4.setMinimumSize(new java.awt.Dimension(80, 14));
-        jLabel4.setPreferredSize(new java.awt.Dimension(80, 14));
+        jLabel4.setPreferredSize(new java.awt.Dimension(100, 14));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 1;
@@ -302,7 +306,7 @@ public class ResourceDistributorSettingsPanel extends WizardPage {
         jLabel7.setEnabled(false);
         jLabel7.setMaximumSize(new java.awt.Dimension(80, 14));
         jLabel7.setMinimumSize(new java.awt.Dimension(80, 14));
-        jLabel7.setPreferredSize(new java.awt.Dimension(80, 14));
+        jLabel7.setPreferredSize(new java.awt.Dimension(100, 14));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 3;
@@ -383,6 +387,16 @@ public class ResourceDistributorSettingsPanel extends WizardPage {
         gridBagConstraints.insets = new java.awt.Insets(5, 2, 5, 2);
         jFilterPanel.add(jPanel5, gridBagConstraints);
 
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 0.3;
+        add(jFilterPanel, gridBagConstraints);
+
+        jVillagePanel.setMinimumSize(new java.awt.Dimension(400, 200));
+        jVillagePanel.setPreferredSize(new java.awt.Dimension(400, 200));
         jVillagePanel.setLayout(new java.awt.GridBagLayout());
 
         jVillageTableScrollPane.setPreferredSize(new java.awt.Dimension(312, 387));
@@ -497,50 +511,13 @@ public class ResourceDistributorSettingsPanel extends WizardPage {
         gridBagConstraints.insets = new java.awt.Insets(0, 25, 2, 5);
         jVillagePanel.add(jStatusLabel, gridBagConstraints);
 
-        setLayout(new java.awt.GridBagLayout());
-
-        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
-        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("Informationen einblenden");
-        jLabel1.setToolTipText("Blendet Informationen zu dieser Ansicht und zu den Datenquellen ein/aus");
-        jLabel1.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
-        jLabel1.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireShowHideInfoEvent(evt);
-            }
-        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        add(jLabel1, gridBagConstraints);
-
-        jXCollapsiblePane1.setCollapsed(true);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        add(jXCollapsiblePane1, gridBagConstraints);
-
-        jPanel1.setLayout(new java.awt.GridBagLayout());
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridy = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel1.add(jideSplitPane1, gridBagConstraints);
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        add(jPanel1, gridBagConstraints);
+        gridBagConstraints.weighty = 0.7;
+        add(jVillagePanel, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
 
     private void fireShowHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireShowHideInfoEvent
@@ -732,7 +709,6 @@ public class ResourceDistributorSettingsPanel extends WizardPage {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
@@ -742,7 +718,6 @@ public class ResourceDistributorSettingsPanel extends WizardPage {
     private javax.swing.JPanel jVillagePanel;
     private javax.swing.JScrollPane jVillageTableScrollPane;
     private org.jdesktop.swingx.JXCollapsiblePane jXCollapsiblePane1;
-    private com.jidesoft.swing.JideSplitPane jideSplitPane1;
     // End of variables declaration//GEN-END:variables
 
     @Override

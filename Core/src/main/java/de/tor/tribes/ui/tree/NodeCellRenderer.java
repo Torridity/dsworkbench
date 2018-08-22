@@ -15,15 +15,15 @@
  */
 package de.tor.tribes.ui.tree;
 
-import de.tor.tribes.types.ext.Ally;
 import de.tor.tribes.types.Tag;
+import de.tor.tribes.types.ext.Ally;
+import de.tor.tribes.types.ext.Tribe;
+import de.tor.tribes.types.ext.Village;
 import java.awt.Component;
 import javax.swing.ImageIcon;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.MutableTreeNode;
-import de.tor.tribes.types.ext.Tribe;
-import de.tor.tribes.types.ext.Village;
 
 /**
  *
@@ -43,6 +43,7 @@ public class NodeCellRenderer extends DefaultTreeCellRenderer {
         tag = new ImageIcon("./graphics/icons/tag16.png");
     }
 
+    @Override
     public Component getTreeCellRendererComponent(
             JTree tree,
             Object value,

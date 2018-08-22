@@ -20,7 +20,7 @@ import de.tor.tribes.types.StorageStatus;
 import de.tor.tribes.util.farm.FarmManager;
 import java.util.Date;
 import javax.swing.table.AbstractTableModel;
-import org.apache.commons.lang.time.DurationFormatUtils;
+import org.apache.commons.lang3.time.DurationFormatUtils;
 
 /**
  *
@@ -28,7 +28,7 @@ import org.apache.commons.lang.time.DurationFormatUtils;
  */
 public class FarmTableModel extends AbstractTableModel {
 
-    private Class[] types = new Class[]{FarmInformation.FARM_STATUS.class, Boolean.class, Date.class, String.class, FarmInformation.Siege_STATUS.class, Integer.class, StorageStatus.class, String.class, FarmInformation.FARM_RESULT.class, Float.class};
+    private Class[] types = new Class[]{FarmInformation.FARM_STATUS.class, Boolean.class, Date.class, String.class, FarmInformation.SIEGE_STATUS.class, Integer.class, StorageStatus.class, String.class, FarmInformation.FARM_RESULT.class, Float.class};
     private String[] colNames = new String[]{"Status", "Resourcen gefunden", "Letzter Bericht", "Dorf", "Kata Status", "Wall", "Rohstoffe", "Ankunft", "Übertragen", "Erfolgsquote"};
 
     public FarmTableModel() {

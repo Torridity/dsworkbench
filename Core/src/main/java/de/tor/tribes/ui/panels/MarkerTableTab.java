@@ -16,35 +16,19 @@
 package de.tor.tribes.ui.panels;
 
 import de.tor.tribes.types.Marker;
-import de.tor.tribes.ui.MarkerCell;
 import de.tor.tribes.ui.editors.ColorChooserCellEditor;
-import de.tor.tribes.ui.editors.VisibleInvisibleEditor;
+import de.tor.tribes.ui.editors.CustomCheckBoxEditor;
 import de.tor.tribes.ui.models.MarkerTableModel;
 import de.tor.tribes.ui.renderer.ColorCellRenderer;
+import de.tor.tribes.ui.renderer.CustomBooleanRenderer;
 import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
-import de.tor.tribes.ui.renderer.MarkerPanelCellRenderer;
-import de.tor.tribes.ui.renderer.VisibilityCellRenderer;
+import de.tor.tribes.ui.renderer.MarkerCellRenderer;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.ImageUtils;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.UIHelper;
 import de.tor.tribes.util.bb.MarkerListFormatter;
 import de.tor.tribes.util.mark.MarkerManager;
-import org.apache.log4j.Logger;
-import org.jdesktop.swingx.JXTable;
-import org.jdesktop.swingx.decorator.*;
-import org.jdesktop.swingx.painter.AbstractLayoutPainter.HorizontalAlignment;
-import org.jdesktop.swingx.painter.AbstractLayoutPainter.VerticalAlignment;
-import org.jdesktop.swingx.painter.ImagePainter;
-import org.jdesktop.swingx.painter.MattePainter;
-import org.jdesktop.swingx.table.TableColumnExt;
-
-import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableModel;
 import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
@@ -61,6 +45,21 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
+import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableModel;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jdesktop.swingx.JXTable;
+import org.jdesktop.swingx.decorator.*;
+import org.jdesktop.swingx.painter.AbstractLayoutPainter.HorizontalAlignment;
+import org.jdesktop.swingx.painter.AbstractLayoutPainter.VerticalAlignment;
+import org.jdesktop.swingx.painter.ImagePainter;
+import org.jdesktop.swingx.painter.MattePainter;
+import org.jdesktop.swingx.table.TableColumnExt;
 
 /**
  *
@@ -68,11 +67,11 @@ import java.util.regex.Matcher;
  */
 public class MarkerTableTab extends javax.swing.JPanel implements ListSelectionListener {
 
-    private static Logger logger = Logger.getLogger("MarkerTableTab");
+    private static Logger logger = LogManager.getLogger("MarkerTableTab");
 
     public enum TRANSFER_TYPE {
 
-        CLIPBOARD_PLAIN, CLIPBOARD_BB, CUT_TO_INTERNAL_CLIPBOARD, COPY_TO_INTERNAL_CLIPBOARD, FROM_EXTERNAL_CLIPBOARD
+        CLIPBOARD_BB, CUT_TO_INTERNAL_CLIPBOARD, COPY_TO_INTERNAL_CLIPBOARD, FROM_INTERNAL_CLIPBOARD
     }
     private String sMarkerSet = null;
     private final static JXTable jxMarkerTable = new JXTable();
@@ -85,7 +84,7 @@ public class MarkerTableTab extends javax.swing.JPanel implements ListSelectionL
         jxMarkerTable.setHighlighters(new CompoundHighlighter(colu, HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B)));
         jxMarkerTable.setColumnControlVisible(true);
         jxMarkerTable.setDefaultRenderer(Color.class, new ColorCellRenderer());
-        jxMarkerTable.setDefaultRenderer(MarkerCell.class, new MarkerPanelCellRenderer());
+        jxMarkerTable.setDefaultRenderer(Marker.class, new MarkerCellRenderer());
         ColorChooserCellEditor editor = new ColorChooserCellEditor(new ActionListener() {
 
             @Override
@@ -96,9 +95,8 @@ public class MarkerTableTab extends javax.swing.JPanel implements ListSelectionL
         markerModel = new MarkerTableModel(MarkerManager.DEFAULT_GROUP);
         jxMarkerTable.setModel(markerModel);
         TableColumnExt visibilityCol = jxMarkerTable.getColumnExt("Sichtbar");
-        visibilityCol.setCellRenderer(new VisibilityCellRenderer());
-        visibilityCol.setCellEditor(new VisibleInvisibleEditor());
-
+        visibilityCol.setCellRenderer(new CustomBooleanRenderer(CustomBooleanRenderer.LayoutStyle.VISIBLE_INVISIBLE));
+        visibilityCol.setCellEditor(new CustomCheckBoxEditor(CustomBooleanRenderer.LayoutStyle.VISIBLE_INVISIBLE));
 
         BufferedImage back = ImageUtils.createCompatibleBufferedImage(5, 5, BufferedImage.BITMASK);
         Graphics2D g = back.createGraphics();
@@ -127,7 +125,7 @@ public class MarkerTableTab extends javax.swing.JPanel implements ListSelectionL
             KeyStroke cut = KeyStroke.getKeyStroke(KeyEvent.VK_X, ActionEvent.CTRL_MASK, false);
             KeyStroke paste = KeyStroke.getKeyStroke(KeyEvent.VK_V, ActionEvent.CTRL_MASK, false);
             KeyStroke delete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, false);
-            jxMarkerTable.registerKeyboardAction(pActionListener, "Cut", copy, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+            jxMarkerTable.registerKeyboardAction(pActionListener, "Copy", copy, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
             jxMarkerTable.registerKeyboardAction(pActionListener, "Cut", cut, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
             jxMarkerTable.registerKeyboardAction(pActionListener, "BBCopy", bbCopy, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
             jxMarkerTable.registerKeyboardAction(pActionListener, "Paste", paste, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
@@ -311,11 +309,12 @@ public class MarkerTableTab extends javax.swing.JPanel implements ListSelectionL
             case CUT_TO_INTERNAL_CLIPBOARD:
                 cutToClipboard();
                 break;
-                /*
-            case FROM_EXTERNAL_CLIPBOARD:
-                pasteFromExternalClipboard();
+            case COPY_TO_INTERNAL_CLIPBOARD:
+                copyToInternalClipboard();
                 break;
-                */
+            case FROM_INTERNAL_CLIPBOARD:
+                copyFromInternalClipboard();
+                break;
             case CLIPBOARD_BB:
                 copyBBToExternalClipboardEvent();
                 break;
@@ -356,38 +355,6 @@ public class MarkerTableTab extends javax.swing.JPanel implements ListSelectionL
             showError("Fehler beim Ausschneiden der Markierungen");
         }
     }
-
-    /*
-     * Changed DiplomacyParser from GenericParserInterface to SilentParserInterface, causing errors in this method.
-     * This kind of stuff ist done via ClipboardWatch, PluginManager, DiplomacyParser, MarkerManager now (importing nap/enemy/bnd marker)
-     * Perhaps this whole class is not needed anymore, but i'll leave it in case i'm wrong. 
-     * 
-    private void pasteFromExternalClipboard() {
-        try {
-            String data = (String) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null).getTransferData(DataFlavor.stringFlavor);
-            List<Marker> markers = PluginManager.getSingleton().executeDiplomacyParser(data);
-            
-            if (markers.isEmpty()) {
-                //do internal paste
-                copyFromInternalClipboard();
-                return;
-            }
-            for (Marker m : markers) {
-                MarkerManager.getSingleton().addManagedElement(getMarkerSet(), m);
-            }
-
-            showSuccess(markers.size() + ((markers.size() == 1) ? " Markierung eingefügt" : " Markierungen eingefügt"));
-        } catch (UnsupportedFlavorException ufe) {
-            logger.error("Failed to paste markers from external clipboard", ufe);
-            showError("Fehler beim Lesen der Markierungen aus der Zwischenablage");
-        } catch (IOException ioe) {
-            logger.error("Failed to paste markers from external clipboard", ioe);
-            showError("Fehler beim Lesen der Markierungen aus der Zwischenablage");
-        }
-        markerModel.fireTableDataChanged();
-        MarkerManager.getSingleton().revalidate(getMarkerSet(), true);
-    }
-    */
 
     private void copyFromInternalClipboard() {
         try {

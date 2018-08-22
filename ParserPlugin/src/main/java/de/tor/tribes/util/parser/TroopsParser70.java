@@ -24,24 +24,23 @@ import de.tor.tribes.ui.windows.NotifierFrame;
 import de.tor.tribes.util.SilentParserInterface;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-
 import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.regex.Pattern;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * @author Charon
  */
 public class TroopsParser70 implements SilentParserInterface {
-
-    private static Logger logger = Logger.getLogger("TroopsParser70");
+    private static Logger logger = LogManager.getLogger("TroopsParser70");
     private static final boolean IS_DEBUG = false;
 
     /*
@@ -119,7 +118,7 @@ public class TroopsParser70 implements SilentParserInterface {
 
         //update selected group, if any
         if(groupName != null && !groupName.equals(getVariable("groups.all"))){
-            Hashtable<String, List<Village>> groupTable = new Hashtable<>();
+            HashMap<String, List<Village>> groupTable = new HashMap<>();
             groupTable.put(groupName, villages);
             DSWorkbenchMainFrame.getSingleton().fireGroupParserEvent(groupTable);
         }

@@ -16,7 +16,7 @@
 package de.tor.tribes.types;
 
 import de.tor.tribes.types.ext.Village;
-import org.apache.commons.lang.math.LongRange;
+import org.apache.commons.lang3.Range;
 
 /**
  *
@@ -26,9 +26,9 @@ public class DefenseTask {
 
     private Village target = null;
     private int necessaryDefenses = 0;
-    private LongRange arriveTimeFrame = null;
+    private Range<Long> arriveTimeFrame = null;
 
-    public DefenseTask(Village pTarget, int pDefenses, LongRange pTimeFrame) {
+    public DefenseTask(Village pTarget, int pDefenses, Range<Long> pTimeFrame) {
         target = pTarget;
         necessaryDefenses = pDefenses;
         arriveTimeFrame = pTimeFrame;
@@ -51,7 +51,7 @@ public class DefenseTask {
     /**
      * @return the arriveTimeFrame
      */
-    public LongRange getArriveTimeFrame() {
+    public Range<Long> getArriveTimeFrame() {
         return arriveTimeFrame;
     }
 }

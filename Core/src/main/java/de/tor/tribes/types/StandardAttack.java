@@ -22,8 +22,9 @@ import de.tor.tribes.ui.ImageManager;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import org.apache.log4j.Logger;
-import org.jdom.Element;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jdom2.Element;
 
 /**
  *
@@ -31,7 +32,7 @@ import org.jdom.Element;
  */
 public class StandardAttack extends ManageableType {
 
-    private static Logger logger = Logger.getLogger("StandardAttack");
+    private static Logger logger = LogManager.getLogger("StandardAttack");
     private String name = null;
     private TroopAmountDynamic troops = null;
     public static final int NO_ICON = ImageManager.NOTE_SYMBOL_NONE;
@@ -57,21 +58,6 @@ public class StandardAttack extends ManageableType {
     }
 
     @Override
-    public String getElementIdentifier() {
-        return "stdAttack";
-    }
-
-    @Override
-    public String getElementGroupIdentifier() {
-        return "stdAttacks";
-    }
-
-    @Override
-    public String getGroupNameAttributeIdentifier() {
-        return "";
-    }
-
-    @Override
     public int hashCode() {
         int hash = 3;
         hash = 97 * hash + this.name.hashCode();
@@ -90,24 +76,22 @@ public class StandardAttack extends ManageableType {
             return troops.transformToFixed(null).equals(pOther);
         }
         if(pOther instanceof StandardAttack) {
-            return pOther.hashCode() == this.hashCode();
+            //only icon needs to be same
+            return ((StandardAttack) pOther).getIcon() == this.getIcon();
         }
         return false;
     }
 
     @Override
-    public String toXml() {
-        StringBuilder b = new StringBuilder();
+    public Element toXml(String elementName) {
+        Element stdAtt = new Element(elementName);
         try {
-            b.append("<").append(getElementIdentifier()).append(" name=\"").append(URLEncoder.encode(name, "UTF-8")).append("\" icon=\"").append(icon).append("\">\n");
-            b.append("<attackElements ");
-            b.append(troops.toXml());
-            b.append(" />\n");
-            b.append("</").append(getElementIdentifier()).append(">\n");
-        } catch (IOException ioe) {
-            return "\n";
+            stdAtt.setAttribute("name", URLEncoder.encode(name, "UTF-8"));
+            stdAtt.setAttribute("icon", Integer.toString(icon));
+            stdAtt.addContent(troops.toXml("attackElements"));
+        } catch (IOException ignored) {
         }
-        return b.toString();
+        return stdAtt;
     }
 
     @Override

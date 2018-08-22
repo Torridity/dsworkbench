@@ -31,7 +31,9 @@ import java.util.HashMap;
 import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.table.AbstractTableModel;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 /**
  *
@@ -39,7 +41,7 @@ import org.apache.log4j.Logger;
  */
 public class TroopsTableModel extends AbstractTableModel {
 
-    private static Logger logger = Logger.getLogger("TroopTable");
+    private static Logger logger = LogManager.getLogger("TroopTable");
 
     public enum COL_CONTENT {
 

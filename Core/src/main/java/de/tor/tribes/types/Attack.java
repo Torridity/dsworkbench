@@ -26,17 +26,17 @@ import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.ImageManager;
 import de.tor.tribes.util.*;
 import de.tor.tribes.util.attack.StandardAttackManager;
-import de.tor.tribes.util.xml.JaxenUtils;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
-import org.jdom.Element;
-
+import de.tor.tribes.util.xml.JDomUtils;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import org.apache.log4j.Logger;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.Predicate;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jdom2.Element;
 
 /**
  *
@@ -44,7 +44,7 @@ import org.apache.log4j.Logger;
  */
 public class Attack extends ManageableType implements Serializable, Comparable<Attack>, BBSupport {
 
-    private static Logger logger = Logger.getLogger("AttackTableModel");
+    private static Logger logger = LogManager.getLogger("AttackTableModel");
 
     private final static String[] VARIABLES = new String[]{"%TYPE%", "%ATTACKER%", "%SOURCE%", "%UNIT%", "%DEFENDER%", "%TARGET%", "%SEND%", "%ARRIVE%", "%PLACE%", "%PLACE_URL%"};
     private final static String STANDARD_TEMPLATE = "%TYPE% von %ATTACKER% aus %SOURCE% mit %UNIT% auf %DEFENDER% in %TARGET% startet am [color=#ff0e0e]%SEND%[/color] und kommt am [color=#2eb92e]%ARRIVE%[/color] an (%PLACE%)";
@@ -138,7 +138,7 @@ public class Attack extends ManageableType implements Serializable, Comparable<A
         return arriveTime;
     }
 
-    public void setArriveTime(Date arriveTime) {
+    public final void setArriveTime(Date arriveTime) {
         if (arriveTime == null) {
             return;
         }
@@ -213,12 +213,18 @@ public class Attack extends ManageableType implements Serializable, Comparable<A
             return;
         }
         
-        TroopAmountDynamic typeAmount = StandardAttackManager.getSingleton().getElementByIcon(this.type).getTroops();
+        StandardAttack byType = StandardAttackManager.getSingleton().getElementByIcon(this.type);
+        if(byType == null) {
+            //no StandardAttack exists for that type
+            return;
+        }
+        
+        TroopAmountDynamic typeAmount = byType.getTroops();
 
-        for(UnitHolder unit: DataHolder.getSingleton().getUnits()) {
-            if(unit.getSpeed() <= this.unit.getSpeed()) {
+        for(UnitHolder u: DataHolder.getSingleton().getUnits()) {
+            if(u.getSpeed() <= unit.getSpeed()) {
                 //faster or equal
-                this.amounts.setAmount(typeAmount.getElementForUnit(unit));
+                this.amounts.setAmount(typeAmount.getElementForUnit(u));
             }
         }
     }
@@ -261,7 +267,7 @@ public class Attack extends ManageableType implements Serializable, Comparable<A
     }
 
     public static Attack fromInternalRepresentation(String pLine) {
-        Attack a = null;
+        Attack a;
         try {
             String[] split = pLine.trim().split("&");
             a = new Attack();
@@ -290,21 +296,21 @@ public class Attack extends ManageableType implements Serializable, Comparable<A
     }
 
     @Override
-    public String toXml() {
-        StringBuilder b = new StringBuilder();
-        b.append("<attack>\n");
-        b.append("<source>").append(source.getId()).append("</source>\n");
-        b.append("<target>").append(target.getId()).append("</target>\n");
-        b.append("<arrive>").append(arriveTime.getTime()).append("</arrive>\n");
-        b.append("<unit>").append(getUnit().getPlainName()).append("</unit>\n");
-        b.append("<extensions>\n");
-        b.append("\t<amounts ").append(amounts.toXml()).append(" />\n");
-        b.append("\t<showOnMap>").append(showOnMap).append("</showOnMap>\n");
-        b.append("\t<type>").append(type).append("</type>\n");
-        b.append("\t<transferredToBrowser>").append(transferredToBrowser).append("</transferredToBrowser>\n");
-        b.append("</extensions>\n");
-        b.append("</attack>");
-        return b.toString();
+    public Element toXml(String elementName) {
+        Element attack = new Element(elementName);
+        attack.addContent(new Element("source").setText(Integer.toString(source.getId())));
+        attack.addContent(new Element("target").setText(Integer.toString(target.getId())));
+        attack.addContent(new Element("arrive").setText(Long.toString(arriveTime.getTime())));
+        attack.addContent(new Element("unit").setText(getUnit().getPlainName()));
+
+        Element extensions = new Element("extensions");
+        extensions.addContent(amounts.toXml("amounts"));
+        extensions.addContent(new Element("showOnMap").setText(Boolean.toString(showOnMap)));
+        extensions.addContent(new Element("type").setText(Integer.toString(type)));
+        extensions.addContent(new Element("transferredToBrowser").setText(Boolean.toString(transferredToBrowser)));
+        
+        attack.addContent(extensions);
+        return attack;
     }
 
     @Override
@@ -315,7 +321,7 @@ public class Attack extends ManageableType implements Serializable, Comparable<A
         this.unit = DataHolder.getSingleton().getUnitByPlainName(pElement.getChild("unit").getText());
         
         try {
-            this.type = Integer.parseInt(JaxenUtils.getNodeValue(pElement, "extensions/type"));
+            this.type = Integer.parseInt(JDomUtils.getNodeValue(pElement, "extensions/type"));
             try {
                 this.amounts = new TroopAmountDynamic(pElement.getChild("extensions").getChild("amounts"));
             } catch (Exception e) {
@@ -327,28 +333,8 @@ public class Attack extends ManageableType implements Serializable, Comparable<A
             this.type = NO_TYPE;
             this.amounts = new TroopAmountDynamic(0);
         }
-        this.showOnMap = Boolean.parseBoolean(JaxenUtils.getNodeValue(pElement, "extensions/showOnMap"));
-        try {
-            this.transferredToBrowser = Boolean.parseBoolean(JaxenUtils.getNodeValue(pElement, "extensions/transferredToBrowser"));
-        } catch (Exception e) {
-            //not transferred yet
-            this.transferredToBrowser = false;
-        }
-    }
-
-    @Override
-    public String getElementIdentifier() {
-        return "attack";
-    }
-
-    @Override
-    public String getElementGroupIdentifier() {
-        return "plan";
-    }
-
-    @Override
-    public String getGroupNameAttributeIdentifier() {
-        return "key";
+        this.showOnMap = Boolean.parseBoolean(JDomUtils.getNodeValue(pElement, "extensions/showOnMap"));
+        this.transferredToBrowser = Boolean.parseBoolean(JDomUtils.getNodeValue(pElement, "extensions/transferredToBrowser"));
     }
 
     @Override

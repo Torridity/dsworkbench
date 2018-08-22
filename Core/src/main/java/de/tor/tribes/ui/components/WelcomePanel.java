@@ -18,16 +18,11 @@ package de.tor.tribes.ui.components;
 import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
 import de.tor.tribes.util.BrowserInterface;
 import de.tor.tribes.util.GlobalOptions;
-import java.awt.BorderLayout;
 import java.awt.TexturePaint;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.util.Hashtable;
+import java.util.HashMap;
 import javax.imageio.ImageIO;
-import javax.swing.*;
-
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.Logger;
 import org.jdesktop.swingx.JXLabel;
 import org.jdesktop.swingx.JXPanel;
 import org.jdesktop.swingx.painter.MattePainter;
@@ -38,7 +33,7 @@ import org.jdesktop.swingx.painter.MattePainter;
  */
 public class WelcomePanel extends JXPanel {
 
-    private Hashtable<JXLabel, String> welcomeTooltipMap = new Hashtable<>();
+    private HashMap<JXLabel, String> welcomeTooltipMap = new HashMap<>();
     private BufferedImage back = null;
 
     /** Creates new form WelcomePanel */
@@ -245,26 +240,7 @@ public class WelcomePanel extends JXPanel {
             DSWorkbenchMainFrame.getSingleton().hideWelcomePage();
         }
     }//GEN-LAST:event_firePerformWelcomeActionEvent
-
-    public static void main(String[] args) {
-        Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
-        try {
-            // UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-            //JFrame.setDefaultLookAndFeelDecorated(true);
-
-            // SubstanceLookAndFeel.setSkin(SubstanceLookAndFeel.getAllSkins().get("Twilight").getClassName());
-            //  UIManager.put(SubstanceLookAndFeel.FOCUS_KIND, FocusKind.NONE);
-        } catch (Exception ignored) {
-        }
-        JFrame f = new JFrame();
-        f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        f.getContentPane().setLayout(new BorderLayout());
-        f.getContentPane().add(new WelcomePanel(), BorderLayout.CENTER);
-        f.setSize(500, 500);
-        f.setVisible(true);
-
-    }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private org.jdesktop.swingx.JXLabel jContentLabel;
     private javax.swing.JCheckBox jDisableWelcome;

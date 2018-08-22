@@ -46,13 +46,11 @@ import de.tor.tribes.util.tag.TagManager;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
 import de.tor.tribes.util.village.KnownVillageManager;
-import org.apache.log4j.Logger;
-
-import javax.swing.*;
 import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.dnd.*;
 import java.awt.event.*;
 import java.awt.geom.AffineTransform;
@@ -61,9 +59,14 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.util.*;
 import java.util.List;
 import java.util.Timer;
+import javax.swing.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 /**
  * @author Charon
@@ -111,7 +114,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
         }
     }
     // <editor-fold defaultstate="collapsed" desc=" Member variables ">
-    private static final Logger logger = Logger.getLogger("MapCanvas");
+    private static final Logger logger = LogManager.getLogger("MapCanvas");
     private BufferedImage mBuffer = null;
     //private VolatileImage mBuffer = null;
     private double dCenterX = 500.0;
@@ -1369,7 +1372,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
         } else if (evt.getSource() == jCurrentToAStarAsAttacker || evt.getSource() == jCurrentToAStarAsDefender) {
             VillageTroopsHolder own = TroopsManager.getSingleton().getTroopsForVillage(actionMenuVillage, TroopsManager.TROOP_TYPE.OWN);
 
-            Hashtable<String, Double> values = new Hashtable<>();
+            HashMap<String, Double> values = new HashMap<>();
             if (evt.getSource() == jCurrentToAStarAsAttacker && own == null) {
                 JOptionPaneHelper.showInformationBox(this, "Keine Truppeninformationen (Eigene) vorhanden", "Information");
                 return;
@@ -1832,7 +1835,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                 return;
             }
             attackAddFrame.setupAttack(v, target, DataHolder.getSingleton().getUnitID("Ramme"), null);
-        } catch (Exception ex) {
+        } catch (UnsupportedFlavorException | IOException ex) {
             logger.error("Failed to drop villages", ex);
         }
     }

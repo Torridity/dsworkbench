@@ -20,16 +20,15 @@ import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.Marker;
 import de.tor.tribes.types.UserProfile;
 import de.tor.tribes.types.ext.*;
-import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
 import de.tor.tribes.ui.ImageManager;
 import de.tor.tribes.ui.MinimapListener;
-import de.tor.tribes.ui.windows.MinimapZoomFrame;
 import de.tor.tribes.ui.renderer.map.MapRenderer;
+import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
+import de.tor.tribes.ui.windows.MinimapZoomFrame;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ImageUtils;
 import de.tor.tribes.util.JOptionPaneHelper;
-import de.tor.tribes.util.ProfileManager;
 import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.interfaces.ToolChangeListener;
 import de.tor.tribes.util.mark.MarkerManager;
@@ -53,15 +52,14 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.text.NumberFormat;
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.labels.StandardPieSectionLabelGenerator;
@@ -82,7 +80,7 @@ public class MinimapPanel extends javax.swing.JPanel implements GenericManagerLi
     public void dataChangedEvent(String pGroup) {
         redraw();
     }
-    private static Logger logger = Logger.getLogger("MinimapCanvas");
+    private static Logger logger = LogManager.getLogger("MinimapCanvas");
     private Image mBuffer = null;
     private int iX = 0;
     private int iY = 0;
@@ -106,8 +104,8 @@ public class MinimapPanel extends javax.swing.JPanel implements GenericManagerLi
     private static final int ID_MINIMAP = 0;
     private static final int ID_ALLY_CHART = 1;
     private static final int ID_TRIBE_CHART = 2;
-    private Hashtable<Integer, Rectangle> minimapButtons = new Hashtable<>();
-    private Hashtable<Integer, BufferedImage> minimapIcons = new Hashtable<>();
+    private HashMap<Integer, Rectangle> minimapButtons = new HashMap<>();
+    private HashMap<Integer, BufferedImage> minimapIcons = new HashMap<>();
     private int iCurrentView = ID_MINIMAP;
     private BufferedImage mChartImage;
     private int lastHash = 0;
@@ -552,7 +550,7 @@ public class MinimapPanel extends javax.swing.JPanel implements GenericManagerLi
     }
 
     private void renderChartInfo() {
-        Hashtable<Object, Marker> marks = new Hashtable<>();
+        HashMap<Object, Marker> marks = new HashMap<>();
         DefaultPieDataset dataset = buildDataset(marks);
 
         JFreeChart chart = ChartFactory.createPieChart(
@@ -568,15 +566,12 @@ public class MinimapPanel extends javax.swing.JPanel implements GenericManagerLi
         // plot.setBackgroundPaint(null);
         //  plot.setShadowPaint(null);
 
-        Enumeration<Object> markKeys = marks.keys();
-
-
-        while (markKeys.hasMoreElements()) {
+        for(Object o: marks.keySet()) {
             if (iCurrentView == ID_ALLY_CHART) {
-                Ally a = (Ally) markKeys.nextElement();
+                Ally a = (Ally) o;
                 plot.setSectionPaint(a.getTag(), marks.get(a).getMarkerColor());
             } else {
-                Tribe t = (Tribe) markKeys.nextElement();
+                Tribe t = (Tribe) o;
                 plot.setSectionPaint(t.getName(), marks.get(t).getMarkerColor());
             }
         }
@@ -620,25 +615,20 @@ public class MinimapPanel extends javax.swing.JPanel implements GenericManagerLi
         // g2d.drawImage(bi, 30, 30, null);
     }
 
-    private DefaultPieDataset buildDataset(Hashtable<Object, Marker> marks) {
+    private DefaultPieDataset buildDataset(HashMap<Object, Marker> marks) {
         DefaultPieDataset dataset = new DefaultPieDataset();
 
-
         if (iCurrentView == ID_ALLY_CHART) {
-            Hashtable<Ally, Integer> allyCount = MapPanel.getSingleton().getMapRenderer().getAllyCount();
+            HashMap<Ally, Integer> allyCount = MapPanel.getSingleton().getMapRenderer().getAllyCount();
             int overallVillages = 0;
-            Enumeration<Ally> keys = allyCount.keys();
+            
             //count all villages
-            while (keys.hasMoreElements()) {
-                overallVillages += allyCount.get(keys.nextElement());
+            for(Integer count: allyCount.values()) {
+                overallVillages += count;
             }
-            keys = allyCount.keys();
 
             double rest = 0;
-            // Hashtable<Ally, Marker> marks = new Hashtable<Ally, Marker>();
-
-            while (keys.hasMoreElements()) {
-                Ally a = keys.nextElement();
+            for(Ally a: allyCount.keySet()) {
                 Integer v = allyCount.get(a);
                 Double perc = (double) v / (double) overallVillages * 100;
 
@@ -657,23 +647,17 @@ public class MinimapPanel extends javax.swing.JPanel implements GenericManagerLi
 
             dataset.setValue("Sonstige", rest);
         } else {
-            Hashtable<Tribe, Integer> tribeCount = MapPanel.getSingleton().getMapRenderer().getTribeCount();
+            HashMap<Tribe, Integer> tribeCount = MapPanel.getSingleton().getMapRenderer().getTribeCount();
 
             int overallVillages = 0;
-            Enumeration<Tribe> keys = tribeCount.keys();
             //count all villages
 
-            while (keys.hasMoreElements()) {
-                overallVillages += tribeCount.get(keys.nextElement());
+            for(Integer trbCnt: tribeCount.values()) {
+                overallVillages += trbCnt;
             }
-            keys = tribeCount.keys();
 
             double rest = 0;
-            //  Hashtable<Tribe, Marker> marks = new Hashtable<Tribe, Marker>();
-
-            while (keys.hasMoreElements()) {
-                Tribe t = keys.nextElement();
-
+            for(Tribe t: tribeCount.keySet()) {
                 Integer v = tribeCount.get(t);
 
                 Double perc = (double) v / (double) overallVillages * 100;
@@ -948,19 +932,6 @@ private void fireScreenshotControlClosingEvent(java.awt.event.WindowEvent evt) {
     jScreenshotPreview.setVisible(false);
 }//GEN-LAST:event_fireScreenshotControlClosingEvent
 
-    public static void main(String[] args) {
-        Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
-        GlobalOptions.setSelectedServer("de43");
-        ProfileManager.getSingleton().loadProfiles();
-        GlobalOptions.setSelectedProfile(ProfileManager.getSingleton().getProfiles("de43")[0]);
-        DataHolder.getSingleton().loadData(false);
-        JFrame f = new JFrame();
-        f.getContentPane().add(MinimapPanel.getSingleton());
-        f.pack();
-        f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        f.setVisible(true);
-
-    }
   // Variables declaration - do not modify//GEN-BEGIN:variables
   private javax.swing.JButton jButton1;
   private javax.swing.JButton jButton2;
@@ -978,7 +949,7 @@ private void fireScreenshotControlClosingEvent(java.awt.event.WindowEvent evt) {
 
 class MinimapRepaintThread extends Thread {
 
-    private static Logger logger = Logger.getLogger("MinimapRenderer");
+    private static Logger logger = LogManager.getLogger("MinimapRenderer");
     private BufferedImage mBuffer = null;
     private boolean drawn = false;
     private Rectangle mapDim = null;
@@ -1141,13 +1112,9 @@ class MinimapRepaintThread extends Thread {
                                     marker = MarkerManager.getSingleton().getMarker(v.getTribe().getAlly());
                                     if (marker != null && marker.isShownOnMap()) {
                                         markerColor = marker.getMarkerColor();
-                                    } else {
-                                        markerColor = DEFAULT;
                                     }
                                 } else {
-                                    if (!marker.isShownOnMap()) {
-                                        markerColor = DEFAULT;
-                                    } else {
+                                    if (marker.isShownOnMap()) {
                                         markerColor = marker.getMarkerColor();
                                     }
                                 }

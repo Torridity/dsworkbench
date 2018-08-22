@@ -16,13 +16,13 @@
 package de.tor.tribes.util.html;
 
 import de.tor.tribes.io.DataHolder;
-import de.tor.tribes.util.*;
 import de.tor.tribes.io.ServerManager;
 import de.tor.tribes.io.UnitHolder;
-import de.tor.tribes.types.ext.Ally;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.StandardAttack;
+import de.tor.tribes.types.ext.Ally;
 import de.tor.tribes.types.ext.Tribe;
+import de.tor.tribes.util.*;
 import de.tor.tribes.util.attack.StandardAttackManager;
 import java.io.BufferedReader;
 import java.io.File;
@@ -34,14 +34,16 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 /**
  * @author Charon
  */
 public class AttackPlanHTMLExporter {
 
-    private static Logger logger = Logger.getLogger("AttackHTMLExporter");
+    private static Logger logger = LogManager.getLogger("AttackHTMLExporter");
     private static String HEADER = "";
     private static String FOOTER = "";
     private static String BLOCK = "";

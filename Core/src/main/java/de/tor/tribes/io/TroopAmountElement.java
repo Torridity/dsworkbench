@@ -21,8 +21,9 @@ import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.io.UnsupportedEncodingException;
 import java.util.Base64;
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.log4j.Logger;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * @author Charon
@@ -30,7 +31,7 @@ import org.apache.log4j.Logger;
  */
 public class TroopAmountElement {
 
-    private static final Logger logger = Logger.getLogger("TroopAmountElement");
+    private static final Logger logger = LogManager.getLogger("TroopAmountElement");
     public static final String ALL_TROOPS = "alle";
     public static final String RND_VALUE = "rnd";
     public static final String FAKE_VALUE = "fake";
@@ -77,12 +78,13 @@ public class TroopAmountElement {
             fixed = false;
             dynamicAmount = pAmount;
         } else {
-            fixed = true;
             val = parse(pAmount, -1, -1);
             if (val instanceof Double) {
+                fixed = true;
                 dynamicAmount = Integer.toString(((Double) val).intValue());
             } else if(val instanceof String) {
                 //we can't parse without arguments; curently only needed for 50%
+                fixed = false;
                 dynamicAmount = pAmount;
             }
         }

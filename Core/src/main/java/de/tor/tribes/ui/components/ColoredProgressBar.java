@@ -40,10 +40,12 @@ public class ColoredProgressBar extends JProgressBar {
         setMinimumSize(size);
         BasicProgressBarUI ui = new BasicProgressBarUI() {
 
+            @Override
             protected Color getSelectionForeground() {
                 return Color.BLACK;
             }
 
+            @Override
             protected Color getSelectionBackground() {
                 return Color.BLACK;
             }

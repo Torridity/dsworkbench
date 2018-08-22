@@ -19,9 +19,9 @@ import de.tor.tribes.types.StorageStatus;
 import de.tor.tribes.types.VillageMerchantInfo;
 import de.tor.tribes.ui.models.REDSourceTableModel;
 import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
+import de.tor.tribes.ui.renderer.EnumImageCellRenderer;
 import de.tor.tribes.ui.renderer.NumberFormatCellRenderer;
 import de.tor.tribes.ui.renderer.StorageCellRenderer;
-import de.tor.tribes.ui.renderer.TradeDirectionCellRenderer;
 import de.tor.tribes.util.*;
 import java.awt.BorderLayout;
 import java.awt.Toolkit;
@@ -81,7 +81,7 @@ public class ResourceDistributorDataReadPanel extends WizardPage {
         jDataTable.setModel(new REDSourceTableModel());
         jDataTable.getTableHeader().setDefaultRenderer(new DefaultTableHeaderRenderer());
         jDataTable.setHighlighters(HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B));
-        jDataTable.setDefaultRenderer(VillageMerchantInfo.Direction.class, new TradeDirectionCellRenderer());
+        jDataTable.setDefaultRenderer(VillageMerchantInfo.Direction.class, new EnumImageCellRenderer(EnumImageCellRenderer.LayoutStyle.TradeDirection));
         jDataTable.setDefaultRenderer(Integer.class, new NumberFormatCellRenderer());
         jDataTable.setDefaultRenderer(StorageStatus.class, new StorageCellRenderer());
 

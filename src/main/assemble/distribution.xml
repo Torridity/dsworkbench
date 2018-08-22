@@ -31,7 +31,7 @@
             <includes>
                 <include>*.jar</include>
             </includes>
-        </fileSet> 
+        </fileSet>
         <fileSet>
             <directory>ParserPlugin/target/</directory>
             <outputDirectory>lib</outputDirectory>
@@ -39,41 +39,41 @@
                 <include>*.jar</include>
             </includes>
         </fileSet>
+        <fileSet>
+            <directory>ParserPlugin/target/</directory>
+            <outputDirectory>lib</outputDirectory>
+            <includes>
+                <include>*.jar</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+            <directory>resources</directory>
+            <outputDirectory></outputDirectory>
+            <includes>
+                <include>log4j*.xml</include>
+                <include>world.dat.gz</include>
+                <include>servers.txt</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+            <directory>resources/Scripts</directory>
+            <outputDirectory></outputDirectory>
+            <includes>
+                <include>show.tmpl</include>
+                <include>DSWorkbench*</include>
+                <include>Launcher.bat</include>
+                <include>hidecmd.vbs</include>
+            </includes>
+        </fileSet>
     </fileSets>
     <files>
-        <file>
-            <source>resources/log4j.xml</source>
-            <outputDirectory></outputDirectory>
-        </file>
-        <file>
-            <source>resources/world.dat.gz</source>
-            <outputDirectory></outputDirectory>
-        </file>
-        <file>
-            <source>resources/servers.txt</source>
-            <outputDirectory></outputDirectory>
-        </file>
-        <file>
-            <source>resources/Scripts/show.tmpl</source>
-            <outputDirectory>scripts</outputDirectory>
-        </file>
-        <file>
-            <source>resources/Scripts/DSWorkbench</source>
-            <outputDirectory></outputDirectory>
-        </file>
-        <file>
-            <source>resources/Scripts/DSWorkbench.bat</source>
-            <outputDirectory></outputDirectory>
-        </file>
         <file>
             <source>LICENSE</source>
             <outputDirectory></outputDirectory>
         </file>
         <file>
-        	<source>resources/Scripts/Launcher.bat</source>
-        	<outputDirectory></outputDirectory></file>
-        <file>
-        	<source>resources/Scripts/hidecmd.vbs</source>
-        	<outputDirectory></outputDirectory></file>
+            <source>dsworkbench.jks</source>
+            <outputDirectory></outputDirectory>
+        </file>
     </files>
 </assembly>

@@ -15,8 +15,8 @@
  */
 package de.tor.tribes.util.parser;
 
-import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.types.VillageMerchantInfo;
+import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.GenericParserInterface;
 import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
@@ -24,16 +24,17 @@ import java.awt.datatransfer.Transferable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  *
  * @author Jejkal
  */
 public class MerchantParser implements GenericParserInterface<VillageMerchantInfo> {
+    private static Logger logger = LogManager.getLogger("MerchantParser");
 
-    private static Logger logger = Logger.getLogger("MerchantParser");
-
+    @Override
     public List<VillageMerchantInfo> parse(String pProductionString) {
         StringTokenizer lineTok = new StringTokenizer(pProductionString, "\n\r");
         List<VillageMerchantInfo> infos = new LinkedList<>();

@@ -1,4 +1,4 @@
-<?xml version="1.1" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 
 <Form version="1.3" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JFrameFormInfo">
   <NonVisualComponents>
@@ -11,13 +11,7 @@
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
       <SubComponents>
-        <Container class="com.jidesoft.swing.JideTabbedPane" name="jNoteTabbedPane">
-          <Properties>
-            <Property name="showCloseButton" type="boolean" value="true"/>
-            <Property name="showCloseButtonOnTab" type="boolean" value="true"/>
-            <Property name="showGripper" type="boolean" value="true"/>
-            <Property name="tabEditingAllowed" type="boolean" value="true"/>
-          </Properties>
+        <Container class="javax.swing.JTabbedPane" name="jNoteTabbedPane">
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
               <BorderConstraints direction="Center"/>
@@ -260,7 +254,7 @@
           <SubComponents>
             <Component class="javax.swing.JTextPane" name="jTextPane1">
               <Properties>
-                <Property name="contentType" type="java.lang.String" value="text/html"/>
+                <Property name="contentType" type="java.lang.String" value="text/html" noResource="true"/>
                 <Property name="editable" type="boolean" value="false"/>
               </Properties>
             </Component>
@@ -287,6 +281,7 @@
   </Properties>
   <SyntheticProperties>
     <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
+    <SyntheticProperty name="generateCenter" type="boolean" value="false"/>
   </SyntheticProperties>
   <AuxValues>
     <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
@@ -306,7 +301,6 @@
     <Component class="javax.swing.JCheckBox" name="jAlwaysOnTopBox">
       <Properties>
         <Property name="text" type="java.lang.String" value="Immer im Vordergrund"/>
-        <Property name="opaque" type="boolean" value="false"/>
       </Properties>
       <Events>
         <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="fireAlwaysOnTopChangedEvent"/>

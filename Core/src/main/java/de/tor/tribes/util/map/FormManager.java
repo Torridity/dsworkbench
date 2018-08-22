@@ -19,15 +19,12 @@ import de.tor.tribes.control.GenericManager;
 import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.types.drawing.AbstractForm;
 import de.tor.tribes.ui.panels.MapPanel;
-import de.tor.tribes.util.xml.JaxenUtils;
-import org.apache.log4j.Logger;
-import org.jdom.Document;
-import org.jdom.Element;
-
-import java.io.File;
-import java.io.FileWriter;
+import de.tor.tribes.util.xml.JDomUtils;
 import java.util.LinkedList;
 import java.util.List;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jdom2.Element;
 
 /**
  *
@@ -35,7 +32,7 @@ import java.util.List;
  */
 public class FormManager extends GenericManager<AbstractForm> {
 
-    private static Logger logger = Logger.getLogger("FormManager");
+    private static Logger logger = LogManager.getLogger("FormManager");
     private static FormManager SINGLETON = null;
 
     public static synchronized FormManager getSingleton() {
@@ -50,68 +47,34 @@ public class FormManager extends GenericManager<AbstractForm> {
     }
 
     @Override
-    public void loadElements(String pFile) {
-        if (pFile == null) {
-            logger.error("File argument is 'null'");
-            return;
+    public int importData(Element pElm, String pExtension) {
+        if (pElm == null) {
+            logger.error("Element argument is 'null'");
+            return -1;
         }
-        invalidate();
-        initialize();
-        File formFile = new File(pFile);
-        if (formFile.exists()) {
-            logger.info("Loading forms from '" + pFile + "'");
-            try {
-                Document d = JaxenUtils.getDocument(formFile);
-                for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//forms/form")) {
-                    AbstractForm form = AbstractForm.fromXml(e);
-                    if (form != null) {
-                        addManagedElement(form);
-                    }
-                }
-                logger.debug("Forms loaded successfully");
-            } catch (Exception e) {
-                logger.error("Failed to load forms", e);
-            }
-        } else {
-            logger.info("No forms found under '" + pFile + "'");
-        }
-        revalidate();
-    }
-
-    @Override
-    public boolean importData(File pFile, String pExtension) {
-        if (pFile == null) {
-            logger.error("File argument is 'null'");
-            return false;
-        }
-
+        int result = 0;
         logger.info("Loading forms");
-        boolean result = false;
         invalidate();
         try {
-            Document d = JaxenUtils.getDocument(pFile);
-            for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//forms/form")) {
+            for (Element e : (List<Element>) JDomUtils.getNodes(pElm, "forms/form")) {
                 AbstractForm form = AbstractForm.fromXml(e);
                 if (form != null) {
-                    if (form.getFormName() == null) {
-                        if (pExtension != null) {
-                            form.setFormName(pExtension);
+                    if (pExtension != null) {
+                        if (form.getFormName() == null) {
+                                form.setFormName(pExtension);
                         } else {
-                            form.setFormName("");
-                        }
-                    } else {
-                        if (pExtension != null) {
-                            form.setFormName(form.getFormName() + "_" + pExtension);
+                                form.setFormName(form.getFormName() + "_" + pExtension);
                         }
                     }
                     addManagedElement(form);
+                    result++;
                 }
             }
             logger.debug("Forms imported successfully");
             //do a pseudo-scroll to update the forms visibility
             MapPanel.getSingleton().fireScrollEvents(0, 0);
-            result = true;
         } catch (Exception e) {
+            result = result * (-1) - 1;
             logger.error("Failed to import forms", e);
             //do a pseudo-scroll to update the forms visibility
             MapPanel.getSingleton().fireScrollEvents(0, 0);
@@ -121,42 +84,18 @@ public class FormManager extends GenericManager<AbstractForm> {
     }
 
     @Override
-    public String getExportData(List<String> pGroupsToExport) {
+    public Element getExportData(final List<String> pGroupsToExport) {
+        Element forms = new Element("plans");
         try {
-            logger.debug("Generating forms export data");
-            String result = "<forms>\n";
-
-            ManageableType[] elements = getAllElements().toArray(new ManageableType[getAllElements().size()]);
-
-            for (ManageableType t : elements) {
-                AbstractForm form = (AbstractForm) t;
-                result += form.toXml();
+            logger.debug("Generating forms data");
+            for (ManageableType t : getAllElements()) {
+                forms.addContent(t.toXml("form"));
             }
-            result += "</forms>\n";
             logger.debug("Export data generated successfully");
-            return result;
         } catch (Exception e) {
             logger.error("Failed to generate forms export data", e);
-            return "";
         }
-    }
-
-    @Override
-    public void saveElements(String pFile) {
-        try {
-            FileWriter w = new FileWriter(pFile);
-            w.write("<forms>\n");
-
-            for (ManageableType type : getAllElements()) {
-                AbstractForm form = (AbstractForm) type;
-                w.write(form.toXml());
-            }
-            w.write("</forms>\n");
-            w.flush();
-            w.close();
-        } catch (Exception e) {
-            logger.error("Failed to store forms", e);
-        }
+        return forms;
     }
 
     public synchronized void addForm(AbstractForm pForm) {

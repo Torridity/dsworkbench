@@ -15,7 +15,6 @@
  */
 package de.tor.tribes.ui.views;
 
-import com.smardec.mousegestures.MouseGestures;
 import de.tor.tribes.control.GenericManagerListener;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.LinkedTag;
@@ -34,9 +33,22 @@ import de.tor.tribes.util.*;
 import de.tor.tribes.util.bb.TagListFormatter;
 import de.tor.tribes.util.bb.VillageListFormatter;
 import de.tor.tribes.util.tag.TagManager;
-import org.apache.commons.configuration.Configuration;
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.Logger;
+import java.awt.*;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
+import java.awt.event.*;
+import java.awt.geom.GeneralPath;
+import java.awt.image.BufferedImage;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.List;
+import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import org.apache.commons.configuration2.Configuration;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jdesktop.swingx.JXButton;
 import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.decorator.CompoundHighlighter;
@@ -48,20 +60,6 @@ import org.jdesktop.swingx.painter.AbstractLayoutPainter.VerticalAlignment;
 import org.jdesktop.swingx.painter.ImagePainter;
 import org.jdesktop.swingx.painter.MattePainter;
 import org.jdesktop.swingx.table.TableColumnExt;
-
-import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import java.awt.*;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.StringSelection;
-import java.awt.datatransfer.Transferable;
-import java.awt.event.*;
-import java.awt.geom.GeneralPath;
-import java.awt.image.BufferedImage;
-import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.List;
 
 /**
  * @author Torridity
@@ -109,7 +107,7 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame implements Gen
         ((TagTableModel) jTagsTable.getModel()).fireTableDataChanged();
         updateVillageList();
     }
-    private static Logger logger = Logger.getLogger("GroupView");
+    private static Logger logger = LogManager.getLogger("GroupView");
     private static DSWorkbenchTagFrame SINGLETON = null;
     private GenericTestPanel centerPanel = null;
 
@@ -150,6 +148,7 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame implements Gen
         pack();
     }
 
+    @Override
     public void storeCustomProperties(Configuration pConfig) {
         pConfig.setProperty(getPropertyPrefix() + ".menu.visible", centerPanel.isMenuVisible());
         pConfig.setProperty(getPropertyPrefix() + ".alwaysOnTop", jAlwaysOnTopBox.isSelected());
@@ -157,6 +156,7 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame implements Gen
         PropertyHelper.storeTableProperties(jTagsTable, pConfig, getPropertyPrefix());
     }
 
+    @Override
     public void restoreCustomProperties(Configuration pConfig) {
         centerPanel.setMenuVisible(pConfig.getBoolean(getPropertyPrefix() + ".menu.visible", true));
 
@@ -169,6 +169,7 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame implements Gen
         PropertyHelper.restoreTableProperties(jTagsTable, pConfig, getPropertyPrefix());
     }
 
+    @Override
     public String getPropertyPrefix() {
         return "tag.view";
     }
@@ -691,30 +692,7 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame implements Gen
     }
 
     // </editor-fold>
-    public static void main(String[] args) {
-        Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
-        GlobalOptions.setSelectedServer("de43");
-        DataHolder.getSingleton().loadData(false);
-        MouseGestures mMouseGestures = new MouseGestures();
-        mMouseGestures.setMouseButton(MouseEvent.BUTTON3_MASK);
-        mMouseGestures.addMouseGesturesListener(new MouseGestureHandler());
-        mMouseGestures.start();
-        try {
-            //  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-        } catch (Exception ignored) {
-        }
-
-        Tag t = new Tag("Mein Tag", true);
-        t.tagVillage(DataHolder.getSingleton().getRandomVillage().getId());
-        TagManager.getSingleton().addManagedElement(t);
-
-        DSWorkbenchTagFrame.getSingleton().setSize(600, 400);
-        DSWorkbenchTagFrame.getSingleton().resetView();
-        DSWorkbenchTagFrame.getSingleton().setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        DSWorkbenchTagFrame.getSingleton().setVisible(true);
-
-    }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private de.tor.tribes.ui.components.CapabilityInfoPanel capabilityInfoPanel1;
     private org.jdesktop.swingx.JXCollapsiblePane infoPanel;

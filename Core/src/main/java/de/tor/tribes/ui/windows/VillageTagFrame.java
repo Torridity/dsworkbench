@@ -17,11 +17,11 @@ package de.tor.tribes.ui.windows;
 
 import de.tor.tribes.control.GenericManagerListener;
 import de.tor.tribes.control.ManageableType;
-import de.tor.tribes.types.ext.Barbarians;
 import de.tor.tribes.types.LinkedTag;
-import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.types.Tag;
+import de.tor.tribes.types.ext.Barbarians;
 import de.tor.tribes.types.ext.Tribe;
+import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.tag.TagManager;
 import java.awt.event.ActionEvent;

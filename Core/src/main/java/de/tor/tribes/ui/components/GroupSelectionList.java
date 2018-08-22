@@ -16,17 +16,14 @@
 package de.tor.tribes.ui.components;
 
 import de.tor.tribes.control.GenericManagerListener;
-import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.NoTag;
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.renderer.GroupListCellRenderer;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.JOptionPaneHelper;
-import de.tor.tribes.util.ProfileManager;
 import de.tor.tribes.util.TagUtils;
 import de.tor.tribes.util.tag.TagManager;
-import java.awt.BorderLayout;
 import java.awt.Point;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -39,10 +36,7 @@ import java.util.regex.Pattern;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.swing.*;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.Logger;
+import org.apache.commons.collections4.CollectionUtils;
 
 /**
  *
@@ -442,28 +436,6 @@ public class GroupSelectionList extends IconizedList implements GenericManagerLi
     @Override
     public void dataChangedEvent(String pGroup) {
         resetModel();
-    }
-
-    public static void main(String[] args) {
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            // UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-        } catch (Exception ignored) {
-        }
-
-        GroupSelectionList ren = new GroupSelectionList("");
-        ren.setExpertSelection(true);
-        JFrame f = new JFrame();
-        f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        f.getContentPane().setLayout(new BorderLayout());
-        f.getContentPane().add(ren, BorderLayout.CENTER);
-        f.setVisible(true);
-        Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
-        GlobalOptions.setSelectedServer("de43");
-        DataHolder.getSingleton().loadData(false);
-        ProfileManager.getSingleton().loadProfiles();
-        GlobalOptions.setSelectedProfile(ProfileManager.getSingleton().getProfiles("de43")[0]);
-        GlobalOptions.loadUserData();
     }
 
     public static class ListItem {

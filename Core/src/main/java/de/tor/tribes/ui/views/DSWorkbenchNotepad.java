@@ -15,47 +15,36 @@
  */
 package de.tor.tribes.ui.views;
 
-import com.jidesoft.swing.JideTabbedPane;
-import com.jidesoft.swing.TabEditingEvent;
-import com.jidesoft.swing.TabEditingListener;
-import com.jidesoft.swing.TabEditingValidator;
-import com.smardec.mousegestures.MouseGestures;
 import de.tor.tribes.control.GenericManagerListener;
-import de.tor.tribes.io.DataHolder;
-import de.tor.tribes.types.test.DummyVillage;
 import de.tor.tribes.types.Note;
 import de.tor.tribes.types.ext.Village;
-import de.tor.tribes.ui.windows.AbstractDSWorkbenchFrame;
 import de.tor.tribes.ui.panels.GenericTestPanel;
-import de.tor.tribes.ui.ImageManager;
 import de.tor.tribes.ui.panels.NoteTableTab;
+import de.tor.tribes.ui.windows.AbstractDSWorkbenchFrame;
 import de.tor.tribes.util.Constants;
-import de.tor.tribes.util.JOptionPaneHelper;
-import de.tor.tribes.util.note.NoteManager;
-import java.awt.event.ActionEvent;
-import java.awt.image.BufferedImage;
-import java.util.List;
-import javax.swing.*;
-
-import org.apache.log4j.Logger;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ImageUtils;
-import de.tor.tribes.util.MouseGestureHandler;
-import de.tor.tribes.util.ProfileManager;
+import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.PropertyHelper;
+import de.tor.tribes.util.note.NoteManager;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.TexturePaint;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
+import java.util.List;
+import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import org.apache.commons.configuration.Configuration;
-import org.apache.log4j.ConsoleAppender;
+import org.apache.commons.configuration2.Configuration;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jdesktop.swingx.JXButton;
 import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.painter.MattePainter;
@@ -111,7 +100,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
             tab.updateSet();
         }
     }
-    private static Logger logger = Logger.getLogger("Notepad");
+    private static Logger logger = LogManager.getLogger("Notepad");
     private static DSWorkbenchNotepad SINGLETON = null;
     private GenericTestPanel centerPanel = null;
     
@@ -130,60 +119,6 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
         centerPanel.setChildComponent(jXNotePanel);
         buildMenu();
         capabilityInfoPanel1.addActionListener(this);
-        jNoteTabbedPane.setTabShape(JideTabbedPane.SHAPE_OFFICE2003);
-        jNoteTabbedPane.setTabColorProvider(JideTabbedPane.ONENOTE_COLOR_PROVIDER);
-        jNoteTabbedPane.setBoldActiveTab(true);
-        jNoteTabbedPane.addTabEditingListener(new TabEditingListener() {
-            
-            @Override
-            public void editingStarted(TabEditingEvent tee) {
-            }
-            
-            @Override
-            public void editingStopped(TabEditingEvent tee) {
-                NoteManager.getSingleton().renameGroup(tee.getOldTitle(), tee.getNewTitle());
-            }
-            
-            @Override
-            public void editingCanceled(TabEditingEvent tee) {
-            }
-        });
-        jNoteTabbedPane.setTabEditingValidator(new TabEditingValidator() {
-            
-            @Override
-            public boolean alertIfInvalid(int tabIndex, String tabText) {
-                if (tabText.trim().length() == 0) {
-                    JOptionPaneHelper.showWarningBox(jNoteTabbedPane, "'" + tabText + "' ist ein ungültiger Name für ein Notizset", "Fehler");
-                    return false;
-                }
-                
-                if (NoteManager.getSingleton().groupExists(tabText)) {
-                    JOptionPaneHelper.showWarningBox(jNoteTabbedPane, "Es existiert bereits ein Notizset mit dem Namen '" + tabText + "'", "Fehler");
-                    return false;
-                }
-                return true;
-            }
-            
-            @Override
-            public boolean isValid(int tabIndex, String tabText) {
-                return tabText.trim().length() != 0 && !NoteManager.getSingleton().groupExists(tabText);
-
-            }
-            
-            @Override
-            public boolean shouldStartEdit(int tabIndex, MouseEvent event) {
-                return !(tabIndex == 0);
-            }
-        });
-        jNoteTabbedPane.setCloseAction(new AbstractAction("closeAction") {
-            
-            public void actionPerformed(ActionEvent e) {
-                NoteTableTab tab = (NoteTableTab) e.getSource();
-                if (JOptionPaneHelper.showQuestionConfirmBox(jNoteTabbedPane, "Das Notizset '" + tab.getNoteSet() + "' und alle darin enthaltenen Notizen wirklich löschen? ", "Löschen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
-                    NoteManager.getSingleton().removeGroup(tab.getNoteSet());
-                }
-            }
-        });
         
         jNoteTabbedPane.getModel().addChangeListener(new ChangeListener() {
             
@@ -246,6 +181,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
         PropertyHelper.restoreTableProperties(tab.getNoteTable(), pConfig, getPropertyPrefix());
     }
     
+    @Override
     public String getPropertyPrefix() {
         return "notes.view";
     }
@@ -332,7 +268,6 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
         LabelUIResource lr = new LabelUIResource();
         lr.setLayout(new BorderLayout());
         lr.add(jNewSetPanel, BorderLayout.CENTER);
-        jNoteTabbedPane.setTabLeadingComponent(lr);
         String[] plans = NoteManager.getSingleton().getGroups();
 
         //insert default tab to first place
@@ -342,7 +277,6 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
             jNoteTabbedPane.addTab(plan, tab);
             cnt++;
         }
-        jNoteTabbedPane.setTabClosableAt(0, false);
         jNoteTabbedPane.revalidate();
         jNoteTabbedPane.setSelectedIndex(0);
         NoteTableTab tab = getActiveTab();
@@ -396,7 +330,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
         java.awt.GridBagConstraints gridBagConstraints;
 
         jXNotePanel = new org.jdesktop.swingx.JXPanel();
-        jNoteTabbedPane = new com.jidesoft.swing.JideTabbedPane();
+        jNoteTabbedPane = new javax.swing.JTabbedPane();
         jNewSetPanel = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
         jxSearchPane = new org.jdesktop.swingx.JXPanel();
@@ -420,11 +354,6 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
 
         jXNotePanel.setPreferredSize(new java.awt.Dimension(500, 400));
         jXNotePanel.setLayout(new java.awt.BorderLayout());
-
-        jNoteTabbedPane.setShowCloseButton(true);
-        jNoteTabbedPane.setShowCloseButtonOnTab(true);
-        jNoteTabbedPane.setShowGripper(true);
-        jNoteTabbedPane.setTabEditingAllowed(true);
         jXNotePanel.add(jNoteTabbedPane, java.awt.BorderLayout.CENTER);
 
         jNewSetPanel.setOpaque(false);
@@ -528,7 +457,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
 
         jScrollPane4.setBorder(javax.swing.BorderFactory.createTitledBorder("Vorschau"));
 
-        jTextPane1.setContentType("text/html");
+        jTextPane1.setContentType("text/html"); // NOI18N
         jTextPane1.setEditable(false);
         jScrollPane4.setViewportView(jTextPane1);
 
@@ -582,7 +511,6 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         jAlwaysOnTopBox.setText("Immer im Vordergrund");
-        jAlwaysOnTopBox.setOpaque(false);
         jAlwaysOnTopBox.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 fireAlwaysOnTopChangedEvent(evt);
@@ -670,126 +598,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
     @Override
     public void fireVillagesDraggedEvent(List<Village> pVillages, Point pDropLocation) {
     }
-    /* if (currentNote == null) {
-    return;ji
-    }
-    try {
-    Rectangle bounds = jVillageList.getBounds();
-    Point locationWithinNotepad = jVillageList.getLocationOnScreen();
-    Point notepadLocation = this.getLocationOnScreen();
-    locationWithinNotepad.translate(-notepadLocation.x, -notepadLocation.y);
-    bounds.setLocation(locationWithinNotepad);
-    if (bounds.contains(pDropLocation)) {
-    for (Village v : pVillages) {
-    currentNote.addVillage(v);
-    }
-    }
-    showCurrentNote();
-    try {
-    MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.NOTE_LAYER);
-    } catch (Exception e) {
-    }
-    } catch (Exception e) {
-    logger.error("Failed to insert dropped villages", e);
-    }*/
-    //  }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
-            
-            public void run() {
-                Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
-                GlobalOptions.setSelectedServer("de43");
-                DataHolder.getSingleton().loadData(false);
-                ProfileManager.getSingleton().loadProfiles();
-                GlobalOptions.setSelectedProfile(ProfileManager.getSingleton().getProfiles("de43")[0]);
-                MouseGestures mMouseGestures = new MouseGestures();
-                mMouseGestures.setMouseButton(MouseEvent.BUTTON3_MASK);
-                mMouseGestures.addMouseGesturesListener(new MouseGestureHandler());
-                mMouseGestures.start();
-                try {
-                    //  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-                    UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-                    //JFrame.setDefaultLookAndFeelDecorated(true);
-
-                    // SubstanceLookAndFeel.setSkin(SubstanceLookAndFeel.getAllSkins().get("Twilight").getClassName());
-                    //  UIManager.put(SubstanceLookAndFeel.FOCUS_KIND, FocusKind.NONE);
-                } catch (Exception ignored) {
-                }
-                
-                DSWorkbenchNotepad.getSingleton().setSize(600, 400);
-                
-                NoteManager.getSingleton().addGroup("test1");
-                NoteManager.getSingleton().addGroup("asd2");
-                NoteManager.getSingleton().addGroup("awe3");
-                for (int i = 0; i < 5; i++) {
-                    Note n = new Note();
-                    n.setNoteText("Test");
-                    n.setTimestamp(System.currentTimeMillis());
-                    n.setMapMarker(ImageManager.ID_NOTE_ICON_0);
-                    n.setNoteSymbol(ImageManager.NOTE_SYMBOL_AXE);
-                    n.addVillage(new DummyVillage());
-                    n.addVillage(new DummyVillage());
-                    n.addVillage(new DummyVillage());
-                    Note n2 = new Note();
-                    n2.setNoteText("Test2");
-                    n2.setTimestamp(System.currentTimeMillis());
-                    n2.setMapMarker(ImageManager.ID_NOTE_ICON_1);
-                    n2.setNoteSymbol(ImageManager.NOTE_SYMBOL_SNOB);
-                    n2.addVillage(new DummyVillage());
-                    n2.addVillage(new DummyVillage());
-                    Note n3 = new Note();
-                    n3.setNoteText("Test3");
-                    n3.setTimestamp(System.currentTimeMillis());
-                    n3.setMapMarker(ImageManager.ID_NOTE_ICON_1);
-                    n3.setNoteSymbol(ImageManager.NOTE_SYMBOL_SPEAR);
-                    n3.addVillage(new DummyVillage());
-                    n3.addVillage(new DummyVillage());
-                    n3.addVillage(new DummyVillage());
-                    n3.addVillage(new DummyVillage());
-                    
-                    NoteManager.getSingleton().addManagedElement(n);
-                    NoteManager.getSingleton().addManagedElement("test1", n2);
-                    NoteManager.getSingleton().addManagedElement("asd2", n3);
-                }
-                DSWorkbenchNotepad.getSingleton().resetView();
-                DSWorkbenchNotepad.getSingleton().setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-                DSWorkbenchNotepad.getSingleton().setVisible(true);
-            }
-        });
-    }
-
-    /*   @Override
-    public void dragGestureRecognized(DragGestureEvent dge) {
-    Note selectedNote = (Note) jNotesList.getSelectedValue();
     
-    List<Village> villageList = new LinkedList<Village>();
-    for (Integer villageId : selectedNote.getVillageIds()) {
-    Village v = DataHolder.getSingleton().getVillagesById().get(villageId);
-    if (!villageList.contains(v)) {
-    villageList.add(v);
-    }
-    }
-    if (villageList.isEmpty()) {
-    return;
-    }
-    Cursor c = ImageManager.createVillageDragCursor(villageList.size());
-    setCursor(c);
-    dge.startDrag(c, new VillageTransferable(villageList), this);
-    }
-    
-    @Override
-    public void dragEnter(DragSourceDragEvent dsde) {
-    }
-    
-    @Override
-    public void dragOver(DragSourceDragEvent dsde) {
-    }
-    
-    @Override
-    public void dragDropEnd(DragSourceDropEvent dsde) {
-    setCursor(Cursor.getDefaultCursor());
-    }*/
     // <editor-fold defaultstate="collapsed" desc="Gesture handling">
     @Override
     public void fireExportAsBBGestureEvent() {
@@ -842,7 +651,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jNewSetPanel;
-    private com.jidesoft.swing.JideTabbedPane jNoteTabbedPane;
+    private javax.swing.JTabbedPane jNoteTabbedPane;
     private javax.swing.JPanel jNotesPanel;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JTextField jTextField1;

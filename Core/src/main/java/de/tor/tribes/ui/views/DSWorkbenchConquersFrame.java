@@ -17,10 +17,8 @@ package de.tor.tribes.ui.views;
 
 import de.tor.tribes.control.GenericManagerListener;
 import de.tor.tribes.types.Conquer;
-import de.tor.tribes.types.ext.Ally;
-import de.tor.tribes.types.ext.Tribe;
+import de.tor.tribes.types.ext.Barbarians;
 import de.tor.tribes.types.ext.Village;
-import de.tor.tribes.types.test.DummyVillage;
 import de.tor.tribes.ui.models.ConquerTableModel;
 import de.tor.tribes.ui.panels.GenericTestPanel;
 import de.tor.tribes.ui.renderer.DateCellRenderer;
@@ -29,20 +27,6 @@ import de.tor.tribes.ui.windows.AbstractDSWorkbenchFrame;
 import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
 import de.tor.tribes.util.*;
 import de.tor.tribes.util.conquer.ConquerManager;
-import org.apache.commons.configuration.Configuration;
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.Logger;
-import org.jdesktop.swingx.JXButton;
-import org.jdesktop.swingx.JXTaskPane;
-import org.jdesktop.swingx.decorator.*;
-import org.jdesktop.swingx.painter.MattePainter;
-import org.jdesktop.swingx.table.TableColumnExt;
-
-import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -56,7 +40,19 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableModel;
+import org.apache.commons.configuration2.Configuration;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jdesktop.swingx.JXButton;
+import org.jdesktop.swingx.JXTaskPane;
+import org.jdesktop.swingx.decorator.*;
+import org.jdesktop.swingx.painter.MattePainter;
+import org.jdesktop.swingx.table.TableColumnExt;
 
 /**
  * @author Charon
@@ -88,7 +84,7 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
             jxFilterPane.setVisible(true);
         }
     }
-    private static Logger logger = Logger.getLogger("ConquerView");
+    private static Logger logger = LogManager.getLogger("ConquerView");
     private static DSWorkbenchConquersFrame SINGLETON = null;
     private GenericTestPanel centerPanel = null;
     private PainterHighlighter highlighter = null;
@@ -144,6 +140,7 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
         return SINGLETON;
     }
 
+    @Override
     public void storeCustomProperties(Configuration pConfig) {
         pConfig.setProperty(getPropertyPrefix() + ".menu.visible", centerPanel.isMenuVisible());
         pConfig.setProperty(getPropertyPrefix() + ".alwaysOnTop", jConquersFrameAlwaysOnTop.isSelected());
@@ -151,6 +148,7 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
 
     }
 
+    @Override
     public void restoreCustomProperties(Configuration pConfig) {
         centerPanel.setMenuVisible(pConfig.getBoolean(getPropertyPrefix() + ".menu.visible", true));
 
@@ -164,6 +162,7 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
         PropertyHelper.restoreTableProperties(jConquersTable, pConfig, getPropertyPrefix());
     }
 
+    @Override
     public String getPropertyPrefix() {
         return "conquers.view";
     }
@@ -233,6 +232,7 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
         jLastUpdateLabel = new javax.swing.JLabel();
         jGreyConquersLabel = new javax.swing.JLabel();
         jFriendlyConquersLabel = new javax.swing.JLabel();
+        jSelfConquersLabel = new javax.swing.JLabel();
         jxFilterPane = new org.jdesktop.swingx.JXPanel();
         jXPanel3 = new org.jdesktop.swingx.JXPanel();
         jButton12 = new javax.swing.JButton();
@@ -328,6 +328,18 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
         gridBagConstraints.insets = new java.awt.Insets(0, 5, 5, 5);
         jXPanel2.add(jFriendlyConquersLabel, gridBagConstraints);
 
+        jSelfConquersLabel.setBackground(new java.awt.Color(213, 255, 128));
+        jSelfConquersLabel.setText("Selbstadelungen:");
+        jSelfConquersLabel.setOpaque(true);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 5, 5, 5);
+        jXPanel2.add(jSelfConquersLabel, gridBagConstraints);
+
         jConquersPanel.add(jXPanel2, java.awt.BorderLayout.SOUTH);
 
         jxFilterPane.setOpaque(false);
@@ -352,7 +364,6 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
         jLabel21.setText("Suchbegriff");
 
         jFilterRows.setText("Nur gefilterte Zeilen anzeigen");
-        jFilterRows.setOpaque(false);
         jFilterRows.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 jFilterRowsfireUpdateFilterEvent(evt);
@@ -360,7 +371,6 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
         });
 
         jFilterCaseSensitive.setText("Groß-/Kleinschreibung beachten");
-        jFilterCaseSensitive.setOpaque(false);
         jFilterCaseSensitive.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 jFilterCaseSensitivefireUpdateFilterEvent(evt);
@@ -426,7 +436,6 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         jConquersFrameAlwaysOnTop.setText("Immer im Vordergrund");
-        jConquersFrameAlwaysOnTop.setOpaque(false);
         jConquersFrameAlwaysOnTop.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 fireConquersFrameAlwaysOnTopEvent(evt);
@@ -626,42 +635,7 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
         }
         return elements;
     }
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-
-        Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
-        try {
-            //  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-            //  UIManager.setLookAndFeel(new SubstanceBusinessBlackSteelLookAndFeel());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        DSWorkbenchConquersFrame.getSingleton().setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        for (int i = 0; i < 50; i++) {
-            Conquer c = new Conquer();
-            c.setTimestamp((int) System.currentTimeMillis());
-            DummyVillage v = new DummyVillage((short) (i * Math.random()), (short) i);
-            Ally a = new Ally();
-            a.setName("Los Locos");
-            a.setTag("L~L");
-            Tribe t = new Tribe();
-            t.setName("Someone");
-            t.setAlly(a);
-            v.setTribe(t);
-            c.setVillage(v);
-            c.setWinner(v.getTribe());
-            c.setLoser(v.getTribe());
-            ConquerManager.getSingleton().addConquer(c);
-        }
-        DSWorkbenchConquersFrame.getSingleton().resetView();
-        DSWorkbenchConquersFrame.getSingleton().dataChangedEvent();
-        DSWorkbenchConquersFrame.getSingleton().setVisible(true);
-
-    }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private de.tor.tribes.ui.components.CapabilityInfoPanel capabilityInfoPanel1;
     private org.jdesktop.swingx.JXCollapsiblePane infoPanel;
@@ -680,6 +654,7 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
     private javax.swing.JLabel jLastUpdateLabel;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane4;
+    private javax.swing.JLabel jSelfConquersLabel;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JTextField jTextField1;
     private org.jdesktop.swingx.JXList jXColumnList;
@@ -691,9 +666,10 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
 
     static {
         jConquersTable.setColumnControlVisible(true);
-        ColorHighlighter p = new ColorHighlighter(new PatternPredicate(Pattern.compile("Barbaren"), 4), Color.PINK, Color.BLACK);
-        ColorHighlighter p1 = new ColorHighlighter(new ColumnEqualsPredicate(5, 7), Color.CYAN, Color.BLACK);
-        jConquersTable.setHighlighters(HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B), p, p1);
+        ColorHighlighter p = new ColorHighlighter(new ConquerPredicate(ConquerPredicate.PType.BARBARIAN), Color.PINK, Color.BLACK);
+        ColorHighlighter p1 = new ColorHighlighter(new ConquerPredicate(ConquerPredicate.PType.ALLY), Color.CYAN, Color.BLACK);
+        ColorHighlighter p2 = new ColorHighlighter(new ConquerPredicate(ConquerPredicate.PType.OWN), new Color(0xD5FF80), Color.BLACK);
+        jConquersTable.setHighlighters(HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B), p, p1, p2);
         jConquersTable.setDefaultRenderer(Date.class, new DateCellRenderer());
     }
 
@@ -714,86 +690,39 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
         int conquers = ConquerManager.getSingleton().getConquerCount();
         int percGrey = (int) Math.rint(100.0 * (double) conquerStats[0] / (double) conquers);
         int percFriendly = (int) Math.rint(100.0 * (double) conquerStats[1] / (double) conquers);
+        int percSelf = (int) Math.rint(100.0 * (double) conquerStats[2] / (double) conquers);
 
         jGreyConquersLabel.setText("<html><b>Grau-Adelungen:</b> " + conquerStats[0] + " von " + conquers + " (" + percGrey + "%)" + "</html>");
         jFriendlyConquersLabel.setText("<html><b>Aufadelungen:</b> " + conquerStats[1] + " von " + conquers + " (" + percFriendly + "%)" + "</html>");
+        jSelfConquersLabel.setText("<html><b>Selbstadelungen:</b> " + conquerStats[2] + " von " + conquers + " (" + percSelf + "%)" + "</html>");
         ((ConquerTableModel) jConquersTable.getModel()).fireTableDataChanged();
     }
 }
 
-class ColumnEqualsPredicate implements HighlightPredicate {
-
-    public static final int ALL = -1;
-    private int highlightColumn;
-    private int[] testColumn;
-    private Pattern pattern;
-
-    /**
-     * Instantiates a Predicate with the given Pattern and testColumn index (in model coordinates) highlighting all columns. A column index
-     * of -1 is interpreted as "all".
-     *
-     * @param testColumn the column index in model coordinates of the cell which contains the value to test against the pattern
-     */
-    public ColumnEqualsPredicate(int... testColumn) {
-        this.testColumn = testColumn;
+class ConquerPredicate implements HighlightPredicate {
+    public enum PType {
+        BARBARIAN, ALLY, OWN
     }
 
-    /**
-     *
-     * @inherited <p>
-     *
-     * Implemented to return true if the match of cell content's String representation against the Pattern if found and the adapter's view
-     * column maps to the decorateColumn/s. Otherwise returns false.
-     *
-     */
+    private final PType type;
+    
+    public ConquerPredicate(PType t) {
+        this.type = t;
+    }
+    
     @Override
     public boolean isHighlighted(Component renderer, ComponentAdapter adapter) {
-        return isHighlightCandidate(adapter) && test(adapter);
-    }
-
-    /**
-     * Test the value. This is called only if the pre-check returned true, because accessing the value might be potentially costly
-     *
-     * @param adapter
-     * @return
-     */
-    private boolean test(ComponentAdapter adapter) {
-        // test all
-        Object value = null;
-        for (int aTestColumn : testColumn) {
-            if (value == null) {
-                value = adapter.getValue(aTestColumn);
-            } else if (!value.equals(adapter.getValue(aTestColumn))) {
-                return false;
-            }
+        switch(type) {
+            case BARBARIAN:
+                return adapter.getValue(4).equals(Barbarians.getSingleton());
+            case ALLY:
+                //Ally same, but tribes not
+                return adapter.getValue(5).equals(adapter.getValue(7))
+                        && !adapter.getValue(4).equals(adapter.getValue(6));
+            case OWN:
+                //Tribes are the same
+                return adapter.getValue(4).equals(adapter.getValue(6));
         }
-        return true;
-    }
-
-    /**
-     * A quick pre-check.
-     *
-     * @param adapter
-     *
-     * @return
-     */
-    private boolean isHighlightCandidate(ComponentAdapter adapter) {
-        return true;
-    }
-
-    /**
-     *
-     * @return returns the column index to decorate (in model coordinates)
-     */
-    public int getHighlightColumn() {
-        return highlightColumn;
-    }
-
-    /**
-     *
-     * @return returns the Pattern to test the cell value against
-     */
-    public Pattern getPattern() {
-        return pattern;
+        return false;
     }
 }

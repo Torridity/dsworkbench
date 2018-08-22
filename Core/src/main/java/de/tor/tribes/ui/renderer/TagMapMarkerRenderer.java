@@ -32,8 +32,6 @@ import org.jdesktop.swingx.renderer.DefaultTableRenderer;
  * @author Torridity
  */
 public class TagMapMarkerRenderer extends DefaultTableRenderer {
-
-    // private DefaultTableCellRenderer renderer = new DefaultTableCellRenderer();
     final private ImageIcon no_tag = new ImageIcon(TagMapMarkerEditorImpl.class.getResource("/res/remove.gif"));
 
     @Override
@@ -59,7 +57,7 @@ public class TagMapMarkerRenderer extends DefaultTableRenderer {
         ((JLabel) c).setText("");
         ((JLabel) c).setHorizontalAlignment(SwingConstants.CENTER);
         if (tagMarker.getTagIcon() >= 0) {
-            ((JLabel) c).setIcon(new ImageIcon(ImageManager.getNoteSymbol(tagMarker.getTagIcon())));//ImageManager.getUnitIcon(tagMarker.getTagIcon(), false));
+            ((JLabel) c).setIcon(new ImageIcon(ImageManager.getNoteSymbol(tagMarker.getTagIcon())));
         } else {
             ((JLabel) c).setIcon(no_tag);
         }

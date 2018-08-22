@@ -15,21 +15,21 @@
  */
 package de.tor.tribes.types;
 
-import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.ImageManager;
 import de.tor.tribes.util.BBSupport;
 import de.tor.tribes.util.StringHelper;
 import de.tor.tribes.util.bb.VillageListFormatter;
-import org.jdom.Element;
-import de.tor.tribes.util.xml.JaxenUtils;
+import de.tor.tribes.util.xml.JDomUtils;
 import java.awt.Color;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+import org.jdom2.Element;
 
 /**
  *
@@ -37,14 +37,6 @@ import java.util.List;
  */
 public class Tag extends ManageableType implements Comparable<Tag>, BBSupport {
 
-    /**<tags>
-     * <tag name="TagName" shownOnMap="true">
-     * <village>4711</village>
-     * <village>4712</village>
-     * </tag>
-     * </tags>
-     * 
-     */
     public static final Comparator<Tag> CASE_INSENSITIVE_ORDER = new CaseInsensitiveTagComparator();
     public static final Comparator<Tag> SIZE_ORDER = new SizeComparator();
     private final static String[] VARIABLES = new String[]{"%NAME%", "%VILLAGE_LIST%", "%VILLAGE_COUNT%", "%COLOR%", "%ICON%"};
@@ -125,7 +117,7 @@ public class Tag extends ManageableType implements Comparable<Tag>, BBSupport {
                 setTagIcon(-1);
             }
 
-            for (Element e : (List<Element>) JaxenUtils.getNodes(pElement, "villages/village")) {
+            for (Element e : (List<Element>) JDomUtils.getNodes(pElement, "villages/village")) {
                 tagVillage(Integer.parseInt(e.getValue()));
             }
         } catch (Exception ignored) {
@@ -224,25 +216,30 @@ public class Tag extends ManageableType implements Comparable<Tag>, BBSupport {
      * @return String String that contains the XML representation
      */
     @Override
-    public String toXml() {
+    public Element toXml(String elementName) {
+        Element tag = new Element(elementName);
         try {
-            String ret = "<tag shownOnMap=\"" + showOnMap + "\">\n";
-            ret += "<name><![CDATA[" + URLEncoder.encode(sName, "UTF-8") + "]]></name>\n";
+            tag.setAttribute("shownOnMap", Boolean.toString(showOnMap));
+            
+            tag.addContent(new Element("name").setText(URLEncoder.encode(sName, "UTF-8")));
+            
             Color c = getTagColor();
             if (c != null) {
-                ret += "<color r=\"" + c.getRed() + "\" g=\"" + c.getGreen() + "\" b=\"" + c.getBlue() + "\"/>\n";
+                Element color = new Element("color");
+                color.setAttribute("r", Integer.toString(c.getRed()));
+                color.setAttribute("g", Integer.toString(c.getGreen()));
+                color.setAttribute("b", Integer.toString(c.getBlue()));
+                tag.addContent(color);
             }
-            ret += "<icon>" + getTagIcon() + "</icon>\n";
-            ret += "<villages>\n";
+            tag.addContent(new Element("icon").setText(Integer.toString(getTagIcon())));
+            Element villages = new Element("villages");
             for (Integer i : mVillageIDs) {
-                ret += "<village>" + i + "</village>\n";
+                villages.addContent(new Element("village").setText(Integer.toString(i)));
             }
-            ret += "</villages>\n";
-            ret += "</tag>\n";
-            return ret;
-        } catch (Exception e) {
-            return "\n";
+            tag.addContent(villages);
+        } catch (Exception ignored) {
         }
+        return tag;
     }
 
     /**Get the color of the associated TagMapMarker
@@ -278,21 +275,6 @@ public class Tag extends ManageableType implements Comparable<Tag>, BBSupport {
      */
     public final void setMapMarker(TagMapMarker mapMarker) {
         this.mapMarker = mapMarker;
-    }
-
-    @Override
-    public String getElementIdentifier() {
-        return "tag";
-    }
-
-    @Override
-    public String getElementGroupIdentifier() {
-        return "tags";
-    }
-
-    @Override
-    public String getGroupNameAttributeIdentifier() {
-        return "";
     }
 
     private static class CaseInsensitiveTagComparator implements Comparator<Tag>, java.io.Serializable {

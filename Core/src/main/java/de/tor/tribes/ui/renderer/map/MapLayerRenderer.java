@@ -16,12 +16,12 @@
 package de.tor.tribes.ui.renderer.map;
 
 import de.tor.tribes.io.WorldDecorationHolder;
+import de.tor.tribes.types.Marker;
 import de.tor.tribes.types.ext.BarbarianAlly;
 import de.tor.tribes.types.ext.Barbarians;
-import de.tor.tribes.types.Marker;
 import de.tor.tribes.types.ext.Village;
-import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
 import de.tor.tribes.ui.panels.MapPanel;
+import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ImageUtils;

@@ -24,8 +24,6 @@ import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.GenericParserInterface;
 import de.tor.tribes.util.ServerSettings;
-import org.apache.log4j.Logger;
-
 import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
@@ -33,15 +31,16 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
 import java.util.regex.Pattern;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  *
  * @author Torridity
  */
 public class SOSParser implements GenericParserInterface<SOSRequest> {
-
-    private boolean debug = true;
-    private static Logger logger = Logger.getLogger("SOSParser");
+    private static Logger logger = LogManager.getLogger("SOSParser");
     /*
      * [b]Verteidiger[/b] Name: [player]Rattenfutter[/player] Stamm: [ally][KdS][/ally] Punkte: 1887516
      *
@@ -63,36 +62,34 @@ public class SOSParser implements GenericParserInterface<SOSRequest> {
      * Ankunftszeit: 23.03.12 18:44:15:931
      */
 
+    @Override
     public List<SOSRequest> parse(String pData) {
         print("Start parsing SOS request");
         List<SOSRequest> requests = new LinkedList<>();
         try {
-            Hashtable<Tribe, SOSRequest> parsedData = parseRequests(pData);
+            HashMap<Tribe, SOSRequest> parsedData = parseRequests(pData);
             if (parsedData.isEmpty()) {
                 print("Check short version");
                 parsedData = parseRequestsShort(pData);
             } else {
                 print("Got results for long version");
             }
-            Enumeration<Tribe> keys = parsedData.keys();
-            while (keys.hasMoreElements()) {
-                requests.add(parsedData.get(keys.nextElement()));
-            }
+            CollectionUtils.addAll(requests, parsedData.values());
         } catch (Exception ignored) {
         }
         return requests;
     }
 
-    private Hashtable<Tribe, SOSRequest> parseRequests(String pData) {
+    private HashMap<Tribe, SOSRequest> parseRequests(String pData) {
         String[] lines = pData.split("\n");
-        Hashtable<Tribe, SOSRequest> requests = new Hashtable<>();
+        HashMap<Tribe, SOSRequest> requests = new HashMap<>();
         SOSRequest currentRequest = null;
         boolean waitForTarget = false;
         boolean waitForTroops = false;
         Village source = null;
         Village target = null;
 
-        SimpleDateFormat dateFormat = null;
+        SimpleDateFormat dateFormat;
         boolean useMillis = ServerSettings.getSingleton().isMillisArrival();
         if (!useMillis) {
             dateFormat = new SimpleDateFormat(getVariable("sos.date.format"));
@@ -218,9 +215,9 @@ public class SOSParser implements GenericParserInterface<SOSRequest> {
      * Ramm, 42 The White Knigth 04 (448|894) , K84 Just4Testing (448|894) K55 --> Ankunftszeit: 25.08.11 14:46:51:846 Torridity
      *
      */
-    private Hashtable<Tribe, SOSRequest> parseRequestsShort(String pData) {
+    private HashMap<Tribe, SOSRequest> parseRequestsShort(String pData) {
         String[] lines = pData.split("\n");
-        Hashtable<Tribe, SOSRequest> requests = new Hashtable<>();
+        HashMap<Tribe, SOSRequest> requests = new HashMap<>();
         Village destination = null;
         SOSRequest request = null;
         SimpleDateFormat dateFormat = null;
@@ -416,8 +413,8 @@ public class SOSParser implements GenericParserInterface<SOSRequest> {
          */
     }
 
-    public Hashtable<Tribe, SOSRequest> attacksToSOSRequests(List<Attack> pAttacks) {
-        Hashtable<Tribe, SOSRequest> requests = new Hashtable<>();
+    public HashMap<Tribe, SOSRequest> attacksToSOSRequests(List<Attack> pAttacks) {
+        HashMap<Tribe, SOSRequest> requests = new HashMap<>();
 
         for (Attack attack : pAttacks) {
             Tribe defender = attack.getTarget().getTribe();

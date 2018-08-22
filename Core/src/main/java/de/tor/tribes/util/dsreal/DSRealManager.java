@@ -25,14 +25,16 @@ import java.io.File;
 import java.net.URL;
 import java.net.URLConnection;
 import javax.imageio.ImageIO;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 /**
  * @author Charon
  */
 public class DSRealManager {
 
-    private static Logger logger = Logger.getLogger("DSRealManager");
+    private static Logger logger = LogManager.getLogger("DSRealManager");
     private static DSRealManager SINGLETON = null;
     boolean isError = false;
     private static final String CHART_PATH = "dsreal";

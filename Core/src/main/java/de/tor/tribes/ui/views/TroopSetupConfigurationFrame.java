@@ -16,7 +16,6 @@
 package de.tor.tribes.ui.views;
 
 import de.tor.tribes.control.GenericManagerListener;
-import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.TroopAmountElement;
 import de.tor.tribes.types.StandardAttack;
 import de.tor.tribes.ui.ImageManager;
@@ -30,7 +29,6 @@ import de.tor.tribes.ui.renderer.UnitTableHeaderRenderer;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.JOptionPaneHelper;
-import de.tor.tribes.util.ProfileManager;
 import de.tor.tribes.util.attack.StandardAttackManager;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -40,8 +38,6 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.Logger;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
 
 /**
@@ -332,49 +328,7 @@ public class TroopSetupConfigurationFrame extends javax.swing.JDialog implements
                     + ((delta > 0) ? ("\n" + delta + " Eintrag/Einträge können nicht gelöscht werden.") : ""), "Information");
         }
     }
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /*
-         * Set the Nimbus look and feel
-         */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /*
-         * If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel. For details see
-         * http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException | javax.swing.UnsupportedLookAndFeelException | IllegalAccessException | InstantiationException ex) {
-            java.util.logging.Logger.getLogger(TroopSetupConfigurationFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-        
-        /*
-         * Create and display the form
-         */
-        
-        Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
-        GlobalOptions.setSelectedServer("de77");
-        ProfileManager.getSingleton().loadProfiles();
-        GlobalOptions.setSelectedProfile(ProfileManager.getSingleton().getProfiles("de77")[0]);
-        DataHolder.getSingleton().loadData(false);
-        GlobalOptions.loadUserData();
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            
-            public void run() {
-                TroopSetupConfigurationFrame.getSingleton().setup();
-                TroopSetupConfigurationFrame.getSingleton().setVisible(true);
-            }
-        });
-    }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private de.tor.tribes.ui.components.CapabilityInfoPanel capabilityInfoPanel1;
     private javax.swing.JButton jAddTypeButton;

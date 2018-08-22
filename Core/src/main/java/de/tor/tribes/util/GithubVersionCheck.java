@@ -15,25 +15,24 @@
  */
 package de.tor.tribes.util;
 
-import de.tor.tribes.php.json.JSONArray;
-import de.tor.tribes.php.json.JSONException;
-import de.tor.tribes.php.json.JSONObject;
 import de.tor.tribes.ui.views.DSWorkbenchSettingsDialog;
-import org.apache.log4j.Logger;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  *
  * @author Torridity
  */
 public final class GithubVersionCheck {
-
-    private static Logger LOGGER = Logger.getLogger("GithubVersionCheck");
+    private static final Logger LOGGER = LogManager.getLogger("GithubVersionCheck");
 
     private static final String API_URL = "https://api.github.com/repos/torridity/dsworkbench/releases/latest";
 
@@ -120,9 +119,4 @@ public final class GithubVersionCheck {
             return UpdateInfo.factoryUpdateCheckFailedInfo();
         }
     }
-
-    public static void main(String[] args) {
-        GithubVersionCheck.getUpdateInformation();
-    }
-
 }

@@ -27,7 +27,7 @@ import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.util.Date;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -42,8 +42,8 @@ public class NonPAPlaceParser implements SilentParserInterface {
         Village v = null;
         TroopAmountFixed ownTroops = null;
         TroopAmountFixed troopsInVillage = new TroopAmountFixed(0);
-        Hashtable<Village, TroopAmountFixed> supportsToThis = new Hashtable<>();
-        Hashtable<Village, TroopAmountFixed> supportsFromThis = new Hashtable<>();
+        HashMap<Village, TroopAmountFixed> supportsToThis = new HashMap<>();
+        HashMap<Village, TroopAmountFixed> supportsFromThis = new HashMap<>();
         while (lineTok.hasMoreElements()) {
             String currentLine = lineTok.nextToken();
             //walk through all lines
@@ -141,7 +141,7 @@ public class NonPAPlaceParser implements SilentParserInterface {
 
             //set supports
 /*              Enumeration<Village> supportsToThisKeys = supportsToThis.keys();
-            Hashtable<UnitHolder, Integer> troopsOutside = holder.getTroopsOutside();
+            HashMap<UnitHolder, Integer> troopsOutside = holder.getTroopsOutside();
             if (troopsOutside.isEmpty()) {
                 for (UnitHolder u : DataHolder.getSingleton().getUnits()) {
                     troopsOutside.put(u, 0);
@@ -165,8 +165,8 @@ public class NonPAPlaceParser implements SilentParserInterface {
                 if (holder2.addSupportTarget(v)) {
                     //add support only if support not already in
                     //correct outside troops for supporting village
-                    Hashtable<UnitHolder, Integer> supportTroops = supportsToThis.get(supporter);
-                    Hashtable<UnitHolder, Integer> troops2Outside = holder2.getTroopsOutside();
+                    HashMap<UnitHolder, Integer> supportTroops = supportsToThis.get(supporter);
+                    HashMap<UnitHolder, Integer> troops2Outside = holder2.getTroopsOutside();
                     for (UnitHolder u : DataHolder.getSingleton().getUnits()) {
                         troops2Outside.put(u, troops2Outside.get(u) + supportTroops.get(u));
                     }
@@ -193,7 +193,7 @@ public class NonPAPlaceParser implements SilentParserInterface {
                         holder2 = TroopsManager.getSingleton().getTroopsForVillage(supported);
                     }
                     //get support units for supported village
-                    Hashtable<UnitHolder, Integer> supportTroops = supportsFromThis.get(supported);
+                    HashMap<UnitHolder, Integer> supportTroops = supportsFromThis.get(supported);
                     //add support from current village 'v' to supported village
                     holder2.addSupport(v, supportTroops);
                     //correct troops outside for current village 'v'

@@ -27,19 +27,19 @@ import de.tor.tribes.util.GlobalOptions;
 import java.awt.Desktop;
 import java.awt.event.ItemEvent;
 import java.util.Arrays;
-import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-import org.apache.log4j.Logger;
 
 /**
  * @author Torridity
  */
 public class DSWorkbenchSearchFrame extends javax.swing.JFrame implements SearchListener {
     
-    private static Logger logger = Logger.getLogger("Search");
+    private static Logger logger = LogManager.getLogger("Search");
     private String sLastPlayerValue = null;
     private SearchThread mSearchThread = null;
     private static DSWorkbenchSearchFrame SINGLETON = null;
@@ -447,15 +447,6 @@ private void fireSearchFrameAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) 
     setAlwaysOnTop(!isAlwaysOnTop());
 }//GEN-LAST:event_fireSearchFrameAlwaysOnTopEvent
     
-    public static void main(String[] args) {
-        try {
-            //  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-        } catch (Exception ignored) {
-        }
-        DSWorkbenchSearchFrame.getSingleton().setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        DSWorkbenchSearchFrame.getSingleton().setVisible(true);
-    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JLabel jAlliesLabel;
@@ -547,9 +538,7 @@ class SearchThread extends Thread {
                 if (sSearchTerm.length() >= 1) {
                     List<Tribe> tribeList = new LinkedList<>();
                     List<Ally> allyList = new LinkedList<>();
-                    Enumeration<Integer> tribes = DataHolder.getSingleton().getTribes().keys();
-                    while (tribes.hasMoreElements()) {
-                        Tribe t = DataHolder.getSingleton().getTribes().get(tribes.nextElement());
+                    for(Tribe t: DataHolder.getSingleton().getTribes().values()) {
                         if (t.getName().toLowerCase().contains(sSearchTerm.toLowerCase())) {
                             if (!tribeList.contains(t)) {
                                 tribeList.add(t);

@@ -15,8 +15,8 @@
  */
 package de.tor.tribes.types;
 
-import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
 import de.tor.tribes.util.ProfileManager;
 import java.io.File;
@@ -25,7 +25,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 /**
  *
@@ -33,7 +35,7 @@ import org.apache.log4j.Logger;
  */
 public class UserProfile {
 
-    private static Logger logger = Logger.getLogger("UserProfile");
+    private static Logger logger = LogManager.getLogger("UserProfile");
     private static final int NO_UV = -1;
     private long iProfileId = -1;
     private String sServerId = null;

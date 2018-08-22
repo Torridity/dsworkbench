@@ -16,25 +16,24 @@
 package de.tor.tribes.ui.panels;
 
 import de.tor.tribes.io.DataHolder;
-import de.tor.tribes.io.ServerManager;
 import de.tor.tribes.types.ext.Ally;
-import de.tor.tribes.types.ext.InvalidTribe;
 import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.*;
 import de.tor.tribes.util.interfaces.BBChangeListener;
-import net.java.dev.colorchooser.ColorChooser;
-import org.apache.log4j.Logger;
-
-import javax.swing.*;
-import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
-import javax.swing.text.BadLocationException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.regex.Matcher;
+import javax.swing.*;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
+import javax.swing.text.BadLocationException;
+import net.java.dev.colorchooser.ColorChooser;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 /**
  *
@@ -42,7 +41,7 @@ import java.util.regex.Matcher;
  */
 public class BBPanel extends javax.swing.JPanel {
 
-    private static Logger logger = Logger.getLogger("BBPanel");
+    private static Logger logger = LogManager.getLogger("BBPanel");
     private String buffer = "";
     private ColorChooser colorChooser = null;
     private BBChangeListener changeListener = null;

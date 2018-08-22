@@ -22,7 +22,7 @@ import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.SystrayHelper;
-import de.tor.tribes.util.xml.JaxenUtils;
+import de.tor.tribes.util.xml.JDomUtils;
 import java.applet.Applet;
 import java.applet.AudioClip;
 import java.awt.BorderLayout;
@@ -31,8 +31,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -43,17 +41,18 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.swing.*;
 import javax.swing.JSpinner.DateEditor;
-import org.apache.commons.lang.time.DateUtils;
-import org.apache.log4j.Logger;
-import org.jdom.Document;
-import org.jdom.Element;
+import org.apache.commons.lang3.time.DateUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jdom2.Document;
+import org.jdom2.Element;
 
 /**
  * @author Torridity
  */
 public class ClockFrame extends javax.swing.JFrame implements ActionListener {
 
-    private static Logger logger = Logger.getLogger("ClockFrame");
+    private static Logger logger = LogManager.getLogger("ClockFrame");
 
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -189,18 +188,13 @@ public class ClockFrame extends javax.swing.JFrame implements ActionListener {
     }
 
     private void storeTimers() {
-        try {
-            FileWriter w = new FileWriter("timers.xml");
-            w.write("<timers\n>");
-            for (TimerPanel p : timers) {
-                w.write(p.toXml());
-            }
-            w.write("</timers>");
-            w.flush();
-            w.close();
-        } catch (IOException ioe) {
-            logger.error("Failed to store timers", ioe);
+        Document timerDoc = JDomUtils.createDocument();
+        Element timersElm = new Element("timers");
+        for (TimerPanel p : timers) {
+            timersElm.addContent(p.toXml("timer"));
         }
+        timerDoc.getRootElement().addContent(timersElm);
+        JDomUtils.saveDocument(timerDoc, "timers.xml");
     }
 
     private void restoreTimers() {
@@ -209,8 +203,8 @@ public class ClockFrame extends javax.swing.JFrame implements ActionListener {
             if (timerFile.exists()) {
                 String message = "Die folgenden Timer sind zwischenzeitlich abgelaufen:\n";
                 long l = message.length();
-                Document d = JaxenUtils.getDocument(timerFile);
-                for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//timers/timer")) {
+                Document d = JDomUtils.getDocument(timerFile);
+                for (Element e : (List<Element>) JDomUtils.getNodes(d, "timers/timer")) {
                     TimerPanel p = new TimerPanel(this);
                     if (p.fromXml(e)) {
                         if (!p.isExpired()) {
@@ -237,7 +231,7 @@ public class ClockFrame extends javax.swing.JFrame implements ActionListener {
         Clip clip = null;
         AudioClip ac = null;
         try {
-            if (org.apache.commons.lang.SystemUtils.IS_OS_WINDOWS) {
+            if (org.apache.commons.lang3.SystemUtils.IS_OS_WINDOWS) {
                 clip = AudioSystem.getClip();
                 BufferedInputStream bin = new BufferedInputStream(ClockFrame.class.getResourceAsStream("/res/" + pSound + ".wav"));
                 AudioInputStream inputStream = AudioSystem.getAudioInputStream(bin);
@@ -550,6 +544,7 @@ private void fireTestSoundEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:even
     public static void main(String args[]) {
 
         java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 ClockFrame cf = new ClockFrame();
                 cf.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);

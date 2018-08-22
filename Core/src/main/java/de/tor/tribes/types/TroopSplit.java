@@ -21,14 +21,16 @@ import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 /**
  *
  * @author Torridity
  */
 public class TroopSplit {
-    private static final Logger logger = Logger.getLogger("TroopSplit");
+    private static final Logger logger = LogManager.getLogger("TroopSplit");
 
     private Village mVillage = null;
     private int iSplitCount = 1;

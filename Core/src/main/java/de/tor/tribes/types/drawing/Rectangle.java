@@ -19,14 +19,12 @@ import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.panels.MapPanel;
 import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
 import de.tor.tribes.util.bb.VillageListFormatter;
-import org.jdom.Element;
-
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
-import java.net.URLDecoder;
 import java.util.List;
+import org.jdom2.Element;
 
 /**
  *
@@ -43,17 +41,10 @@ public class Rectangle extends AbstractForm {
     private Color drawColor = Color.WHITE;
     private float drawAlpha = 1.0f;
 
-    public void loadFromXml(Element e) {
+    @Override
+    public void formFromXml(Element e) {
         try {
-            Element elem = e.getChild("name");
-            setFormName(URLDecoder.decode(elem.getTextTrim(), "UTF-8"));
-            elem = e.getChild("pos");
-            setXPos(Double.parseDouble(elem.getAttributeValue("x")));
-            setYPos(Double.parseDouble(elem.getAttributeValue("y")));
-            elem = e.getChild("textColor");
-            setTextColor(new Color(Integer.parseInt(elem.getAttributeValue("r")), Integer.parseInt(elem.getAttributeValue("g")), Integer.parseInt(elem.getAttributeValue("b"))));
-            setTextAlpha(Float.parseFloat(elem.getAttributeValue("a")));
-            elem = e.getChild("drawColor");
+            Element elem = e.getChild("drawColor");
             this.drawColor = new Color(Integer.parseInt(elem.getAttributeValue("r")), Integer.parseInt(elem.getAttributeValue("g")), Integer.parseInt(elem.getAttributeValue("b")));
             this.drawAlpha = Float.parseFloat(elem.getAttributeValue("a"));
             elem = e.getChild("stroke");
@@ -63,14 +54,38 @@ public class Rectangle extends AbstractForm {
             this.yPosEnd = Double.parseDouble(elem.getAttributeValue("y"));
             elem = e.getChild("filled");
             this.filled = Boolean.parseBoolean(elem.getTextTrim());
-            elem = e.getChild("textSize");
-            setTextSize(Integer.parseInt(elem.getTextTrim()));
             elem = e.getChild("drawName");
             this.drawName = Boolean.parseBoolean(elem.getTextTrim());
         } catch (Exception ignored) {
         }
     }
 
+    @Override
+    protected Element formToXml(String elementName) {
+        Element arrow = new Element(elementName);
+        try {
+            arrow.addContent(new Element("filled").setText(Boolean.toString(filled)));
+            arrow.addContent(new Element("stroke").setAttribute("width", Float.toString(strokeWidth)));
+            arrow.addContent(new Element("drawName").setText(Boolean.toString(drawName)));
+            arrow.addContent(new Element("rounding").setText(Integer.toString(rounding)));
+            
+            Element elm = new Element("end");
+            elm.setAttribute("x", Double.toString(xPosEnd));
+            elm.setAttribute("y", Double.toString(yPosEnd));
+            arrow.addContent(elm);
+            
+            elm = new Element("drawColor");
+            elm.setAttribute("r", Integer.toString(drawColor.getRed()));
+            elm.setAttribute("g", Integer.toString(drawColor.getGreen()));
+            elm.setAttribute("b", Integer.toString(drawColor.getBlue()));
+            elm.setAttribute("a", Float.toString(drawAlpha));
+            arrow.addContent(elm);
+        } catch (Exception ignored) {
+        }
+        return arrow;
+    }
+
+    @Override
     public boolean allowsBBExport() {
         return true;
     }
@@ -215,17 +230,6 @@ public class Rectangle extends AbstractForm {
         int w = (int) Math.round(Math.abs(s.x - e.x));
         int h = (int) Math.round(Math.abs(s.y - e.y));
         return new java.awt.Rectangle(x, y, w, h);
-    }
-
-    @Override
-    protected String getFormXml() {
-        String xml = "<end x=\"" + xPosEnd + "\" y=\"" + yPosEnd + "\"/>\n";
-        xml += "<drawColor r=\"" + drawColor.getRed() + "\" g=\"" + drawColor.getGreen() + "\" b=\"" + drawColor.getBlue() + "\" a=\"" + drawAlpha + "\"/>\n";
-        xml += "<rounding>" + rounding + "</rounding>\n";
-        xml += "<filled>" + filled + "</filled>\n";
-        xml += "<stroke width=\"" + strokeWidth + "\"/>\n";
-        xml += "<drawName>" + drawName + "</drawName>\n";
-        return xml;
     }
 
     @Override

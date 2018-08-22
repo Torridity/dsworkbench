@@ -17,8 +17,6 @@ package de.tor.tribes.io;
 
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ImageUtils;
-import org.apache.log4j.Logger;
-
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -28,6 +26,9 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 /**
  *
@@ -35,7 +36,7 @@ import java.util.zip.GZIPInputStream;
  */
 public class WorldDecorationHolder {
 
-  private static Logger logger = Logger.getLogger("WorldDecorationManager");
+  private static Logger logger = LogManager.getLogger("WorldDecorationManager");
   private static byte[] decoration = new byte[1000000];
   private static List<BufferedImage> mTextures = null;
   private static HashMap<Integer, HashMap<Double, BufferedImage>> cache = new HashMap<>();

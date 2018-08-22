@@ -22,7 +22,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
@@ -30,7 +30,9 @@ import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 /**
  *
@@ -38,11 +40,11 @@ import org.apache.log4j.Logger;
  */
 public class AttackToTextWriter {
 
-    private static Logger logger = Logger.getLogger("AttackToTextWriter");
+    private static Logger logger = LogManager.getLogger("AttackToTextWriter");
 
     public static boolean writeAttacks(Attack[] pAttacks, File pPath, int pAttacksPerFile, boolean pExtendedInfo, boolean pZipResults) {
 
-        Hashtable<Tribe, List<Attack>> attacks = new Hashtable<>();
+        HashMap<Tribe, List<Attack>> attacks = new HashMap<>();
 
         for (Attack a : pAttacks) {
             Tribe t = a.getSource().getTribe();

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="TRACE">
+  <Appenders>
+    <RollingFile
+      name="MAINFILE"
+      fileName="log/dsworkbench.log"
+      filePattern="log/dsworkbench.%i.log.gz"
+      ignoreExceptions="false">
+      <PatternLayout pattern="%d - %-5p [%t] - (%C [%L]) - %m%n"/>
+      <Policies>
+        <OnStartupTriggeringPolicy />
+        <SizeBasedTriggeringPolicy size="50 MB" />
+      </Policies>
+      <DefaultRolloverStrategy>
+        <Delete basePath="${baseDir}" maxDepth="1">
+          <IfFileName glob="log/dsworkbench.*.log.gz" />
+          <IfLastModified age="7d" />
+        </Delete>
+      </DefaultRolloverStrategy>
+    </RollingFile>
+    <Console name="STDOUT" target="SYSTEM_OUT">
+      <PatternLayout pattern="%d - %-5p [%t] - (%C [%L]) - %m%n"/>
+    </Console>
+  </Appenders>
+  <Loggers>
+    <Root level="trace">
+      <AppenderRef ref="STDOUT"/>
+      <AppenderRef ref="MAINFILE"/>
+    </Root>
+  </Loggers>
+</Configuration>

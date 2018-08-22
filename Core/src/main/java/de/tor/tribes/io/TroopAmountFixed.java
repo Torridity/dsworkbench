@@ -23,9 +23,9 @@ import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import org.apache.log4j.Logger;
-import org.jdom.Attribute;
-import org.jdom.Element;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jdom2.Element;
 
 /**
  * This Class holds a fixed troop split
@@ -33,23 +33,8 @@ import org.jdom.Element;
  * @author extremeCrazyCoder
  */
 public class TroopAmountFixed extends TroopAmount {
-    private static Logger logger = Logger.getLogger("TroopAmount");
+    private static Logger logger = LogManager.getLogger("TroopAmount");
     HashMap<UnitHolder, Integer> amounts;
-
-    @Override
-    public String getElementIdentifier() {
-        return "trpAmountFix";
-    }
-
-    @Override
-    public String getElementGroupIdentifier() {
-        return "trpAmountFix";
-    }
-
-    @Override
-    public String getGroupNameAttributeIdentifier() {
-        return "";
-    }
     
     public TroopAmountFixed() {
         this(-1);
@@ -105,8 +90,7 @@ public class TroopAmountFixed extends TroopAmount {
         //load from xml (saved as attributes)
         for(UnitHolder unit: DataHolder.getSingleton().getUnits()) {
             try {
-                Attribute attrib = pElement.getAttribute(unit.getPlainName());
-                amounts.put(unit, attrib.getIntValue());
+                amounts.put(unit, pElement.getAttribute(unit.getPlainName()).getIntValue());
             } catch (Exception ignored) {
                 amounts.put(unit, -1);
             }
@@ -119,24 +103,16 @@ public class TroopAmountFixed extends TroopAmount {
      * @return the converted xml
      */
     @Override
-    public String toXml() {
-        StringBuilder xml = new StringBuilder();
-        boolean first = true;
+    public Element toXml(String elementName) {
+        Element amount = new Element(elementName);
+        
         for(UnitHolder unit: DataHolder.getSingleton().getUnits()) {
             int elm = getAmountForUnit(unit);
             if(elm >= 0) {
-                //Information stored in sub element
-                if(!first)
-                    xml.append(" ");
-                else
-                    first = false;
-
-                xml.append(unit.getPlainName()).append("=\"");
-                //base 64 encode to ensure everything can be saved
-                xml.append(elm).append("\"");
+                amount.setAttribute(unit.getPlainName(), Integer.toString(elm));
             }
         }
-        return xml.toString();
+        return amount;
     }
 
     public TroopAmountFixed loadFromProperty(String pProperty) {

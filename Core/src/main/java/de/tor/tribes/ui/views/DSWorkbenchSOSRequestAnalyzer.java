@@ -25,18 +25,17 @@ import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.components.ClickAccountPanel;
 import de.tor.tribes.ui.components.ProfileQuickChangePanel;
-import de.tor.tribes.ui.windows.AbstractDSWorkbenchFrame;
-import de.tor.tribes.ui.panels.GenericTestPanel;
 import de.tor.tribes.ui.models.DefenseToolModel;
 import de.tor.tribes.ui.models.SupportsModel;
+import de.tor.tribes.ui.panels.GenericTestPanel;
 import de.tor.tribes.ui.renderer.*;
+import de.tor.tribes.ui.windows.AbstractDSWorkbenchFrame;
 import de.tor.tribes.ui.windows.VillageSupportFrame;
 import de.tor.tribes.ui.wiz.dep.DefenseAnalysePanel;
 import de.tor.tribes.ui.wiz.ret.RetimerDataPanel;
 import de.tor.tribes.ui.wiz.tap.TacticsPlanerWizard;
 import de.tor.tribes.util.*;
 import de.tor.tribes.util.bb.SosListFormatter;
-import de.tor.tribes.util.generator.ui.SOSGenerator;
 import de.tor.tribes.util.sos.SOSManager;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -57,11 +56,11 @@ import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import javax.swing.*;
-
-import org.apache.commons.configuration.Configuration;
-import org.apache.commons.lang.time.DateUtils;
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.Logger;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.configuration2.Configuration;
+import org.apache.commons.lang3.time.DateUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jdesktop.swingx.JXButton;
 import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
@@ -83,7 +82,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
             removeSelection();
         }
     }
-    private static Logger logger = Logger.getLogger("SOSRequestAnalyzer");
+    private static Logger logger = LogManager.getLogger("SOSRequestAnalyzer");
     private static DSWorkbenchSOSRequestAnalyzer SINGLETON = null;
     private GenericTestPanel centerPanel = null;
     private DefenseAnalyzer a = null;
@@ -146,7 +145,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
         jSupportsTable.setHighlighters(HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B));
         jSupportsTable.getTableHeader().setDefaultRenderer(new DefaultTableHeaderRenderer());
         jSupportsTable.setDefaultRenderer(Date.class, new ColoredDateCellRenderer());
-        jSupportsTable.setDefaultRenderer(Boolean.class, new SentNotSentCellRenderer());
+        jSupportsTable.setDefaultRenderer(Boolean.class, new CustomBooleanRenderer(CustomBooleanRenderer.LayoutStyle.SENT_NOTSENT));
 
         new SupportCountdownThread().start();
         new SupportColorUpdateThread().start();
@@ -510,7 +509,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
     }
 
     private void copySelectionToClipboardAsBBCode() {
-        Hashtable<Tribe, SOSRequest> selectedRequests = new Hashtable<>();
+        HashMap<Tribe, SOSRequest> selectedRequests = new HashMap<>();
         List<DefenseInformation> selection = getSelectedRows();
         if (selection.isEmpty()) {
             showInfo("Keine SOS Anfragen eingelesen");
@@ -539,11 +538,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
             }
 
             List<SOSRequest> requests = new LinkedList<>();
-
-            Enumeration<Tribe> tribeKeys = selectedRequests.keys();
-            while (tribeKeys.hasMoreElements()) {
-                requests.add(selectedRequests.get(tribeKeys.nextElement()));
-            }
+            CollectionUtils.addAll(requests, selectedRequests.values());
             buffer.append(new SosListFormatter().formatElements(requests,
                     extended));
 
@@ -803,9 +798,7 @@ private void fireAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRS
         model.clear();
         for (ManageableType t : SOSManager.getSingleton().getAllElements()) {
             SOSRequest r = (SOSRequest) t;
-            Enumeration<Village> targets = r.getTargets();
-            while (targets.hasMoreElements()) {
-                Village target = targets.nextElement();
+            for(Village target: r.getTargets()) {
                 DefenseInformation d = r.getDefenseInformation(target);
                 for (Defense i : d.getSupports()) {
                     model.addRow(i);
@@ -889,9 +882,8 @@ private void fireAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRS
 
         for (ManageableType e : SOSManager.getSingleton().getAllElements()) {
             SOSRequest r = (SOSRequest) e;
-            Enumeration<Village> targets = r.getTargets();
-            while (targets.hasMoreElements()) {
-                model.addRow(r.getDefenseInformation(targets.nextElement()));
+            for(Village target: r.getTargets()) {
+                model.addRow(r.getDefenseInformation(target));
             }
         }
         model.fireTableDataChanged();
@@ -906,15 +898,10 @@ private void fireAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRS
             
             for (ManageableType manTyp: SOSManager.getSingleton().getAllElements()) {
                 SOSRequest pRequest = (SOSRequest) manTyp;
-                Enumeration<Village> targets = pRequest.getTargets();
-
-                while (targets.hasMoreElements()) {
-                    Village target = targets.nextElement();
+                for(Village target: pRequest.getTargets()) {
                     TargetInformation targetInfo = pRequest.getTargetInformation(target);
-
-                    Enumeration<Village> targetSources = targetInfo.getSources();
-                    while (targetSources.hasMoreElements()) {
-                        Village targetSource = targetSources.nextElement();
+                    
+                    for(Village targetSource: targetInfo.getSources()) {
                         if(sourcesOnce.contains(targetSource) &&
                                 !sourcesMoreThanOnce.contains(targetSource)) {
                             sourcesMoreThanOnce.add(targetSource);
@@ -928,10 +915,8 @@ private void fireAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRS
             
             for (ManageableType manTyp: SOSManager.getSingleton().getAllElements()) {
                 SOSRequest pRequest = (SOSRequest) manTyp;
-                Enumeration<Village> targets = pRequest.getTargets();
-
-                while (targets.hasMoreElements()) {
-                    Village target = targets.nextElement();
+                
+                for(Village target: pRequest.getTargets()) {
                     TargetInformation targetInfo = pRequest.getTargetInformation(target);
 
                     Enumeration<TimedAttack> attacks = Collections.enumeration(targetInfo.getAttacks());
@@ -964,15 +949,11 @@ private void fireAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRS
             for (ManageableType manTyp: SOSManager.getSingleton().getAllElements()) {
                 SOSRequest pRequest = (SOSRequest) manTyp;
                 
-                Enumeration<Village> targets = pRequest.getTargets();
-                while (targets.hasMoreElements()) {
-                    Village target = targets.nextElement();
+                for(Village target: pRequest.getTargets()) {
                     TargetInformation targetInfo = pRequest.getTargetInformation(target);
 
                     //check for multiple attacks from same source to same target
-                    Enumeration<Village> sources = targetInfo.getSources();
-                    while (sources.hasMoreElements()) {
-                        Village source = sources.nextElement();
+                    for(Village source: targetInfo.getSources()) {
                         if (targetInfo.getAttackCountFromSource(source) > 1) {
                             for (TimedAttack att : targetInfo.getAttacksFromSource(source)) {
                                 if (!att.isPossibleFake() && !att.isPossibleSnob()) {//check only once
@@ -1000,9 +981,8 @@ private void fireAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRS
             for (ManageableType manTyp: SOSManager.getSingleton().getAllElements()) {
                 SOSRequest pRequest = (SOSRequest) manTyp;
                 
-                Enumeration<Village> targets = pRequest.getTargets();
-                while (targets.hasMoreElements()) {
-                    pRequest.getDefenseInformation(targets.nextElement()).updateAttackInfo();
+                for(Village target: pRequest.getTargets()) {
+                    pRequest.getDefenseInformation(target).updateAttackInfo();
                 }
             }
         }
@@ -1077,28 +1057,6 @@ private void fireAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRS
         }
     }
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
-        GlobalOptions.setSelectedServer("de77");
-        ProfileManager.getSingleton().loadProfiles();
-        GlobalOptions.setSelectedProfile(ProfileManager.getSingleton().getProfiles("de77")[0]);
-        DataHolder.getSingleton().loadData(false);
-        GlobalOptions.loadUserData();
-        try {
-            //  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-        } catch (Exception ignored) {
-        }
-        // createSampleRequests();
-        new SOSGenerator().setVisible(true);
-        DSWorkbenchSOSRequestAnalyzer.getSingleton().resetView();
-        DSWorkbenchSOSRequestAnalyzer.getSingleton().setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        DSWorkbenchSOSRequestAnalyzer.getSingleton().setVisible(true);
-    }
-
     @Override
     public void fireVillagesDraggedEvent(List<Village> pVillages, Point pDropLocation) {
     }
@@ -1126,6 +1084,7 @@ class SupportColorUpdateThread extends Thread {
         setDaemon(true);
     }
 
+    @Override
     public void run() {
         while (true) {
             try {

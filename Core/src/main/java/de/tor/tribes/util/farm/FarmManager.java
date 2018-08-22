@@ -15,8 +15,6 @@
  */
 package de.tor.tribes.util.farm;
 
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.converters.ConversionException;
 import de.tor.tribes.control.GenericManager;
 import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;
@@ -25,6 +23,7 @@ import de.tor.tribes.types.FightReport;
 import de.tor.tribes.types.ext.*;
 import de.tor.tribes.util.*;
 import de.tor.tribes.util.report.ReportManager;
+import de.tor.tribes.util.xml.JDomUtils;
 import java.awt.HeadlessException;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -34,10 +33,12 @@ import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
 import java.io.*;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jdom2.Element;
 
 /**
  *
@@ -45,9 +46,9 @@ import org.apache.log4j.Logger;
  */
 public class FarmManager extends GenericManager<FarmInformation> {
 
-  private static Logger logger = Logger.getLogger("FarmManager");
+  private static Logger logger = LogManager.getLogger("FarmManager");
   private static FarmManager SINGLETON = null;
-  private Hashtable<Village, FarmInformation> infoMap = null;
+  private HashMap<Village, FarmInformation> infoMap = null;
   private Village lastUpdatedFarm = null;
 
   public static synchronized FarmManager getSingleton() {
@@ -59,7 +60,7 @@ public class FarmManager extends GenericManager<FarmInformation> {
 
   FarmManager() {
     super(false);
-    infoMap = new Hashtable<>();
+    infoMap = new HashMap<>();
   }
 
   public FarmInformation addFarm(Village pVillage) {
@@ -67,10 +68,7 @@ public class FarmManager extends GenericManager<FarmInformation> {
     if (info == null) {
       info = new FarmInformation(pVillage);
       infoMap.put(pVillage, info);
-      info.setJustCreated(true);
       addManagedElement(info);
-    } else {
-      info.setJustCreated(false);
     }
     return info;
   }
@@ -104,7 +102,7 @@ public class FarmManager extends GenericManager<FarmInformation> {
       for (Village farm : villages) {
         if (farm != null && !handled.contains(farm) && farm.getTribe().equals(Barbarians.getSingleton())) {
           FarmInformation info = addFarm(farm);
-          if (info.isJustCreated()) {
+          if (info.getLastReport() < 0) {
             FightReport r = ReportManager.getSingleton().findLastReportForSource(farm);
             if (r != null) {
               info.updateFromReport(r);
@@ -182,7 +180,7 @@ public class FarmManager extends GenericManager<FarmInformation> {
             FarmInformation info = addFarm(target);
             info.updateFromReport(report);
             handled.add(target);
-            if (info.isJustCreated()) {
+            if (info.getLastReport() < 0) {
               addCount++;
             }
           } else {//update to newer report
@@ -222,7 +220,7 @@ public class FarmManager extends GenericManager<FarmInformation> {
               Village farm = DataHolder.getSingleton().getVillages()[x][y];
               if (farm != null && farm.getTribe().equals(Barbarians.getSingleton())) {
                 FarmInformation info = addFarm(farm);
-                if (info.isJustCreated()) {
+                if (info.getLastReport() < 0) {
                   FightReport r = ReportManager.getSingleton().findLastReportForSource(farm);
                   if (r != null) {
                     info.updateFromReport(r);
@@ -256,7 +254,7 @@ public class FarmManager extends GenericManager<FarmInformation> {
             Village v = DataHolder.getSingleton().getVillages()[i][j];
             if (v != null && v.getTribe().equals(Barbarians.getSingleton())) {
               FarmInformation info = addFarm(v);
-              if (info.isJustCreated()) {
+              if (info.getLastReport() < 0) {
                 FightReport r = ReportManager.getSingleton().findLastReportForSource(v);
                 if (r != null) {
                   info.updateFromReport(r);
@@ -285,151 +283,45 @@ public class FarmManager extends GenericManager<FarmInformation> {
   }
 
   @Override
-  public void loadElements(String pFile) {
-    XStream x = new XStream();
-    x.alias("farmInfo", FarmInformation.class);
-    lastUpdatedFarm = null;
-    FileReader r = null;
-    logger.debug("Reading farm information from file " + pFile);
-    initialize();
-    infoMap.clear();
+  public int importData(Element pElm, String pExtension) {
+    if (pElm == null) {
+        logger.error("Element argument is 'null'");
+        return -1;
+    }
+    invalidate();
+    int result = 0;
+    logger.debug("Reading farm information");
     try {
-      r = new FileReader(pFile);
-      List<ManageableType> el = (List<ManageableType>) x.fromXML(r);
-      invalidate();
-      for (ManageableType t : el) {
-        FarmInformation info = (FarmInformation) t;
-        if (info.getVillage() != null) {
+      for (Element e : (List<Element>) JDomUtils.getNodes(pElm, "farmInfos/farmInfo")) {
+        FarmInformation element = new FarmInformation(e);
+        if (element.getVillage() != null) {
           //just add valid information
-          info.revalidate();
-          addManagedElement(info);
-          infoMap.put(info.getVillage(), info);
+          element.revalidate();
+          addManagedElement(element);
+          infoMap.put(element.getVillage(), element);
+          result++;
         }
       }
-      r.close();
       logger.debug("Farm information successfully read");
     } catch (Exception e) {
+      result = result * (-1) - 1;
       logger.error("Failed to read farm information", e);
-    } finally {
-      try {
-        if (r != null) {
-          r.close();
-        }
-      } catch (IOException ignored) {
-      }
     }
-
     revalidate(true);
+    return result;
   }
 
   @Override
-  public void saveElements(String pFile) {
-    XStream x = new XStream();
-    x.alias("farmInfo", FarmInformation.class);
-    logger.debug("Writing farm information to file " + pFile);
-    FileWriter w = null;
-
-    try {
-      w = new FileWriter(pFile);
-      x.toXML(getAllElements(), w);
-      w.flush();
-    } catch (IOException ioe) {
-      logger.error("Failed to write farm information", ioe);
-    } finally {
-      try {
-        if (w != null) {
-          w.close();
-        }
-      } catch (IOException ignored) {
-      }
+  public Element getExportData(final List<String> pGroupsToExport) {
+    Element farmInfos = new Element("farmInfos");
+    if (pGroupsToExport == null || pGroupsToExport.isEmpty()) {
+        return farmInfos;
     }
-  }
-
-  @Override
-  public String getExportData(List<String> pGroupsToExport) {
-    XStream x = new XStream();
-    x
-            .alias("farmInfo", FarmInformation.class
-            );
-    ByteArrayOutputStream bout = new ByteArrayOutputStream();
-
-    try {
-      x.toXML(getAllElements(), bout);
-      bout.flush();
-      bout.close();
-    } catch (IOException ioe) {
-      logger.error("Failed to write farm information", ioe);
-    } finally {
-      try {
-        if (bout != null) {
-          bout.close();
-        }
-      } catch (IOException ignored) {
-      }
+    
+    for (ManageableType element : getAllElements()) {
+      farmInfos.addContent(element.toXml("farmInfo"));
     }
-
-    return bout.toString();
-  }
-
-  @Override
-  public boolean importData(File pFile, String pExtension) {
-    StringBuilder b = new StringBuilder();
-    BufferedReader reader = null;
-    try {
-      reader = new BufferedReader(new FileReader(pFile));
-      String line = "";
-      boolean haveStart = false;
-      String end = "</java.util.Collections_-UnmodifiableRandomAccessList>";
-      while ((line = reader.readLine()) != null) {
-        if (line.startsWith("<java.util.Collections")) {
-          haveStart = true;
-        }
-
-        if (haveStart) {
-          if (line.startsWith(end)) {
-            b.append(line.substring(0, end.length()));
-          } else {
-            b.append(line);
-          }
-        }
-      }
-    } catch (IOException e) {
-      logger.error("Failed to farm data from file", e);
-    } finally {
-      if (reader != null) {
-        try {
-          reader.close();
-        } catch (IOException ignored) {
-        }
-      }
-    }
-    XStream x = new XStream();
-    x
-            .alias("farmInfo", FarmInformation.class
-            );
-    lastUpdatedFarm = null;
-
-    initialize();
-
-    infoMap.clear();
-
-    try {
-      List<ManageableType> el = (List<ManageableType>) x.fromXML(b.toString());
-      invalidate();
-      for (ManageableType t : el) {
-        FarmInformation info = (FarmInformation) t;
-        info.revalidate();
-        addManagedElement(info);
-        infoMap.put(info.getVillage(), info);
-      }
-      logger.debug("Farm information successfully imported");
-    } catch (ConversionException ce) {
-      logger.error("Failed to deserialize farm information", ce);
-      return false;
-    } finally {
-      revalidate(true);
-    }
-
-    return true;
+    
+    return farmInfos;
   }
 }

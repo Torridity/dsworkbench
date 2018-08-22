@@ -15,8 +15,6 @@
  */
 package de.tor.tribes.ui.wiz.ref;
 
-import com.jidesoft.swing.JideBoxLayout;
-import com.jidesoft.swing.JideSplitPane;
 import de.tor.tribes.types.UserProfile;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.components.VillageOverviewMapPanel;
@@ -37,8 +35,6 @@ import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -95,26 +91,8 @@ public class SupportRefillSourcePanel extends WizardPage {
         villageSelectionPanel.enableSelectionElement(VillageSelectionPanel.SELECTION_ELEMENT.TRIBE, false);
         villageSelectionPanel.setUnitSelectionEnabled(false);
         villageSelectionPanel.setFakeSelectionEnabled(false);
-        jPanel1.add(villageSelectionPanel, BorderLayout.CENTER);
-        jideSplitPane1.setOrientation(JideSplitPane.VERTICAL_SPLIT);
-        jideSplitPane1.setProportionalLayout(true);
-        jideSplitPane1.setDividerSize(5);
-        jideSplitPane1.setShowGripper(true);
-        jideSplitPane1.setOneTouchExpandable(true);
-        jideSplitPane1.setDividerStepSize(10);
-        jideSplitPane1.setInitiallyEven(true);
-        jideSplitPane1.add(jDataPanel, JideBoxLayout.FLEXIBLE);
-        jideSplitPane1.add(jVillageTablePanel, JideBoxLayout.VARY);
-        jideSplitPane1.getDividerAt(0).addMouseListener(new MouseAdapter() {
-
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                if (e.getClickCount() == 2) {
-                    jideSplitPane1.setProportions(new double[]{0.5});
-                }
-            }
-        });
-
+        jDataPanel.add(villageSelectionPanel, BorderLayout.CENTER);
+        
         KeyStroke paste = KeyStroke.getKeyStroke(KeyEvent.VK_V, ActionEvent.CTRL_MASK, false);
         KeyStroke delete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, false);
         ActionListener panelListener = new ActionListener() {
@@ -180,8 +158,9 @@ public class SupportRefillSourcePanel extends WizardPage {
 
         jInfoScrollPane = new javax.swing.JScrollPane();
         jInfoTextPane = new javax.swing.JTextPane();
+        jXCollapsiblePane1 = new org.jdesktop.swingx.JXCollapsiblePane();
+        jLabel1 = new javax.swing.JLabel();
         jDataPanel = new javax.swing.JPanel();
-        jPanel1 = new javax.swing.JPanel();
         jVillageTablePanel = new javax.swing.JPanel();
         jTableScrollPane = new javax.swing.JScrollPane();
         jVillageTable = new org.jdesktop.swingx.JXTable();
@@ -191,32 +170,55 @@ public class SupportRefillSourcePanel extends WizardPage {
         capabilityInfoPanel1 = new de.tor.tribes.ui.components.CapabilityInfoPanel();
         jPanel3 = new javax.swing.JPanel();
         jButton1 = new javax.swing.JButton();
-        jXCollapsiblePane1 = new org.jdesktop.swingx.JXCollapsiblePane();
-        jLabel1 = new javax.swing.JLabel();
-        jideSplitPane1 = new com.jidesoft.swing.JideSplitPane();
 
         jInfoScrollPane.setMinimumSize(new java.awt.Dimension(19, 180));
         jInfoScrollPane.setPreferredSize(new java.awt.Dimension(19, 180));
 
-        jInfoTextPane.setContentType("text/html");
+        jInfoTextPane.setContentType("text/html"); // NOI18N
         jInfoTextPane.setEditable(false);
         jInfoTextPane.setText("<html>Du befindest dich im <b>Angriffsmodus</b>. Hier kannst du die Herkunftsd&ouml;rfer ausw&auml;hlen, die f&uuml;r Angriffe verwendet werden d&uuml;rfen. Hierf&uuml;r hast die folgenden M&ouml;glichkeiten:\n<ul>\n<li>Einf&uuml;gen von Dorfkoordinaten aus der Zwischenablage per STRG+V</li>\n<li>Einf&uuml;gen der Herkunftsd&ouml;rfer aus der Gruppen&uuml;bersicht</li>\n<li>Einf&uuml;gen der Herkunftsd&ouml;rfer aus dem SOS-Analyzer</li>\n<li>Einf&uuml;gen der Herkunftsd&ouml;rfer aus Berichten</li>\n<li>Einf&uuml;gen aus der Auswahlübersicht</li>\n<li>Manuelle Eingabe</li>\n</ul>\n</html>\n");
         jInfoScrollPane.setViewportView(jInfoTextPane);
 
-        jDataPanel.setMinimumSize(new java.awt.Dimension(0, 130));
-        jDataPanel.setPreferredSize(new java.awt.Dimension(0, 130));
-        jDataPanel.setLayout(new java.awt.GridBagLayout());
+        setLayout(new java.awt.GridBagLayout());
 
-        jPanel1.setLayout(new java.awt.BorderLayout());
+        jXCollapsiblePane1.setCollapsed(true);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        add(jXCollapsiblePane1, gridBagConstraints);
+
+        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel1.setText("Informationen einblenden");
+        jLabel1.setToolTipText("Blendet Informationen zu dieser Ansicht und zu den Datenquellen ein/aus");
+        jLabel1.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+        jLabel1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireHideInfoEvent(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        add(jLabel1, gridBagConstraints);
+
+        jDataPanel.setMinimumSize(new java.awt.Dimension(500, 200));
+        jDataPanel.setPreferredSize(new java.awt.Dimension(500, 200));
+        jDataPanel.setLayout(new java.awt.BorderLayout());
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jDataPanel.add(jPanel1, gridBagConstraints);
+        gridBagConstraints.weighty = 0.5;
+        add(jDataPanel, gridBagConstraints);
 
+        jVillageTablePanel.setMinimumSize(new java.awt.Dimension(500, 232));
+        jVillageTablePanel.setPreferredSize(new java.awt.Dimension(500, 232));
         jVillageTablePanel.setLayout(new java.awt.GridBagLayout());
 
         jTableScrollPane.setBorder(javax.swing.BorderFactory.createTitledBorder("Verwendete Herkunftsdörfer"));
@@ -317,38 +319,13 @@ public class SupportRefillSourcePanel extends WizardPage {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jVillageTablePanel.add(jPanel3, gridBagConstraints);
 
-        setLayout(new java.awt.GridBagLayout());
-
-        jXCollapsiblePane1.setCollapsed(true);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        add(jXCollapsiblePane1, gridBagConstraints);
-
-        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
-        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("Informationen einblenden");
-        jLabel1.setToolTipText("Blendet Informationen zu dieser Ansicht und zu den Datenquellen ein/aus");
-        jLabel1.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
-        jLabel1.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireHideInfoEvent(evt);
-            }
-        });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        add(jLabel1, gridBagConstraints);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridy = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        add(jideSplitPane1, gridBagConstraints);
+        gridBagConstraints.weighty = 0.5;
+        add(jVillageTablePanel, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
 
     private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireHideInfoEvent
@@ -371,6 +348,7 @@ public class SupportRefillSourcePanel extends WizardPage {
             jPanel2.add(overviewPanel, BorderLayout.CENTER);
             SwingUtilities.invokeLater(new Runnable() {
 
+                @Override
                 public void run() {
                     jPanel2.updateUI();
                 }
@@ -409,9 +387,8 @@ public class SupportRefillSourcePanel extends WizardPage {
     }
 
     private void pasteFromClipboard() {
-        String data = "";
         try {
-            data = (String) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null).getTransferData(DataFlavor.stringFlavor);
+            String data = (String) Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null).getTransferData(DataFlavor.stringFlavor);
             List<Village> villages = PluginManager.getSingleton().executeVillageParser(data);
             if (!villages.isEmpty()) {
                 addVillages(villages.toArray(new Village[villages.size()]));
@@ -473,7 +450,6 @@ public class SupportRefillSourcePanel extends WizardPage {
     private javax.swing.JScrollPane jInfoScrollPane;
     private javax.swing.JTextPane jInfoTextPane;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JLabel jStatusLabel;
@@ -482,7 +458,6 @@ public class SupportRefillSourcePanel extends WizardPage {
     private org.jdesktop.swingx.JXTable jVillageTable;
     private javax.swing.JPanel jVillageTablePanel;
     private org.jdesktop.swingx.JXCollapsiblePane jXCollapsiblePane1;
-    private com.jidesoft.swing.JideSplitPane jideSplitPane1;
     // End of variables declaration//GEN-END:variables
 
     @Override

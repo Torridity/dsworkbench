@@ -15,7 +15,6 @@
  */
 package de.tor.tribes.ui.components;
 
-import com.jidesoft.spinner.SpinnerWheelSupport;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.models.CoordinateSpinnerModel;
@@ -40,7 +39,6 @@ public class CoordinateSpinner extends JSpinner {
      */
     public CoordinateSpinner(CoordinateSpinnerModel model) {
         super(model);
-        customizeSpinner();
     }
 
     /**
@@ -150,9 +148,5 @@ public class CoordinateSpinner extends JSpinner {
         } catch (Exception e) {
             return null;
         }
-    }
-
-    protected void customizeSpinner() {
-        SpinnerWheelSupport.installMouseWheelSupport(this);
     }
 }

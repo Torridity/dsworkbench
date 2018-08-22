@@ -91,11 +91,7 @@ public class ColoredDateCellRenderer extends DefaultTableRenderer {
                 int green = (int) (c2.getGreen() * ratio + c1.getGreen() * (1 - ratio));
                 int blue = (int) (c2.getBlue() * ratio + c1.getBlue() * (1 - ratio));
                 color = new Color(red, green, blue);
-            } else {
-                //default renderer and color
-                renderComponent.setText(specialFormat.format((Date) value));
             }
-
 
             if (isSelected) {
                 color = c.getBackground();

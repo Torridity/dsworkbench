@@ -42,26 +42,32 @@ public class Barbarians extends Tribe {
         return "Barbaren";
     }
 
+    @Override
     public String getName() {
         return "Barbaren";
     }
 
+    @Override
     public int getAllyID() {
         return BarbarianAlly.getSingleton().getId();
     }
 
+    @Override
     public short getVillages() {
         return 0;
     }
 
+    @Override
     public double getPoints() {
         return 0;
     }
 
+    @Override
     public int getRank() {
         return 0;
     }
 
+    @Override
     public Ally getAlly() {
         return BarbarianAlly.getSingleton();
     }
@@ -84,6 +90,7 @@ public class Barbarians extends Tribe {
         return pVillage != null && pVillage.getTribe().equals(Barbarians.getSingleton());
     }
 
+    @Override
     public String getToolTipText() {
         NumberFormat nf = NumberFormat.getInstance();
         nf.setMinimumFractionDigits(0);

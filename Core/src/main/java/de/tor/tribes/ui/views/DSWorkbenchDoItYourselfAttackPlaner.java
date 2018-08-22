@@ -15,27 +15,27 @@
  */
 package de.tor.tribes.ui.views;
 
-import com.smardec.mousegestures.MouseGestures;
 import de.tor.tribes.control.GenericManagerListener;
+import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Attack;
+import de.tor.tribes.types.StandardAttack;
 import de.tor.tribes.types.ext.Village;
-import de.tor.tribes.ui.windows.AbstractDSWorkbenchFrame;
 import de.tor.tribes.ui.editors.DateSpinEditor;
 import de.tor.tribes.ui.editors.NoteIconCellEditor;
 import de.tor.tribes.ui.editors.UnitCellEditor;
 import de.tor.tribes.ui.editors.VillageCellEditor;
 import de.tor.tribes.ui.models.DoItYourselfAttackTableModel;
 import de.tor.tribes.ui.renderer.*;
+import de.tor.tribes.ui.windows.AbstractDSWorkbenchFrame;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ImageUtils;
 import de.tor.tribes.util.JOptionPaneHelper;
-import de.tor.tribes.util.MouseGestureHandler;
-import de.tor.tribes.util.ProfileManager;
 import de.tor.tribes.util.PropertyHelper;
 import de.tor.tribes.util.attack.AttackManager;
+import de.tor.tribes.util.attack.StandardAttackManager;
 import de.tor.tribes.util.bb.AttackListFormatter;
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -48,7 +48,6 @@ import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
 import java.awt.geom.GeneralPath;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -62,10 +61,9 @@ import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import org.apache.commons.configuration.Configuration;
-import org.apache.commons.lang.time.DateUtils;
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.Logger;
+import org.apache.commons.configuration2.Configuration;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jdesktop.swingx.decorator.CompoundHighlighter;
 import org.jdesktop.swingx.decorator.HighlightPredicate;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
@@ -122,7 +120,7 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
             }
         }
     }
-    private static final Logger logger = Logger.getLogger("DoItYourselflAttackPlaner");
+    private static final Logger logger = LogManager.getLogger("DoItYourselflAttackPlaner");
     private static DSWorkbenchDoItYourselfAttackPlaner SINGLETON = null;
 
     /**
@@ -245,14 +243,14 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
         jUnitBox.setSelectedItem(DataHolder.getSingleton().getUnitByPlainName("ram"));
         jUnitComboBox.setSelectedItem(DataHolder.getSingleton().getUnitByPlainName("ram"));
         jUnitBox.setRenderer(new UnitListCellRenderer());
+        jAttackTypeComboBox.setRenderer(new StandardAttackListCellRenderer());
+        
         DefaultComboBoxModel typeModel = new DefaultComboBoxModel();
-        jAttackTypeComboBox.setRenderer(new AttackTypeListCellRenderer());
-        typeModel.addElement(Attack.NO_TYPE);
-        typeModel.addElement(Attack.CLEAN_TYPE);
-        typeModel.addElement(Attack.SNOB_TYPE);
-        typeModel.addElement(Attack.FAKE_TYPE);
-        typeModel.addElement(Attack.FAKE_DEFF_TYPE);
-        typeModel.addElement(Attack.SUPPORT_TYPE);
+
+        for (ManageableType t : StandardAttackManager.getSingleton().getAllElements()) {
+            StandardAttack a = (StandardAttack) t;
+            typeModel.addElement(a);
+        }
         jAttackTypeComboBox.setModel(typeModel);
 
         jUnitComboBox.setRenderer(new UnitListCellRenderer());
@@ -261,6 +259,7 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
         jTargetVillage.setValue(new Point(500, 500));
         SwingUtilities.invokeLater(new Runnable() {
 
+            @Override
             public void run() {
                 jSourceVillage.updateUI();
                 jTargetVillage.updateUI();
@@ -736,7 +735,7 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
                 a.setUnit(newUnit);
             }
         } else if (evt.getSource() == jAdeptTypeButton) {
-            Integer newType = (Integer) jAttackTypeComboBox.getSelectedItem();
+            StandardAttack newType = (StandardAttack) jAttackTypeComboBox.getSelectedItem();
             if (newType == null) {
                 showError("Kein Angriffstyp ausgewählt");
                 return;
@@ -745,7 +744,7 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
             for (int r = rows.length - 1; r >= 0; r--) {
                 int row = jAttackTable.convertRowIndexToModel(rows[r]);
                 Attack a = (Attack) AttackManager.getSingleton().getDoItYourselfAttacks().get(row);
-                a.setType(newType);
+                a.setType(newType.getIcon());
                 a.setTroopsByType();
             }
         }
@@ -907,37 +906,7 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
         }
         return selectedAttacks;
     }
-
-    public static void main(String[] args) {
-        Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
-        MouseGestures mMouseGestures = new MouseGestures();
-        mMouseGestures.setMouseButton(MouseEvent.BUTTON3_MASK);
-        mMouseGestures.addMouseGesturesListener(new MouseGestureHandler());
-        mMouseGestures.start();
-        GlobalOptions.setSelectedServer("de43");
-        ProfileManager.getSingleton().loadProfiles();
-        GlobalOptions.setSelectedProfile(ProfileManager.getSingleton().getProfiles("de43")[0]);
-
-        DataHolder.getSingleton().loadData(false);
-        try {
-            //  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-        } catch (Exception ignored) {
-        }
-        DSWorkbenchDoItYourselfAttackPlaner.getSingleton().resetView();
-        //  DSWorkbenchAttackFrame.getSingleton().setSize(800, 600);
-        DSWorkbenchAttackFrame.getSingleton().pack();
-        AttackManager.getSingleton().invalidate();
-        for (int i = 0; i < 100; i++) {
-            AttackManager.getSingleton().addAttack(DataHolder.getSingleton().getRandomVillage(),
-                    DataHolder.getSingleton().getRandomVillage(), DataHolder.getSingleton().getRandomUnit(),
-                    new Date(System.currentTimeMillis() + DateUtils.MILLIS_PER_DAY), AttackManager.MANUAL_ATTACK_PLAN);
-        }
-
-        AttackManager.getSingleton().revalidate(AttackManager.MANUAL_ATTACK_PLAN, true);
-        DSWorkbenchDoItYourselfAttackPlaner.getSingleton().setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        DSWorkbenchDoItYourselfAttackPlaner.getSingleton().setVisible(true);
-    }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private de.tor.tribes.ui.components.CapabilityInfoPanel capabilityInfoPanel1;
     private org.jdesktop.swingx.JXCollapsiblePane infoPanel;

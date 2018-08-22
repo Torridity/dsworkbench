@@ -16,7 +16,6 @@
 package de.tor.tribes.types.ext;
 
 import de.tor.tribes.util.StringHelper;
-
 import java.io.Serializable;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -214,17 +213,21 @@ public class Ally implements Comparable<Ally>, Serializable {
         return stringRepresentation;
     }
 
+    private String toolTip = null;
     public String getToolTipText() {
-        NumberFormat nf = NumberFormat.getInstance();
-        nf.setMinimumFractionDigits(0);
-        nf.setMaximumFractionDigits(0);
-        StringBuilder b = new StringBuilder();
-        b.append("<html><table style='border: solid 1px black; cellspacing:0px;cellpadding: 0px;background-color:#EFEBDF;'>");
-        b.append("<tr><td><b>Stamm:</b> </td><td>").append(toString()).append("</td></tr>");
-        b.append("<tr><td>&nbsp;&nbsp;&nbsp;Mitglieder: </td><td>").append(nf.format(getMembers())).append("</td></tr>");
-        b.append("<tr><td>&nbsp;&nbsp;&nbsp;Punkte: </td><td>").append(nf.format(getPoints())).append("(").append(nf.format(getRank())).append(")</td></tr>");
-        b.append("</table></html>");
-        return b.toString();
+        if(toolTip == null) {
+            NumberFormat nf = NumberFormat.getInstance();
+            nf.setMinimumFractionDigits(0);
+            nf.setMaximumFractionDigits(0);
+            StringBuilder b = new StringBuilder();
+            b.append("<html><table style='border: solid 1px black; cellspacing:0px;cellpadding: 0px;background-color:#EFEBDF;'>");
+            b.append("<tr><td><b>Stamm:</b> </td><td>").append(toString()).append("</td></tr>");
+            b.append("<tr><td>&nbsp;&nbsp;&nbsp;Mitglieder: </td><td>").append(nf.format(getMembers())).append("</td></tr>");
+            b.append("<tr><td>&nbsp;&nbsp;&nbsp;Punkte: </td><td>").append(nf.format(getPoints())).append("(").append(nf.format(getRank())).append(")</td></tr>");
+            b.append("</table></html>");
+            return b.toString();
+        }
+        return toolTip;
     }
 
     public String toBBCode() {
@@ -247,5 +250,12 @@ public class Ally implements Comparable<Ally>, Serializable {
         public int compare(Ally s1, Ally s2) {
             return StringHelper.compareByStringRepresentations(s1, s2);
         }
+    }
+    
+    @Override
+    public boolean equals(Object other) {
+        if(!(other instanceof Ally)) return false;
+        
+        return this.getId() == ((Ally) other).getId();
     }
 }

@@ -35,24 +35,6 @@ import de.tor.tribes.util.bb.ReportListFormatter;
 import de.tor.tribes.util.report.ReportManager;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
-import org.apache.log4j.Logger;
-import org.jdesktop.swingx.JXTable;
-import org.jdesktop.swingx.decorator.HighlightPredicate;
-import org.jdesktop.swingx.decorator.HighlighterFactory;
-import org.jdesktop.swingx.decorator.PainterHighlighter;
-import org.jdesktop.swingx.decorator.PatternPredicate;
-import org.jdesktop.swingx.painter.AbstractLayoutPainter.HorizontalAlignment;
-import org.jdesktop.swingx.painter.AbstractLayoutPainter.VerticalAlignment;
-import org.jdesktop.swingx.painter.ImagePainter;
-import org.jdesktop.swingx.painter.MattePainter;
-import org.jdesktop.swingx.table.TableColumnExt;
-
-import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableModel;
 import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
@@ -66,6 +48,24 @@ import java.io.IOException;
 import java.util.*;
 import java.util.List;
 import java.util.regex.Matcher;
+import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableModel;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jdesktop.swingx.JXTable;
+import org.jdesktop.swingx.decorator.HighlightPredicate;
+import org.jdesktop.swingx.decorator.HighlighterFactory;
+import org.jdesktop.swingx.decorator.PainterHighlighter;
+import org.jdesktop.swingx.decorator.PatternPredicate;
+import org.jdesktop.swingx.painter.AbstractLayoutPainter.HorizontalAlignment;
+import org.jdesktop.swingx.painter.AbstractLayoutPainter.VerticalAlignment;
+import org.jdesktop.swingx.painter.ImagePainter;
+import org.jdesktop.swingx.painter.MattePainter;
+import org.jdesktop.swingx.table.TableColumnExt;
 
 /**
  *
@@ -91,7 +91,7 @@ public class ReportTableTab extends javax.swing.JPanel implements ListSelectionL
             showError("Das Zieldorf ist ungültig");
         }
     }
-    private static Logger logger = Logger.getLogger("ReportTableTab");
+    private static Logger logger = LogManager.getLogger("ReportTableTab");
 
     public enum TRANSFER_TYPE {
 
@@ -102,7 +102,7 @@ public class ReportTableTab extends javax.swing.JPanel implements ListSelectionL
     private static ReportManagerTableModel reportModel = null;
     private static boolean KEY_LISTENER_ADDED = false;
     private static PainterHighlighter highlighter = null;
-    private Hashtable<Integer, List<ReportShowDialog>> showDialogs = null;
+    private HashMap<Integer, List<ReportShowDialog>> showDialogs = null;
 
     static {
         jxReportTable.setHighlighters(HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B));
@@ -115,7 +115,7 @@ public class ReportTableTab extends javax.swing.JPanel implements ListSelectionL
         reportModel = new ReportManagerTableModel(ReportManager.DEFAULT_GROUP);
         jxReportTable.setModel(reportModel);
         TableColumnExt statCol = jxReportTable.getColumnExt("Status");
-        statCol.setCellRenderer(new FightReportCellRenderer());
+        statCol.setCellRenderer(new EnumImageCellRenderer(EnumImageCellRenderer.LayoutStyle.FightReportStatus));
         TableColumnExt miscCol = jxReportTable.getColumnExt("Sonstiges");
         miscCol.setCellRenderer(new ReportWallCataCellRenderer());
         BufferedImage back = ImageUtils.createCompatibleBufferedImage(5, 5, BufferedImage.BITMASK);
@@ -163,7 +163,7 @@ public class ReportTableTab extends javax.swing.JPanel implements ListSelectionL
 
             KEY_LISTENER_ADDED = true;
         }
-        showDialogs = new Hashtable<>();
+        showDialogs = new HashMap<>();
         jxReportTable.getSelectionModel().addListSelectionListener(ReportTableTab.this);
     }
 
@@ -262,9 +262,8 @@ public class ReportTableTab extends javax.swing.JPanel implements ListSelectionL
     }
 
     public void closeAllReportDialogs() {
-        Enumeration<Integer> keys = showDialogs.keys();
-        while (keys.hasMoreElements()) {
-            Integer key = keys.nextElement();
+        //transform to array, because hashmap is changed during this
+        for(Integer key: showDialogs.keySet().toArray(new Integer[showDialogs.keySet().size()])) {
             closeReportLayer(key);
         }
     }
@@ -480,7 +479,7 @@ public class ReportTableTab extends javax.swing.JPanel implements ListSelectionL
         }
 
         FightReport report = selection.get(0);
-        Hashtable<String, Double> values = new Hashtable<>();
+        HashMap<String, Double> values = new HashMap<>();
         for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
             if (!report.areAttackersHidden()) {
                 values.put("att_" + unit.getPlainName(), (double) report.getAttackers().getAmountForUnit(unit));

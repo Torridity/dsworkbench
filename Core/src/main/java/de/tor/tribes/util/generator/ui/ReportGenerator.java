@@ -27,9 +27,11 @@ import de.tor.tribes.util.UIHelper;
 import de.tor.tribes.util.farm.FarmManager;
 import de.tor.tribes.util.report.ReportManager;
 import de.tor.tribes.util.village.KnownVillage;
-import org.apache.log4j.Logger;
-
+import de.tor.tribes.util.xml.JDomUtils;
 import java.util.List;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 /**
  *
@@ -37,7 +39,7 @@ import java.util.List;
  */
 public class ReportGenerator extends javax.swing.JFrame {
 
-    private static Logger logger = Logger.getLogger("ReportGenerator");
+    private static Logger logger = LogManager.getLogger("ReportGenerator");
 
     /**
      * Creates new form ReportGenerator
@@ -491,7 +493,7 @@ public class ReportGenerator extends javax.swing.JFrame {
         }
 
         System.out.println("---Adding generated report (Valid:" + r.isValid() + ")----");
-        System.out.println(r.toXml());
+        System.out.println(JDomUtils.toShortString(r.toXml("report")));
         ReportManager.getSingleton().addManagedElement(r);
         System.out.println("----Done----");
     }
@@ -584,42 +586,7 @@ public class ReportGenerator extends javax.swing.JFrame {
             UIHelper.parseIntFromField(jStorageLevel),
             UIHelper.parseIntFromField(jHideLevel)};
     }
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /*
-         * Set the Nimbus look and feel
-         */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /*
-         * If Nimbus (introduced in Java SE 6) is not available, stay with the
-         * default look and feel. For details see
-         * http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException | javax.swing.UnsupportedLookAndFeelException | IllegalAccessException | InstantiationException ex) {
-            java.util.logging.Logger.getLogger(ReportGenerator.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /*
-         * Create and display the form
-         */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-
-            public void run() {
-                new ReportGenerator().setVisible(true);
-            }
-        });
-    }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.ButtonGroup buttonGroup2;

@@ -16,28 +16,30 @@
 package de.tor.tribes.util;
 
 import de.tor.tribes.io.WorldDecorationHolder;
-import de.tor.tribes.ui.windows.SkinPreviewFrame;
-import java.awt.Image;
-import java.awt.Point;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import org.apache.log4j.Logger;
-import de.tor.tribes.ui.views.DSWorkbenchSettingsDialog;
 import de.tor.tribes.ui.panels.MapPanel;
+import de.tor.tribes.ui.views.DSWorkbenchSettingsDialog;
+import de.tor.tribes.ui.windows.SkinPreviewFrame;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
+import java.awt.Image;
+import java.awt.Point;
 import java.awt.Transparency;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 /**
  * @author Charon
  */
 public class Skin {
 
-    private static Logger logger = Logger.getLogger("TexturePack");
+    private static Logger logger = LogManager.getLogger("TexturePack");
     public final static String MINIMAP_SKIN_ID = "minimap";
     private int iFieldWidth = 0;
     private int iFieldHeight = 0;
@@ -219,7 +221,7 @@ public class Skin {
                 }
             }
         } catch (IOException ioe) {
-            throw new Exception("Fehler beim laden des Grafikpaketes");
+            throw new Exception("Fehler beim laden des Grafikpaketes", ioe);
         } catch (Exception e) {
             throw new Exception("Grafikpaket ungültig (" + e.getMessage() + ")");
         }

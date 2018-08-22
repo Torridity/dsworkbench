@@ -16,18 +16,14 @@
 package de.tor.tribes.ui.windows;
 
 import de.tor.tribes.control.ManageableType;
-import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.LinkedTag;
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.ui.editors.LinkGroupColorCellEditor;
 import de.tor.tribes.ui.models.TagLinkMatrixModel;
-import de.tor.tribes.ui.renderer.AlternatingColorCellRenderer;
 import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
 import de.tor.tribes.ui.renderer.MultiColorCellRenderer;
 import de.tor.tribes.util.Constants;
-import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.JOptionPaneHelper;
-import de.tor.tribes.util.ProfileManager;
 import de.tor.tribes.util.tag.TagManager;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -35,9 +31,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
-import javax.swing.UIManager;
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.Logger;
 import org.jdesktop.swingx.decorator.CompoundHighlighter;
 import org.jdesktop.swingx.decorator.HighlightPredicate;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
@@ -62,7 +55,6 @@ public class LinkTagsDialog extends javax.swing.JDialog {
         jXTable1.setHighlighters(new CompoundHighlighter(colu, HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B)));
         jXTable1.setColumnControlVisible(false);
         jXTable1.setDefaultRenderer(Integer.class, new MultiColorCellRenderer());
-        jXTable1.setDefaultRenderer(Tag.class, new AlternatingColorCellRenderer());
         jXTable1.setDefaultEditor(Integer.class, new LinkGroupColorCellEditor());
         jXTable1.setRowHeight(21);
         jXTable1.getTableHeader().setDefaultRenderer(new DefaultTableHeaderRenderer());
@@ -260,38 +252,7 @@ public class LinkTagsDialog extends javax.swing.JDialog {
         }
         JOptionPaneHelper.showInformationBox(this, "<html>Die Dörfer der verknüpften Gruppe mit dem Namen '" + name + "' befinden sich<BR/> " + equation + "</html>", "Verknüpfung");
     }//GEN-LAST:event_fireShowLinkInPlainTextEvent
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        try {
-            //  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-        } catch (Exception ignored) {
-        }
-        Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
-        GlobalOptions.setSelectedServer("de43");
-        DataHolder.getSingleton().loadData(false);
-        ProfileManager.getSingleton().loadProfiles();
-        TagManager.getSingleton().addTag("Test");
-
-        GlobalOptions.setSelectedProfile(ProfileManager.getSingleton().getProfiles("de43")[0]);
-
-        java.awt.EventQueue.invokeLater(new Runnable() {
-
-            public void run() {
-                LinkTagsDialog dialog = new LinkTagsDialog(new javax.swing.JFrame(), true);
-                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-
-                    public void windowClosing(java.awt.event.WindowEvent e) {
-                        System.exit(0);
-                    }
-                });
-                dialog.setupAndShow();
-            }
-        });
-    }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;

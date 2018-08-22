@@ -28,7 +28,9 @@ import de.tor.tribes.types.ext.Village;
 import java.awt.Desktop;
 import java.net.URI;
 import java.util.Date;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 /**
  *
@@ -36,7 +38,7 @@ import org.apache.log4j.Logger;
  */
 public class BrowserInterface {
 
-    private static Logger logger = Logger.getLogger("BrowserInterface");
+    private static Logger logger = LogManager.getLogger("BrowserInterface");
 
     public static boolean sendAttack(Attack pAttack) {
         return sendAttack(pAttack, null);

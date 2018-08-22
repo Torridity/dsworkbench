@@ -15,18 +15,17 @@
  */
 package de.tor.tribes.ui.windows;
 
-import de.tor.tribes.ui.views.DSWorkbenchSettingsDialog;
+import de.tor.tribes.dssim.ui.DSWorkbenchSimulatorFrame;
 import de.tor.tribes.io.DataHolder;
-import org.apache.log4j.Logger;
 import de.tor.tribes.io.DataHolderListener;
 import de.tor.tribes.io.ServerManager;
 import de.tor.tribes.types.UserProfile;
 import de.tor.tribes.ui.renderer.ProfileTreeNodeRenderer;
+import de.tor.tribes.ui.views.DSWorkbenchSettingsDialog;
 import de.tor.tribes.ui.wiz.FirstStartWizard;
 import de.tor.tribes.util.*;
 import de.tor.tribes.util.GithubVersionCheck.UpdateInfo;
 import de.tor.tribes.util.ThreadDeadlockDetector.DefaultDeadlockListener;
-import de.tor.tribes.dssim.ui.DSWorkbenchSimulatorFrame;
 import java.io.*;
 import java.util.Collections;
 import java.util.Comparator;
@@ -42,8 +41,10 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Appender;
-import org.apache.log4j.Level;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.config.Configurator;
 import org.netbeans.api.wizard.WizardDisplayer;
 import org.netbeans.spi.wizard.Wizard;
 import org.netbeans.spi.wizard.WizardPanelProvider;
@@ -57,7 +58,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
         SUCCESS, RESTART_NEEDED, ERROR
     }
 
-    private static Logger logger = Logger.getLogger("Launcher");
+    private static Logger logger = LogManager.getLogger("Launcher");
     private final DSWorkbenchSplashScreen self = this;
     private final SplashRepaintThread t;
     private static DSWorkbenchSplashScreen SINGLETON = null;
@@ -115,6 +116,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
         jButton1.setBackground(new java.awt.Color(239, 235, 223));
         jButton1.setText("Profil auswählen");
         jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireSelectAccountEvent(evt);
             }
@@ -418,6 +420,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
             handleException(Thread.currentThread().getName(), thrown);
         }
 
+        @Override
         public void uncaughtException(Thread thread, Throwable thrown) {
             // for other uncaught exceptions
             handleException(thread.getName(), thrown);
@@ -436,7 +439,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
         SystrayHelper.showInfoMessage("Switching to debug mode");
         deadlockDetector = new ThreadDeadlockDetector();
         deadlockDetector.addListener(new DefaultDeadlockListener());
-        Logger.getRootLogger().setLevel(Level.DEBUG);
+        Configurator.setAllLevels(LogManager.getRootLogger().getName(), Level.DEBUG);
         logger.debug("==========================");
         logger.debug("==DEBUG MODE ESTABLISHED==");
         logger.debug("==========================");
@@ -463,14 +466,8 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
                     case "-d":
                     case "--debug":
                         //debug mode
-                        mode = 1;
-                        SystrayHelper.showInfoMessage("Running in debug mode");
-                        break;
-                    case "-i":
-                    case "--info":
-                        //info mode
                         mode = 0;
-                        SystrayHelper.showInfoMessage("Running in info mode");
+                        SystrayHelper.showInfoMessage("Running in debug mode");
                         break;
                     case "-m":
                         minimal = 1;
@@ -484,49 +481,15 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
         Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler());
         System.setProperty("sun.awt.exception.handler", ExceptionHandler.class.getName());
 
-        Appender a;
-
-        if (!Constants.DEBUG) {
-            a = new org.apache.log4j.RollingFileAppender();
-            ((org.apache.log4j.RollingFileAppender) a).setMaxFileSize("1MB");
-        } else {
-            SystrayHelper.installSystrayIcon();
-            SystrayHelper.showInfoMessage("Running in developer mode");
-            a = new org.apache.log4j.ConsoleAppender();
-            ((org.apache.log4j.ConsoleAppender) a).setWriter(new PrintWriter(System.out));
+        if (mode == 0) {
+            Configurator.setAllLevels(LogManager.getRootLogger().getName(), Level.DEBUG);
         }
-        a.setLayout(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n"));
-        try {
-            if (!Constants.DEBUG) {
-                ((org.apache.log4j.RollingFileAppender) a).setFile("./log/dsworkbench.log", true, true, 1024);
-            }
-            switch (mode) {
-                case 0: {
-                    Logger.getRootLogger().setLevel(Level.INFO);
-                    break;
-                }
-                case 1: {
-                    Logger.getRootLogger().setLevel(Level.DEBUG);
-                    break;
-                }
-                default: {
-                    Logger.getRootLogger().setLevel(Level.ERROR);
-                    break;
-                }
-            }
-
-            Logger.getRootLogger().addAppender(a);
-            Logger.getLogger("de.tor").addAppender(a);
-            Logger.getLogger("dswb").addAppender(a);
-            GlobalOptions.setMinimalVersion(minimal == 1);
-        } catch (IOException ioe) {
-            logger.error("Failed to initialize logging", ioe);
-        }
+        GlobalOptions.setMinimalVersion(minimal == 1);
 
         try {
             GlobalDefaults.initialize();
             GlobalOptions.initialize();
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            //UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {
             logger.error("Failed to setup LnF", e);
         }
@@ -558,8 +521,8 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
     // End of variables declaration                   
 
     @Override
-    public void fireDataHolderEvent(String pText) {
-        jStatusOutput.setString(pText);
+    public void fireDataHolderEvent(String eventMessage) {
+        jStatusOutput.setString(eventMessage);
     }
 
     public void updateStatus() {
@@ -582,6 +545,7 @@ class HideSplashTask extends TimerTask {
         super();
     }
 
+    @Override
     public void run() {
         try {
             switch (DSWorkbenchSplashScreen.getSingleton().hideSplash()) {
@@ -595,7 +559,7 @@ class HideSplashTask extends TimerTask {
                 }
                 default: {
                     //finally, add the shutdown hook to guarantee a proper termination
-                    Runtime.getRuntime().addShutdownHook(new MainShutdownHook());
+                    Runtime.getRuntime().addShutdownHook(MainShutdownHook.getSingleton());
                     GlobalOptions.setStarted();
                     break;
                 }
@@ -615,6 +579,7 @@ class SplashRepaintThread extends Thread {
         setDaemon(true);
     }
 
+    @Override
     public void run() {
         while (running) {
             DSWorkbenchSplashScreen.getSingleton().updateStatus();

@@ -38,6 +38,7 @@ public class ProfileTreeNodeRenderer extends DefaultTreeCellRenderer {
         uvProfile = new ImageIcon(ProfileTreeNodeRenderer.class.getResource("/res/uv_profile.png"));
     }
 
+    @Override
     public Component getTreeCellRendererComponent(
             JTree tree,
             Object value,

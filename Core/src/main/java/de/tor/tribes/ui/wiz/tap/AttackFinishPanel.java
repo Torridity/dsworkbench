@@ -18,9 +18,9 @@ package de.tor.tribes.ui.wiz.tap;
 import de.tor.tribes.control.GenericManagerListener;
 import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.UnitHolder;
-import de.tor.tribes.types.TroopMovement;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.StandardAttack;
+import de.tor.tribes.types.TroopMovement;
 import de.tor.tribes.types.UserProfile;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.components.VillageOverviewMapPanel;
@@ -36,15 +36,14 @@ import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.algo.types.TimeFrame;
 import de.tor.tribes.util.attack.StandardAttackManager;
+import java.awt.*;
+import java.util.*;
+import java.util.List;
+import javax.swing.*;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.netbeans.spi.wizard.Wizard;
 import org.netbeans.spi.wizard.WizardPage;
 import org.netbeans.spi.wizard.WizardPanelNavResult;
-
-import javax.swing.*;
-import java.awt.*;
-import java.util.*;
-import java.util.List;
 
 /**
  *
@@ -113,6 +112,9 @@ public class AttackFinishPanel extends WizardPage {
                 dataChangedEvent();
             }
         });
+        
+        jStandardFake.setRenderer(new StandardAttackListCellRenderer());
+        jStandardOff.setRenderer(new StandardAttackListCellRenderer());
     }
 
     public void storeProperties() {
@@ -133,27 +135,27 @@ public class AttackFinishPanel extends WizardPage {
 
     private void updateStandardAttacks() {
         UserProfile profile = GlobalOptions.getSelectedProfile();
-        DefaultComboBoxModel offModel = new DefaultComboBoxModel();
-        DefaultComboBoxModel fakeModel = new DefaultComboBoxModel();
+        DefaultComboBoxModel stdOffModel = new DefaultComboBoxModel();
+        DefaultComboBoxModel stdFakeModel = new DefaultComboBoxModel();
 
         for (ManageableType t : StandardAttackManager.getSingleton().getAllElements()) {
             StandardAttack a = (StandardAttack) t;
-            offModel.addElement(a.getName());
-            fakeModel.addElement(a.getName());
+            stdOffModel.addElement(a);
+            stdFakeModel.addElement(a);
         }
-        jStandardOff.setModel(offModel);
-        jStandardFake.setModel(fakeModel);
+        jStandardOff.setModel(stdOffModel);
+        jStandardFake.setModel(stdFakeModel);
 
-        String val = profile.getProperty("tap.finish.std.off");
-        if (val == null || StandardAttackManager.getSingleton().isAllowedName(val)) {//no value set or std attack not used
-            val = StandardAttackManager.getSingleton().getElementByIcon(StandardAttack.OFF_ICON).getName();
+        StandardAttack val = StandardAttackManager.getSingleton().getElementByName(profile.getProperty("tap.finish.std.off"));
+        if (val == null) {//no value set or std attack not used
+            val = StandardAttackManager.getSingleton().getElementByIcon(StandardAttack.OFF_ICON);
         }
         jStandardOff.setSelectedItem(val);
 
 
-        val = profile.getProperty("tap.finish.std.fake");
-        if (val == null || StandardAttackManager.getSingleton().isAllowedName(val)) {//no value set or std attack not used
-            val = StandardAttackManager.getSingleton().getElementByIcon(StandardAttack.FAKE_ICON).getName();
+        val = StandardAttackManager.getSingleton().getElementByName(profile.getProperty("tap.finish.std.fake"));
+        if (val == null) {//no value set or std attack not used
+            val = StandardAttackManager.getSingleton().getElementByIcon(StandardAttack.FAKE_ICON);
         }
         jStandardFake.setSelectedItem(val);
     }
@@ -623,6 +625,7 @@ public class AttackFinishPanel extends WizardPage {
 
             SwingUtilities.invokeLater(new Runnable() {
 
+                @Override
                 public void run() {
                     jPanel5.updateUI();
                 }
@@ -699,14 +702,14 @@ public class AttackFinishPanel extends WizardPage {
         }
 
         //modify attack types
-        String stdOff = (String) jStandardOff.getSelectedItem();
+        StandardAttack stdOff = (StandardAttack) jStandardOff.getSelectedItem();
         if (stdOff == null) {
-            stdOff = StandardAttackManager.getSingleton().getElementByIcon(StandardAttack.OFF_ICON).getName();
+            stdOff = StandardAttackManager.getSingleton().getElementByIcon(StandardAttack.OFF_ICON);
         }
 
-        String stdFake = (String) jStandardFake.getSelectedItem();
+        StandardAttack stdFake = (StandardAttack) jStandardFake.getSelectedItem();
         if (stdFake == null) {
-            stdFake = StandardAttackManager.getSingleton().getElementByIcon(StandardAttack.FAKE_ICON).getName();
+            stdFake = StandardAttackManager.getSingleton().getElementByIcon(StandardAttack.FAKE_ICON);
         }
 
         List<Attack> modifiedTransfer = new LinkedList<>();
@@ -714,9 +717,9 @@ public class AttackFinishPanel extends WizardPage {
             Attack newAttack = new Attack(a);
 
             if (a.getType() == Attack.FAKE_TYPE) {
-                newAttack.setType(StandardAttackManager.getSingleton().getElementByName(stdFake).getIcon());
+                newAttack.setType(stdFake.getIcon());
             } else if (a.getType() == Attack.CLEAN_TYPE) {
-                newAttack.setType(StandardAttackManager.getSingleton().getElementByName(stdOff).getIcon());
+                newAttack.setType(stdOff.getIcon());
             }
             newAttack.setUnit(a.getUnit());
             newAttack.setTroopsByType();

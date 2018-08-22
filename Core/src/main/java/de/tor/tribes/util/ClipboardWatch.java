@@ -15,7 +15,6 @@
  */
 package de.tor.tribes.util;
 
-import de.tor.tribes.sec.SecurityAdapter;
 import de.tor.tribes.ui.windows.ClockFrame;
 import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
 import java.applet.Applet;
@@ -25,10 +24,13 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.zip.CRC32;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 /**
  *
@@ -36,7 +38,7 @@ import org.apache.log4j.Logger;
  */
 public class ClipboardWatch extends Thread {
 
-    private static Logger logger = Logger.getLogger("ClipboardMonitor");
+    private static Logger logger = LogManager.getLogger("ClipboardMonitor");
     private static ClipboardWatch SINGLETON = null;
 
     public static synchronized ClipboardWatch getSingleton() {
@@ -73,7 +75,7 @@ public class ClipboardWatch extends Thread {
                 }
 
                 try {
-                    if (org.apache.commons.lang.SystemUtils.IS_OS_WINDOWS) {
+                    if (org.apache.commons.lang3.SystemUtils.IS_OS_WINDOWS) {
                         if (clip == null) {
                             clip = AudioSystem.getClip();
                             AudioInputStream inputStream = AudioSystem.getAudioInputStream(ClockFrame.class.getResourceAsStream("/res/Ding.wav"));
@@ -96,15 +98,18 @@ public class ClipboardWatch extends Thread {
     @Override
     public void run() {
         logger.info("Starting ClipboardMonitor");
-        String lastHash = null;
+        long lastCRC = 0;
+        CRC32 c = new CRC32(); //use CRC32 because it is fast
         while (true) {
             if (DSWorkbenchMainFrame.getSingleton().isWatchClipboard()) {
                 try {
                     Transferable t = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
                     String data = (String) t.getTransferData(DataFlavor.stringFlavor);
-                    String currentHash = SecurityAdapter.hashStringMD5(data);
+                    c.reset();
+                    c.update(data.getBytes("UTF-8"));
+                    long currentCRC = c.getValue();
 
-                    if ((data.length() > 10) && (lastHash == null || !currentHash.equals(lastHash))) {
+                    if ((data.length() > 10) && currentCRC != lastCRC) {
                         if (PluginManager.getSingleton().executeReportParser(data)) {
                             //report parsed, clean clipboard
                             logger.info("Report successfully parsed.");
@@ -134,7 +139,7 @@ public class ClipboardWatch extends Thread {
                             SystrayHelper.showInfoMessage("Befehle erfolgreich eingelesen");
                             playNotification();
                         }
-                        lastHash = currentHash;
+                        lastCRC = currentCRC;
                     }
                 } catch (Exception e) {
                     //no usable data

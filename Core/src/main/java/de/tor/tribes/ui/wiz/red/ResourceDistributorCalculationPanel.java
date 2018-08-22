@@ -15,25 +15,6 @@
  */
 package de.tor.tribes.ui.wiz.red;
 
-import java.awt.BorderLayout;
-import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Hashtable;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
-import javax.swing.Icon;
-import javax.swing.JOptionPane;
-
-import org.apache.log4j.Logger;
-import org.netbeans.spi.wizard.Wizard;
-import org.netbeans.spi.wizard.WizardPage;
-import org.netbeans.spi.wizard.WizardPanelNavResult;
-
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.Resource;
 import de.tor.tribes.types.UserProfile;
@@ -47,6 +28,23 @@ import de.tor.tribes.util.algo.MerchantDistributor;
 import de.tor.tribes.util.algo.types.MerchantDestination;
 import de.tor.tribes.util.algo.types.MerchantSource;
 import de.tor.tribes.util.algo.types.Order;
+import java.awt.BorderLayout;
+import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import javax.swing.Icon;
+import javax.swing.JOptionPane;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.netbeans.spi.wizard.Wizard;
+import org.netbeans.spi.wizard.WizardPage;
+import org.netbeans.spi.wizard.WizardPanelNavResult;
 
 /**
  *
@@ -61,7 +59,7 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
     private static ResourceDistributorCalculationPanel singleton = null;
     private MerchantDistributor calculator = null;
     private boolean transportsAlreadyTransferred = false;
-    private static Logger logger = Logger.getLogger("ResourceDistributorCalculationPanel");
+    private static Logger logger = LogManager.getLogger("ResourceDistributorCalculationPanel");
 
     public static synchronized ResourceDistributorCalculationPanel getSingleton() {
         if (singleton == null) {
@@ -304,15 +302,21 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
         jXCollapsiblePane3 = new org.jdesktop.swingx.JXCollapsiblePane();
         jFillSettingsPanel = new javax.swing.JPanel();
         jLabel11 = new javax.swing.JLabel();
-        jTargetWood = new com.jidesoft.swing.LabeledTextField();
         jLabel8 = new javax.swing.JLabel();
-        jRemainWood = new com.jidesoft.swing.LabeledTextField();
-        jTargetClay = new com.jidesoft.swing.LabeledTextField();
-        jRemainClay = new com.jidesoft.swing.LabeledTextField();
-        jTargetIron = new com.jidesoft.swing.LabeledTextField();
-        jRemainIron = new com.jidesoft.swing.LabeledTextField();
         jButton1 = new javax.swing.JButton();
+        jLabel5 = new javax.swing.JLabel();
+        jLabel12 = new javax.swing.JLabel();
+        jLabel17 = new javax.swing.JLabel();
         jNoSettingsLabel = new javax.swing.JLabel();
+        jTargetWood = new javax.swing.JTextField();
+        jTargetClay = new javax.swing.JTextField();
+        jTargetIron = new javax.swing.JTextField();
+        jLabel18 = new javax.swing.JLabel();
+        jRemainWood = new javax.swing.JTextField();
+        jLabel19 = new javax.swing.JLabel();
+        jRemainClay = new javax.swing.JTextField();
+        jLabel20 = new javax.swing.JLabel();
+        jRemainIron = new javax.swing.JTextField();
         jCalculateButton = new javax.swing.JButton();
         jProgressBar1 = new javax.swing.JProgressBar();
 
@@ -331,7 +335,6 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
         jIgnoreTransportsButton.setText("Transporte mit weniger als");
         jIgnoreTransportsButton.setMaximumSize(new java.awt.Dimension(200, 25));
         jIgnoreTransportsButton.setMinimumSize(new java.awt.Dimension(200, 25));
-        jIgnoreTransportsButton.setOpaque(false);
         jIgnoreTransportsButton.setPreferredSize(new java.awt.Dimension(200, 25));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -396,7 +399,6 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
         jIgnoreTransportsByDistanceButton.setText("Transportentfernung über");
         jIgnoreTransportsByDistanceButton.setMaximumSize(new java.awt.Dimension(200, 25));
         jIgnoreTransportsByDistanceButton.setMinimumSize(new java.awt.Dimension(200, 25));
-        jIgnoreTransportsByDistanceButton.setOpaque(false);
         jIgnoreTransportsByDistanceButton.setPreferredSize(new java.awt.Dimension(200, 25));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -584,7 +586,6 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
         jLimitMerchantAmount.setToolTipText("<html>Schränkt die Anzahl der Händler pro Rohstoff gleichmäßig ein.<br/>\nWerden alle 3 Rohstoffe gehandelt, wird jeder Rohstoff mit 33% der Händler verschickt.<br/>\nHandelt man nur 2 Rohstoffe, werden für jeden Rohstoff 50% der Händler verwendet.<br/>\nIst diese Option deaktiviert, werden die Händler nach der Reihenfolge des Handels verwendet.</html>");
         jLimitMerchantAmount.setMaximumSize(new java.awt.Dimension(200, 25));
         jLimitMerchantAmount.setMinimumSize(new java.awt.Dimension(200, 25));
-        jLimitMerchantAmount.setOpaque(false);
         jLimitMerchantAmount.setPreferredSize(new java.awt.Dimension(200, 25));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -598,7 +599,6 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
         jAllowOverflow.setToolTipText("<html>Hebt das Limit der Speichergröße auf.<br/>  Ist diese Option aktiviert, so werden Rohstoffsendungen bis zur x-fachen Speichergröße an die<br/> Dörfer zugeteilt (oder bis zum Max. Rohstoffe (Empfänger) Limit), je nachdem was kleiner ist. <br/>  Wird ein Speicher beim Beliefern überfüllt, so verfallen die gesendeten Rohstoffe. Ist diese <br/>  Option aktiviert, sollte daher unbedingt darauf geachtet werden empfangene Rohstoffe schnell<br/>  genug zu verarbeiten.<br/> Ist diese Option deaktiviert, so werden Lieferungen anhand des Speichers begrenzt (bis zum Max.<br/> Speicherfüllstand [%] oben). </html>");
         jAllowOverflow.setMaximumSize(new java.awt.Dimension(200, 25));
         jAllowOverflow.setMinimumSize(new java.awt.Dimension(200, 25));
-        jAllowOverflow.setOpaque(false);
         jAllowOverflow.setPreferredSize(new java.awt.Dimension(200, 25));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -872,19 +872,6 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jFillSettingsPanel.add(jLabel11, gridBagConstraints);
 
-        jTargetWood.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/holz.png"))); // NOI18N
-        jTargetWood.setMaximumSize(new java.awt.Dimension(100, 25));
-        jTargetWood.setMinimumSize(new java.awt.Dimension(100, 25));
-        jTargetWood.setPreferredSize(new java.awt.Dimension(100, 25));
-        jTargetWood.setText("380000");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jFillSettingsPanel.add(jTargetWood, gridBagConstraints);
-
         jLabel8.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         jLabel8.setText("Min. Rohstoffe (Lieferanten)");
         jLabel8.setMaximumSize(new java.awt.Dimension(200, 25));
@@ -892,76 +879,11 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
         jLabel8.setPreferredSize(new java.awt.Dimension(200, 25));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weighty = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jFillSettingsPanel.add(jLabel8, gridBagConstraints);
-
-        jRemainWood.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/holz.png"))); // NOI18N
-        jRemainWood.setMaximumSize(new java.awt.Dimension(100, 25));
-        jRemainWood.setMinimumSize(new java.awt.Dimension(100, 25));
-        jRemainWood.setPreferredSize(new java.awt.Dimension(100, 25));
-        jRemainWood.setText("28000");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jFillSettingsPanel.add(jRemainWood, gridBagConstraints);
-
-        jTargetClay.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/lehm.png"))); // NOI18N
-        jTargetClay.setMaximumSize(new java.awt.Dimension(100, 25));
-        jTargetClay.setMinimumSize(new java.awt.Dimension(100, 25));
-        jTargetClay.setPreferredSize(new java.awt.Dimension(100, 25));
-        jTargetClay.setText("380000");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jFillSettingsPanel.add(jTargetClay, gridBagConstraints);
-
-        jRemainClay.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/lehm.png"))); // NOI18N
-        jRemainClay.setMaximumSize(new java.awt.Dimension(100, 25));
-        jRemainClay.setMinimumSize(new java.awt.Dimension(100, 25));
-        jRemainClay.setPreferredSize(new java.awt.Dimension(100, 25));
-        jRemainClay.setText("30000");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jFillSettingsPanel.add(jRemainClay, gridBagConstraints);
-
-        jTargetIron.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/eisen.png"))); // NOI18N
-        jTargetIron.setMaximumSize(new java.awt.Dimension(100, 25));
-        jTargetIron.setMinimumSize(new java.awt.Dimension(100, 25));
-        jTargetIron.setPreferredSize(new java.awt.Dimension(100, 25));
-        jTargetIron.setText("380000");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 3;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jFillSettingsPanel.add(jTargetIron, gridBagConstraints);
-
-        jRemainIron.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/eisen.png"))); // NOI18N
-        jRemainIron.setMaximumSize(new java.awt.Dimension(100, 25));
-        jRemainIron.setMinimumSize(new java.awt.Dimension(100, 25));
-        jRemainIron.setPreferredSize(new java.awt.Dimension(100, 25));
-        jRemainIron.setText("25000");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 3;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jFillSettingsPanel.add(jRemainIron, gridBagConstraints);
 
         jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/median.png"))); // NOI18N
         jButton1.setToolTipText("Durchnittliche Ressourcen aller Dörfer verwenden");
@@ -971,15 +893,27 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 4;
-        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridx = 7;
+        gridBagConstraints.gridy = 2;
         jFillSettingsPanel.add(jButton1, gridBagConstraints);
 
+        jLabel5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/holz.png"))); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        jSettingsPanel.add(jFillSettingsPanel, gridBagConstraints);
+        jFillSettingsPanel.add(jLabel5, gridBagConstraints);
+
+        jLabel12.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/lehm.png"))); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 0;
+        jFillSettingsPanel.add(jLabel12, gridBagConstraints);
+
+        jLabel17.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/eisen.png"))); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 5;
+        gridBagConstraints.gridy = 0;
+        jFillSettingsPanel.add(jLabel17, gridBagConstraints);
 
         jNoSettingsLabel.setBackground(new java.awt.Color(255, 255, 255));
         jNoSettingsLabel.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
@@ -988,10 +922,101 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
         jNoSettingsLabel.setOpaque(true);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 7;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(5, 10, 5, 10);
-        jSettingsPanel.add(jNoSettingsLabel, gridBagConstraints);
+        jFillSettingsPanel.add(jNoSettingsLabel, gridBagConstraints);
+
+        jTargetWood.setText("380000");
+        jTargetWood.setMinimumSize(new java.awt.Dimension(70, 25));
+        jTargetWood.setPreferredSize(new java.awt.Dimension(70, 25));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 20);
+        jFillSettingsPanel.add(jTargetWood, gridBagConstraints);
+
+        jTargetClay.setText("380000");
+        jTargetClay.setMinimumSize(new java.awt.Dimension(70, 25));
+        jTargetClay.setPreferredSize(new java.awt.Dimension(70, 25));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 20);
+        jFillSettingsPanel.add(jTargetClay, gridBagConstraints);
+
+        jTargetIron.setText("380000");
+        jTargetIron.setMinimumSize(new java.awt.Dimension(70, 25));
+        jTargetIron.setPreferredSize(new java.awt.Dimension(70, 25));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 6;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 20);
+        jFillSettingsPanel.add(jTargetIron, gridBagConstraints);
+
+        jLabel18.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/holz.png"))); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        jFillSettingsPanel.add(jLabel18, gridBagConstraints);
+
+        jRemainWood.setText("380000");
+        jRemainWood.setMinimumSize(new java.awt.Dimension(70, 25));
+        jRemainWood.setPreferredSize(new java.awt.Dimension(70, 25));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 20);
+        jFillSettingsPanel.add(jRemainWood, gridBagConstraints);
+
+        jLabel19.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/lehm.png"))); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 2;
+        jFillSettingsPanel.add(jLabel19, gridBagConstraints);
+
+        jRemainClay.setText("380000");
+        jRemainClay.setMinimumSize(new java.awt.Dimension(70, 25));
+        jRemainClay.setPreferredSize(new java.awt.Dimension(70, 25));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 20);
+        jFillSettingsPanel.add(jRemainClay, gridBagConstraints);
+
+        jLabel20.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/eisen.png"))); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 5;
+        gridBagConstraints.gridy = 2;
+        jFillSettingsPanel.add(jLabel20, gridBagConstraints);
+
+        jRemainIron.setText("380000");
+        jRemainIron.setMinimumSize(new java.awt.Dimension(70, 25));
+        jRemainIron.setPreferredSize(new java.awt.Dimension(70, 25));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 6;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 20);
+        jFillSettingsPanel.add(jRemainIron, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        jSettingsPanel.add(jFillSettingsPanel, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -1416,10 +1441,10 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
         }
     }
 
-    protected Hashtable<Village, Hashtable<Village, List<Resource>>> getTransports() {
+    protected HashMap<Village, HashMap<Village, List<Resource>>> getTransports() {
         logger.debug("Getting transports");
 
-        Hashtable<Village, Hashtable<Village, List<Resource>>> transports = new Hashtable<>();
+        HashMap<Village, HashMap<Village, List<Resource>>> transports = new HashMap<>();
         if (!calculator.getResults().isEmpty()) {
             int minAmount = 1;
             if (jIgnoreTransportsButton.isSelected()) {
@@ -1456,10 +1481,10 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
 
                 for (MerchantSource source : resultForResource) {
                     Village sourceVillage = DataHolder.getSingleton().getVillages()[source.getC().getX()][source.getC().getY()];
-                    Hashtable<Village, List<Resource>> transportsForSource = transports.get(sourceVillage);
+                    HashMap<Village, List<Resource>> transportsForSource = transports.get(sourceVillage);
 
                     if (transportsForSource == null) {
-                        transportsForSource = new Hashtable<>();
+                        transportsForSource = new HashMap<>();
                         transports.put(sourceVillage, transportsForSource);
                     }
 
@@ -1483,12 +1508,12 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
                 }
             }
 
-            Set<Entry<Village, Hashtable<Village, List<Resource>>>> entries = transports.entrySet();
+            Set<Entry<Village, HashMap<Village, List<Resource>>>> entries = transports.entrySet();
 
             List<Village> destinationsToRemove = new LinkedList<>();
-            for (Entry<Village, Hashtable<Village, List<Resource>>> entry : entries) {
+            for (Entry<Village, HashMap<Village, List<Resource>>> entry : entries) {
                 Village transportDestination = entry.getKey();
-                Hashtable<Village, List<Resource>> destinationTransports = entry.getValue();
+                HashMap<Village, List<Resource>> destinationTransports = entry.getValue();
                 Set<Entry<Village, List<Resource>>> transportEntries = destinationTransports.entrySet();
                 List<Village> toRemove = new LinkedList<>();
                 for (Entry<Village, List<Resource>> transportEntry : transportEntries) {
@@ -1544,13 +1569,19 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
+    private javax.swing.JLabel jLabel17;
+    private javax.swing.JLabel jLabel18;
+    private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
@@ -1564,9 +1595,9 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
     private javax.swing.JPanel jPanel4;
     private javax.swing.JProgressBar jProgressBar1;
     private javax.swing.JLabel jReceivers;
-    private com.jidesoft.swing.LabeledTextField jRemainClay;
-    private com.jidesoft.swing.LabeledTextField jRemainIron;
-    private com.jidesoft.swing.LabeledTextField jRemainWood;
+    private javax.swing.JTextField jRemainClay;
+    private javax.swing.JTextField jRemainIron;
+    private javax.swing.JTextField jRemainWood;
     private javax.swing.JLabel jResource1;
     private javax.swing.JLabel jResource2;
     private javax.swing.JLabel jResource3;
@@ -1576,9 +1607,9 @@ public class ResourceDistributorCalculationPanel extends WizardPage {
     private javax.swing.JButton jSwitch12Button;
     private javax.swing.JButton jSwitch23Button;
     private javax.swing.JButton jSwitch23Button1;
-    private com.jidesoft.swing.LabeledTextField jTargetClay;
-    private com.jidesoft.swing.LabeledTextField jTargetIron;
-    private com.jidesoft.swing.LabeledTextField jTargetWood;
+    private javax.swing.JTextField jTargetClay;
+    private javax.swing.JTextField jTargetIron;
+    private javax.swing.JTextField jTargetWood;
     private javax.swing.JToggleButton jToggleButton1;
     private javax.swing.JCheckBox jUseResource1;
     private javax.swing.JCheckBox jUseResource2;

@@ -21,7 +21,9 @@ import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.report.ReportManager;
 import java.util.Date;
 import javax.swing.table.AbstractTableModel;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 /**
  *
@@ -30,9 +32,9 @@ import org.apache.log4j.Logger;
 public class ReportManagerTableModel extends AbstractTableModel {
 
     private String sSet = null;
-    private Class[] types = new Class[]{FightReport.class, Date.class, Tribe.class, Village.class, Tribe.class, Village.class, Integer.class, Byte.class};
+    private Class[] types = new Class[]{FightReport.status.class, Date.class, Tribe.class, Village.class, Tribe.class, Village.class, Integer.class, Byte.class};
     private String[] colNames = new String[]{"Status", "Gesendet", "Angreifer", "Herkunft", "Verteidiger", "Ziel", "Typ", "Sonstiges"};
-    private static Logger logger = Logger.getLogger("ReportTableModel");
+    private static Logger logger = LogManager.getLogger("ReportTableModel");
 
     public ReportManagerTableModel(String pSet) {
         sSet = pSet;
@@ -80,7 +82,7 @@ public class ReportManagerTableModel extends AbstractTableModel {
             FightReport r = (FightReport) ReportManager.getSingleton().getAllElements(sSet).get(rowIndex);
             switch (columnIndex) {
                 case 0:
-                    return r;
+                    return r.getStatus();
                 case 1:
                     return new Date(r.getTimestamp());//new SimpleDateFormat("dd.MM.yy HH:mm").format(new Date(r.getTimestamp()));
                 case 2:

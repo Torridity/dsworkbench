@@ -18,23 +18,20 @@ package de.tor.tribes.util.attack;
 import de.tor.tribes.control.GenericManager;
 import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.types.StandardAttack;
-import de.tor.tribes.util.xml.JaxenUtils;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
-import org.apache.log4j.Logger;
-import org.jdom.Document;
-import org.jdom.Element;
-
-import java.io.File;
-import java.io.FileWriter;
+import de.tor.tribes.util.xml.JDomUtils;
 import java.util.List;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.Predicate;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jdom2.Element;
 
 /**
  * @author Charon
  */
 public class StandardAttackManager extends GenericManager<StandardAttack> {
 
-    private static final Logger logger = Logger.getLogger("StandardAttackManager");
+    private static final Logger logger = LogManager.getLogger("StandardAttackManager");
     public static final String NO_TYPE_NAME = "Keine Auswahl";
     public static final String FAKE_TYPE_NAME = "Fake";
     public static final String OFF_TYPE_NAME = "Off";
@@ -54,7 +51,8 @@ public class StandardAttackManager extends GenericManager<StandardAttack> {
         super(false);
     }
 
-    private void checkValues() {
+    @Override
+    protected void checkValues() {
         if (getElementByName(NO_TYPE_NAME) == null) {
             addManagedElement(new StandardAttack(NO_TYPE_NAME, StandardAttack.NO_ICON));
         }
@@ -159,60 +157,44 @@ public class StandardAttackManager extends GenericManager<StandardAttack> {
     }
 
     @Override
-    public void loadElements(String pFile) {
-
-        if (pFile == null) {
-            logger.error("File argument is 'null'");
-            return;
-        }
-        invalidate();
-        initialize();
-        File attackFile = new File(pFile);
-        if (attackFile.exists()) {
-            logger.info("Loading standard attacks from '" + pFile + "'");
-            try {
-                Document d = JaxenUtils.getDocument(attackFile);
-                for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//stdAttacks/stdAttack")) {
-                    StandardAttack element = new StandardAttack();
-                    element.loadFromXml(e);
-                    addManagedElement(element);
-                }
-                checkValues();
-                logger.debug("Standard attacks loaded successfully");
-            } catch (Exception e) {
-                logger.error("Failed to load standard attacks", e);
-                checkValues();
-            }
-        } else {
-            logger.info("No standard attacks found under '" + pFile + "'");
-            checkValues();
-        }
-        revalidate();
-    }
-
-    @Override
-    public void saveElements(String pFile) {
-        try (FileWriter w = new FileWriter(pFile)) {
-            w.write("<stdAttacks>\n");
-
+    public Element getExportData(final List<String> pGroupsToExport) {
+        Element stdAtts = new Element("stdAttacks");
+        
+        try {
             for (ManageableType element : getAllElements()) {
-                w.write(element.toXml());
+                stdAtts.addContent(element.toXml("stdAttack"));
             }
-            w.write("</stdAttacks>\n");
-            w.flush();
-            w.close();
         } catch (Exception e) {
             logger.error("Failed to store standard attacks", e);
         }
+        return stdAtts;
     }
 
     @Override
-    public String getExportData(List<String> pGroupsToExport) {
-        return "";
-    }
+    public int importData(Element pElm, String pExtension) {
+        if (pElm == null) {
+            logger.error("Element argument is 'null'");
+            return -1;
+        }
+        int result = 0;
+        invalidate();
+        logger.info("Loading standard attacks");
 
-    @Override
-    public boolean importData(File pFile, String pExtension) {
-        return false;
+        try {
+            for (Element e : (List<Element>) JDomUtils.getNodes(pElm, "stdAttacks/stdAttack")) {
+                StandardAttack element = new StandardAttack();
+                element.loadFromXml(e);
+                addManagedElement(element);
+                result++;
+            }
+            logger.debug("Standard attacks loaded successfully");
+            checkValues();
+        } catch (Exception e) {
+            result = result * (-1) - 1;
+            logger.error("Failed to load standard attacks", e);
+            checkValues();
+        }
+        revalidate(true);
+        return result;
     }
 }

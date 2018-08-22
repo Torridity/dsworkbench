@@ -18,8 +18,6 @@ package de.tor.tribes.ui.views;
 import de.tor.tribes.control.GenericManagerListener;
 import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Village;
-import de.tor.tribes.types.test.DummyVillage;
-import de.tor.tribes.ui.editors.WatchtowerLevelCellEditor;
 import de.tor.tribes.ui.models.WatchtowerTableModel;
 import de.tor.tribes.ui.panels.GenericTestPanel;
 import de.tor.tribes.ui.renderer.ColorCellRenderer;
@@ -27,12 +25,25 @@ import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
 import de.tor.tribes.ui.windows.AbstractDSWorkbenchFrame;
 import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
 import de.tor.tribes.util.*;
-import de.tor.tribes.util.village.KnownVillageManager;
-import de.tor.tribes.util.village.KnownVillage;
 import de.tor.tribes.util.mark.MarkerManager;
-import org.apache.commons.configuration.Configuration;
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.Logger;
+import de.tor.tribes.util.village.KnownVillage;
+import de.tor.tribes.util.village.KnownVillageManager;
+import java.awt.*;
+import java.awt.datatransfer.StringSelection;
+import java.awt.event.*;
+import java.awt.geom.GeneralPath;
+import java.awt.image.BufferedImage;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.StringTokenizer;
+import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import org.apache.commons.configuration2.Configuration;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jdesktop.swingx.JXButton;
 import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.decorator.CompoundHighlighter;
@@ -44,20 +55,6 @@ import org.jdesktop.swingx.painter.AbstractLayoutPainter.VerticalAlignment;
 import org.jdesktop.swingx.painter.ImagePainter;
 import org.jdesktop.swingx.painter.MattePainter;
 import org.jdesktop.swingx.table.TableColumnExt;
-
-import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import java.awt.*;
-import java.awt.datatransfer.StringSelection;
-import java.awt.event.*;
-import java.awt.geom.GeneralPath;
-import java.awt.image.BufferedImage;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.StringTokenizer;
 
 /**
  * @author Charon
@@ -74,7 +71,7 @@ public class DSWorkbenchWatchtowerFrame extends AbstractDSWorkbenchFrame impleme
     public void dataChangedEvent(String pGroup) {
         ((WatchtowerTableModel) jWatchtowerTable.getModel()).fireTableDataChanged();
     }
-    private final static Logger logger = Logger.getLogger("WatchtowerView");
+    private final static Logger logger = LogManager.getLogger("WatchtowerView");
     private static DSWorkbenchWatchtowerFrame SINGLETON = null;
     private GenericTestPanel centerPanel = null;
 
@@ -459,26 +456,7 @@ public class DSWorkbenchWatchtowerFrame extends AbstractDSWorkbenchFrame impleme
     @Override
     public void fireVillagesDraggedEvent(List<Village> pVillages, Point pDropLocation) {
     }
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
-        try {
-            //  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-        } catch (Exception ignored) {
-        }
-        DSWorkbenchWatchtowerFrame.getSingleton().resetView();
-        for (int i = 0; i < 50; i++) {
-            KnownVillageManager.getSingleton().addWatchtowerLevel(new DummyVillage((short) i, (short) i), 2);
-        }
-
-        DSWorkbenchWatchtowerFrame.getSingleton().setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        DSWorkbenchWatchtowerFrame.getSingleton().setVisible(true);
-
-    }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private de.tor.tribes.ui.components.CapabilityInfoPanel capabilityInfoPanel1;
     private org.jdesktop.swingx.JXCollapsiblePane infoPanel;
@@ -496,7 +474,11 @@ public class DSWorkbenchWatchtowerFrame extends AbstractDSWorkbenchFrame impleme
 
         jWatchtowerTable.setColumnControlVisible(true);
         jWatchtowerTable.setDefaultRenderer(Color.class, new ColorCellRenderer());
-        jWatchtowerTable.setDefaultEditor(Integer.class, new WatchtowerLevelCellEditor());
+        
+        DefaultComboBoxModel model = new DefaultComboBoxModel();
+        for(int i = 1; i <= KnownVillage.getMaxBuildingLevel("watchtower"); i++)
+            model.addElement(i);
+        jWatchtowerTable.setDefaultEditor(Integer.class, new DefaultCellEditor(new JComboBox(model)));
         BufferedImage back = ImageUtils.createCompatibleBufferedImage(5, 5, BufferedImage.BITMASK);
         Graphics2D g = back.createGraphics();
         GeneralPath p = new GeneralPath();

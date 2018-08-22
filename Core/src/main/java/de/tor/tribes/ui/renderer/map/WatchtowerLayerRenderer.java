@@ -17,17 +17,17 @@ package de.tor.tribes.ui.renderer.map;
 
 import de.tor.tribes.ui.panels.MapPanel;
 import de.tor.tribes.util.Constants;
-import de.tor.tribes.util.village.KnownVillageManager;
 import de.tor.tribes.util.village.KnownVillage;
+import de.tor.tribes.util.village.KnownVillageManager;
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Graphics2D;
-import java.awt.Rectangle;
-import java.util.List;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.Stroke;
+import java.util.List;
 
 /**
  *

@@ -17,24 +17,33 @@ package de.tor.tribes.ui.views;
 
 import de.tor.tribes.control.GenericManagerListener;
 import de.tor.tribes.types.drawing.AbstractForm;
-import de.tor.tribes.types.drawing.Circle;
-import de.tor.tribes.types.drawing.Line;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.ImageManager;
 import de.tor.tribes.ui.models.FormTableModel;
 import de.tor.tribes.ui.panels.GenericTestPanel;
 import de.tor.tribes.ui.panels.MapPanel;
+import de.tor.tribes.ui.renderer.CustomBooleanRenderer;
 import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
-import de.tor.tribes.ui.renderer.VisibilityCellRenderer;
 import de.tor.tribes.ui.windows.AbstractDSWorkbenchFrame;
 import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
 import de.tor.tribes.ui.windows.FormConfigFrame;
 import de.tor.tribes.util.*;
 import de.tor.tribes.util.bb.FormListFormatter;
 import de.tor.tribes.util.map.FormManager;
-import org.apache.commons.configuration.Configuration;
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.Logger;
+import java.awt.*;
+import java.awt.datatransfer.StringSelection;
+import java.awt.event.*;
+import java.awt.geom.GeneralPath;
+import java.awt.image.BufferedImage;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.List;
+import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import org.apache.commons.configuration2.Configuration;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jdesktop.swingx.JXButton;
 import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.decorator.HighlightPredicate;
@@ -44,18 +53,6 @@ import org.jdesktop.swingx.painter.AbstractLayoutPainter.HorizontalAlignment;
 import org.jdesktop.swingx.painter.AbstractLayoutPainter.VerticalAlignment;
 import org.jdesktop.swingx.painter.ImagePainter;
 import org.jdesktop.swingx.painter.MattePainter;
-
-import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import java.awt.*;
-import java.awt.datatransfer.StringSelection;
-import java.awt.event.*;
-import java.awt.geom.GeneralPath;
-import java.awt.image.BufferedImage;
-import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.List;
 
 /**
  * @author Charon
@@ -73,7 +70,7 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame implements Li
             deleteSelection();
         }
     }
-    private static Logger logger = Logger.getLogger("FormFrame");
+    private static Logger logger = LogManager.getLogger("FormFrame");
     private static DSWorkbenchFormFrame SINGLETON = null;
     private GenericTestPanel centerPanel = null;
     
@@ -217,6 +214,7 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame implements Li
         }
     }
     
+    @Override
     public void storeCustomProperties(Configuration pConfig) {
         pConfig.setProperty(getPropertyPrefix() + ".menu.visible", centerPanel.isMenuVisible());
         pConfig.setProperty(getPropertyPrefix() + ".alwaysOnTop", jAlwaysOnTop.isSelected());
@@ -224,6 +222,7 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame implements Li
         PropertyHelper.storeTableProperties(jFormsTable, pConfig, getPropertyPrefix());
     }
     
+    @Override
     public void restoreCustomProperties(Configuration pConfig) {
         centerPanel.setMenuVisible(pConfig.getBoolean(getPropertyPrefix() + ".menu.visible", true));
         
@@ -237,6 +236,7 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame implements Li
         PropertyHelper.restoreTableProperties(jFormsTable, pConfig, getPropertyPrefix());
     }
     
+    @Override
     public String getPropertyPrefix() {
         return "forms.view";
     }
@@ -579,28 +579,6 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame implements Li
         ((FormTableModel) jFormsTable.getModel()).fireTableDataChanged();
     }
     
-    public static void main(String[] args) {
-        try {
-            //  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-        } catch (Exception ignored) {
-        }
-        Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
-        DSWorkbenchFormFrame.getSingleton().setSize(800, 600);
-        FormManager.getSingleton().addForm(new Circle());
-        FormManager.getSingleton().addForm(new de.tor.tribes.types.drawing.Rectangle());
-        FormManager.getSingleton().addForm(new Circle());
-        FormManager.getSingleton().addForm(new de.tor.tribes.types.drawing.Rectangle());
-        FormManager.getSingleton().addForm(new Circle());
-        FormManager.getSingleton().addForm(new de.tor.tribes.types.drawing.Rectangle());
-        FormManager.getSingleton().addForm(new Circle());
-        FormManager.getSingleton().addForm(new de.tor.tribes.types.drawing.Rectangle());
-        FormManager.getSingleton().addForm(new Line());
-        
-        DSWorkbenchFormFrame.getSingleton().resetView();
-        DSWorkbenchFormFrame.getSingleton().setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        DSWorkbenchFormFrame.getSingleton().setVisible(true);
-    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private de.tor.tribes.ui.components.CapabilityInfoPanel capabilityInfoPanel1;
     private org.jdesktop.swingx.JXCollapsiblePane infoPanel;
@@ -615,7 +593,7 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame implements Li
     static {
         jFormsTable.setHighlighters(HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B));
         jFormsTable.setColumnControlVisible(true);
-        jFormsTable.setDefaultRenderer(Boolean.class, new VisibilityCellRenderer());
+        jFormsTable.setDefaultRenderer(Boolean.class, new CustomBooleanRenderer(CustomBooleanRenderer.LayoutStyle.VISIBLE_INVISIBLE));
         BufferedImage back = ImageUtils.createCompatibleBufferedImage(5, 5, BufferedImage.BITMASK);
         Graphics2D g = back.createGraphics();
         GeneralPath p = new GeneralPath();

@@ -15,8 +15,8 @@
  */
 package de.tor.tribes.types;
 
-import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.util.BBSupport;
 import java.io.BufferedReader;
 import java.io.File;
@@ -26,7 +26,7 @@ import java.util.Calendar;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
-import org.apache.commons.lang.time.DateUtils;
+import org.apache.commons.lang3.time.DateUtils;
 
 /**
  *

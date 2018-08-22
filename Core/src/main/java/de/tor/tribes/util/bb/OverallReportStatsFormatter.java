@@ -16,11 +16,10 @@
 package de.tor.tribes.util.bb;
 
 import de.tor.tribes.types.OverallStatResult;
-import org.apache.commons.lang.StringUtils;
-
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author Torridity

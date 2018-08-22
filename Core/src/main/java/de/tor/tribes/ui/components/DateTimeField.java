@@ -62,6 +62,7 @@ public class DateTimeField extends javax.swing.JPanel {
 
     final class Listener extends ComponentAdapter {
 
+        @Override
         public void componentHidden(ComponentEvent componentevent) {
             if (componentevent.getSource() == dp) {
                 Date date = ((DatePicker) componentevent.getSource()).getDate();

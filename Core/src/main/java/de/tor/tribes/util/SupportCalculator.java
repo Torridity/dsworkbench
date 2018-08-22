@@ -24,18 +24,19 @@ import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-import org.apache.log4j.Logger;
 
 /**
  * @author Charon
  */
 public class SupportCalculator {
 
-    private static Logger logger = Logger.getLogger("SupportCalculator");
+    private static Logger logger = LogManager.getLogger("SupportCalculator");
 
     public static List<SupportMovement> calculateSupport(Village pVillage, Date pArrive, boolean pRealDefOnly, List<Tag> pTags, int pMinNumber) {
-        Hashtable<UnitHolder, Integer> unitTable = new Hashtable<>();
+        HashMap<UnitHolder, Integer> unitTable = new HashMap<>();
         if (logger.isDebugEnabled()) {
             logger.debug("Try to find support for village " + pVillage + " at arrival time " + new SimpleDateFormat("dd.MM.yy HH:mm:ss.SSS").format(pArrive));
             if (pTags == null || pTags.isEmpty()) {
@@ -134,8 +135,7 @@ public class SupportCalculator {
         return movements;
     }
 
-    private static UnitHolder calculateAvailableUnits(Village pTarget, Village pSource, Hashtable<UnitHolder, Integer> pUnitTable, Date pArrive, int pMinNumber) {
-        Enumeration<UnitHolder> allowedKeys = pUnitTable.keys();
+    private static UnitHolder calculateAvailableUnits(Village pTarget, Village pSource, HashMap<UnitHolder, Integer> pUnitTable, Date pArrive, int pMinNumber) {
         VillageTroopsHolder troops = TroopsManager.getSingleton().getTroopsForVillage(pSource, TroopsManager.TROOP_TYPE.OWN);
         if (troops == null) {
             return null;
@@ -143,8 +143,7 @@ public class SupportCalculator {
         // List<Integer> availableTroops = troops.getTroops();
 
         UnitHolder slowestPossible = null;
-        while (allowedKeys.hasMoreElements()) {
-            UnitHolder unit = allowedKeys.nextElement();
+        for(UnitHolder unit: pUnitTable.keySet()) {
             int availCount = troops.getTroops().getAmountForUnit(unit);
             if (availCount > pMinNumber) {
                 long ms = (long) (DSCalculator.calculateMoveTimeInSeconds(pSource, pTarget, unit.getSpeed()) * 1000);

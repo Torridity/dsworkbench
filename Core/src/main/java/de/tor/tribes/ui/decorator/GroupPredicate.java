@@ -19,11 +19,10 @@ import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
-import org.jdesktop.swingx.decorator.ComponentAdapter;
-import org.jdesktop.swingx.decorator.HighlightPredicate;
-
 import java.awt.*;
 import java.util.List;
+import org.jdesktop.swingx.decorator.ComponentAdapter;
+import org.jdesktop.swingx.decorator.HighlightPredicate;
 
 /**
  *

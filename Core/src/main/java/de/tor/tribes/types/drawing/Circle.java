@@ -19,14 +19,12 @@ import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.panels.MapPanel;
 import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
 import de.tor.tribes.util.bb.VillageListFormatter;
-import org.jdom.Element;
-
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.net.URLDecoder;
 import java.util.List;
+import org.jdom2.Element;
 
 /**
  *
@@ -43,17 +41,9 @@ public class Circle extends AbstractForm {
     private float drawAlpha = 1.0f;
 
     @Override
-    public void loadFromXml(Element e) {
+    public void formFromXml(Element e) {
         try {
-            Element elem = e.getChild("name");
-            setFormName(URLDecoder.decode(elem.getTextTrim(), "UTF-8"));
-            elem = e.getChild("pos");
-            setXPos(Double.parseDouble(elem.getAttributeValue("x")));
-            setYPos(Double.parseDouble(elem.getAttributeValue("y")));
-            elem = e.getChild("textColor");
-            setTextColor(new Color(Integer.parseInt(elem.getAttributeValue("r")), Integer.parseInt(elem.getAttributeValue("g")), Integer.parseInt(elem.getAttributeValue("b"))));
-            setTextAlpha(Float.parseFloat(elem.getAttributeValue("a")));
-            elem = e.getChild("drawColor");
+            Element elem = e.getChild("drawColor");
             this.drawColor = new Color(Integer.parseInt(elem.getAttributeValue("r")), Integer.parseInt(elem.getAttributeValue("g")), Integer.parseInt(elem.getAttributeValue("b")));
             this.drawAlpha = Float.parseFloat(elem.getAttributeValue("a"));
             elem = e.getChild("stroke");
@@ -63,12 +53,34 @@ public class Circle extends AbstractForm {
             this.yPosEnd = Double.parseDouble(elem.getAttributeValue("y"));
             elem = e.getChild("filled");
             this.filled = Boolean.parseBoolean(elem.getTextTrim());
-            elem = e.getChild("textSize");
-            setTextSize(Integer.parseInt(elem.getTextTrim()));
             elem = e.getChild("drawName");
             this.drawName = Boolean.parseBoolean(elem.getTextTrim());
         } catch (Exception ignored) {
         }
+    }
+
+    @Override
+    protected Element formToXml(String elementName) {
+        Element circle = new Element(elementName);
+        try {
+            circle.addContent(new Element("filled").setText(Boolean.toString(filled)));
+            circle.addContent(new Element("stroke").setAttribute("width", Float.toString(strokeWidth)));
+            circle.addContent(new Element("drawName").setText(Boolean.toString(drawName)));
+            
+            Element elm = new Element("end");
+            elm.setAttribute("x", Double.toString(xPosEnd));
+            elm.setAttribute("y", Double.toString(yPosEnd));
+            circle.addContent(elm);
+            
+            elm = new Element("drawColor");
+            elm.setAttribute("r", Integer.toString(drawColor.getRed()));
+            elm.setAttribute("g", Integer.toString(drawColor.getGreen()));
+            elm.setAttribute("b", Integer.toString(drawColor.getBlue()));
+            elm.setAttribute("a", Float.toString(drawAlpha));
+            circle.addContent(elm);
+        } catch (Exception ignored) {
+        }
+        return circle;
     }
 
     @Override
@@ -227,17 +239,6 @@ public class Circle extends AbstractForm {
         int w = (int) Math.round(Math.abs(s.getX() - e.getX()));
         int h = (int) Math.round(Math.abs(s.getY() - e.getY()));
         return new java.awt.Rectangle(x, y, w, h);
-    }
-
-    @Override
-    protected String getFormXml() {
-        StringBuilder b = new StringBuilder();
-        b.append("<end x=\"").append(xPosEnd).append("\" y=\"").append(yPosEnd).append("\"/>\n");
-        b.append("<drawColor r=\"").append(drawColor.getRed()).append("\" g=\"").append(drawColor.getGreen()).append("\" b=\"").append(drawColor.getBlue()).append("\" a=\"").append(drawAlpha).append("\"/>\n");
-        b.append("<filled>").append(filled).append("</filled>\n");
-        b.append("<stroke width=\"").append(strokeWidth).append("\"/>\n");
-        b.append("<drawName>").append(drawName).append("</drawName>\n");
-        return b.toString();
     }
 
     @Override

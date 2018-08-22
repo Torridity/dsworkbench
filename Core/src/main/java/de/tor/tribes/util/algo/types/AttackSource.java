@@ -36,10 +36,12 @@ public class AttackSource extends Village implements Source {
         this.ordered = 0;
     }
 
+    @Override
     public String toString() {
         return this.c.toString();
     }
 
+    @Override
     public void addOrder(Destination d, int amount) {
         if (amount == 0) {
             return;
@@ -60,6 +62,7 @@ public class AttackSource extends Village implements Source {
         System.out.println("Added order (amount: " + Integer.toString(amount) + ") at " + this.c.toString() + " to " + ((AttackDestination) d).getC().toString());
     }
 
+    @Override
     public void removeOrder(Destination d, int amount) {
         for (Order o : this.orders) {
             if (o.getDestination() == d) {
@@ -71,20 +74,24 @@ public class AttackSource extends Village implements Source {
         }
     }
 
+    @Override
     public void removeOrder(Order o) {
         System.out.println("Removed order at " + this.c.toString() + " to " + ((AttackDestination) o.getDestination()).getC().toString());
         this.ordered -= o.getAmount();
         this.orders.remove(o);
     }
 
+    @Override
     public int waresAvailable() {
         return this.wares - this.ordered;
     }
 
+    @Override
     public int getOrdered() {
         return ordered;
     }
 
+    @Override
     public ArrayList<Order> getOrders() {
         return this.orders;
     }

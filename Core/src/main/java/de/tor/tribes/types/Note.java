@@ -15,13 +15,13 @@
  */
 package de.tor.tribes.types;
 
-import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.ImageManager;
 import de.tor.tribes.util.BBSupport;
 import de.tor.tribes.util.bb.VillageListFormatter;
-import de.tor.tribes.util.xml.JaxenUtils;
+import de.tor.tribes.util.xml.JDomUtils;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -29,7 +29,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import org.jdom.Element;
+import org.jdom2.Element;
 
 /**
  *
@@ -109,31 +109,29 @@ public class Note extends ManageableType implements BBSupport {
         } catch (UnsupportedEncodingException usee) {
             setNoteText("FEHLER");
         }
-        for (Element elem : (List<Element>) JaxenUtils.getNodes(e, "villages/village")) {
+        for (Element elem : (List<Element>) JDomUtils.getNodes(e, "villages/village")) {
             villageIds.add(Integer.parseInt(elem.getValue()));
         }
 
     }
 
     @Override
-    public String toXml() {
-        StringBuilder result = new StringBuilder();
+    public Element toXml(String elementName) {
+        Element note = new Element(elementName);
         try {
-            result.append("<note>\n");
-            result.append("<timestamp>").append(timestamp).append("</timestamp>\n");
-            result.append("<mapMarker>").append(mapMarker).append("</mapMarker>\n");
-            result.append("<noteSymbol>").append(noteSymbol).append("</noteSymbol>\n");
-            result.append("<text>").append(URLEncoder.encode(getNoteText(), "UTF-8")).append("</text>\n");
-            result.append("<villages>\n");
+            note.addContent(new Element("timestamp").setText(Long.toString(timestamp)));
+            note.addContent(new Element("mapMarker").setText(Integer.toString(mapMarker)));
+            note.addContent(new Element("noteSymbol").setText(Integer.toString(noteSymbol)));
+            note.addContent(new Element("text").setText(URLEncoder.encode(getNoteText(), "UTF-8")));
+            
+            Element villages = new Element("villages");
             for (Integer id : villageIds) {
-                result.append("<village>").append(id).append("</village>\n");
+                villages.addContent(new Element("village").setText(Integer.toString(id)));
             }
-            result.append("</villages>\n");
-            result.append("</note>\n");
-            return result.toString();
-        } catch (UnsupportedEncodingException usee) {
-            return null;
+            note.addContent(villages);
+        } catch (UnsupportedEncodingException ignored) {
         }
+        return note;
     }
 
     public String toBBCode() {
@@ -250,21 +248,6 @@ public class Note extends ManageableType implements BBSupport {
     public void setNoteSymbol(int noteSymbol) {
         this.noteSymbol = noteSymbol;
         timestamp = System.currentTimeMillis();
-    }
-
-    @Override
-    public String getElementIdentifier() {
-        return "note";
-    }
-
-    @Override
-    public String getElementGroupIdentifier() {
-        return "notes";
-    }
-
-    @Override
-    public String getGroupNameAttributeIdentifier() {
-        return "name";
     }
 
     @Override

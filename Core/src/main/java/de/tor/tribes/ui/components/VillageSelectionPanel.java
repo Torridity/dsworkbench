@@ -17,8 +17,8 @@ package de.tor.tribes.ui.components;
 
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
-import de.tor.tribes.types.ext.Ally;
 import de.tor.tribes.types.Tag;
+import de.tor.tribes.types.ext.Ally;
 import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.renderer.UnitListCellRenderer;
@@ -30,6 +30,7 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
@@ -39,8 +40,6 @@ import java.util.List;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.Logger;
 import org.jdesktop.swingx.JXList;
 
 /**
@@ -70,7 +69,7 @@ public class VillageSelectionPanel extends javax.swing.JPanel{
         initComponents();
         listener = pListener;
 
-        jXButton2.setIcon(new ImageIcon(ResourceDistributorDataReadPanel.class.getResource("/res/ui/clipboard.png")));
+        jFromClipboard.setIcon(new ImageIcon(ResourceDistributorDataReadPanel.class.getResource("/res/ui/clipboard.png")));
         
         allyList = new IconizedList("/res/awards/ally.png");
         jAllyScrollPane.setViewportView(allyList);
@@ -115,7 +114,7 @@ public class VillageSelectionPanel extends javax.swing.JPanel{
             tribeList.setListData(new Tribe[]{GlobalOptions.getSelectedProfile().getTribe()});
         }
 
-        jXTextField1.setText("");
+        jTextFieldSearchAlly.setText("");
 
         setupFilters();
         //do initial selection
@@ -146,14 +145,12 @@ public class VillageSelectionPanel extends javax.swing.JPanel{
                     if (!tribeList.isVisible()) {
                         return new Tribe[]{GlobalOptions.getSelectedProfile().getTribe()};
                     }
-
-                    List<Tribe> res = new LinkedList<>();
+                    List<Tribe> res = new ArrayList<>();
                     for (Object o : getSelection()) {
-                        Ally a = (Ally) o;
+                        Ally a = (Ally) o;                        
                         res.addAll(Arrays.asList(a.getTribes()));
                     }
-
-                    Collections.sort(res, Tribe.CASE_INSENSITIVE_ORDER);
+                    res = TribeUtils.filterTribes(res, jTextFieldSearchTribe.getText(), Tribe.CASE_INSENSITIVE_ORDER);
                     return res.toArray(new Tribe[res.size()]);
                 }
             };
@@ -169,7 +166,7 @@ public class VillageSelectionPanel extends javax.swing.JPanel{
                     List<GroupSelectionList.ListItem> items = new LinkedList<>();
                     for (Object o : getSelection()) {
                         Tribe t = (Tribe) o;
-                        Collections.addAll(villages, t.getVillageList());
+                            Collections.addAll(villages, t.getVillageList());
                         for (Tag tag : TagUtils.getTagsByTribe(t, Tag.CASE_INSENSITIVE_ORDER)) {
                             if (!usedTags.contains(tag)) {
                                 items.add(new GroupSelectionList.ListItem(tag));
@@ -279,10 +276,11 @@ public class VillageSelectionPanel extends javax.swing.JPanel{
         switch (pElement) {
             case ALLY:
                 changeSelectionElementVisibility(jAllyScrollPane, allyList, pEnable);
-                jXTextField1.setVisible(pEnable);
+                jTextFieldSearchAlly.setVisible(pEnable);
                 break;
             case TRIBE:
                 changeSelectionElementVisibility(jTribeScrollPane, tribeList, pEnable);
+                jTextFieldSearchTribe.setVisible(pEnable);
                 break;
             case GROUP:
                 changeSelectionElementVisibility(jGroupScrollPane, groupList, pEnable);
@@ -317,41 +315,42 @@ public class VillageSelectionPanel extends javax.swing.JPanel{
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
 
-        jXButton2 = new org.jdesktop.swingx.JXButton();
+        jFromClipboard = new org.jdesktop.swingx.JXButton();
         jAllyScrollPane = new javax.swing.JScrollPane();
         jTribeScrollPane = new javax.swing.JScrollPane();
         jGroupScrollPane = new javax.swing.JScrollPane();
         jContinentScrollPane = new javax.swing.JScrollPane();
         jVillageScrollPane = new javax.swing.JScrollPane();
-        jLabel1 = new javax.swing.JLabel();
+        jLabelOverallInfo = new javax.swing.JLabel();
         jExpertHelpLabel = new javax.swing.JLabel();
         jSeparator1 = new javax.swing.JSeparator();
-        jXButton1 = new org.jdesktop.swingx.JXButton();
+        jButtonUseSelection = new org.jdesktop.swingx.JXButton();
         jUnitBox = new org.jdesktop.swingx.JXComboBox();
         jFakeBox = new javax.swing.JCheckBox();
-        jXTextField1 = new org.jdesktop.swingx.JXTextField();
+        jTextFieldSearchAlly = new org.jdesktop.swingx.JXTextField();
         jAmountLabel = new javax.swing.JLabel();
         jAmountField = new javax.swing.JTextField();
         jExpertSelection = new javax.swing.JCheckBox();
+        jTextFieldSearchTribe = new org.jdesktop.swingx.JXTextField();
 
         setPreferredSize(new java.awt.Dimension(600, 350));
         setLayout(new java.awt.GridBagLayout());
 
-        jXButton2.setToolTipText("Sucht in der Zwischenablage nach Dörfern und fügt diese ein. ");
-        jXButton2.setMaximumSize(new java.awt.Dimension(90, 23));
-        jXButton2.setMinimumSize(new java.awt.Dimension(90, 23));
-        jXButton2.setPreferredSize(new java.awt.Dimension(90, 23));
-        jXButton2.addMouseListener(new java.awt.event.MouseAdapter() {
+        jFromClipboard.setToolTipText("Sucht in der Zwischenablage nach Dörfern und fügt diese ein. ");
+        jFromClipboard.setMaximumSize(new java.awt.Dimension(90, 23));
+        jFromClipboard.setMinimumSize(new java.awt.Dimension(90, 23));
+        jFromClipboard.setPreferredSize(new java.awt.Dimension(90, 23));
+        jFromClipboard.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jXButton2fireTransferClipboardVillagesEvent(evt);
+                jFromClipboardClicked(evt);
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 4;
-        gridBagConstraints.gridy = 6;
+        gridBagConstraints.gridy = 5;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        add(jXButton2, gridBagConstraints);
+        add(jFromClipboard, gridBagConstraints);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
@@ -362,7 +361,9 @@ public class VillageSelectionPanel extends javax.swing.JPanel{
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 0, 5);
         add(jAllyScrollPane, gridBagConstraints);
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridheight = java.awt.GridBagConstraints.RELATIVE;
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridheight = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
@@ -379,7 +380,7 @@ public class VillageSelectionPanel extends javax.swing.JPanel{
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 0;
-        gridBagConstraints.gridheight = java.awt.GridBagConstraints.RELATIVE;
+        gridBagConstraints.gridheight = 4;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
@@ -395,16 +396,16 @@ public class VillageSelectionPanel extends javax.swing.JPanel{
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         add(jVillageScrollPane, gridBagConstraints);
 
-        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 9)); // NOI18N
-        jLabel1.setForeground(new java.awt.Color(153, 153, 153));
-        jLabel1.setText("<html>Elemente der Reihe nach ausw&auml;hlen. F&uuml;r eine Suche nach Elementen in die entsprechende Liste klicken und den Elementnamen tippen oder per STRG+F die Suche &ouml;ffnen. Mehrere Elemente mit gedr&uuml;ckter STRG-Taste ausw&auml;hlen.</html>");
+        jLabelOverallInfo.setFont(new java.awt.Font("Tahoma", 0, 9)); // NOI18N
+        jLabelOverallInfo.setForeground(new java.awt.Color(153, 153, 153));
+        jLabelOverallInfo.setText("<html>Elemente der Reihe nach ausw&auml;hlen. F&uuml;r eine Suche nach Elementen in die entsprechende Liste klicken und den Elementnamen tippen oder per STRG+F die Suche &ouml;ffnen. Mehrere Elemente mit gedr&uuml;ckter STRG-Taste ausw&auml;hlen.</html>");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 6;
+        gridBagConstraints.gridy = 5;
         gridBagConstraints.gridwidth = 4;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        add(jLabel1, gridBagConstraints);
+        add(jLabelOverallInfo, gridBagConstraints);
 
         jExpertHelpLabel.setFont(new java.awt.Font("Tahoma", 0, 9)); // NOI18N
         jExpertHelpLabel.setForeground(new java.awt.Color(153, 153, 153));
@@ -419,27 +420,27 @@ public class VillageSelectionPanel extends javax.swing.JPanel{
         add(jExpertHelpLabel, gridBagConstraints);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 5;
+        gridBagConstraints.gridy = 4;
         gridBagConstraints.gridwidth = 6;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         add(jSeparator1, gridBagConstraints);
 
-        jXButton1.setText("Auswahl verwenden");
-        jXButton1.setToolTipText("Fügt alle gewählten Dörfer ein.");
-        jXButton1.setMaximumSize(new java.awt.Dimension(90, 23));
-        jXButton1.setMinimumSize(new java.awt.Dimension(90, 23));
-        jXButton1.setPreferredSize(new java.awt.Dimension(90, 23));
-        jXButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+        jButtonUseSelection.setText("Auswahl verwenden");
+        jButtonUseSelection.setToolTipText("Fügt alle gewählten Dörfer ein.");
+        jButtonUseSelection.setMaximumSize(new java.awt.Dimension(90, 23));
+        jButtonUseSelection.setMinimumSize(new java.awt.Dimension(90, 23));
+        jButtonUseSelection.setPreferredSize(new java.awt.Dimension(90, 23));
+        jButtonUseSelection.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireTransferVillageSelectionEvent(evt);
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 5;
-        gridBagConstraints.gridy = 6;
+        gridBagConstraints.gridy = 5;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        add(jXButton1, gridBagConstraints);
+        add(jButtonUseSelection, gridBagConstraints);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 4;
         gridBagConstraints.gridy = 1;
@@ -462,8 +463,8 @@ public class VillageSelectionPanel extends javax.swing.JPanel{
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         add(jFakeBox, gridBagConstraints);
 
-        jXTextField1.setPrompt("Name/Tag eingeben");
-        jXTextField1.addCaretListener(new javax.swing.event.CaretListener() {
+        jTextFieldSearchAlly.setPrompt("Name/Tag eingeben");
+        jTextFieldSearchAlly.addCaretListener(new javax.swing.event.CaretListener() {
             public void caretUpdate(javax.swing.event.CaretEvent evt) {
                 fireAllyNameTagChangedEvent(evt);
             }
@@ -473,7 +474,7 @@ public class VillageSelectionPanel extends javax.swing.JPanel{
         gridBagConstraints.gridy = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        add(jXTextField1, gridBagConstraints);
+        add(jTextFieldSearchAlly, gridBagConstraints);
 
         jAmountLabel.setText("Anzahl");
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -507,6 +508,19 @@ public class VillageSelectionPanel extends javax.swing.JPanel{
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(2, 5, 2, 5);
         add(jExpertSelection, gridBagConstraints);
+
+        jTextFieldSearchTribe.setPrompt("Name eingeben");
+        jTextFieldSearchTribe.addCaretListener(new javax.swing.event.CaretListener() {
+            public void caretUpdate(javax.swing.event.CaretEvent evt) {
+                fireTribeNameTagChangedEvent(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        add(jTextFieldSearchTribe, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
 
     private void fireTransferVillageSelectionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireTransferVillageSelectionEvent
@@ -538,7 +552,7 @@ public class VillageSelectionPanel extends javax.swing.JPanel{
     }//GEN-LAST:event_fireTransferVillageSelectionEvent
 
     private void fireAllyNameTagChangedEvent(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_fireAllyNameTagChangedEvent
-        allyList.setListData(AllyUtils.getAlliesByFilter(jXTextField1.getText(), Ally.CASE_INSENSITIVE_ORDER));
+        allyList.setListData(AllyUtils.getAlliesByFilter(jTextFieldSearchAlly.getText(), Ally.CASE_INSENSITIVE_ORDER));
     }//GEN-LAST:event_fireAllyNameTagChangedEvent
 
     private void fireChangeExpertSelectionEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireChangeExpertSelectionEvent
@@ -546,7 +560,7 @@ public class VillageSelectionPanel extends javax.swing.JPanel{
         jExpertHelpLabel.setVisible(jExpertSelection.isSelected());
     }//GEN-LAST:event_fireChangeExpertSelectionEvent
 
-    private void jXButton2fireTransferClipboardVillagesEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jXButton2fireTransferClipboardVillagesEvent
+    private void jFromClipboardClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jFromClipboardClicked
         Transferable t = Toolkit.getDefaultToolkit().getSystemClipboard().getContents(null);
         String clipboard;
         try {
@@ -557,7 +571,11 @@ public class VillageSelectionPanel extends javax.swing.JPanel{
         List<Village> villages = PluginManager.getSingleton().executeVillageParser(clipboard);
         if(!villages.isEmpty())
             listener.fireVillageSelectionEvent(villages.toArray(new Village[villages.size()]));
-    }//GEN-LAST:event_jXButton2fireTransferClipboardVillagesEvent
+    }//GEN-LAST:event_jFromClipboardClicked
+
+    private void fireTribeNameTagChangedEvent(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_fireTribeNameTagChangedEvent
+        allyTribePipeline.valueChanged(null);
+    }//GEN-LAST:event_fireTribeNameTagChangedEvent
 
     public boolean isExpertSelection() {
         return jExpertSelection.isSelected();
@@ -594,48 +612,21 @@ public class VillageSelectionPanel extends javax.swing.JPanel{
     private javax.swing.JScrollPane jAllyScrollPane;
     private javax.swing.JTextField jAmountField;
     private javax.swing.JLabel jAmountLabel;
+    private org.jdesktop.swingx.JXButton jButtonUseSelection;
     private javax.swing.JScrollPane jContinentScrollPane;
     private javax.swing.JLabel jExpertHelpLabel;
     private javax.swing.JCheckBox jExpertSelection;
     private javax.swing.JCheckBox jFakeBox;
+    private org.jdesktop.swingx.JXButton jFromClipboard;
     private javax.swing.JScrollPane jGroupScrollPane;
-    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabelOverallInfo;
     private javax.swing.JSeparator jSeparator1;
+    private org.jdesktop.swingx.JXTextField jTextFieldSearchAlly;
+    private org.jdesktop.swingx.JXTextField jTextFieldSearchTribe;
     private javax.swing.JScrollPane jTribeScrollPane;
     private org.jdesktop.swingx.JXComboBox jUnitBox;
     private javax.swing.JScrollPane jVillageScrollPane;
-    private org.jdesktop.swingx.JXButton jXButton1;
-    private org.jdesktop.swingx.JXButton jXButton2;
-    private org.jdesktop.swingx.JXTextField jXTextField1;
     // End of variables declaration//GEN-END:variables
-
-    public static void main(String[] args) {
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            //UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-        } catch (Exception ignored) {
-        }
-        Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
-        GlobalOptions.setSelectedServer("de43");
-        DataHolder.getSingleton().loadData(false);
-        ProfileManager.getSingleton().loadProfiles();
-        GlobalOptions.setSelectedProfile(ProfileManager.getSingleton().getProfiles("de43")[0]);
-        GlobalOptions.loadUserData();
-        JFrame f = new JFrame();
-        f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        VillageSelectionPanel p = new VillageSelectionPanel(new VillageSelectionPanelListener() {
-
-            @Override
-            public void fireVillageSelectionEvent(Village[] pSelection) {
-            }
-        });
-        p.setup();
-        p.enableSelectionElement(SELECTION_ELEMENT.GROUP, false);
-        f.getContentPane().add(p);
-        f.pack();
-        f.setVisible(true);
-
-    }
 }
 
 abstract class FilterPipeline<C, D> implements ListSelectionListener {
@@ -656,7 +647,7 @@ abstract class FilterPipeline<C, D> implements ListSelectionListener {
 
     @Override
     public void valueChanged(ListSelectionEvent e) {
-        if (active && !e.getValueIsAdjusting()) {
+        if (active && (e == null || !e.getValueIsAdjusting())) {
             outputList.setListData(filter());
             updateOutputSelection();
         }

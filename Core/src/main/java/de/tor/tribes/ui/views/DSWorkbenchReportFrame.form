@@ -228,7 +228,7 @@
                           <SubComponents>
                             <Component class="javax.swing.JTextPane" name="jOverallStatsArea">
                               <Properties>
-                                <Property name="contentType" type="java.lang.String" value="text/html"/>
+                                <Property name="contentType" type="java.lang.String" value="text/html" noResource="true"/>
                                 <Property name="editable" type="boolean" value="false"/>
                               </Properties>
                             </Component>
@@ -269,7 +269,7 @@
                           <SubComponents>
                             <Component class="javax.swing.JTextPane" name="jAllyStatsArea">
                               <Properties>
-                                <Property name="contentType" type="java.lang.String" value="text/html"/>
+                                <Property name="contentType" type="java.lang.String" value="text/html" noResource="true"/>
                                 <Property name="editable" type="boolean" value="false"/>
                               </Properties>
                             </Component>
@@ -310,7 +310,7 @@
                           <SubComponents>
                             <Component class="javax.swing.JTextPane" name="jTribeStatsArea">
                               <Properties>
-                                <Property name="contentType" type="java.lang.String" value="text/html"/>
+                                <Property name="contentType" type="java.lang.String" value="text/html" noResource="true"/>
                                 <Property name="editable" type="boolean" value="false"/>
                               </Properties>
                             </Component>
@@ -338,13 +338,7 @@
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
       <SubComponents>
-        <Container class="com.jidesoft.swing.JideTabbedPane" name="jReportsTabbedPane">
-          <Properties>
-            <Property name="showCloseButton" type="boolean" value="true"/>
-            <Property name="showCloseButtonOnTab" type="boolean" value="true"/>
-            <Property name="showGripper" type="boolean" value="true"/>
-            <Property name="tabEditingAllowed" type="boolean" value="true"/>
-          </Properties>
+        <Container class="javax.swing.JTabbedPane" name="jReportsTabbedPane">
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
               <BorderConstraints direction="Center"/>
@@ -582,7 +576,6 @@
           <Properties>
             <Property name="selected" type="boolean" value="true"/>
             <Property name="text" type="java.lang.String" value="Gegnerische Verluste sch&#xe4;tzen, falls unbekannt"/>
-            <Property name="opaque" type="boolean" value="false"/>
           </Properties>
           <Events>
             <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="fireStatOptionsChangedEvent"/>
@@ -592,7 +585,6 @@
           <Properties>
             <Property name="selected" type="boolean" value="true"/>
             <Property name="text" type="java.lang.String" value="Ausw&#xe4;rtige Einheiten bei Adelung als Verlust werten"/>
-            <Property name="opaque" type="boolean" value="false"/>
           </Properties>
           <Events>
             <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="fireStatOptionsChangedEvent"/>
@@ -602,7 +594,6 @@
           <Properties>
             <Property name="selected" type="boolean" value="true"/>
             <Property name="text" type="java.lang.String" value="Verluste pro Angreifer/Verteidiger anzeigen"/>
-            <Property name="opaque" type="boolean" value="false"/>
           </Properties>
           <Events>
             <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="fireStatOptionsChangedEvent"/>
@@ -611,7 +602,6 @@
         <Component class="javax.swing.JCheckBox" name="jShowPercentsBox">
           <Properties>
             <Property name="text" type="java.lang.String" value="Prozentuale Anteile anzeigen"/>
-            <Property name="opaque" type="boolean" value="false"/>
           </Properties>
           <Events>
             <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="fireStatOptionsChangedEvent"/>
@@ -625,6 +615,7 @@
   </Properties>
   <SyntheticProperties>
     <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
+    <SyntheticProperty name="generateCenter" type="boolean" value="false"/>
   </SyntheticProperties>
   <AuxValues>
     <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
@@ -644,7 +635,6 @@
     <Component class="javax.swing.JCheckBox" name="jAlwaysOnTopBox">
       <Properties>
         <Property name="text" type="java.lang.String" value="Immer im Vordergrund"/>
-        <Property name="opaque" type="boolean" value="false"/>
       </Properties>
       <Events>
         <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="fireAlwaysOnTopEvent"/>

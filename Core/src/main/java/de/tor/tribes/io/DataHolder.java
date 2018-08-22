@@ -17,18 +17,12 @@ package de.tor.tribes.io;
 
 import de.tor.tribes.types.UnknownUnit;
 import de.tor.tribes.types.ext.*;
-import de.tor.tribes.types.test.DummyUnit;
 import de.tor.tribes.ui.views.DSWorkbenchSettingsDialog;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalDefaults;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ServerSettings;
-import de.tor.tribes.util.xml.JaxenUtils;
-import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
-import org.jdom.Document;
-import org.jdom.Element;
-
+import de.tor.tribes.util.xml.JDomUtils;
 import java.awt.*;
 import java.io.*;
 import java.net.URL;
@@ -36,24 +30,28 @@ import java.net.URLConnection;
 import java.util.*;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
+import org.apache.commons.io.FileUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jdom2.Document;
+import org.jdom2.Element;
 
 /**
  * @author Charon
  */
 public class DataHolder {
-
-    private static Logger logger = Logger.getLogger("DataManager");
+    private static Logger logger = LogManager.getLogger("DataManager");
     private static final int ID_OFF = 0;
     private static final int ID_DEF = 1;
     private Village[][] mVillages = null;
-    private Hashtable<Integer, Village> mVillagesTable = null;
-    private Hashtable<Integer, Ally> mAllies = null;
-    private Hashtable<Integer, Tribe> mTribes = null;
-    private Hashtable<String, Ally> mAlliesByName = null;
-    private Hashtable<String, Ally> mAlliesByTagName = null;
-    private Hashtable<String, Tribe> mTribesByName = null;
+    private HashMap<Integer, Village> mVillagesTable = null;
+    private HashMap<Integer, Ally> mAllies = null;
+    private HashMap<Integer, Tribe> mTribes = null;
+    private HashMap<String, Ally> mAlliesByName = null;
+    private HashMap<String, Ally> mAlliesByTagName = null;
+    private HashMap<String, Tribe> mTribesByName = null;
     private List<UnitHolder> mUnits = null;
-    private Hashtable<String, UnitHolder> mUnitsByName = null;
+    private HashMap<String, UnitHolder> mUnitsByName = null;
     private List<DataHolderListener> mListeners = null;
     private boolean bAborted = false;
     private static DataHolder SINGLETON = null;
@@ -85,13 +83,13 @@ public class DataHolder {
         removeTempData();
 
         mVillages = new Village[1000][1000];
-        mVillagesTable = new Hashtable<>();
-        mAllies = new Hashtable<>();
-        mTribes = new Hashtable<>();
-        mTribesByName = new Hashtable<>();
-        mAlliesByName = new Hashtable<>();
-        mAlliesByTagName = new Hashtable<>();
-        mUnitsByName = new Hashtable<>();
+        mVillagesTable = new HashMap<>();
+        mAllies = new HashMap<>();
+        mTribes = new HashMap<>();
+        mTribesByName = new HashMap<>();
+        mAlliesByName = new HashMap<>();
+        mAlliesByTagName = new HashMap<>();
+        mUnitsByName = new HashMap<>();
         mUnits = new LinkedList<>();
         DATA_VALID = false;
     }
@@ -588,16 +586,16 @@ public class DataHolder {
         return true;
     }
 
-    public Hashtable<Integer, Tribe> getTribesForServer(String pServer) {
+    public HashMap<Integer, Tribe> getTribesForServer(String pServer) {
         return getTribesForServer(pServer, null);
     }
 
-    private Hashtable<Integer, Tribe> getTribesForServer(String pServer, Hashtable<Integer, Tribe> pTribes) {
+    private HashMap<Integer, Tribe> getTribesForServer(String pServer, HashMap<Integer, Tribe> pTribes) {
         try {
             String dataDir = Constants.SERVER_DIR + "/" + pServer;
             BufferedReader r = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(dataDir + "/tribe.txt.gz"))));
             if (pTribes == null) {
-                pTribes = new Hashtable<>();
+                pTribes = new HashMap<>();
             }
             String line;
 
@@ -616,16 +614,16 @@ public class DataHolder {
         return pTribes;
     }
 
-    public Hashtable<Integer, Ally> getAlliesForServer(String pServer) {
+    public HashMap<Integer, Ally> getAlliesForServer(String pServer) {
         return getAlliesForServer(pServer, null);
     }
 
-    private Hashtable<Integer, Ally> getAlliesForServer(String pServer, Hashtable<Integer, Ally> pAllies) {
+    private HashMap<Integer, Ally> getAlliesForServer(String pServer, HashMap<Integer, Ally> pAllies) {
         try {
             String dataDir = Constants.SERVER_DIR + "/" + GlobalOptions.getSelectedServer();
             BufferedReader r = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(dataDir + "/ally.txt.gz"))));
             if (pAllies == null) {
-                pAllies = new Hashtable<>();
+                pAllies = new HashMap<>();
             }
             String line;
 
@@ -844,10 +842,8 @@ public class DataHolder {
         }
 
         logger.debug("Removing empty allies");
-        Enumeration<Integer> allyKeys = mAllies.keys();
         List<Ally> toRemove = new LinkedList<>();
-        while (allyKeys.hasMoreElements()) {
-            Ally a = mAllies.get(allyKeys.nextElement());
+        for(Ally a: mAllies.values()) {
             if (a.getTribes() == null || a.getTribes().length == 0) {
                 toRemove.add(a);
             }
@@ -859,10 +855,8 @@ public class DataHolder {
         }
 
         logger.debug("Updating tribes with no allies");
-        Enumeration<Integer> tribeKeys = mTribes.keys();
         NoAlly.getSingleton().reset();
-        while (tribeKeys.hasMoreElements()) {
-            Tribe t = mTribes.get(tribeKeys.nextElement());
+        for(Tribe t: mTribes.values()) {
             if (t.getAllyID() == 0) {
                 NoAlly.getSingleton().addTribe(t);
             }
@@ -928,11 +922,10 @@ public class DataHolder {
         mUnits.clear();
         mUnitsByName.clear();
         String unitFile = getDataDirectory() + "/units.xml";
-        //buildingsFile += "/units.xml";
         logger.debug("Loading units");
         try {
-            Document d = JaxenUtils.getDocument(new File(unitFile));
-            List<Element> l = (List<Element>) JaxenUtils.getNodes(d, "/config/*");
+            Document d = JDomUtils.getDocument(new File(unitFile));
+            List<Element> l = (List<Element>) JDomUtils.getNodes(d, null);
             for (Element e : l) {
                 try {
                     UnitHolder unit = new UnitHolder(e);
@@ -978,78 +971,30 @@ public class DataHolder {
         System.gc();
     }
 
+    /**
+     * Should not be used to often because it is not optimized therefor
+     * @return random Village with owner
+     */
     public Village getRandomVillageWithOwner() {
-        Iterator<Integer> it = mVillagesTable.keySet().iterator();
-        while (it.hasNext()) {
-            Integer id = it.next();
-            if ((int) Math.rint(Math.random() * 20) == 10) {
-                Village v = mVillagesTable.get(id);
-                if (v != null && !v.getTribe().equals(Barbarians.getSingleton())) {
-                    return v;
-                }
+        List<Tribe> tribeList = new ArrayList<>(mTribes.values());
+        Collections.shuffle(tribeList);
+        
+        for(Tribe t: tribeList) {
+            if(t.getVillages() > 0) {
+                int rnd = (int) (Math.random() * t.getVillages());
+                return t.getVillageList()[rnd];
             }
         }
-        it = mVillagesTable.keySet().iterator();
-        while (it.hasNext()) {
-            Integer id = it.next();
-            if ((int) Math.rint(Math.random() * 10) == 5) {
-                Village v = mVillagesTable.get(id);
-                if (v != null && !v.getTribe().equals(Barbarians.getSingleton())) {
-                    return v;
-                }
-            }
-        }
-        it = mVillagesTable.keySet().iterator();
-        while (it.hasNext()) {
-            Integer id = it.next();
-            if ((int) Math.rint(Math.random() * 5) == 2) {
-                Village v = mVillagesTable.get(id);
-                if (v != null && !v.getTribe().equals(Barbarians.getSingleton())) {
-                    return v;
-                }
-            }
-        }
-        it = mVillagesTable.keySet().iterator();
-        Integer id = it.next();
-        return mVillagesTable.get(id);
+        return null;
     }
 
     public Village getRandomVillage() {
         try {
-            Iterator<Integer> it = mVillagesTable.keySet().iterator();
-            while (it.hasNext()) {
-                Integer id = it.next();
-                if ((int) Math.rint(Math.random() * 20) == 10) {
-                    return mVillagesTable.get(id);
-                }
-            }
-            it = mVillagesTable.keySet().iterator();
-            while (it.hasNext()) {
-                Integer id = it.next();
-                if ((int) Math.rint(Math.random() * 10) == 5) {
-                    return mVillagesTable.get(id);
-                }
-            }
-            it = mVillagesTable.keySet().iterator();
-            while (it.hasNext()) {
-                Integer id = it.next();
-                if ((int) Math.rint(Math.random() * 5) == 2) {
-                    return mVillagesTable.get(id);
-                }
-            }
-            it = mVillagesTable.keySet().iterator();
-            Integer id = it.next();
-            return mVillagesTable.get(id);
+            List<Village> villageList = new ArrayList<>(mVillagesTable.values());
+            return villageList.get((int) (Math.random() * villageList.size()));
         } catch (Exception e) {
             return null;
         }
-        /*
-     * Iterator<Integer> it = mVillagesTable.keySet().iterator(); int id = -1; int cnt = (int) Math.rint(100.0 * Math.random()); while
-     * (cnt >= 0 && it.hasNext()) { id = it.next(); cnt--; }
-     *
-     * if (id != -1) { return mVillagesTable.get(id); } else { DummyVillage v = new DummyVillage(); v.setId(-cnt);
-     * v.setName("Beispieldorf" + cnt); v.setX((short) cnt); v.setY((short) cnt); v.setPoints(cnt * 100); return v; }
-         */
     }
 
     public int countVisibleVillages(Point pStart, Point pEnd) {
@@ -1102,9 +1047,9 @@ public class DataHolder {
     }
 
     /**
-     * Get villages as a hashtable ordered by IDs
+     * Get villages as a HashMap ordered by IDs
      */
-    public synchronized Hashtable<Integer, Village> getVillagesById() {
+    public synchronized HashMap<Integer, Village> getVillagesById() {
         if (loading) {
             //block getting villages while loading to avoid nullpointer exceptions
             try {
@@ -1118,7 +1063,7 @@ public class DataHolder {
     /**
      * Get all allies
      */
-    public Hashtable<Integer, Ally> getAllies() {
+    public HashMap<Integer, Ally> getAllies() {
         return mAllies;
     }
 
@@ -1147,7 +1092,7 @@ public class DataHolder {
     /**
      * Get all tribes
      */
-    public Hashtable<Integer, Tribe> getTribes() {
+    public HashMap<Integer, Tribe> getTribes() {
         return mTribes;
     }
 
@@ -1191,7 +1136,11 @@ public class DataHolder {
     public UnitHolder getRandomUnit() {
         int id = (int) (Math.rint(mUnits.size() * Math.random()));
         if (id >= mUnits.size()) {
-            return new DummyUnit();
+            if(mUnits.isEmpty()) {
+                return new UnitHolder();
+            } else {
+                id = 0;
+            }
         }
         return mUnits.get(id);
     }
@@ -1228,15 +1177,13 @@ public class DataHolder {
     }
 
     private void fireDataHolderEvents(String pMessage) {
-        DataHolderListener[] listeners = mListeners.toArray(new DataHolderListener[]{});
-        for (DataHolderListener listener : listeners) {
+        for (DataHolderListener listener : mListeners) {
             listener.fireDataHolderEvent(pMessage);
         }
     }
 
     private void fireDataLoadedEvents(boolean pSuccess) {
-        DataHolderListener[] listeners = mListeners.toArray(new DataHolderListener[]{});
-        for (DataHolderListener listener : listeners) {
+        for (DataHolderListener listener : mListeners) {
             listener.fireDataLoadedEvent(pSuccess);
         }
     }

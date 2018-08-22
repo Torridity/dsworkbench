@@ -31,10 +31,7 @@ import java.awt.datatransfer.StringSelection;
 import java.awt.event.ItemEvent;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Enumeration;
 import javax.swing.DefaultComboBoxModel;
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.Logger;
 
 /**
  *
@@ -282,7 +279,6 @@ public class SOSGenerator extends javax.swing.JFrame {
           bäääng! [coord]318|272[/coord] --> Ankunftszeit: 11.10.11 14:42:49 [player]MrBlue76[/player] bäääng! [coord]211|345[/coord] -->
           Ankunftszeit: 11.10.11 16:45:37 [player]MrBlue76[/player]
          */
-        Enumeration<Village> targets = sos.getTargets();
         StringBuilder b = new StringBuilder();
         SimpleDateFormat df;
         if (de.tor.tribes.util.ServerSettings.getSingleton().isMillisArrival()) {
@@ -290,8 +286,7 @@ public class SOSGenerator extends javax.swing.JFrame {
         } else {
             df = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
         }
-        while (targets.hasMoreElements()) {
-            Village target = targets.nextElement();
+        for(Village target: sos.getTargets()) {
             b.append("[b]Dorf:[/b] ").append(target.toBBCode()).append("\n");
             TargetInformation ti = sos.getTargetInformation(target);
             b.append("[b]Wallstufe:[/b] ").append(ti.getWallLevel()).append("\n");
@@ -365,46 +360,7 @@ public class SOSGenerator extends javax.swing.JFrame {
     private int getRandomValueInRange(int min, int max) {
         return Math.max(min, (int) (Math.random() * max));
     }
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /*
-         * Set the Nimbus look and feel
-         */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /*
-         * If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel. For details see
-         * http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException | javax.swing.UnsupportedLookAndFeelException | IllegalAccessException | InstantiationException ex) {
-            java.util.logging.Logger.getLogger(SOSGenerator.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-        Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
-        GlobalOptions.setSelectedServer("de43");
-        ProfileManager.getSingleton().loadProfiles();
-        GlobalOptions.setSelectedProfile(ProfileManager.getSingleton().getProfiles("de43")[0]);
-        DataHolder.getSingleton().loadData(false);
-        GlobalOptions.loadUserData();
-        /*
-         * Create and display the form
-         */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-
-            public void run() {
-                new SOSGenerator().setVisible(true);
-            }
-        });
-    }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
     private org.jdesktop.swingx.JXTextField jAmount;

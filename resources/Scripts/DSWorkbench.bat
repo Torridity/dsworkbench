@@ -82,7 +82,7 @@ if NOT "%CLASSPATH_PREFIX%" == "" set CLASSPATH=%CLASSPATH_PREFIX%;%CLASSPATH%
 @REM Reaching here means variables are defined and arguments have been captured
 :endInit
 
-%JAVACMD% %JAVA_OPTS% -Dlog4j.configuration="%BASEDIR%"/log4j.xml -Xmx512m -classpath %CLASSPATH% -Dapp.name="DSWorkbench" -Dapp.repo="%REPO%" -Dapp.home="%BASEDIR%" -Dbasedir="%BASEDIR%" de.tor.tribes.ui.windows.DSWorkbenchSplashScreen %CMD_LINE_ARGS%
+%JAVACMD% %JAVA_OPTS% -Dlog4j.configurationFile="%BASEDIR%"/log4j.xml -Xmx512m -classpath %CLASSPATH% -Dapp.name="DSWorkbench" -Dapp.repo="%REPO%" -Dapp.home="%BASEDIR%" -Dbasedir="%BASEDIR%" de.tor.tribes.ui.windows.DSWorkbenchSplashScreen %CMD_LINE_ARGS%
 if %ERRORLEVEL% NEQ 0 goto error
 goto end
 

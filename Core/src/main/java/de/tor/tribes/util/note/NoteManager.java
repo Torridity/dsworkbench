@@ -21,21 +21,18 @@ import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.Note;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.views.DSWorkbenchNotepad;
-import de.tor.tribes.util.xml.JaxenUtils;
-import java.io.File;
-import java.io.FileWriter;
+import de.tor.tribes.util.xml.JDomUtils;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Hashtable;
-import java.util.Iterator;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import org.apache.log4j.Logger;
-import org.jdom.Document;
-import org.jdom.Element;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jdom2.Element;
 
 /**
  *
@@ -43,7 +40,7 @@ import org.jdom.Element;
  */
 public class NoteManager extends GenericManager<Note> {
 
-    private static Logger logger = Logger.getLogger("NoteManager");
+    private static Logger logger = LogManager.getLogger("NoteManager");
     private static NoteManager SINGLETON = null;
 
     public static synchronized NoteManager getSingleton() {
@@ -77,197 +74,84 @@ public class NoteManager extends GenericManager<Note> {
     }
 
     @Override
-    public void loadElements(String pFile) {
-        if (pFile == null) {
-            logger.error("File argument is 'null'");
-            return;
+    public int importData(Element pElm, String pExtension) {
+        if (pElm == null) {
+            logger.error("Element argument is 'null'");
+            return -1;
         }
-        File noteFile = new File(pFile);
+        int result = 0;
         invalidate();
-        initialize();
-        if (noteFile.exists()) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("Reading notes from '" + pFile + "'");
-            }
-            try {
-                Document d = JaxenUtils.getDocument(noteFile);
-                List<Element> data = (List<Element>) JaxenUtils.getNodes(d, "//noteData");
-                if (data == null || data.isEmpty()) {
-                    logger.info("Loading legacy data format");
-                    //old version
-                    for (Element e1 : (List<Element>) JaxenUtils.getNodes(d, "//notes/note")) {
-                        try {
-                            Note n = new Note();
-                            n.loadFromXml(e1);
-                            addManagedElement(n);
-                        } catch (Exception inner) {
-                            //ignored, note invalid
-                        }
-                    }
-                } else {
-                    Element dataNode = data.get(0);
-                    double version = Double.parseDouble(dataNode.getAttributeValue("version"));
-                    for (Element e : (List<Element>) JaxenUtils.getNodes(dataNode, "noteSets/noteSet")) {
-                        String setKey = e.getAttributeValue("name");
-                        setKey = URLDecoder.decode(setKey, "UTF-8");
-                        if (logger.isDebugEnabled()) {
-                            logger.debug("Loading note set '" + setKey + "'");
-                        }
-                        addGroup(setKey);
-                        for (Element e1 : (List<Element>) JaxenUtils.getNodes(e, "notes/note")) {
-                            try {
-                                Note n = new Note();
-                                n.loadFromXml(e1);
-                                addManagedElement(setKey, n);
-                            } catch (Exception inner) {
-                                //ignored, marker invalid
-                            }
-                        }
-                    }
-                }
-                logger.debug("Notes successfully loaded");
-            } catch (Exception e) {
-                logger.error("Failed to load notes", e);
-            }
-
-        } else {
-            if (logger.isInfoEnabled()) {
-                logger.info("Notes file not found under '" + pFile + "'");
-            }
-        }
-        revalidate();
-    }
-
-    @Override
-    public void saveElements(String pFile) {
-        if (pFile == null) {
-            logger.error("File argument is 'null'");
-            return;
-        }
-
-        if (logger.isDebugEnabled()) {
-            logger.debug("Writing notes to '" + pFile + "'");
-        }
-        try {
-            StringBuilder b = new StringBuilder();
-            b.append("<noteData version=\"1.0\">\n");
-            b.append("<noteSets>\n");
-            Iterator<String> plans = getGroupIterator();
-
-            while (plans.hasNext()) {
-                String key = plans.next();
-                b.append("<noteSet name=\"").append(URLEncoder.encode(key, "UTF-8")).append("\">\n");
-                List<ManageableType> elems = getAllElements(key);
-                b.append("<notes>\n");
-                for (ManageableType elem : elems) {
-                    b.append(elem.toXml()).append("\n");
-                }
-
-                b.append("</notes>\n");
-                b.append("</noteSet>\n");
-            }
-            b.append("</noteSets>");
-            b.append("</noteData>");
-            FileWriter w = new FileWriter(pFile);
-            w.write(b.toString());
-            w.flush();
-            w.close();
-            logger.debug("Notes successfully saved");
-        } catch (Exception e) {
-            if (!new File(pFile).getParentFile().exists()) {
-                //server directory obviously does not exist yet
-                //this should only happen at the first start
-                logger.info("Ignoring error, server directory does not exists yet");
-            } else {
-                logger.error("Failed to save notes", e);
-            }
-        }
-    }
-
-    @Override
-    public String getExportData(List<String> pGroupsToExport) {
-        if (pGroupsToExport.isEmpty()) {
-            return "";
-        }
-        logger.debug("Generating notes export data");
-        StringBuilder b = new StringBuilder();
-        b.append("<noteData>\n");
-        b.append("<noteSets>\n");
-
-        for (String set : pGroupsToExport) {
-            try {
-                b.append("<noteSet name=\"").append(URLEncoder.encode(set, "UTF-8")).append("\">\n");
-                ManageableType[] elements = getAllElements(set).toArray(new ManageableType[getAllElements(set).size()]);
-                b.append("<notes>\n");
-
-                for (ManageableType elem : elements) {
-                    b.append(elem.toXml()).append("\n");
-                }
-                b.append("</notes>\n");
-                b.append("</noteSet>\n");
-            } catch (Exception e) {
-                logger.warn("Failed to export note set'" + set + "'", e);
-            }
-        }
-        b.append("</noteSets>\n");
-        b.append("</noteData>\n");
-        logger.debug("Export data generated successfully");
-        return b.toString();
-    }
-
-    @Override
-    public boolean importData(File pFile, String pExtension) {
-        if (pFile == null) {
-            logger.error("File argument is 'null'");
-            return false;
-        }
-        invalidate();
-        boolean result = false;
         logger.info("Loading notes");
         try {
-            Document d = JaxenUtils.getDocument(pFile);
-
-            List<Element> data = (List<Element>) JaxenUtils.getNodes(d, "//noteData");
+            List<Element> data = (List<Element>) JDomUtils.getNodes(pElm, "noteData");
             if (data == null || data.isEmpty()) {
-                for (Element e : (List<Element>) JaxenUtils.getNodes(d, "//notes/note")) {
-                    Note note = new Note();
-                    note.loadFromXml(e);
-                    if (note != null) {
-                        addManagedElement(note);
-                    }
+                logger.debug("No data element found");
+                return -1;
+            }
+            
+            Element dataNode = data.get(0);
+            try {
+                double version = Double.parseDouble(dataNode.getAttributeValue("version"));
+            } catch(Exception ignored) {};
+            
+            for (Element e : (List<Element>) JDomUtils.getNodes(dataNode, "noteSets/noteSet")) {
+                String setKey = e.getAttributeValue("name");
+                setKey = URLDecoder.decode(setKey, "UTF-8");
+                if (pExtension != null) {
+                    setKey += "_" + pExtension;
                 }
-            } else {
-                Element dataNode = data.get(0);
-                for (Element e : (List<Element>) JaxenUtils.getNodes(dataNode, "noteSets/noteSet")) {
-                    String setKey = e.getAttributeValue("name");
-                    setKey = URLDecoder.decode(setKey, "UTF-8");
-                    if (pExtension != null) {
-                        setKey += "_" + pExtension;
-                    }
-                    if (logger.isDebugEnabled()) {
-                        logger.debug("Loading note set '" + setKey + "'");
-                    }
-                    addGroup(setKey);
+                logger.debug("Loading note set '{}'", setKey);
+                addGroup(setKey);
 
-                    for (Element e1 : (List<Element>) JaxenUtils.getNodes(e, "notes/note")) {
-                        try {
-                            Note n = new Note();
-                            n.loadFromXml(e1);
-                            addManagedElement(setKey, n);
-                        } catch (Exception inner) {
-                            //ignored, marker invalid
-                        }
+                for (Element e1 : (List<Element>) JDomUtils.getNodes(e, "notes/note")) {
+                    try {
+                        Note n = new Note();
+                        n.loadFromXml(e1);
+                        addManagedElement(setKey, n);
+                        result++;
+                    } catch (Exception inner) {
+                        //ignored, marker invalid
                     }
                 }
             }
             logger.debug("Notes imported successfully");
-            result = true;
         } catch (Exception e) {
+            result = result * (-1) - 1;
             logger.error("Failed to import notes", e);
             DSWorkbenchNotepad.getSingleton().resetView();
         }
         revalidate(true);
         return result;
+    }
+
+    @Override
+    public Element getExportData(final List<String> pGroupsToExport) {
+        Element noteData = new Element("noteData");
+        if (pGroupsToExport == null || pGroupsToExport.isEmpty()) {
+            return noteData;
+        }
+        logger.debug("Generating notes data");
+        noteData.setAttribute("version", "1.0");
+        Element noteSets = new Element("noteSets");
+        for (String set : pGroupsToExport) {
+            try {
+                Element noteSet = new Element("noteSet");
+                noteSet.setAttribute("name", URLEncoder.encode(set, "UTF-8"));
+                
+                Element notes = new Element("notes");
+                for (ManageableType elem : getAllElements(set)) {
+                    notes.addContent(elem.toXml("note"));
+                }
+                noteSet.addContent(notes);
+                noteSets.addContent(noteSet);
+            } catch (Exception e) {
+                logger.warn("Failed to generate note set'" + set + "'", e);
+            }
+        }
+        noteData.addContent(noteSets);
+        
+        logger.debug("Data generated successfully");
+        return noteData;
     }
 
     public Note getNoteForVillage(Village pVillage) {
@@ -297,8 +181,8 @@ public class NoteManager extends GenericManager<Note> {
         return noteList;
     }
 
-    public Hashtable<Village, List<Note>> getNotesMap() {
-        Hashtable<Village, List<Note>> noteMap = new Hashtable<>();
+    public HashMap<Village, List<Note>> getNotesMap() {
+        HashMap<Village, List<Note>> noteMap = new HashMap<>();
         for (ManageableType t : getAllElementsFromAllGroups()) {
             Note n = (Note) t;
             for (Integer id : n.getVillageIds()) {

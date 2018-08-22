@@ -16,23 +16,22 @@
 package de.tor.tribes.util;
 
 import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.ext.Ally;
 import de.tor.tribes.types.ext.Barbarians;
-import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Village;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.Predicate;
+import org.apache.commons.lang3.ArrayUtils;
 
 /**
  *
@@ -76,7 +75,7 @@ public class VillageUtils {
             return new Village[0];
         }
         List<Village> villages = new ArrayList<>();
-        Hashtable<Village, Integer> usageCount = new Hashtable<>();
+        HashMap<Village, Integer> usageCount = new HashMap<>();
         for (Tag tag : pTags) {
             for (Integer id : tag.getVillageIDs()) {
                 Village v = DataHolder.getSingleton().getVillagesById().get(id);
@@ -92,13 +91,10 @@ public class VillageUtils {
         }
         if (pRelation.equals(RELATION.AND)) {
             //remove villages that are tagges by less tags than tagCount
-            Enumeration<Village> keys = usageCount.keys();
             int tagAmount = pTags.length;
-            while (keys.hasMoreElements()) {
-                Village key = keys.nextElement();
-                Integer count = usageCount.get(key);
-                if (count == null || count != tagAmount) {
-                    villages.remove(key);
+            for(Entry<Village, Integer> entry: usageCount.entrySet()) {
+                if (entry.getValue() == null || entry.getValue() != tagAmount) {
+                    villages.remove(entry.getKey());
                 }
             }
         }

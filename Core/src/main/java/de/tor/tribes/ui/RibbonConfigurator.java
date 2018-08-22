@@ -15,14 +15,14 @@
  */
 package de.tor.tribes.ui;
 
-import de.tor.tribes.ui.windows.BBCodeEditor;
-import de.tor.tribes.ui.windows.FormConfigFrame;
-import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
-import de.tor.tribes.ui.windows.ClockFrame;
+import de.tor.tribes.dssim.ui.DSWorkbenchSimulatorFrame;
 import de.tor.tribes.ui.panels.MapPanel;
 import de.tor.tribes.ui.panels.MinimapPanel;
-import de.tor.tribes.dssim.ui.DSWorkbenchSimulatorFrame;
 import de.tor.tribes.ui.views.*;
+import de.tor.tribes.ui.windows.BBCodeEditor;
+import de.tor.tribes.ui.windows.ClockFrame;
+import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
+import de.tor.tribes.ui.windows.FormConfigFrame;
 import de.tor.tribes.ui.wiz.red.ResourceDistributorWizard;
 import de.tor.tribes.ui.wiz.tap.TacticsPlanerWizard;
 import de.tor.tribes.util.*;
@@ -37,7 +37,8 @@ import javax.imageio.ImageIO;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.pushingpixels.flamingo.api.common.CommandButtonDisplayState;
 import org.pushingpixels.flamingo.api.common.JCommandButton;
 import org.pushingpixels.flamingo.api.common.JCommandButtonPanel;
@@ -63,7 +64,7 @@ import org.pushingpixels.flamingo.api.ribbon.resize.IconRibbonBandResizePolicy;
  * @author extremeCrazyCoder
  */
 public class RibbonConfigurator {
-    private static Logger logger = Logger.getLogger("RibbonConfigurator");
+    private static Logger logger = LogManager.getLogger("RibbonConfigurator");
 
     public static void addAppIcons(JRibbonFrame frame) {
         RibbonApplicationMenu appmen = new RibbonApplicationMenu();
@@ -189,7 +190,7 @@ public class RibbonConfigurator {
         appmen.addMenuEntry(settingsEntry);
 
         appmen.addMenuSeparator();
-        RibbonApplicationMenuEntryPrimary exitEntry = new RibbonApplicationMenuEntryPrimary(new system_log_out(), "Beenden", new ActionListener() {
+        RibbonApplicationMenuEntryPrimary exitEntry = new RibbonApplicationMenuEntryPrimary(getResizableIconFromFile("graphics/icons/logout.png"), "Beenden", new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 DSWorkbenchMainFrame.getSingleton().doExit();
@@ -207,7 +208,7 @@ public class RibbonConfigurator {
             }
         });
         appmen.addMenuEntry(exitEntry);
-        appmen.addFooterEntry(new RibbonApplicationMenuEntryFooter(new system_log_out(), "Beenden", new ActionListener() {
+        appmen.addFooterEntry(new RibbonApplicationMenuEntryFooter(getResizableIconFromFile("graphics/icons/logout.png"), "Beenden", new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 DSWorkbenchMainFrame.getSingleton().doExit();

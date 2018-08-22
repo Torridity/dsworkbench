@@ -15,9 +15,9 @@
  */
 package de.tor.tribes.ui.windows;
 
+import de.tor.tribes.util.BrowserInterface;
 import de.tor.tribes.util.Constants;
 import java.awt.Cursor;
-import de.tor.tribes.util.BrowserInterface;
 
 /**
  *

@@ -15,16 +15,17 @@
  */
 package de.tor.tribes.util.village;
 
-import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.FightReport;
-import de.tor.tribes.util.ServerSettings;
+import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.Constants;
+import de.tor.tribes.util.ServerSettings;
 import java.awt.Color;
 import java.util.Arrays;
-import org.apache.log4j.Logger;
-import org.jdom.Element;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jdom2.Element;
 
 /**
  * @author extremeCrazyCoder
@@ -35,7 +36,7 @@ import org.jdom.Element;
  */
 public class KnownVillage extends ManageableType {
     
-    private static Logger logger = Logger.getLogger("KnownVillage");
+    private static Logger logger = LogManager.getLogger("KnownVillage");
     
     private int[] buildings;
 
@@ -43,7 +44,7 @@ public class KnownVillage extends ManageableType {
      * -1 Building not Available
      * -2 Special Building depends on World Settings
      */
-    private static final int[] buildingMaxLevel = {30, 25, 20, 15, -2, -2, -2,
+    private static final int[] BUILDING_MAX_LEVEL = {30, 25, 20, 15, -2, -2, -2,
             20, 1, 1, 30, 30, 30, 30, 30, 30, 10, 20};
     
     private Village village;
@@ -51,66 +52,49 @@ public class KnownVillage extends ManageableType {
     private long lastUpdate;
 
     public static final int[] CHURCH_RANGE = {0, 4, 6, 8};
-    public static final double[] WATCHTOWER_RANGE = {0, 1.1, 1.3, 1.5, 1.7, 2.0, 2.3, 2.6, 3.0, 3.4, 3.9, 4.4, 5.1, 5.8, 6.7, 7.6, 8.7, 10.0, 11.5, 13.1, 15.0};
+    public static final double[] WATCHTOWER_RANGE = {0, 1.1, 1.3, 1.5, 1.7, 2.0, 2.3,
+            2.6, 3.0, 3.4, 3.9, 4.4, 5.1, 5.8, 6.7, 7.6, 8.7, 10.0, 11.5, 13.1, 15.0};
     
     public KnownVillage(Village pVillage) {
-        buildings = new int[Constants.buildingNames.length];
+        buildings = new int[Constants.BUILDING_NAMES.length];
         Arrays.fill(buildings, -1);
         this.village = pVillage;
         updateTime();
     }
     
     public KnownVillage(Element e) {
-        buildings = new int[Constants.buildingNames.length];
+        buildings = new int[Constants.BUILDING_NAMES.length];
         Arrays.fill(buildings, -1);
         loadFromXml(e);
     }
 
     @Override
-    public String toXml() {
-        try {
-            StringBuilder xml = new StringBuilder();
-            xml.append("<village>");
-            xml.append("<id>").append(village.getId()).append("</id>");
-            xml.append("<update>").append(lastUpdate).append("</update>");
-            
-            for(int i = 0; i < Constants.buildingNames.length; i++) {
-                xml.append("<").append(Constants.buildingNames[i]).append(">")
-                        .append(buildings[i])
-                        .append("</").append(Constants.buildingNames[i]).append(">");
-            }
-            
-            xml.append("</village>");
-            return xml.toString();
-        } catch (Exception e) {
-            return null;
-        }
-
-    }
-
-    @Override
-    public String getElementIdentifier() {
-        return "knownVillage";
-    }
-
-    @Override
-    public String getElementGroupIdentifier() {
-        return "knownVillages";
-    }
-
-    @Override
-    public String getGroupNameAttributeIdentifier() {
-        return "";
-    }
-
-    @Override
-    public void loadFromXml(Element pElement) {
+    public final void loadFromXml(Element pElement) {
         this.village = DataHolder.getSingleton().getVillagesById().get(Integer.parseInt(pElement.getChild("id").getText()));
         this.lastUpdate = Long.parseLong(pElement.getChild("update").getText());
         
-        for(int i = 0; i < Constants.buildingNames.length; i++) {
-            this.buildings[i] = Integer.parseInt(pElement.getChild(Constants.buildingNames[i]).getText());
+        for(int i = 0; i < Constants.BUILDING_NAMES.length; i++) {
+            this.buildings[i] = Integer.parseInt(pElement.getChild(Constants.BUILDING_NAMES[i]).getText());
         }
+    }
+
+    @Override
+    public Element toXml(String elementName) {
+        Element kVillage = new Element(elementName);
+        try {
+            kVillage.addContent(new Element("id").setText(Integer.toString(village.getId())));
+            kVillage.addContent(new Element("update").setText(Long.toString(lastUpdate)));
+            
+            Element buildingsE = new Element("buildings");
+            for(int i = 0; i < Constants.BUILDING_NAMES.length; i++) {
+                buildingsE.setAttribute(Constants.BUILDING_NAMES[i], Integer.toString(buildings[i]));
+            }
+            kVillage.addContent(buildingsE);
+        } catch (Exception e) {
+            return null;
+        }
+        
+        return kVillage;
     }
 
     public Village getVillage() {
@@ -120,16 +104,16 @@ public class KnownVillage extends ManageableType {
     public void updateInformation(KnownVillage other) {
         if(lastUpdate > other.getLastUpdate()) {
             //This is newer.... Just get Information that has not been discovered here
-            for(int i = 0; i < Constants.buildingNames.length; i++) {
+            for(int i = 0; i < Constants.BUILDING_NAMES.length; i++) {
                 if(buildings[i] == -1) {
-                    buildings[i] = other.getBuildingLevelByName(Constants.buildingNames[i]);
+                    buildings[i] = other.getBuildingLevelByName(Constants.BUILDING_NAMES[i]);
                 }
             }
         }
         else {
             //Other is newer ... Copy everything that is valid
-            for(int i = 0; i < Constants.buildingNames.length; i++) {
-                int level = other.getBuildingLevelByName(Constants.buildingNames[i]);
+            for(int i = 0; i < Constants.BUILDING_NAMES.length; i++) {
+                int level = other.getBuildingLevelByName(Constants.BUILDING_NAMES[i]);
                 if(level != -1) {
                     buildings[i] = level;
                 }
@@ -232,7 +216,7 @@ public class KnownVillage extends ManageableType {
         return buildings[id];
     }
 
-    private void setBuildingLevelByName(String pBuilding, int pLevel) {
+    public void setBuildingLevelByName(String pBuilding, int pLevel) {
         int id = getBuildingIdByName(pBuilding);
         if(id == -2) {
             logger.info("Building " + pBuilding + " not found");
@@ -248,7 +232,7 @@ public class KnownVillage extends ManageableType {
     }
     
     private void setBuildingLevelById(int pBuildingId, int pLevel) {
-        if(pLevel > getMaxBuildingLevel(Constants.buildingNames[pBuildingId])) {
+        if(pLevel > getMaxBuildingLevel(Constants.BUILDING_NAMES[pBuildingId])) {
             logger.error("Building cannot be constructed that far " + pBuildingId + ": " + pLevel);
             return;
         }
@@ -274,8 +258,8 @@ public class KnownVillage extends ManageableType {
             logger.info("Building " + pBuilding + " not found");
             return -2;
         }
-        if(buildingMaxLevel[id] != -2) {
-            return buildingMaxLevel[id];
+        if(BUILDING_MAX_LEVEL[id] != -2) {
+            return BUILDING_MAX_LEVEL[id];
         }
         //Buildings that depend on world settings
         switch(pBuilding) {
@@ -306,8 +290,8 @@ public class KnownVillage extends ManageableType {
      * returns -2 if the building was not found
      */
     public static int getBuildingIdByName(String pName) {
-        for(int i = 0; i < Constants.buildingNames.length; i++) {
-            if(Constants.buildingNames[i].equals(pName)) {
+        for(int i = 0; i < Constants.BUILDING_NAMES.length; i++) {
+            if(Constants.BUILDING_NAMES[i].equals(pName)) {
                 return i;
             }   
         }
@@ -315,15 +299,20 @@ public class KnownVillage extends ManageableType {
     }
 
     void updateInformation(FightReport pReport) {
-        for(int i = 0; i < buildings.length; i++) {
-            if(pReport.getBuilding(i) != -1) {
-                //Building was spyed
-                if(getMaxBuildingLevel(Constants.buildingNames[i]) > 0) {
-                    //Building can be build
-                    setBuildingLevelById(i, pReport.getBuilding(i));
-                    updateTime();
+        if (pReport.getSpyLevel() >= pReport.SPY_LEVEL_BUILDINGS) {
+            for(int i = 0; i < buildings.length; i++) {
+                if(pReport.getBuilding(i) != -1) {
+                    //Building was spyed
+                    if(getMaxBuildingLevel(Constants.BUILDING_NAMES[i]) > 0) {
+                        //Building can be build
+                        setBuildingLevelById(i, pReport.getBuilding(i));
+                        updateTime();
+                    }
                 }
             }
+        } else if (pReport.getWallAfter() != -1) {
+            // set wall destruction (works also without spying)
+            setBuildingLevelByName("wall", pReport.getWallAfter());
         }
     }
 }

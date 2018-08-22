@@ -30,7 +30,8 @@ import javax.swing.JTextField;
 public class DateSpinEditor extends DefaultCellEditor {
 
     private final JSpinner spinnerComponent = new javax.swing.JSpinner();
-private DateTimeField dtf = new DateTimeField();
+    private DateTimeField dtf = new DateTimeField();
+    
     public DateSpinEditor() {
         super(new JTextField(""));
         setClickCountToStart(2);

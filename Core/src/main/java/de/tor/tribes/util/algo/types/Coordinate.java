@@ -15,8 +15,6 @@
  */
 package de.tor.tribes.util.algo.types;
 
-import java.lang.Math;
-
 /**
  *
  * @author Robert Nitsch <dev@robertnitsch.de>
@@ -31,6 +29,7 @@ public class Coordinate implements Comparable<Coordinate> {
         this.y = y;
     }
 
+    @Override
     public String toString() {
         return Integer.toString(this.x) + "|" + Integer.toString(this.y);
     }

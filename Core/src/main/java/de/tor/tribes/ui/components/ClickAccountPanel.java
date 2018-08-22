@@ -46,10 +46,10 @@ public class ClickAccountPanel extends javax.swing.JPanel {
         jClickAccountLabel.setText("Klick-Konto [0]");
         jClickAccountLabel.setToolTipText("0 Klick(s) aufgeladen");
         jClickAccountLabel.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(153, 153, 153), 1, true));
-        jClickAccountLabel.setMaximumSize(new java.awt.Dimension(110, 40));
-        jClickAccountLabel.setMinimumSize(new java.awt.Dimension(110, 40));
+        jClickAccountLabel.setMaximumSize(new java.awt.Dimension(140, 40));
+        jClickAccountLabel.setMinimumSize(new java.awt.Dimension(140, 40));
         jClickAccountLabel.setOpaque(true);
-        jClickAccountLabel.setPreferredSize(new java.awt.Dimension(110, 40));
+        jClickAccountLabel.setPreferredSize(new java.awt.Dimension(140, 40));
         jClickAccountLabel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 fireUpdateClickAccountEvent(evt);

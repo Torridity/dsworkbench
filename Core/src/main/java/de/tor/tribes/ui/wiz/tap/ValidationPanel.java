@@ -15,8 +15,6 @@
  */
 package de.tor.tribes.ui.wiz.tap;
 
-import com.jidesoft.swing.JideBoxLayout;
-import com.jidesoft.swing.JideSplitPane;
 import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.algo.SettingsChangedListener;
@@ -31,16 +29,15 @@ import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.algo.types.TimeFrame;
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import javax.swing.SwingUtilities;
 import javax.swing.table.AbstractTableModel;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.netbeans.spi.wizard.Wizard;
 import org.netbeans.spi.wizard.WizardPage;
@@ -52,7 +49,7 @@ import org.netbeans.spi.wizard.WizardPanelNavResult;
  */
 public class ValidationPanel extends WizardPage implements SettingsChangedListener {
     
-    Logger logger = Logger.getLogger("ValidationPanel");
+    Logger logger = LogManager.getLogger("ValidationPanel");
     @Override
     public void fireTimeFrameChangedEvent() {
     }
@@ -81,24 +78,7 @@ public class ValidationPanel extends WizardPage implements SettingsChangedListen
         jXCollapsiblePane1.setLayout(new BorderLayout());
         jXCollapsiblePane1.add(jInfoScrollPane, BorderLayout.CENTER);
         jInfoTextPane.setText(GENERAL_INFO);
-        jideSplitPane1.setOrientation(JideSplitPane.VERTICAL_SPLIT);
-        jideSplitPane1.setProportionalLayout(true);
-        jideSplitPane1.setDividerSize(5);
-        jideSplitPane1.setShowGripper(true);
-        jideSplitPane1.setOneTouchExpandable(true);
-        jideSplitPane1.setDividerStepSize(10);
-        jideSplitPane1.setInitiallyEven(true);
-        jideSplitPane1.add(jSourceValidationPanel, JideBoxLayout.FLEXIBLE);
-        jideSplitPane1.add(jTargetValidationPanel, JideBoxLayout.VARY);
-        jideSplitPane1.getDividerAt(0).addMouseListener(new MouseAdapter() {
-
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                if (e.getClickCount() == 2) {
-                    jideSplitPane1.setProportions(new double[]{0.5});
-                }
-            }
-        });
+        
         sourceOverviewPanel = new VillageOverviewMapPanel();
         jPanel2.add(sourceOverviewPanel, BorderLayout.CENTER);
         targetOverviewPanel = new VillageOverviewMapPanel();
@@ -132,6 +112,8 @@ public class ValidationPanel extends WizardPage implements SettingsChangedListen
 
         jInfoScrollPane = new javax.swing.JScrollPane();
         jInfoTextPane = new javax.swing.JTextPane();
+        jXCollapsiblePane1 = new org.jdesktop.swingx.JXCollapsiblePane();
+        jLabel1 = new javax.swing.JLabel();
         jSourceValidationPanel = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jXTable1 = new org.jdesktop.swingx.JXTable();
@@ -142,19 +124,44 @@ public class ValidationPanel extends WizardPage implements SettingsChangedListen
         jXTable2 = new org.jdesktop.swingx.JXTable();
         jPanel3 = new javax.swing.JPanel();
         jToggleButton2 = new javax.swing.JToggleButton();
-        jXCollapsiblePane1 = new org.jdesktop.swingx.JXCollapsiblePane();
-        jLabel1 = new javax.swing.JLabel();
-        jPanel1 = new javax.swing.JPanel();
-        jideSplitPane1 = new com.jidesoft.swing.JideSplitPane();
 
         jInfoScrollPane.setMinimumSize(new java.awt.Dimension(19, 180));
         jInfoScrollPane.setPreferredSize(new java.awt.Dimension(19, 180));
 
-        jInfoTextPane.setContentType("text/html");
+        jInfoTextPane.setContentType("text/html"); // NOI18N
         jInfoTextPane.setEditable(false);
         jInfoTextPane.setText("<html>Du befindest dich im <b>Angriffsmodus</b>. Hier kannst du die Herkunftsd&ouml;rfer ausw&auml;hlen, die f&uuml;r Angriffe verwendet werden d&uuml;rfen. Hierf&uuml;r hast die folgenden M&ouml;glichkeiten:\n<ul>\n<li>Einf&uuml;gen von Dorfkoordinaten aus der Zwischenablage per STRG+V</li>\n<li>Einf&uuml;gen der Herkunftsd&ouml;rfer aus der Gruppen&uuml;bersicht</li>\n<li>Einf&uuml;gen der Herkunftsd&ouml;rfer aus dem SOS-Analyzer</li>\n<li>Einf&uuml;gen der Herkunftsd&ouml;rfer aus Berichten</li>\n<li>Einf&uuml;gen aus der Auswahlübersicht</li>\n<li>Manuelle Eingabe</li>\n</ul>\n</html>\n");
         jInfoScrollPane.setViewportView(jInfoTextPane);
 
+        setLayout(new java.awt.GridBagLayout());
+
+        jXCollapsiblePane1.setCollapsed(true);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        add(jXCollapsiblePane1, gridBagConstraints);
+
+        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel1.setText("Informationen einblenden");
+        jLabel1.setToolTipText("Blendet Informationen zu dieser Ansicht und zu den Datenquellen ein/aus");
+        jLabel1.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
+        jLabel1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                fireHideInfoEvent(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        add(jLabel1, gridBagConstraints);
+
+        jSourceValidationPanel.setMinimumSize(new java.awt.Dimension(400, 200));
+        jSourceValidationPanel.setPreferredSize(new java.awt.Dimension(400, 200));
         jSourceValidationPanel.setLayout(new java.awt.GridBagLayout());
 
         jScrollPane1.setBorder(javax.swing.BorderFactory.createTitledBorder("Mögliche Verwendungen der Herkunftsdörfer"));
@@ -205,6 +212,16 @@ public class ValidationPanel extends WizardPage implements SettingsChangedListen
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 5);
         jSourceValidationPanel.add(jToggleButton1, gridBagConstraints);
 
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 0.5;
+        add(jSourceValidationPanel, gridBagConstraints);
+
+        jTargetValidationPanel.setMinimumSize(new java.awt.Dimension(400, 200));
+        jTargetValidationPanel.setPreferredSize(new java.awt.Dimension(400, 200));
         jTargetValidationPanel.setLayout(new java.awt.GridBagLayout());
 
         jScrollPane2.setBorder(javax.swing.BorderFactory.createTitledBorder("Mögliche Verwendungen der Zieldörfer"));
@@ -255,42 +272,13 @@ public class ValidationPanel extends WizardPage implements SettingsChangedListen
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 5);
         jTargetValidationPanel.add(jToggleButton2, gridBagConstraints);
 
-        setLayout(new java.awt.GridBagLayout());
-
-        jXCollapsiblePane1.setCollapsed(true);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        add(jXCollapsiblePane1, gridBagConstraints);
-
-        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 10)); // NOI18N
-        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("Informationen einblenden");
-        jLabel1.setToolTipText("Blendet Informationen zu dieser Ansicht und zu den Datenquellen ein/aus");
-        jLabel1.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
-        jLabel1.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                fireHideInfoEvent(evt);
-            }
-        });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        add(jLabel1, gridBagConstraints);
-
-        jPanel1.setLayout(new java.awt.BorderLayout());
-        jPanel1.add(jideSplitPane1, java.awt.BorderLayout.CENTER);
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridy = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        add(jPanel1, gridBagConstraints);
+        gridBagConstraints.weighty = 0.5;
+        add(jTargetValidationPanel, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
 
     private void fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireHideInfoEvent
@@ -314,6 +302,7 @@ public class ValidationPanel extends WizardPage implements SettingsChangedListen
                 jPanel2.add(sourceOverviewPanel, BorderLayout.CENTER);
                 SwingUtilities.invokeLater(new Runnable() {
 
+                    @Override
                     public void run() {
                         jPanel2.updateUI();
                     }
@@ -329,6 +318,7 @@ public class ValidationPanel extends WizardPage implements SettingsChangedListen
                 jPanel3.add(targetOverviewPanel, BorderLayout.CENTER);
                 SwingUtilities.invokeLater(new Runnable() {
 
+                    @Override
                     public void run() {
                         jPanel3.updateUI();
                     }
@@ -344,8 +334,8 @@ public class ValidationPanel extends WizardPage implements SettingsChangedListen
         TAPAttackSourceElement[] sourceElements = AttackSourceFilterPanel.getSingleton().getFilteredElements();
         List<TAPAttackTargetElement> targetElements = AttackTargetPanel.getSingleton().getAllElements();
 
-        Hashtable<Village, Integer> validSources = new Hashtable<>();
-        Hashtable<Village, Integer> validTargets = new Hashtable<>();
+        HashMap<Village, Integer> validSources = new HashMap<>();
+        HashMap<Village, Integer> validTargets = new HashMap<>();
 
         TimeFrame f = TimeSettingsPanel.getSingleton().getTimeFrame();
         logger.debug("Got timeFrame" + f.toString());
@@ -380,24 +370,20 @@ public class ValidationPanel extends WizardPage implements SettingsChangedListen
 
         VillageUsageTableModel model = (VillageUsageTableModel) jXTable1.getModel();
         model.clear();
-        Enumeration<Village> sourceKeys = validSources.keys();
-        while (sourceKeys.hasMoreElements()) {
-            Village source = sourceKeys.nextElement();
-            float possibilities = 100f * (float) validSources.get(source) / (float) targetElements.size();
+        for(Entry<Village, Integer> entry: validSources.entrySet()) {
+            float possibilities = 100f * (float) entry.getValue() / (float) targetElements.size();
             possibilities = Math.min(possibilities, 100.0f);
-            sourceOverviewPanel.addVillage(source, ColorGradientHelper.getGradientColor(possibilities, Color.RED, Color.YELLOW));
-            model.addRow(source, possibilities / 100.0f);
+            sourceOverviewPanel.addVillage(entry.getKey(), ColorGradientHelper.getGradientColor(possibilities, Color.RED, Color.YELLOW));
+            model.addRow(entry.getKey(), possibilities / 100.0f);
         }
         model.fireTableDataChanged();
 
         model = (VillageUsageTableModel) jXTable2.getModel();
         model.clear();
-        Enumeration<Village> targetKeys = validTargets.keys();
-        while (targetKeys.hasMoreElements()) {
-            Village target = targetKeys.nextElement();
-            float possibilities = 100f * (float) validTargets.get(target) / (float) sourceElements.length;
-            targetOverviewPanel.addVillage(target, ColorGradientHelper.getGradientColor(possibilities, Color.RED, Color.YELLOW));
-            model.addRow(target, possibilities / 100.0f);
+        for(Entry<Village, Integer> entry: validTargets.entrySet()) {
+            float possibilities = 100f * (float) entry.getValue() / (float) sourceElements.length;
+            targetOverviewPanel.addVillage(entry.getKey(), ColorGradientHelper.getGradientColor(possibilities, Color.RED, Color.YELLOW));
+            model.addRow(entry.getKey(), possibilities / 100.0f);
         }
         model.fireTableDataChanged();
         sourceOverviewPanel.repaint();
@@ -408,7 +394,6 @@ public class ValidationPanel extends WizardPage implements SettingsChangedListen
     private javax.swing.JScrollPane jInfoScrollPane;
     private javax.swing.JTextPane jInfoTextPane;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
@@ -420,7 +405,6 @@ public class ValidationPanel extends WizardPage implements SettingsChangedListen
     private org.jdesktop.swingx.JXCollapsiblePane jXCollapsiblePane1;
     private org.jdesktop.swingx.JXTable jXTable1;
     private org.jdesktop.swingx.JXTable jXTable2;
-    private com.jidesoft.swing.JideSplitPane jideSplitPane1;
     // End of variables declaration//GEN-END:variables
 
     @Override

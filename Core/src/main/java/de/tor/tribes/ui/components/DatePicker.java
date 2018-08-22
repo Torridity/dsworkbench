@@ -15,443 +15,368 @@
  */
 package de.tor.tribes.ui.components;
 
-/*
- * To change this template, choose Tools | Templates and open the template in the editor.
- */
-// Decompiled by Jad v1.5.8g. Copyright 2001 Pavel Kouznetsov.
-// Jad home page: http://www.kpdus.com/jad.html
-// Decompiler options: packimports(3)
-import java.awt.*;
-import java.awt.event.*;
-import java.text.DateFormat;
-import java.text.FieldPosition;
-import java.util.*;
-import javax.swing.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import javax.swing.JLabel;
 import javax.swing.plaf.basic.BasicArrowButton;
-import org.netbeans.lib.awtextra.AbsoluteConstraints;
-import org.netbeans.lib.awtextra.AbsoluteLayout;
+import org.apache.commons.lang3.time.DateUtils;
 
-public class DatePicker extends JPanel {
+/**
+ *
+ * @author extremeCrazyCoder
+ */
+public class DatePicker extends javax.swing.JPanel {
+    private static final Color LIGHT_GRAY = Color.LIGHT_GRAY;
+    private static final Color GRAY = new Color(200, 200, 200);
+    private static final Color BLACK = new Color(0, 0, 0);
+    private static final SimpleDateFormat monthAndYear = new SimpleDateFormat("MMMMM yyyy");
+    private static final int WEEKS_TO_SHOW = 6;
+    
+    private CrossedLabel daysInMonth[][];
+    private Date datesInMonth[][]; //used for mapping labels with dates
+    private Date selectedDate;
+    private final Date originalDate;
+    private final String dayNames[] = { "Mo", "Di", "Mi", "Do", "Fr", "Sa", "So" };
 
-    private static final Font smallFont = new Font("Dialog", 0, 10);
-    // private static final Font largeFont = new Font("Dialog", 0, 10);
-    private static final Insets insets = new Insets(1, 1, 1, 1);
-    private static final Color highlight = new Color(255, 255, 204);
-    private static final Color white = new Color(255, 255, 255);
-    private static final Color gray = new Color(204, 204, 204);
-    private CrossedLabel selectedDay;
-    private GregorianCalendar selectedDate;
-    private GregorianCalendar originalDate;
-    private final JButton backButton;
-    private final JLabel monthAndYear;
-    private final JButton forwardButton;
-    private final JTextField dayHeadings[] = {
-        new JTextField("Mo"), new JTextField("Di"), new JTextField("Mi"), new JTextField("Do"), new JTextField("Fr"), new JTextField("Sa"), new JTextField("So")
-    };
-    private final CrossedLabel daysInMonth[][] = {
-        {
-            new CrossedLabel(), new CrossedLabel(), new CrossedLabel(), new CrossedLabel(), new CrossedLabel(), new CrossedLabel(), new CrossedLabel()
-        }, {
-            new CrossedLabel(), new CrossedLabel(), new CrossedLabel(), new CrossedLabel(), new CrossedLabel(), new CrossedLabel(), new CrossedLabel()
-        }, {
-            new CrossedLabel(), new CrossedLabel(), new CrossedLabel(), new CrossedLabel(), new CrossedLabel(), new CrossedLabel(), new CrossedLabel()
-        }, {
-            new CrossedLabel(), new CrossedLabel(), new CrossedLabel(), new CrossedLabel(), new CrossedLabel(), new CrossedLabel(), new CrossedLabel()
-        }, {
-            new CrossedLabel(), new CrossedLabel(), new CrossedLabel(), new CrossedLabel(), new CrossedLabel(), new CrossedLabel(), new CrossedLabel()
-        }, {
-            new CrossedLabel(), new CrossedLabel(), new CrossedLabel(), new CrossedLabel(), new CrossedLabel(), new CrossedLabel(), new CrossedLabel()
-        }
-    };
-    private final JButton todayButton;
-    private final JButton cancelButton;
+    /**
+     * Creates new form DatePicker
+     */
 
     public DatePicker() {
-        selectedDay = null;
-        selectedDate = null;
-        originalDate = null;
-        backButton = new BasicArrowButton(BasicArrowButton.WEST);//JButton();
-        monthAndYear = new JLabel();
-        forwardButton = new BasicArrowButton(BasicArrowButton.EAST);//new JButton();
-        todayButton = new JButton();
-        cancelButton = new JButton();
-        selectedDate = getToday();
+        initComponents();
+        originalDate = DateUtils.truncate(new Date(), Calendar.DATE);
+        selectedDate = originalDate;
         init();
     }
 
     public DatePicker(Date date) {
-        selectedDay = null;
-        selectedDate = null;
-        originalDate = null;
-        backButton = new BasicArrowButton(BasicArrowButton.WEST);//new JButton();
-        monthAndYear = new JLabel();
-        forwardButton = new BasicArrowButton(BasicArrowButton.EAST);//new JButton();
-        todayButton = new JButton();
-        cancelButton = new JButton();
+        initComponents();
         if (date == null) {
-            selectedDate = getToday();
+            originalDate = DateUtils.truncate(new Date(), Calendar.DATE);
         } else {
-            selectedDate = new GregorianCalendar();
-            selectedDate.setTime(date);
+            originalDate = DateUtils.truncate(date, Calendar.DATE);
         }
-        originalDate = new GregorianCalendar(selectedDate.get(Calendar.YEAR), selectedDate.get(Calendar.MONTH), selectedDate.get(Calendar.DAY_OF_MONTH));
+        selectedDate = originalDate;
         init();
     }
-
-    public Date getDate() {
-        if (null != selectedDate) {
-            return selectedDate.getTime();
-        } else {
-            return null;
-        }
-    }
-
+    
     private void init() {
-        setLayout(new AbsoluteLayout());
-        setMinimumSize(new Dimension(161, 220));
-        setMaximumSize(getMinimumSize());
-        setPreferredSize(getMinimumSize());
-        setBorder(new javax.swing.plaf.BorderUIResource.EtchedBorderUIResource());
-        backButton.setFont(smallFont);
-        //  backButton.setText("<");
-        backButton.setMargin(insets);
-        backButton.setDefaultCapable(false);
-        backButton.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent actionevent) {
-                onBackClicked(actionevent);
-            }
-        });
-        add(backButton, new AbsoluteConstraints(10, 10, 20, 20));
-        //    monthAndYear.setFont(largeFont);
-        monthAndYear.setHorizontalAlignment(SwingConstants.CENTER);
-        monthAndYear.setText(formatDateText(selectedDate.getTime()));
-        add(monthAndYear, new AbsoluteConstraints(30, 10, 100, 20));
-        forwardButton.setFont(smallFont);
-        //forwardButton.setText(">");
-        forwardButton.setMargin(insets);
-        forwardButton.setDefaultCapable(false);
-        forwardButton.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent actionevent) {
-                onForwardClicked(actionevent);
-            }
-        });
-        add(forwardButton, new AbsoluteConstraints(130, 10, 20, 20));
-        int i = 10;
-        for (JTextField dayHeading : dayHeadings) {
-            dayHeading.setBackground(gray);
-            dayHeading.setEditable(false);
-            dayHeading.setFont(smallFont);
-            dayHeading.setHorizontalAlignment(0);
-            dayHeading.setBorder(BorderFactory.createEmptyBorder());
-            dayHeading.setFocusable(false);
-            add(dayHeading, new AbsoluteConstraints(i, 40, 21, 21));
-            i += 20;
+        //build Header
+        for(int i = 0; i < 7; i++) {
+            JLabel head = new JLabel(dayNames[i]);
+            head.setBackground(GRAY);
+            head.setOpaque(true);
+            head.setPreferredSize(new Dimension(20, 20));
+            head.setMinimumSize(new Dimension(20, 20));
+            head.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+            
+            GridBagConstraints gbc = new GridBagConstraints();
+            gbc.anchor = GridBagConstraints.PAGE_START;
+            gbc.fill = GridBagConstraints.HORIZONTAL;
+            gbc.gridx = i;
+            gbc.gridy = 0;
+            gbc.insets = new Insets(2, 2, 6, 2);
+            gbc.ipadx = 0;
+            gbc.ipady = 0;
+            gbc.weightx = 1.0;
+            gbc.weighty = 0.0;
+            jPanelDaySelection.add(head, gbc);
         }
+        
+        daysInMonth = new CrossedLabel[WEEKS_TO_SHOW][7];
+        datesInMonth = new Date[WEEKS_TO_SHOW][7];
+        for(int i = 0; i < WEEKS_TO_SHOW; i++) {
+            for(int j = 0; j < 7; j++) {
+                daysInMonth[i][j] = new CrossedLabel();
+                daysInMonth[i][j].setPreferredSize(new Dimension(20, 20));
+                daysInMonth[i][j].setMinimumSize(new Dimension(20, 20));
+                daysInMonth[i][j].setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+                daysInMonth[i][j].addMouseListener(new MouseAdapter() {
 
-        i = 10;
-        int k = 60;
-        for (CrossedLabel[] aDaysInMonth : daysInMonth) {
-            for (CrossedLabel anADaysInMonth : aDaysInMonth) {
-                anADaysInMonth.setBackground(gray);
-                anADaysInMonth.setFont(smallFont);
-                anADaysInMonth.setHorizontalAlignment(SwingConstants.RIGHT);
-                anADaysInMonth.setText("");
-                anADaysInMonth.setFocusable(false);
-                anADaysInMonth.addMouseListener(new MouseAdapter() {
-
+                    @Override
                     public void mouseClicked(MouseEvent mouseevent) {
-                        onDayClicked(mouseevent);
+                        dayClicked(mouseevent);
                     }
                 });
-                add(anADaysInMonth, new AbsoluteConstraints(i, k, 21, 21));
-                i += 20;
-            }
 
-            i = 10;
-            k += 20;
-        }
-
-        initButtons(true);
-        calculateCalendar();
-    }
-
-    private void initButtons(boolean flag) {
-        if (flag) {
-            Dimension dimension = new Dimension(68, 24);
-            //  todayButton.setFont(largeFont);
-            todayButton.setText("Heute");
-            todayButton.setMargin(insets);
-            todayButton.setMaximumSize(dimension);
-            todayButton.setMinimumSize(dimension);
-            todayButton.setPreferredSize(dimension);
-            todayButton.setDefaultCapable(true);
-            todayButton.setSelected(true);
-            todayButton.addActionListener(new ActionListener() {
-
-                public void actionPerformed(ActionEvent actionevent) {
-                    onToday(actionevent);
-                }
-            });
-            //   cancelButton.setFont(largeFont);
-            cancelButton.setText("OK");
-            cancelButton.setMargin(insets);
-            cancelButton.setMaximumSize(dimension);
-            cancelButton.setMinimumSize(dimension);
-            cancelButton.setPreferredSize(dimension);
-            cancelButton.addActionListener(new ActionListener() {
-
-                public void actionPerformed(ActionEvent actionevent) {
-                    setVisible(false);
-                }
-            });
-        } else {
-            remove(todayButton);
-            remove(cancelButton);
-        }
-
-        add(todayButton, new AbsoluteConstraints(9, 190, 68, -1));
-        add(cancelButton, new AbsoluteConstraints(87, 190, 48, -1));
-    }
-
-    public void removeOk() {
-        remove(cancelButton);
-    }
-
-    private void onToday(ActionEvent actionevent) {
-        selectedDate = getToday();
-        if (isVisible()) {
-            monthAndYear.setText(formatDateText(selectedDate.getTime()));
-            calculateCalendar();
-        }
-    }
-
-    private void onCancel(ActionEvent actionevent) {
-        selectedDate = originalDate;
-        setVisible(false);
-    }
-
-    private void onForwardClicked(ActionEvent actionevent) {
-        int i = selectedDate.get(Calendar.DAY_OF_MONTH);
-        selectedDate.set(Calendar.DAY_OF_MONTH, 1);
-        selectedDate.add(Calendar.MONTH, 1);
-        selectedDate.set(Calendar.DAY_OF_MONTH, Math.min(i, calculateDaysInMonth(selectedDate)));
-        monthAndYear.setText(formatDateText(selectedDate.getTime()));
-        if (selectedDay != null) {
-            selectedDay.uncross();
-        }
-        calculateCalendar();
-    }
-
-    private void onBackClicked(ActionEvent actionevent) {
-        int i = selectedDate.get(Calendar.DAY_OF_MONTH);
-        selectedDate.set(Calendar.DAY_OF_MONTH, 1);
-        selectedDate.add(Calendar.MONTH, -1);
-        selectedDate.set(Calendar.DAY_OF_MONTH, Math.min(i, calculateDaysInMonth(selectedDate)));
-        monthAndYear.setText(formatDateText(selectedDate.getTime()));
-        if (selectedDay != null) {
-            selectedDay.uncross();
-        }
-        calculateCalendar();
-    }
-
-    private void onDayClicked(MouseEvent mouseevent) {
-        CrossedLabel jtextfield = (CrossedLabel) mouseevent.getSource();
-        if (!jtextfield.getForeground().equals(Color.LIGHT_GRAY)) {
-            if (null != selectedDay) {
-                selectedDay.setBackground(white);
-                selectedDay.uncross();
-            }
-            jtextfield.setBackground(highlight);
-            jtextfield.cross();
-            selectedDay = jtextfield;
-            selectedDate.set(Calendar.DAY_OF_MONTH, Integer.parseInt(jtextfield.getText()));
-        }
-    }
-
-    private static GregorianCalendar getToday() {
-        GregorianCalendar gregoriancalendar = new GregorianCalendar();
-        gregoriancalendar.set(GregorianCalendar.HOUR, 0);
-        gregoriancalendar.set(GregorianCalendar.MINUTE, 0);
-        gregoriancalendar.set(GregorianCalendar.SECOND, 0);
-        gregoriancalendar.set(GregorianCalendar.MILLISECOND, 0);
-        return gregoriancalendar;
-    }
-
-    private void calculateCalendar() {
-        if (null != selectedDay) {
-            selectedDay.setBackground(white);
-            selectedDay = null;
-        }
-
-        //get days of this and the last month and current calendar
-        GregorianCalendar calLast = new GregorianCalendar(selectedDate.get(1), selectedDate.get(2), 1);
-        calLast.add(Calendar.MONTH, -1);
-        int daysInLastMonth = calculateDaysInMonth(calLast);
-        GregorianCalendar calCurrent = new GregorianCalendar(selectedDate.get(1), selectedDate.get(2), 1);
-        int daysInCurrentMonth = calculateDaysInMonth(calCurrent);
-
-        int dayToSelect = Math.min(daysInCurrentMonth, selectedDate.get(GregorianCalendar.DAY_OF_MONTH));
-
-        //reset all boxes
-        for (CrossedLabel[] aDaysInMonth : daysInMonth) {
-            for (int i2 = 0; i2 < daysInMonth[0].length; i2++) {
-                aDaysInMonth[i2].setText("");
-                aDaysInMonth[i2].setBackground(Color.WHITE);
+                GridBagConstraints gbc = new GridBagConstraints();
+                gbc.anchor = GridBagConstraints.PAGE_START;
+                gbc.fill = GridBagConstraints.HORIZONTAL;
+                gbc.gridx = j;
+                gbc.gridy = i + 1;
+                gbc.insets = new Insets(2, 2, 2, 2);
+                gbc.ipadx = 0;
+                gbc.ipady = 0;
+                gbc.weightx = 1.0;
+                gbc.weighty = 0.0;
+                jPanelDaySelection.add(daysInMonth[i][j], gbc);
             }
         }
-
-        //re-map the calendars day and get leading and trailing village amount
-        int startDay = 0;
-        int leadingDays = 0;
-        int calendarDay = calCurrent.get(GregorianCalendar.DAY_OF_WEEK);
-        switch (calendarDay) {
-            case Calendar.TUESDAY:
-                startDay = 1;
-                leadingDays = 1;
-                break;
-            case Calendar.WEDNESDAY:
-                startDay = 2;
-                leadingDays = 2;
-                break;
-            case Calendar.THURSDAY:
-                startDay = 3;
-                leadingDays = 3;
-                break;
-            case Calendar.FRIDAY:
-                startDay = 4;
-                leadingDays = 4;
-                break;
-            case Calendar.SATURDAY:
-                startDay = 5;
-                leadingDays = 5;
-                break;
-            case Calendar.SUNDAY:
-                startDay = 6;
-                leadingDays = 6;
-                break;
-            default:
-                //monday
-                startDay = 0;
-                leadingDays = 7;
+        
+        buildCalendar();
+    }
+    
+    public void buildCalendar() {
+        jLabelMonth.setText(monthAndYear.format(selectedDate));
+        
+        Calendar temp = new GregorianCalendar();
+        temp.setTime(selectedDate);
+        int maxDaysInMonth = temp.getActualMaximum(Calendar.DAY_OF_MONTH);
+        int firstdayInMonth = temp.getActualMinimum(Calendar.DAY_OF_MONTH);
+        
+        temp.set(Calendar.DAY_OF_MONTH, firstdayInMonth);
+        int dayOfWeek = mapDayOfWeek(temp.get(Calendar.DAY_OF_WEEK));
+        
+        int currentField = 0;
+        //ensure that at least one day of prev month is shown
+        int preDaysToAdd = ((dayOfWeek + 5) % 7) + 1;
+        
+        temp.add(Calendar.MONTH, -1);
+        temp.set(Calendar.DAY_OF_MONTH, temp.getActualMaximum(Calendar.DAY_OF_MONTH) - preDaysToAdd + 1);
+        for(; currentField < preDaysToAdd; currentField++) {
+            //days belong to last month
+            CrossedLabel current = daysInMonth[currentField / 7][currentField % 7];
+            current.setText("" + temp.get(Calendar.DAY_OF_MONTH));
+            current.setForeground(LIGHT_GRAY);
+            datesInMonth[currentField / 7][currentField % 7] = temp.getTime();
+            
+            temp.add(Calendar.DAY_OF_MONTH, 1);
         }
-
-        for (int i = 1; i <= leadingDays; i++) {
-            CrossedLabel leadingField = daysInMonth[0][i - 1];
-            leadingField.setText(Integer.toString(daysInLastMonth - leadingDays + i));
-            leadingField.setForeground(Color.LIGHT_GRAY);
-            leadingField.setHorizontalAlignment(SwingConstants.CENTER);
+        
+        //normal days of month
+        for(int i = firstdayInMonth; i <= maxDaysInMonth; i++, currentField++) {
+            CrossedLabel current = daysInMonth[currentField / 7][currentField % 7];
+            current.setText("" + temp.get(Calendar.DAY_OF_MONTH));
+            current.setForeground(BLACK);
+            datesInMonth[currentField / 7][currentField % 7] = temp.getTime();
+            
+            temp.add(Calendar.DAY_OF_MONTH, 1);
         }
-
-        int week = 0;
-        startDay = leadingDays;
-        do {
-            //check if we've reached sunday
-            if (startDay != 0 && startDay % 7 == 0) {
-                //increment week and reset week day
-                week++;
-                startDay = 0;
-            }
-            //get current calendar field
-            CrossedLabel currentDayField = daysInMonth[week][startDay];
-            //increment day of week
-            startDay += 1;
-            //set value of day from calendar
-            currentDayField.setText(Integer.toString(calCurrent.get(GregorianCalendar.DAY_OF_MONTH)));
-            currentDayField.setForeground(Color.BLACK);
-            currentDayField.setHorizontalAlignment(SwingConstants.CENTER);
-            //hightlight currently selected day of month
-            if (dayToSelect == calCurrent.get(GregorianCalendar.DAY_OF_MONTH)) {
-                //current field is selected, mark it
-                currentDayField.setBackground(highlight);
-                selectedDay = currentDayField;
-                currentDayField.cross();
+        
+        //post days of month
+        for(; currentField < WEEKS_TO_SHOW*7; currentField++) {
+            CrossedLabel current = daysInMonth[currentField / 7][currentField % 7];
+            current.setText("" + temp.get(Calendar.DAY_OF_MONTH));
+            current.setForeground(LIGHT_GRAY);
+            datesInMonth[currentField / 7][currentField % 7] = temp.getTime();
+            
+            temp.add(Calendar.DAY_OF_MONTH, 1);
+        }
+        
+        for(int i = 0; i < WEEKS_TO_SHOW * 7; i++) {
+            if(selectedDate.equals(datesInMonth[i / 7][i % 7])) {
+                daysInMonth[i / 7][i % 7].cross();
             } else {
-                //draw white background
-                currentDayField.setBackground(Color.WHITE);
-                currentDayField.uncross();
+                daysInMonth[i / 7][i % 7].uncross();
             }
-            if (calCurrent.get(GregorianCalendar.DAY_OF_MONTH) >= daysInCurrentMonth) {
-                //break if all days of this month where set
-                break;
-            }
-            //increment to next day
-            calCurrent.add(GregorianCalendar.DAY_OF_MONTH, 1);
-
-        } while (startDay <= daysInCurrentMonth);
-
-        int trailingDay = 1;
-        //add trailing days beginning with the last day of this month
-        for (int i = week * 7 + startDay + 1; i <= 42; i++) {
-            if (startDay % 7 == 0) {
-                week++;
-                startDay = 0;
-            }
-            //get trailing field
-            CrossedLabel trailingField = daysInMonth[week][startDay];
-            startDay++;
-            //set trailing value and increment trailing day
-            trailingField.setForeground(Color.LIGHT_GRAY);
-            trailingField.setText(Integer.toString(trailingDay));
-            trailingField.setHorizontalAlignment(SwingConstants.CENTER);
-            trailingDay++;
         }
-        //set day of month eiter to the selected day or to the last day if the selected month has less days
-        calCurrent.set(GregorianCalendar.DAY_OF_MONTH, dayToSelect);
-        selectedDate = calCurrent;
+        
+    }
+    
+    public Date getDate() {
+        return selectedDate;
+    }
+    
+    /**
+     * remaps the days of week of gregorian Calendar to internal values
+     */
+    private int mapDayOfWeek(int cal) {
+        switch(cal) {
+            case Calendar.MONDAY:
+                return 1;
+            case Calendar.TUESDAY:
+                return 2;
+            case Calendar.WEDNESDAY:
+                return 3;
+            case Calendar.THURSDAY:
+                return 4;
+            case Calendar.FRIDAY:
+                return 5;
+            case Calendar.SATURDAY:
+                return 6;
+            case Calendar.SUNDAY:
+                return 7;
+            default:
+                return 1; //should never happen
+        }
+    }
+    
+    /**
+     * removes the ok button from the form
+     */
+    public void removeOk() {
+        jButtonOK.setVisible(false);
     }
 
     /**
-     * Calculate the number of days for the current month
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
      */
-    private static int calculateDaysInMonth(Calendar calendar) {
-        byte days = 0;
-        switch (calendar.get(GregorianCalendar.MONTH)) {
-            case GregorianCalendar.JANUARY:
-            case GregorianCalendar.MARCH:
-            case GregorianCalendar.MAY:
-            case GregorianCalendar.JULY:
-            case GregorianCalendar.AUGUST:
-            case GregorianCalendar.OCTOBER:
-            case GregorianCalendar.DECEMBER:
-                days = 31;
-                break;
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
 
-            case GregorianCalendar.APRIL:
-            case GregorianCalendar.JUNE:
-            case GregorianCalendar.SEPTEMBER:
-            case GregorianCalendar.NOVEMBER:
-                days = 30;
-                break;
+        jPanelMonthSelection = new javax.swing.JPanel();
+        jButtonPrevious = new BasicArrowButton(BasicArrowButton.WEST);
+        jLabelMonth = new javax.swing.JLabel();
+        jButtonNext = new BasicArrowButton(BasicArrowButton.EAST);
+        jPanelDaySelection = new javax.swing.JPanel();
+        jPanelBottom = new javax.swing.JPanel();
+        jButtonToday = new javax.swing.JButton();
+        jButtonOK = new javax.swing.JButton();
 
-            case GregorianCalendar.FEBRUARY:
-                int i = calendar.get(GregorianCalendar.YEAR);
-                days = 0 != i % 1000 ? 0 != i % 100 ? ((byte) (0 != i % 4 ? 28 : 29)) : 28 : 29;
-                break;
+        setMinimumSize(new java.awt.Dimension(170, 240));
+        setPreferredSize(new java.awt.Dimension(170, 240));
+        setVerifyInputWhenFocusTarget(false);
+        setLayout(new java.awt.BorderLayout());
+
+        jPanelMonthSelection.setMinimumSize(new java.awt.Dimension(170, 30));
+        jPanelMonthSelection.setPreferredSize(new java.awt.Dimension(170, 30));
+
+        jButtonPrevious.setToolTipText("");
+        jButtonPrevious.setMaximumSize(new java.awt.Dimension(20, 20));
+        jButtonPrevious.setMinimumSize(new java.awt.Dimension(20, 20));
+        jButtonPrevious.setPreferredSize(new java.awt.Dimension(20, 20));
+        jButtonPrevious.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                firePrevNextAction(evt);
+            }
+        });
+
+        jLabelMonth.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabelMonth.setText("Juli 2018");
+
+        jButtonNext.setToolTipText("");
+        jButtonNext.setMaximumSize(new java.awt.Dimension(20, 20));
+        jButtonNext.setMinimumSize(new java.awt.Dimension(20, 20));
+        jButtonNext.setPreferredSize(new java.awt.Dimension(20, 20));
+        jButtonNext.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                firePrevNextAction(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanelMonthSelectionLayout = new javax.swing.GroupLayout(jPanelMonthSelection);
+        jPanelMonthSelection.setLayout(jPanelMonthSelectionLayout);
+        jPanelMonthSelectionLayout.setHorizontalGroup(
+            jPanelMonthSelectionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelMonthSelectionLayout.createSequentialGroup()
+                .addContainerGap(49, Short.MAX_VALUE)
+                .addComponent(jButtonPrevious, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(5, 5, 5)
+                .addComponent(jLabelMonth)
+                .addGap(4, 4, 4)
+                .addComponent(jButtonNext, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(50, Short.MAX_VALUE))
+        );
+        jPanelMonthSelectionLayout.setVerticalGroup(
+            jPanelMonthSelectionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelMonthSelectionLayout.createSequentialGroup()
+                .addGroup(jPanelMonthSelectionLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jButtonNext, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabelMonth)
+                    .addComponent(jButtonPrevious, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(10, Short.MAX_VALUE))
+        );
+
+        add(jPanelMonthSelection, java.awt.BorderLayout.PAGE_START);
+        jPanelMonthSelection.getAccessibleContext().setAccessibleName("");
+
+        jPanelDaySelection.setMinimumSize(new java.awt.Dimension(170, 160));
+        jPanelDaySelection.setPreferredSize(new java.awt.Dimension(170, 160));
+        jPanelDaySelection.setRequestFocusEnabled(false);
+        jPanelDaySelection.setLayout(new java.awt.GridBagLayout());
+        add(jPanelDaySelection, java.awt.BorderLayout.CENTER);
+
+        jPanelBottom.setMinimumSize(new java.awt.Dimension(170, 50));
+        jPanelBottom.setPreferredSize(new java.awt.Dimension(170, 50));
+
+        jButtonToday.setText("Heute");
+        jButtonToday.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fireTodayAction(evt);
+            }
+        });
+
+        jButtonOK.setText("OK");
+        jButtonOK.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fireOkAcion(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanelBottomLayout = new javax.swing.GroupLayout(jPanelBottom);
+        jPanelBottom.setLayout(jPanelBottomLayout);
+        jPanelBottomLayout.setHorizontalGroup(
+            jPanelBottomLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelBottomLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jButtonToday)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 97, Short.MAX_VALUE)
+                .addComponent(jButtonOK)
+                .addContainerGap())
+        );
+        jPanelBottomLayout.setVerticalGroup(
+            jPanelBottomLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelBottomLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanelBottomLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButtonToday)
+                    .addComponent(jButtonOK))
+                .addContainerGap())
+        );
+
+        add(jPanelBottom, java.awt.BorderLayout.PAGE_END);
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void firePrevNextAction(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_firePrevNextAction
+        if(evt.getSource().equals(jButtonPrevious)) {
+            selectedDate = DateUtils.addMonths(selectedDate, -1);
+            buildCalendar();
+        } else if(evt.getSource().equals(jButtonNext)) {
+            selectedDate = DateUtils.addMonths(selectedDate, 1);
+            buildCalendar();
         }
-        return days;
-    }
+    }//GEN-LAST:event_firePrevNextAction
 
-    private static String formatDateText(Date date) {
-        DateFormat dateformat = DateFormat.getDateInstance(0, Locale.GERMAN);
-        StringBuffer stringbuffer = new StringBuffer();
-        StringBuffer stringbuffer1 = new StringBuffer();
-        FieldPosition fieldposition = new FieldPosition(2);
-        FieldPosition fieldposition1 = new FieldPosition(1);
-        dateformat.format(date, stringbuffer, fieldposition);
-        dateformat.format(date, stringbuffer1, fieldposition1);
-        return stringbuffer.toString().substring(fieldposition.getBeginIndex(), fieldposition.getEndIndex()) + " " + stringbuffer1.toString().substring(fieldposition1.getBeginIndex(), fieldposition1.getEndIndex());
-    }
+    private void fireTodayAction(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireTodayAction
+        selectedDate = DateUtils.truncate(new Date(), Calendar.DATE);
+        buildCalendar();
+    }//GEN-LAST:event_fireTodayAction
 
-    public static void main(String[] args) {
-        try {
-            //  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-        } catch (Exception ignored) {
+    private void fireOkAcion(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireOkAcion
+        setVisible(false);
+    }//GEN-LAST:event_fireOkAcion
+
+    private void dayClicked(MouseEvent mvt) {
+        CrossedLabel evtSrc = (CrossedLabel) mvt.getSource();
+        for(int i = 0; i < WEEKS_TO_SHOW * 7; i++) {
+            if(evtSrc.equals(daysInMonth[i / 7][i % 7])) {
+                selectedDate = datesInMonth[i / 7][i % 7];
+                break;
+            }
         }
-        JFrame f = new JFrame();
-        f.add(new DatePicker());
-        f.setVisible(true);
+        
+        buildCalendar();
     }
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButtonNext;
+    private javax.swing.JButton jButtonOK;
+    private javax.swing.JButton jButtonPrevious;
+    private javax.swing.JButton jButtonToday;
+    private javax.swing.JLabel jLabelMonth;
+    private javax.swing.JPanel jPanelBottom;
+    private javax.swing.JPanel jPanelDaySelection;
+    private javax.swing.JPanel jPanelMonthSelection;
+    // End of variables declaration//GEN-END:variables
 }

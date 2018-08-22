@@ -15,23 +15,24 @@
  */
 package de.tor.tribes.types;
 
-import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.io.DataHolder;
-import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.io.TroopAmountFixed;
+import de.tor.tribes.io.UnitHolder;
+import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.ServerSettings;
-import de.tor.tribes.util.xml.JaxenUtils;
+import de.tor.tribes.util.xml.JDomUtils;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import org.apache.log4j.Logger;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
-import org.jdom.Element;
+import java.util.Set;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.Predicate;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jdom2.Element;
 
 /**
  *
@@ -40,7 +41,7 @@ import org.jdom.Element;
 public class TargetInformation {
     
     private Village target = null;
-    private Hashtable<Village, List<TimedAttack>> timedAttacks = null;
+    private HashMap<Village, List<TimedAttack>> timedAttacks = null;
     private int iWallLevel = 20;
     private TroopAmountFixed troops = null;
     private int delta = 0;
@@ -48,12 +49,12 @@ public class TargetInformation {
     private int fakes = 0;
     private long first = Long.MAX_VALUE;
     private long last = Long.MIN_VALUE;
-    private final Logger logger = Logger.getLogger("TargetInformation");
+    private final Logger logger = LogManager.getLogger("TargetInformation");
     
     public TargetInformation(Village pTarget) {
         target = pTarget;
         troops = new TroopAmountFixed();
-        timedAttacks = new Hashtable<>();
+        timedAttacks = new HashMap<>();
     }
     
     public void updateAttackInfo() {
@@ -97,11 +98,8 @@ public class TargetInformation {
      * @return the attacks
      */
     public List<TimedAttack> getAttacks() {
-        Enumeration<Village> sourceKeys = timedAttacks.keys();
         List<TimedAttack> result = new LinkedList<>();
-        while (sourceKeys.hasMoreElements()) {
-            Village source = sourceKeys.nextElement();
-            List<TimedAttack> attacksFromSource = timedAttacks.get(source);
+        for(List<TimedAttack> attacksFromSource: timedAttacks.values()) {
             for (TimedAttack a : attacksFromSource) {
                 result.add(a);
             }
@@ -113,8 +111,9 @@ public class TargetInformation {
         return timedAttacks.size();
     }
     
-    public Enumeration<Village> getSources() {
-        return timedAttacks.keys();
+    //TODO find a better way for that
+    public Set<Village> getSources() {
+        return timedAttacks.keySet();
     }
     
     public int getAttackCountFromSource(Village pSource) {
@@ -192,10 +191,7 @@ public class TargetInformation {
     }
     
     public TimedAttack getFirstTimedAttack() {
-        Enumeration<Village> sources = timedAttacks.keys();
-        while (sources.hasMoreElements()) {
-            Village source = sources.nextElement();
-            List<TimedAttack> attsForSource = timedAttacks.get(source);
+        for(List<TimedAttack> attsForSource: timedAttacks.values()) {
             for (TimedAttack a : attsForSource) {
                 if (a.getlArriveTime() == first) {
                     return a;
@@ -315,25 +311,32 @@ public class TargetInformation {
         return result;
     }
     
-    public String toXml() {
-        StringBuilder b = new StringBuilder();
-        b.append("<wall>").append(iWallLevel).append("</wall>\n");
-        b.append("<troops ").append(troops.toXml()).append("< />\n");
-        b.append("<attacks>\n");
+    public Element toXml(String elementName) {
+        Element targetInfo = new Element(elementName);
+        targetInfo.setAttribute("target", Integer.toString(target.getId()));
+        
+        targetInfo.addContent(new Element("wall").setText(Integer.toString(iWallLevel)));
+        targetInfo.addContent(troops.toXml("troops"));
+        
+        Element atts = new Element("attacks");
         for (TimedAttack a : getAttacks()) {
-            b.append("<attack source=\"").append(a.getSource().getId()).append("\" arrive=\"").append(a.getlArriveTime()).append("\"").
-                    append(" fake=\"").append(a.isPossibleFake()).append("\" snob=\"").append(a.isPossibleSnob()).
-                    append("\"/>\n");
+            Element timedAtt = new Element("attack");
+            timedAtt.setAttribute("source", Integer.toString(a.getSource().getId()));
+            timedAtt.setAttribute("arrive", Long.toString(a.getlArriveTime()));
+            timedAtt.setAttribute("fake", Boolean.toString(a.isPossibleFake()));
+            timedAtt.setAttribute("snob", Boolean.toString(a.isPossibleSnob()));
+            atts.addContent(timedAtt);
         }
-        b.append("</attacks>\n");
-        return b.toString();
+        targetInfo.addContent(atts);
+        
+        return targetInfo;
     }
     
     public void loadFromXml(Element e) {
         this.iWallLevel = Integer.parseInt(e.getChild("wall").getText());
         troops = new TroopAmountFixed(e.getChild("troops"));
         
-        for (Element attack : (List<Element>) JaxenUtils.getNodes(e, "attacks/attack")) {
+        for (Element attack : (List<Element>) JDomUtils.getNodes(e, "attacks/attack")) {
             int sourceId = Integer.parseInt(attack.getAttributeValue("source"));
             long arrive = Long.parseLong(attack.getAttributeValue("arrive"));
             boolean fake = Boolean.parseBoolean(attack.getAttributeValue("fake"));

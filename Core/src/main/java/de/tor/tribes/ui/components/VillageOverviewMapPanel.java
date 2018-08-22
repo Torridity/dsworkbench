@@ -15,13 +15,10 @@
  */
 package de.tor.tribes.ui.components;
 
-import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.DSCalculator;
-import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ImageUtils;
-import de.tor.tribes.util.ProfileManager;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -29,15 +26,8 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import javax.swing.*;
-
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.Logger;
+import java.util.HashMap;
 
 /**
  *
@@ -46,7 +36,7 @@ import org.apache.log4j.Logger;
 public class VillageOverviewMapPanel extends javax.swing.JPanel {
 
     private Color[][] colors = new Color[1000][1000];
-    private Hashtable<Shape, Color> additionalShapes = new Hashtable<>();
+    private HashMap<Shape, Color> additionalShapes = new HashMap<>();
     private int upperLeftContinent = -1;
     private int continentsInXAndY = -1;
     private int minCol = -1;
@@ -120,10 +110,8 @@ public class VillageOverviewMapPanel extends javax.swing.JPanel {
         colors[pPoint.x][pPoint.y] = null;
     }
 
-    public void addVillages(Hashtable<Village, Color> pVillages) {
-        Enumeration<Village> keys = pVillages.keys();
-        while (keys.hasMoreElements()) {
-            Village v = keys.nextElement();
+    public void addVillages(HashMap<Village, Color> pVillages) {
+        for(Village v: pVillages.keySet()) {
             colors[v.getX()][v.getY()] = pVillages.get(v);
         }
         repaint();
@@ -187,10 +175,7 @@ public class VillageOverviewMapPanel extends javax.swing.JPanel {
 
         AffineTransform tb = g2d.getTransform();
         g2d.setTransform(AffineTransform.getTranslateInstance(-deltaContinentColumn, -deltaContinentRow));
-        Enumeration<Shape> keys = additionalShapes.keys();
-        while (keys.hasMoreElements()) {
-            Shape s = keys.nextElement();
-
+        for(Shape s: additionalShapes.keySet()) {
             g2d.setColor(additionalShapes.get(s));
             g2d.draw(s);
         }
@@ -220,30 +205,4 @@ public class VillageOverviewMapPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables
-
-    public static void main(String[] args) {
-        JFrame f = new JFrame();
-        f.setSize(300, 300);
-        f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        VillageOverviewMapPanel p = new VillageOverviewMapPanel();
-        Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
-        GlobalOptions.setSelectedServer("de43");
-        ProfileManager.getSingleton().loadProfiles();
-        GlobalOptions.setSelectedProfile(ProfileManager.getSingleton().getProfiles("de43")[0]);
-        DataHolder.getSingleton().loadData(false);
-
-        Point po = DSCalculator.calculateCenterOfMass(Arrays.asList(ProfileManager.getSingleton().getProfiles("de43")[0].getTribe().getVillageList()));
-
-        for (Village v : ProfileManager.getSingleton().getProfiles("de43")[0].getTribe().getVillageList()) {
-            if (v.getContinent() == 96 || v.getContinent() == 95) {
-                p.addVillage(new Point(v.getX(), v.getY()), Color.RED);
-            }
-        }
-        p.addShape(new Ellipse2D.Double(po.x, po.y, 30, 30), Color.yellow);
-
-
-        f.getContentPane().add(p);
-        f.pack();
-        f.setVisible(true);
-    }
 }

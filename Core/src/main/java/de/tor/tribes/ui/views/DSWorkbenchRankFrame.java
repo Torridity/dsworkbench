@@ -15,17 +15,13 @@
  */
 package de.tor.tribes.ui.views;
 
-import com.jidesoft.swing.JideTabbedPane;
-import com.smardec.mousegestures.MouseGestures;
-import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.ext.Village;
-import de.tor.tribes.ui.windows.AbstractDSWorkbenchFrame;
 import de.tor.tribes.ui.panels.GenericTestPanel;
 import de.tor.tribes.ui.panels.RankTableTab;
+import de.tor.tribes.ui.windows.AbstractDSWorkbenchFrame;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ImageUtils;
-import de.tor.tribes.util.MouseGestureHandler;
 import de.tor.tribes.util.PropertyHelper;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -45,9 +41,9 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import org.apache.commons.configuration.Configuration;
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.Logger;
+import org.apache.commons.configuration2.Configuration;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jdesktop.swingx.JXButton;
 import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.painter.MattePainter;
@@ -90,7 +86,7 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame implements Ac
         }
         
     }
-    private static Logger logger = Logger.getLogger("RankDialog");
+    private static Logger logger = LogManager.getLogger("RankDialog");
     private static DSWorkbenchRankFrame SINGLETON = null;
     private GenericTestPanel centerPanel = null;
     
@@ -109,9 +105,6 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame implements Ac
         centerPanel.setChildComponent(jXRankPanel);
         buildMenu();
         capabilityInfoPanel1.addActionListener(this);
-        jRankTabPane.setTabShape(JideTabbedPane.SHAPE_OFFICE2003);
-        jRankTabPane.setTabColorProvider(JideTabbedPane.ONENOTE_COLOR_PROVIDER);
-        jRankTabPane.setBoldActiveTab(true);
         jRankTabPane.getModel().addChangeListener(new ChangeListener() {
             
             @Override
@@ -178,6 +171,7 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame implements Ac
         PropertyHelper.restoreTableProperties(tab.getRankTable(), pConfig, getPropertyPrefix());
     }
     
+    @Override
     public String getPropertyPrefix() {
         return "rank.view";
     }
@@ -215,6 +209,7 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame implements Ac
         centerPanel.setupTaskPane(statsTaskPane);
     }
     
+    @Override
     public void resetView() {
         generateTabs();
     }
@@ -266,7 +261,7 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame implements Ac
         java.awt.GridBagConstraints gridBagConstraints;
 
         jXRankPanel = new org.jdesktop.swingx.JXPanel();
-        jRankTabPane = new com.jidesoft.swing.JideTabbedPane();
+        jRankTabPane = new javax.swing.JTabbedPane();
         jxSearchPane = new org.jdesktop.swingx.JXPanel();
         jXPanel2 = new org.jdesktop.swingx.JXPanel();
         jButton12 = new javax.swing.JButton();
@@ -282,10 +277,6 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame implements Ac
         capabilityInfoPanel1 = new de.tor.tribes.ui.components.CapabilityInfoPanel();
 
         jXRankPanel.setLayout(new java.awt.BorderLayout());
-
-        jRankTabPane.setScrollSelectedTabOnWheel(true);
-        jRankTabPane.setShowGripper(true);
-        jRankTabPane.setTabEditingAllowed(true);
         jXRankPanel.add(jRankTabPane, java.awt.BorderLayout.CENTER);
 
         jxSearchPane.setOpaque(false);
@@ -310,7 +301,6 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame implements Ac
         jLabel21.setText("Suchbegriff");
 
         jFilterRows.setText("Nur gefilterte Zeilen anzeigen");
-        jFilterRows.setOpaque(false);
         jFilterRows.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 jFilterRowsfireUpdateFilterEvent(evt);
@@ -318,7 +308,6 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame implements Ac
         });
 
         jFilterCaseSensitive.setText("Groß-/Kleinschreibung beachten");
-        jFilterCaseSensitive.setOpaque(false);
         jFilterCaseSensitive.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 jFilterCaseSensitivefireUpdateFilterEvent(evt);
@@ -384,7 +373,6 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame implements Ac
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         jAlwaysOnTop.setText("Immer im Vordergrund");
-        jAlwaysOnTop.setOpaque(false);
         jAlwaysOnTop.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 fireRankFrameAlwaysOnTopEvent(evt);
@@ -460,28 +448,6 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame implements Ac
     public void fireVillagesDraggedEvent(List<Village> pVillages, Point pDropLocation) {
     }
     
-    public static void main(String[] args) {
-        GlobalOptions.setSelectedServer("de43");
-        DataHolder.getSingleton().loadData(false);
-        MouseGestures mMouseGestures = new MouseGestures();
-        mMouseGestures.setMouseButton(MouseEvent.BUTTON3_MASK);
-        mMouseGestures.addMouseGesturesListener(new MouseGestureHandler());
-        mMouseGestures.start();
-        try {
-            //  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-        } catch (Exception ignored) {
-        }
-        Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
-        DSWorkbenchRankFrame.getSingleton().setSize(800, 600);
-        
-        
-        
-        DSWorkbenchRankFrame.getSingleton().resetView();
-        DSWorkbenchRankFrame.getSingleton().setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        DSWorkbenchRankFrame.getSingleton().setVisible(true);
-        
-    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private de.tor.tribes.ui.components.CapabilityInfoPanel capabilityInfoPanel1;
     private javax.swing.JCheckBox jAlwaysOnTop;
@@ -491,7 +457,7 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame implements Ac
     private javax.swing.JLabel jLabel21;
     private javax.swing.JLabel jLabel22;
     private javax.swing.JPanel jRankPanel;
-    private com.jidesoft.swing.JideTabbedPane jRankTabPane;
+    private javax.swing.JTabbedPane jRankTabPane;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextField jTextField1;
     private org.jdesktop.swingx.JXList jXColumnList;

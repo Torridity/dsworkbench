@@ -18,13 +18,14 @@ package de.tor.tribes.util;
 /*Source: http://www.koders.com/java/fid1182C9330FDC66A60312A33932E82F09B5C4CA9F.aspx?s=graph
   @author OpenJGraph
  */
-import org.apache.log4j.Logger;
-
 import java.awt.*;
 import java.awt.geom.FlatteningPathIterator;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
 import java.awt.geom.PathIterator;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 /**
  * The Intersection class provides methods for determining
@@ -39,7 +40,7 @@ public class Intersection {
      * Log4J Category. The name of the category is the fully qualified name of the
      * enclosing class.
      */
-    static Logger logger = Logger.getLogger(Intersection.class);
+    static Logger logger = LogManager.getLogger(Intersection.class);
 
     /**
      * Returns the intersection point of two lines.

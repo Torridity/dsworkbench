@@ -16,9 +16,10 @@
 package de.tor.tribes.types.drawing;
 
 import de.tor.tribes.types.ext.Village;
-import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
 import de.tor.tribes.ui.panels.MapPanel;
+import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
 import de.tor.tribes.util.bb.VillageListFormatter;
+import de.tor.tribes.util.xml.JDomUtils;
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -30,10 +31,9 @@ import java.awt.Stroke;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.net.URLDecoder;
 import java.util.LinkedList;
 import java.util.List;
-import org.jdom.Element;
+import org.jdom2.Element;
 
 /**
  *
@@ -52,36 +52,51 @@ public class FreeForm extends AbstractForm {
     private boolean closed = false;
 
     @Override
-    public void loadFromXml(Element e) {
+    public void formFromXml(Element e) {
         try {
-            Element elem = e.getChild("name");
-            setFormName(URLDecoder.decode(elem.getTextTrim(), "UTF-8"));
-            elem = e.getChild("pos");
-            setXPos(Double.parseDouble(elem.getAttributeValue("x")));
-            setYPos(Double.parseDouble(elem.getAttributeValue("y")));
-            elem = e.getChild("textColor");
-            setTextColor(new Color(Integer.parseInt(elem.getAttributeValue("r")), Integer.parseInt(elem.getAttributeValue("g")), Integer.parseInt(elem.getAttributeValue("b"))));
-            setTextAlpha(Float.parseFloat(elem.getAttributeValue("a")));
-            elem = e.getChild("drawColor");
+            Element elem = e.getChild("drawColor");
             this.drawColor = new Color(Integer.parseInt(elem.getAttributeValue("r")), Integer.parseInt(elem.getAttributeValue("g")), Integer.parseInt(elem.getAttributeValue("b")));
             this.drawAlpha = Float.parseFloat(elem.getAttributeValue("a"));
             elem = e.getChild("stroke");
             this.strokeWidth = Float.parseFloat(elem.getAttributeValue("width"));
             elem = e.getChild("filled");
             this.filled = Boolean.parseBoolean(elem.getTextTrim());
-            elem = e.getChild("textSize");
-            setTextSize(Integer.parseInt(elem.getTextTrim()));
-            elem = e.getChild("points");
-            List<Element> pChildren = elem.getChildren("point");
-            for (Element child : pChildren) {
+            elem = e.getChild("drawName");
+            this.drawName = Boolean.parseBoolean(elem.getTextTrim());
+            for (Element child : JDomUtils.getNodes(e, "points/point")) {
                 double x = Double.parseDouble(child.getAttribute("x").getValue());
                 double y = Double.parseDouble(child.getAttribute("y").getValue());
                 addPointWithoutCheck(new Point2D.Double(x, y));
             }
-            elem = e.getChild("drawName");
-            this.drawName = Boolean.parseBoolean(elem.getTextTrim());
         } catch (Exception ignored) {
         }
+    }
+
+    @Override
+    protected Element formToXml(String elementName) {
+        Element freeForm = new Element(elementName);
+        try {
+            freeForm.addContent(new Element("filled").setText(Boolean.toString(filled)));
+            freeForm.addContent(new Element("stroke").setAttribute("width", Float.toString(strokeWidth)));
+            freeForm.addContent(new Element("drawName").setText(Boolean.toString(drawName)));
+            freeForm.addContent(new Element("tolerance").setText(Float.toString(toler)));
+            
+            Element elm = new Element("drawColor");
+            elm.setAttribute("r", Integer.toString(drawColor.getRed()));
+            elm.setAttribute("g", Integer.toString(drawColor.getGreen()));
+            elm.setAttribute("b", Integer.toString(drawColor.getBlue()));
+            elm.setAttribute("a", Float.toString(drawAlpha));
+            freeForm.addContent(elm);
+            
+            elm = new Element("points");
+            for (Point2D.Double p : points) {
+                elm.addContent(new Element("point").setAttribute("x", Double.toString(p.getX()))
+                        .setAttribute("y", Double.toString(p.getY())));
+            }
+            freeForm.addContent(elm);
+        } catch (Exception ignored) {
+        }
+        return freeForm;
     }
 
     public FreeForm() {
@@ -284,22 +299,6 @@ public class FreeForm extends AbstractForm {
         y = a * px + b;
 
         return (Math.min(Math.abs(x - px), Math.abs(y - py)) <= tolerance);
-    }
-
-    @Override
-    protected String getFormXml() {
-        StringBuilder b = new StringBuilder();
-        b.append("<drawColor r=\"").append(drawColor.getRed()).append("\" g=\"").append(drawColor.getGreen()).append("\" b=\"").append(drawColor.getBlue()).append("\" a=\"").append(drawAlpha).append( "\"/>\n");
-        b.append("<filled>").append(filled).append("</filled>\n");
-        b.append("<stroke width=\"").append(strokeWidth).append( "\"/>\n");
-        b.append("<drawName>").append(drawName).append( "</drawName>\n");
-        b.append("<tolerance>").append(toler).append( "</tolerance>\n");
-        b.append( "<points>\n");
-        for (Point2D.Double p : points) {
-            b.append("<point x=\"").append(p.getX()).append("\" y=\"").append(p.getY()).append("\"/>\n");
-        }
-        b.append( "</points>\n");
-        return b.toString();
     }
 
     @Override

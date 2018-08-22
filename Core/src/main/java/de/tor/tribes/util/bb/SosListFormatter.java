@@ -17,13 +17,11 @@ package de.tor.tribes.util.bb;
 
 import de.tor.tribes.types.SOSRequest;
 import de.tor.tribes.types.ext.Village;
-import org.apache.commons.lang.StringUtils;
-
 import java.text.NumberFormat;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author Torridity
@@ -55,9 +53,7 @@ public class SosListFormatter extends BasicFormatter<SOSRequest> {
         String replacedStart = StringUtils.replaceEach(beforeList, new String[] {ELEMENT_COUNT}, new String[] {f.format(pElements.size())});
         b.append(replacedStart);
         for (SOSRequest s : pElements) {
-            Enumeration<Village> targets = s.getTargets();
-            while (targets.hasMoreElements()) {
-                Village target = targets.nextElement();
+            for(Village target: s.getTargets()) {
                 String[] replacements = s.getReplacementsForTarget(target, pExtended);
                 String itemLine = StringUtils.replaceEach(listItemTemplate, s.getBBVariables(), replacements);
                 itemLine = StringUtils.replaceEach(itemLine, new String[] {ELEMENT_ID, ELEMENT_COUNT}, new String[] {f.format(cnt), f.format(pElements.size())});

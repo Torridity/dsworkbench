@@ -15,18 +15,18 @@
  */
 package de.tor.tribes.types;
 
-import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
+import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.DSCalculator;
-import de.tor.tribes.util.xml.JaxenUtils;
+import de.tor.tribes.util.xml.JDomUtils;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
-import org.apache.commons.lang.time.DateUtils;
-import org.jdom.Element;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.Predicate;
+import org.apache.commons.lang3.time.DateUtils;
+import org.jdom2.Element;
 
 /**
  *
@@ -201,23 +201,30 @@ public class DefenseInformation {
         neededSupports = pValue;
     }
 
-    public String toXml() {
-        StringBuilder b = new StringBuilder();
-        b.append("<status>").append(status.toString()).append("</status>\n");
-        b.append("<lossRatio>").append(Double.toString(lossRatio)).append("</lossRatio>\n");
-        b.append("<neededSupports>").append(neededSupports).append("</neededSupports>\n");
-        b.append("<cleanAfter>").append(cleanAfter).append("</cleanAfter>\n");
+    public Element toXml(String elementName) {
+        Element defInfo = new Element(elementName);
+        defInfo.setAttribute("target", Integer.toString(target.getId()));
+        defInfo.setAttribute("analyzed", Boolean.toString(analyzed));
+        defInfo.setAttribute("ignored", Boolean.toString(ignored));
+        
+        defInfo.addContent(new Element("status").setText(status.toString()));
+        defInfo.addContent(new Element("lossRatio").setText(Double.toString(lossRatio)));
+        defInfo.addContent(new Element("neededSupports").setText(Integer.toString(neededSupports)));
+        defInfo.addContent(new Element("cleanAfter").setText(Integer.toString(cleanAfter)));
+        
         if (!defenses.isEmpty()) {
-            b.append("<defenses>\n");
+            Element deffs = new Element("defenses");
             for (Defense d : defenses) {
-                b.append("<defense " + "unit=\"").append(d.getUnit().getPlainName()).
-                        append("\" id=\"").append(d.getSupporter().getId()).
-                        append("\" transferred=\"").append(d.isTransferredToBrowser()).append("\"/>\n");
+                Element def = new Element("defense");
+                def.setAttribute("unit", d.getUnit().getPlainName());
+                def.setAttribute("id", Integer.toString(d.getSupporter().getId()));
+                def.setAttribute("transferred", Boolean.toString(d.isTransferredToBrowser()));
+                deffs.addContent(def);
             }
-            b.append("</defenses>\n");
+            defInfo.addContent(deffs);
         }
 
-        return b.toString();
+        return defInfo;
     }
 
     public void loadFromXml(Element e) {
@@ -227,7 +234,7 @@ public class DefenseInformation {
         cleanAfter = Integer.parseInt(e.getChild("cleanAfter").getText());
         Element defenseElement = e.getChild("defenses");
         if (defenseElement != null) {
-            for (Element defense : (List<Element>) JaxenUtils.getNodes(e, "defenses/defense")) {
+            for (Element defense : (List<Element>) JDomUtils.getNodes(e, "defenses/defense")) {
                 Village v = DataHolder.getSingleton().getVillagesById().get(Integer.parseInt(defense.getAttributeValue("id")));
                 UnitHolder unit = DataHolder.getSingleton().getUnitByPlainName(defense.getAttributeValue("unit"));
                 boolean transferred = Boolean.parseBoolean(defense.getAttributeValue("transferred"));

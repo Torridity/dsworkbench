@@ -21,8 +21,9 @@ import de.tor.tribes.types.ext.Village;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import org.apache.log4j.Logger;
-import org.jdom.Element;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jdom2.Element;
 
 /**
  * This Class holds a troop Amount
@@ -31,7 +32,7 @@ import org.jdom.Element;
  * @author extremeCrazyCoder
  */
 public class TroopAmountDynamic extends TroopAmount {
-    private static final Logger logger = Logger.getLogger("TroopAmountDynamic");
+    private static final Logger logger = LogManager.getLogger("TroopAmountDynamic");
     HashMap<UnitHolder, TroopAmountElement> amounts;
     
     public TroopAmountDynamic() {
@@ -103,27 +104,23 @@ public class TroopAmountDynamic extends TroopAmount {
      * @return converted xml
      */
     @Override
-    public String toXml() {
-        StringBuilder xml = new StringBuilder();
-        boolean first = true;
+    public Element toXml(String elementName) {
+        Element amount = new Element(elementName);
+        
         for(UnitHolder unit: DataHolder.getSingleton().getUnits()) {
             TroopAmountElement elm = getElementForUnit(unit);
             if(!elm.isFixed() || elm.getTroopsAmount(null) >=0) {
-                //Information stored in sub element
-                if(!first)
-                    xml.append(" ");
-                else
-                    first = false;
-
-                xml.append(unit.getPlainName()).append("=\"");
-                //base 64 encode to ensure everything can be saved
-                xml.append(elm.toBase64()).append("\"");
+                amount.setAttribute(unit.getPlainName(), elm.toBase64());
             }
         }
-        return xml.toString();
+        return amount;
     }
     
     public TroopAmountDynamic loadFromProperty(String pProperty) {
+        if(pProperty == null || !pProperty.contains("=")) {
+            logger.debug("Loding from incorrect element tried");
+            return this;
+        }
         String[] splited = pProperty.split("/");
         for(String split: splited) {
             UnitHolder unit = DataHolder.getSingleton().getUnitByPlainName(

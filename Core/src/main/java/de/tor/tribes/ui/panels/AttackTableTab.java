@@ -39,19 +39,6 @@ import de.tor.tribes.util.attack.StandardAttackManager;
 import de.tor.tribes.util.bb.AttackListFormatter;
 import de.tor.tribes.util.html.AttackPlanHTMLExporter;
 import de.tor.tribes.util.js.AttackScriptWriter;
-import org.apache.log4j.Logger;
-import org.jdesktop.swingx.JXTable;
-import org.jdesktop.swingx.decorator.*;
-import org.jdesktop.swingx.painter.AbstractLayoutPainter.HorizontalAlignment;
-import org.jdesktop.swingx.painter.AbstractLayoutPainter.VerticalAlignment;
-import org.jdesktop.swingx.painter.ImagePainter;
-import org.jdesktop.swingx.painter.MattePainter;
-import org.jdesktop.swingx.table.TableColumnExt;
-
-import javax.swing.*;
-import javax.swing.event.*;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableModel;
 import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
@@ -68,6 +55,19 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
 import java.util.regex.Matcher;
+import javax.swing.*;
+import javax.swing.event.*;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableModel;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jdesktop.swingx.JXTable;
+import org.jdesktop.swingx.decorator.*;
+import org.jdesktop.swingx.painter.AbstractLayoutPainter.HorizontalAlignment;
+import org.jdesktop.swingx.painter.AbstractLayoutPainter.VerticalAlignment;
+import org.jdesktop.swingx.painter.ImagePainter;
+import org.jdesktop.swingx.painter.MattePainter;
+import org.jdesktop.swingx.table.TableColumnExt;
 
 /**
  *
@@ -75,7 +75,7 @@ import java.util.regex.Matcher;
  */
 public class AttackTableTab extends javax.swing.JPanel implements ListSelectionListener {
 
-    private static Logger logger = Logger.getLogger("AttackTableTab");
+    private static Logger logger = LogManager.getLogger("AttackTableTab");
 
     public enum TRANSFER_TYPE {
         CLIPBOARD_PLAIN, CLIPBOARD_BB, FILE_HTML, FILE_TEXT, FILE_GM, DSWB_RETIME, SELECTION_TOOL, BROWSER_LINK, CUT_TO_INTERNAL_CLIPBOARD, COPY_TO_INTERNAL_CLIPBOARD, FROM_INTERNAL_CLIPBOARD
@@ -109,11 +109,11 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
 
         jxAttackTable.setModel(attackModel);
         TableColumnExt drawCol = jxAttackTable.getColumnExt("Einzeichnen");
-        drawCol.setCellRenderer(new DrawNotDrawCellRenderer());
-        drawCol.setCellEditor(new DrawNotDrawEditor());
+        drawCol.setCellRenderer(new CustomBooleanRenderer(CustomBooleanRenderer.LayoutStyle.DRAW_NOTDRAW));
+        drawCol.setCellEditor(new CustomCheckBoxEditor(CustomBooleanRenderer.LayoutStyle.DRAW_NOTDRAW));
         TableColumnExt transferCol = jxAttackTable.getColumnExt("Übertragen");
-        transferCol.setCellRenderer(new SentNotSentCellRenderer());
-        transferCol.setCellEditor(new SentNotSentEditor());
+        transferCol.setCellRenderer(new CustomBooleanRenderer(CustomBooleanRenderer.LayoutStyle.SENT_NOTSENT));
+        transferCol.setCellEditor(new CustomCheckBoxEditor(CustomBooleanRenderer.LayoutStyle.SENT_NOTSENT));
         
         BufferedImage back = ImageUtils.createCompatibleBufferedImage(5, 5, BufferedImage.BITMASK);
         Graphics2D g = back.createGraphics();

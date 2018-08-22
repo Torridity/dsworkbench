@@ -14,13 +14,7 @@
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
       <SubComponents>
-        <Container class="com.jidesoft.swing.JideTabbedPane" name="jTroopsTabPane">
-          <Properties>
-            <Property name="scrollSelectedTabOnWheel" type="boolean" value="true"/>
-            <Property name="showGripper" type="boolean" value="true"/>
-            <Property name="showIconsOnTab" type="boolean" value="false"/>
-            <Property name="tabEditingAllowed" type="boolean" value="true"/>
-          </Properties>
+        <Container class="javax.swing.JTabbedPane" name="jTroopsTabPane">
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
               <BorderConstraints direction="Center"/>
@@ -146,7 +140,6 @@
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                   <Image iconType="3" name="/res/ui/logic_or.png"/>
                 </Property>
-                <Property name="opaque" type="boolean" value="false"/>
                 <Property name="rolloverEnabled" type="boolean" value="false"/>
                 <Property name="selectedIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                   <Image iconType="3" name="/res/ui/logic_and.png"/>
@@ -306,7 +299,6 @@
     <Component class="javax.swing.JCheckBox" name="jTroopsInformationAlwaysOnTop">
       <Properties>
         <Property name="text" type="java.lang.String" value="Immer im Vordergrund"/>
-        <Property name="opaque" type="boolean" value="false"/>
       </Properties>
       <Events>
         <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="fireTroopsFrameOnTopEvent"/>

@@ -15,13 +15,19 @@
  */
 package de.tor.tribes.control;
 
+import de.tor.tribes.util.xml.JDomUtils;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jdom2.Document;
+import org.jdom2.Element;
 
 /**
  *
@@ -29,6 +35,7 @@ import java.util.List;
  * @author Torridity
  */
 public abstract class GenericManager<C extends ManageableType> {
+    private static final Logger logger = LogManager.getLogger("GenericManager");
 
     public static final String DEFAULT_GROUP = "default";
     private String alternateDefaultGroupName = null;
@@ -290,28 +297,34 @@ public abstract class GenericManager<C extends ManageableType> {
      * @param pElement
      */
     public void addManagedElement(String pGroup, C pElement) {
-        boolean changed;
         boolean structureChanged = false;
         if (pElement == null) {
             return;
         }
+        
+        List<ManageableType> elems;
         if (!groupable || pGroup == null) {
-            managedElementGroups.get(DEFAULT_GROUP).add(pElement);
-            changed = true;
+            elems = managedElementGroups.get(DEFAULT_GROUP);
         } else {
-            List<ManageableType> elems = managedElementGroups.get(pGroup);
+            elems = managedElementGroups.get(pGroup);
             if (elems == null) {
                 elems = new ArrayList<>();
                 managedElementGroups.put(pGroup, elems);
                 structureChanged = true;
             }
-            elems.add(pElement);
-            changed = true;
         }
-        if (changed && !structureChanged) {
-            fireDataChangedEvents(pGroup);
-        } else if (changed && structureChanged) {
+        
+        if(elems.contains(pElement)) {
+            //don't allow duplicates
+            elems.remove(pElement);
+        }
+        
+        elems.add(pElement);
+
+        if (structureChanged) {
             fireDataChangedEvents();
+        } else {
+            fireDataChangedEvents(pGroup);
         }
     }
 
@@ -421,7 +434,7 @@ public abstract class GenericManager<C extends ManageableType> {
             theGroup = DEFAULT_GROUP;
         }
 
-        for (GenericManagerListener listener : listeners.toArray(new GenericManagerListener[listeners.size()])) {
+        for (GenericManagerListener listener : listeners) {
             if (theGroup == null) {
                 listener.dataChangedEvent();
             } else {
@@ -430,15 +443,47 @@ public abstract class GenericManager<C extends ManageableType> {
         }
 
     }
+    
+    public void loadElements(String pFile) {
+        if (pFile == null) {
+            logger.error("File argument is 'null'");
+            return;
+        }
+        invalidate();
+        initialize();
+        
+        try {
+            if(importData(JDomUtils.getDocument(new File(pFile)).getRootElement(), null) < 0) {
+                logger.debug("Failed to load data");
+            }
+        } catch (Exception ex) {
+            logger.debug("Failed loading data", ex);
+            checkValues();
+        }
+    }
+
+    public void saveElements(String pFile) {
+        Document doc = JDomUtils.createDocument();
+        logger.debug("Starting saving");
+        doc.getRootElement().addContent(getExportData(Arrays.asList(getGroups())));
+        logger.debug("Writing file {}", pFile);
+        JDomUtils.saveDocument(doc, pFile);
+        logger.debug("Finished");
+    }
+    
+    /**
+     * optional method to validate internal Data in case of errorr during loading
+     */
+    protected void checkValues() {};
 
     /////////////////////////////////////////////
     ////Abstract methods that must be implemented
     /////////////////////////////////////////////
-    public abstract void loadElements(String pFile);
 
-    public abstract void saveElements(String pFile);
+    public abstract Element getExportData(final List<String> pGroupsToExport);
 
-    public abstract String getExportData(final List<String> pGroupsToExport);
-
-    public abstract boolean importData(File pFile, String pExtension);
+    /**
+     * @return number of imported Elements<br>negativ (-x-1) if failed
+     */
+    public abstract int importData(Element pElm, String pExtension);
 }

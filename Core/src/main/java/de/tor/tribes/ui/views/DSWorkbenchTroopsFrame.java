@@ -15,36 +15,23 @@
  */
 package de.tor.tribes.ui.views;
 
-import com.jidesoft.swing.JideTabbedPane;
-import com.smardec.mousegestures.MouseGestures;
 import de.tor.tribes.control.GenericManagerListener;
 import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.DataHolderListener;
-import de.tor.tribes.io.TroopAmountFixed;
 import de.tor.tribes.types.NoTag;
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Village;
-import de.tor.tribes.ui.windows.AbstractDSWorkbenchFrame;
-import de.tor.tribes.ui.panels.GenericTestPanel;
-import de.tor.tribes.ui.TabInterface;
-import de.tor.tribes.ui.panels.TroopTableTab;
 import de.tor.tribes.ui.models.TroopsTableModel;
+import de.tor.tribes.ui.panels.GenericTestPanel;
+import de.tor.tribes.ui.panels.TroopTableTab;
+import de.tor.tribes.ui.windows.AbstractDSWorkbenchFrame;
 import de.tor.tribes.util.Constants;
-import java.awt.event.ActionEvent;
-import java.awt.event.ItemEvent;
-import org.apache.log4j.Logger;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.ImageUtils;
-import de.tor.tribes.util.MouseGestureHandler;
-import de.tor.tribes.util.ProfileManager;
 import de.tor.tribes.util.PropertyHelper;
 import de.tor.tribes.util.tag.TagManager;
-import de.tor.tribes.util.troops.SupportVillageTroopsHolder;
-import java.util.List;
-import javax.swing.*;
-import javax.swing.event.ChangeEvent;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.awt.BorderLayout;
@@ -52,7 +39,9 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.TexturePaint;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -61,14 +50,17 @@ import java.awt.image.BufferedImage;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
+import javax.swing.*;
+import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import org.apache.commons.configuration.Configuration;
-import org.apache.log4j.ConsoleAppender;
+import org.apache.commons.configuration2.Configuration;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jdesktop.swingx.JXButton;
 import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.painter.MattePainter;
@@ -79,7 +71,7 @@ import org.jdesktop.swingx.painter.MattePainter;
 public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements GenericManagerListener, ActionListener, DataHolderListener {
 
   @Override
-  public void fireDataHolderEvent(String pFile) {
+  public void fireDataHolderEvent(String eventMessage) {
   }
 
   @Override
@@ -91,7 +83,7 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
 
   @Override
   public void actionPerformed(ActionEvent e) {
-    TabInterface activeTab = getActiveTab();
+    TroopTableTab activeTab = getActiveTab();
     if (e.getActionCommand().equals("Delete")) {
       if (activeTab != null) {
         activeTab.deleteSelection();
@@ -118,7 +110,7 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
       }
     }
   }
-  private static Logger logger = Logger.getLogger("TroopsDialog");
+  private static Logger logger = LogManager.getLogger("TroopsDialog");
   private static DSWorkbenchTroopsFrame SINGLETON = null;
   private GenericTestPanel centerPanel = null;
 
@@ -140,14 +132,11 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
     centerPanel.setChildComponent(jXTroopsPanel);
     buildMenu();
     capabilityInfoPanel1.addActionListener(this);
-    jTroopsTabPane.setTabShape(JideTabbedPane.SHAPE_OFFICE2003);
-    jTroopsTabPane.setTabColorProvider(JideTabbedPane.ONENOTE_COLOR_PROVIDER);
-    jTroopsTabPane.setBoldActiveTab(true);
 
     jTroopsTabPane.getModel().addChangeListener(new ChangeListener() {
       @Override
       public void stateChanged(ChangeEvent e) {
-        TabInterface activeTab = getActiveTab();
+        TroopTableTab activeTab = getActiveTab();
         if (activeTab != null) {
           activeTab.updateSet();
         }
@@ -190,6 +179,7 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
     super.toBack();
   }
 
+  @Override
   public void storeCustomProperties(Configuration pConfig) {
     pConfig.setProperty(getPropertyPrefix() + ".menu.visible", centerPanel.isMenuVisible());
     pConfig.setProperty(getPropertyPrefix() + ".alwaysOnTop", jTroopsInformationAlwaysOnTop.isSelected());
@@ -204,6 +194,7 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
     PropertyHelper.storeTableProperties(tab.getTroopTable(), pConfig, getPropertyPrefix());
   }
 
+  @Override
   public void restoreCustomProperties(Configuration pConfig) {
     centerPanel.setMenuVisible(pConfig.getBoolean(getPropertyPrefix() + ".menu.visible", true));
     try {
@@ -268,7 +259,7 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
     transferVillageList.addMouseListener(new MouseAdapter() {
       @Override
       public void mouseReleased(MouseEvent e) {
-        TabInterface tab = getActiveTab();
+        TroopTableTab tab = getActiveTab();
         if (tab != null) {
           tab.centerVillageInGame();
         }
@@ -282,7 +273,7 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
     openPlace.addMouseListener(new MouseAdapter() {
       @Override
       public void mouseReleased(MouseEvent e) {
-        TabInterface tab = getActiveTab();
+        TroopTableTab tab = getActiveTab();
         if (tab != null) {
           tab.openPlaceInGame();
         }
@@ -299,7 +290,7 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
       centerVillage.addMouseListener(new MouseAdapter() {
         @Override
         public void mouseReleased(MouseEvent e) {
-          TabInterface tab = getActiveTab();
+          TroopTableTab tab = getActiveTab();
           if (tab != null) {
             tab.centerVillage();
           }
@@ -336,12 +327,12 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
   /**
    * Get the currently selected tab
    */
-  private TabInterface getActiveTab() {
+  private TroopTableTab getActiveTab() {
     try {
       if (jTroopsTabPane.getModel().getSelectedIndex() < 0) {
         return null;
       }
-      return ((TabInterface) jTroopsTabPane.getComponentAt(jTroopsTabPane.getModel().getSelectedIndex()));
+      return ((TroopTableTab) jTroopsTabPane.getComponentAt(jTroopsTabPane.getModel().getSelectedIndex()));
     } catch (ClassCastException cce) {
       return null;
     }
@@ -379,7 +370,7 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
 
       jTroopsTabPane.revalidate();
     }
-    TabInterface tab = getActiveTab();
+    TroopTableTab tab = getActiveTab();
     if (tab != null) {
       tab.updateSet();
     }
@@ -396,7 +387,7 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
         java.awt.GridBagConstraints gridBagConstraints;
 
         jXTroopsPanel = new org.jdesktop.swingx.JXPanel();
-        jTroopsTabPane = new com.jidesoft.swing.JideTabbedPane();
+        jTroopsTabPane = new javax.swing.JTabbedPane();
         jxSearchPane = new org.jdesktop.swingx.JXPanel();
         jXPanel2 = new org.jdesktop.swingx.JXPanel();
         jButton12 = new javax.swing.JButton();
@@ -419,11 +410,6 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
         jXTroopsPanel.setMinimumSize(new java.awt.Dimension(700, 500));
         jXTroopsPanel.setPreferredSize(new java.awt.Dimension(700, 500));
         jXTroopsPanel.setLayout(new java.awt.BorderLayout());
-
-        jTroopsTabPane.setScrollSelectedTabOnWheel(true);
-        jTroopsTabPane.setShowGripper(true);
-        jTroopsTabPane.setShowIconsOnTab(false);
-        jTroopsTabPane.setTabEditingAllowed(true);
         jXTroopsPanel.add(jTroopsTabPane, java.awt.BorderLayout.CENTER);
 
         jxSearchPane.setOpaque(false);
@@ -460,7 +446,6 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
         jRelationType1.setToolTipText("Verknüpfung der gewählten Dorfgruppen (UND = Dorf muss in allen Gruppen sein, ODER = Dorf muss in mindestens einer Gruppe sein)");
         jRelationType1.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         jRelationType1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/logic_or.png"))); // NOI18N
-        jRelationType1.setOpaque(false);
         jRelationType1.setRolloverEnabled(false);
         jRelationType1.setSelectedIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/logic_and.png"))); // NOI18N
         jRelationType1.addItemListener(new java.awt.event.ItemListener() {
@@ -481,7 +466,7 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jXPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jRelationType1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 215, Short.MAX_VALUE)
-                    .addComponent(jFilterRows, javax.swing.GroupLayout.DEFAULT_SIZE, 215, Short.MAX_VALUE)
+                    .addComponent(jFilterRows, javax.swing.GroupLayout.PREFERRED_SIZE, 215, Short.MAX_VALUE)
                     .addComponent(jButton12))
                 .addContainerGap())
         );
@@ -588,7 +573,6 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         jTroopsInformationAlwaysOnTop.setText("Immer im Vordergrund");
-        jTroopsInformationAlwaysOnTop.setOpaque(false);
         jTroopsInformationAlwaysOnTop.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 fireTroopsFrameOnTopEvent(evt);
@@ -660,11 +644,11 @@ private void fireApplyTroopAddEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
 }//GEN-LAST:event_fireApplyTroopAddEvent
 
   private void addTroopsManuallyEvent() {
-    Hashtable<Integer, Tribe> tribes = DataHolder.getSingleton().getTribes();
-    Enumeration<Integer> keys = tribes.keys();
+    HashMap<Integer, Tribe> tribes = DataHolder.getSingleton().getTribes();
+    
     List<Tribe> tribesList = new LinkedList<>();
-    while (keys.hasMoreElements()) {
-      tribesList.add(tribes.get(keys.nextElement()));
+    for(Tribe t: tribes.values()) {
+        tribesList.add(t);
     }
     Collections.sort(tribesList, Tribe.CASE_INSENSITIVE_ORDER);
 
@@ -690,7 +674,7 @@ private void fireApplyTroopAddEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
    * Update the troop set filter
    */
   private void updateFilter() {
-    TabInterface tab = getActiveTab();
+    TroopTableTab tab = getActiveTab();
     if (tab != null) {
       final List<Tag> selection = new LinkedList<>();
       for (Object o : jXGroupsList.getSelectedValues()) {
@@ -719,7 +703,7 @@ private void fireApplyTroopAddEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
   // <editor-fold defaultstate="collapsed" desc="Gesture handling">
   @Override
   public void fireExportAsBBGestureEvent() {
-    TabInterface tab = getActiveTab();
+    TroopTableTab tab = getActiveTab();
     if (tab != null) {
       tab.transferSelection(TroopTableTab.TRANSFER_TYPE.CLIPBOARD_BB);
     }
@@ -749,65 +733,7 @@ private void fireApplyTroopAddEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
     jTroopsTabPane.setSelectedIndex(current);
   }
 // </editor-fold>
-
-  public static void main(String[] args) {
-    Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
-
-    MouseGestures mMouseGestures = new MouseGestures();
-    mMouseGestures.setMouseButton(MouseEvent.BUTTON3_MASK);
-    mMouseGestures.addMouseGesturesListener(new MouseGestureHandler());
-    mMouseGestures.start();
-    try {
-      //  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-      UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-    } catch (Exception ignored) {
-    }
-    GlobalOptions.setSelectedServer("de43");
-    DataHolder.getSingleton().loadData(false);
-    ProfileManager.getSingleton().loadProfiles();
-    GlobalOptions.setSelectedProfile(ProfileManager.getSingleton().getProfiles("de43")[0]);
-    TagManager.getSingleton().addTag("Test1");
-    TagManager.getSingleton().addTag("Test2");
-    List<Village> used = new LinkedList<>();
-    TroopsManager.getSingleton().initialize();
-    for (int i = 0; i < 1000; i++) {
-      Village v = DataHolder.getSingleton().getRandomVillage();
-      if (!used.contains(v)) {
-        used.add(v);
-        if (Math.random() > .5) {
-          TagManager.getSingleton().getTagByName("Test1").tagVillage(v.getId());
-        } else {
-          TagManager.getSingleton().getTagByName("Test2").tagVillage(v.getId());
-        }
-        VillageTroopsHolder h = new VillageTroopsHolder(v, new Date());
-        h.setTroops(new TroopAmountFixed(1000));
-        TroopsManager.getSingleton().addManagedElement(h);
-      }
-    }
-
-    for (int i = 0; i < 10; i++) {
-      Village v = DataHolder.getSingleton().getRandomVillage();
-      SupportVillageTroopsHolder supp = new SupportVillageTroopsHolder(v, new Date());
-      for (int j = 0; j < 10; j++) {
-        Village vsource = DataHolder.getSingleton().getRandomVillage();
-        supp.addIncomingSupport(vsource, new TroopAmountFixed(50));
-      }
-      TroopsManager.getSingleton().addManagedElement(TroopsManager.SUPPORT_GROUP, supp);
-    }
-    for (int i = 0; i < 10; i++) {
-      Village v = DataHolder.getSingleton().getRandomVillage();
-      SupportVillageTroopsHolder supp = new SupportVillageTroopsHolder(v, new Date());
-      for (int j = 0; j < 10; j++) {
-        Village vsource = DataHolder.getSingleton().getRandomVillage();
-        supp.addOutgoingSupport(vsource, new TroopAmountFixed(50));
-      }
-      TroopsManager.getSingleton().addManagedElement(TroopsManager.SUPPORT_GROUP, supp);
-    }
-    DSWorkbenchTroopsFrame.getSingleton().resetView();
-    DSWorkbenchTroopsFrame.getSingleton().setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-    DSWorkbenchTroopsFrame.getSingleton().setVisible(true);
-
-  }
+  
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private de.tor.tribes.ui.components.CapabilityInfoPanel capabilityInfoPanel1;
     private javax.swing.JButton jApplyTroopAddButton;
@@ -824,7 +750,7 @@ private void fireApplyTroopAddEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
     private javax.swing.JDialog jTroopsAddDialog;
     private javax.swing.JCheckBox jTroopsInformationAlwaysOnTop;
     private javax.swing.JPanel jTroopsPanel;
-    private com.jidesoft.swing.JideTabbedPane jTroopsTabPane;
+    private javax.swing.JTabbedPane jTroopsTabPane;
     private org.jdesktop.swingx.JXList jXGroupsList;
     private org.jdesktop.swingx.JXPanel jXPanel2;
     private org.jdesktop.swingx.JXPanel jXTroopsPanel;
@@ -838,7 +764,7 @@ private void fireApplyTroopAddEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
 
   @Override
   public void dataChangedEvent(String pGroup) {
-    TabInterface tab = getActiveTab();
+    TroopTableTab tab = getActiveTab();
     if (tab != null) {
       tab.updateSet();
     }

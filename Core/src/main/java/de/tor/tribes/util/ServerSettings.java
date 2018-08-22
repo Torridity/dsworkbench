@@ -15,14 +15,14 @@
  */
 package de.tor.tribes.util;
 
-import de.tor.tribes.util.xml.JaxenUtils;
-import java.awt.Dimension;
+import de.tor.tribes.util.xml.JDomUtils;
 import java.awt.Rectangle;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.log4j.Logger;
-import org.jdom.Document;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jdom2.Document;
 
 /**
  *
@@ -31,7 +31,7 @@ import org.jdom.Document;
  */
 public class ServerSettings {
 
-    private static Logger logger = Logger.getLogger("ServerSettings");
+    private static Logger logger = LogManager.getLogger("ServerSettings");
     private String SERVER_ID = "de26";
     private Rectangle mapSize = null;
     private int BONUS_NEW = 0;
@@ -42,6 +42,7 @@ public class ServerSettings {
     private boolean millisArrival = true;
     private double speed = 1.0;
     private int resourceConstant = 30;
+    private int barbarianPoints = 500;
 
     private boolean nightBonusActive = true;
     private int nightBonusStartHour = 0;
@@ -58,7 +59,7 @@ public class ServerSettings {
     private int nobleSystem = 0;
     
     private static ServerSettings SINGLETON = null;
-    private List<ServerSettingsListener> listeners = new ArrayList<>();
+    private final List<ServerSettingsListener> listeners = new ArrayList<>();
 
     public static synchronized ServerSettings getSingleton() {
         if (SINGLETON == null) {
@@ -74,11 +75,11 @@ public class ServerSettings {
             String serverPath = Constants.SERVER_DIR + "/" + SERVER_ID + "/settings.xml";
             
             logger.debug("Parse server settings from '" + serverPath + "'");
-            Document d = JaxenUtils.getDocument(new File(serverPath));
+            Document d = JDomUtils.getDocument(new File(serverPath));
             
             logger.debug(" - reading map system");
             try {
-                setMapSize(Integer.parseInt(JaxenUtils.getNodeValue(d, "//coord/map_size")));
+                setMapSize(Integer.parseInt(JDomUtils.getNodeValue(d, "coord/map_size")));
             } catch (Exception inner) {
                 logger.warn("Unable to read map Size", inner);
                 setMapSize(1000);
@@ -86,7 +87,7 @@ public class ServerSettings {
             
             logger.debug(" - reading bonus type");
             try {
-                BONUS_NEW = Integer.parseInt(JaxenUtils.getNodeValue(d, "//coord/bonus_new"));
+                BONUS_NEW = Integer.parseInt(JDomUtils.getNodeValue(d, "coord/bonus_new"));
             } catch (Exception inner) {
                 logger.warn("Unable to read bonus type", inner);
                 BONUS_NEW = 0;
@@ -94,7 +95,7 @@ public class ServerSettings {
             
             logger.debug(" - reading snob distance");
             try {
-                SNOB_RANGE = Integer.parseInt(JaxenUtils.getNodeValue(d, "//snob/max_dist"));
+                SNOB_RANGE = Integer.parseInt(JDomUtils.getNodeValue(d, "snob/max_dist"));
             } catch (Exception inner) {
                 logger.warn("Unable to read snob range", inner);
                 SNOB_RANGE = 70;
@@ -102,7 +103,7 @@ public class ServerSettings {
             
             logger.debug(" - reading church setting");
             try {
-                church = Integer.parseInt(JaxenUtils.getNodeValue(d, "//game/church")) == 1;
+                church = Integer.parseInt(JDomUtils.getNodeValue(d, "game/church")) == 1;
             } catch (Exception inner) {
                 logger.warn("Unable to read church setting", inner);
                 church = false;
@@ -110,7 +111,7 @@ public class ServerSettings {
             
             logger.debug(" - reading watchtower setting");
             try {
-                watchtower = Integer.parseInt(JaxenUtils.getNodeValue(d, "//game/watchtower")) == 1;
+                watchtower = Integer.parseInt(JDomUtils.getNodeValue(d, "game/watchtower")) == 1;
             } catch (Exception inner) {
                 logger.warn("Unable to read watchtower setting", inner);
                 watchtower = false;
@@ -118,7 +119,7 @@ public class ServerSettings {
 
             logger.debug(" - reading fake limit settings");
             try {
-                fakeLimit = Integer.parseInt(JaxenUtils.getNodeValue(d, "//game/fake_limit"));
+                fakeLimit = Integer.parseInt(JDomUtils.getNodeValue(d, "game/fake_limit"));
             } catch (Exception inner) {
                 logger.warn("Unable to read fake limit settings", inner);
                 fakeLimit = 1;
@@ -126,10 +127,10 @@ public class ServerSettings {
             
             logger.debug(" - reading millis setting");
             try {
-                millisArrival = Integer.parseInt(JaxenUtils.getNodeValue(d, "//misc/millis_arrival")) == 1;
+                millisArrival = Integer.parseInt(JDomUtils.getNodeValue(d, "misc/millis_arrival")) == 1;
             } catch (Exception inner) {
                 try {//new settings is under "commands"
-                    millisArrival = Integer.parseInt(JaxenUtils.getNodeValue(d, "//commands/millis_arrival")) == 1;
+                    millisArrival = Integer.parseInt(JDomUtils.getNodeValue(d, "commands/millis_arrival")) == 1;
                 } catch (Exception inner2) {
                     logger.warn("Unable to read millis settings (Exception 1/2)", inner);
                     logger.warn("Unable to read millis settings (Exception 2/2)", inner2);
@@ -140,7 +141,7 @@ public class ServerSettings {
 
             logger.debug(" - reading server speed");
             try {
-                this.speed = Double.parseDouble(JaxenUtils.getNodeValue(d, "//speed"));
+                this.speed = Double.parseDouble(JDomUtils.getNodeValue(d, "speed"));
             } catch (Exception inner) {
                 logger.warn("Unable to read server speed", inner);
                 this.speed = 1.0;
@@ -148,7 +149,7 @@ public class ServerSettings {
 
             logger.debug(" - reading noble system");
             try {
-                this.nobleSystem = Integer.parseInt(JaxenUtils.getNodeValue(d, "//snob/gold"));
+                this.nobleSystem = Integer.parseInt(JDomUtils.getNodeValue(d, "snob/gold"));
             } catch (Exception inner) {
                 logger.warn("Unable to read noble system", inner);
                 this.nobleSystem = 1;
@@ -156,7 +157,7 @@ public class ServerSettings {
 
             logger.debug(" - reading night bonus");
             try {
-                this.nightBonusActive = Integer.parseInt(JaxenUtils.getNodeValue(d, "//night/active")) == 1;
+                this.nightBonusActive = Integer.parseInt(JDomUtils.getNodeValue(d, "night/active")) == 1;
             } catch (Exception inner) {
                 logger.warn("Unable to read night bonus", inner);
                 this.nightBonusActive = true;
@@ -164,7 +165,7 @@ public class ServerSettings {
             
             logger.debug(" - reading night bonus start hour");
             try {
-                this.nightBonusStartHour = Integer.parseInt(JaxenUtils.getNodeValue(d, "//night/start_hour"));
+                this.nightBonusStartHour = Integer.parseInt(JDomUtils.getNodeValue(d, "night/start_hour"));
             } catch (Exception inner) {
                 logger.warn("Unable to read night bonus start hour", inner);
                 this.nightBonusStartHour = 0;
@@ -172,7 +173,7 @@ public class ServerSettings {
             
             logger.debug(" - reading night bonus end hour");
             try {
-                this.nightBonusStartHour = Integer.parseInt(JaxenUtils.getNodeValue(d, "//night/end_hour"));
+                this.nightBonusStartHour = Integer.parseInt(JDomUtils.getNodeValue(d, "night/end_hour"));
             } catch (Exception inner) {
                 logger.warn("Unable to read night bonus end hour", inner);
                 this.nightBonusEndHour = 8;
@@ -180,7 +181,7 @@ public class ServerSettings {
             
             logger.debug(" - reading moral type");
             try {
-                setMoralType(Integer.parseInt(JaxenUtils.getNodeValue(d, "//moral")));
+                setMoralType(Integer.parseInt(JDomUtils.getNodeValue(d, "moral")));
             } catch (Exception inner) {
                 logger.warn("Unable to read moral type", inner);
                 this.moral = 0;
@@ -188,10 +189,18 @@ public class ServerSettings {
             
             logger.debug(" - reading resource Production base");
             try {
-                setResourceConstant(Integer.parseInt(JaxenUtils.getNodeValue(d, "//game/base_production")));
+                this.resourceConstant = Integer.parseInt(JDomUtils.getNodeValue(d, "game/base_production"));
             } catch (Exception inner) {
                 logger.warn("Unable to resource Production base", inner);
-                this.moral = 0;
+                this.resourceConstant = 0;
+            }
+            
+            logger.debug(" - reading resource Production base");
+            try {
+                this.barbarianPoints = Integer.parseInt(JDomUtils.getNodeValue(d, "game/barbarian_max_points"));
+            } catch (Exception inner) {
+                logger.warn("Unable to resource Production base", inner);
+                this.barbarianPoints = 500;
             }
             
         } catch (Exception e) {
@@ -212,7 +221,7 @@ public class ServerSettings {
         return SERVER_ID;
     }
     
-    public void setMapSize(int pMapSize) {
+    private void setMapSize(int pMapSize) {
         if (pMapSize < 50 || pMapSize > 1000) {
             logger.warn("Invalid map size (" + pMapSize + "). Falling back to 1000x1000");
             pMapSize = 1000;
@@ -231,24 +240,12 @@ public class ServerSettings {
         return mapSize;
     }
 
-    public void setNewBonus(int pNewBonus) {
-        BONUS_NEW = pNewBonus;
-    }
-
     public int getNewBonus() {
         return BONUS_NEW;
     }
 
-    public void setSnobRange(int pSnobRange) {
-        SNOB_RANGE = pSnobRange;
-    }
-
     public int getSnobRange() {
         return SNOB_RANGE;
-    }
-
-    public void setChurch(boolean v) {
-        church = v;
     }
 
     public boolean isChurch() {
@@ -263,40 +260,20 @@ public class ServerSettings {
         return fakeLimit;
     }
 
-    public void setMillisArrival(boolean v) {
-        millisArrival = v;
-    }
-
     public boolean isMillisArrival() {
         return millisArrival;
-    }
-
-    public void setSpeed(double speed) {
-        this.speed = speed;
     }
 
     public double getSpeed() {
         return speed;
     }
 
-    public void setNightBonusActive(boolean nightBonusActive) {
-        this.nightBonusActive = nightBonusActive;
-    }
-
     public boolean isNightBonusActive() {
         return nightBonusActive;
     }
 
-    public void setNightBonusStartHour(int nightBonusStartHour) {
-        this.nightBonusStartHour = nightBonusStartHour;
-    }
-
     public int getNightBonusStartHour() {
         return nightBonusStartHour;
-    }
-
-    public void setNightBonusEndHour(int nightBonusEndHour) {
-        this.nightBonusEndHour = nightBonusEndHour;
     }
 
     public int getNightBonusEndHour() {
@@ -307,22 +284,23 @@ public class ServerSettings {
         return moral;
     }
 
-    public void setMoralType(int pMoral) {
+    private void setMoralType(int pMoral) {
         if(pMoral < 0 || pMoral > 3) {
             throw new IllegalArgumentException("Invalid moral type (" + pMoral + ")");
         }
         this.moral = pMoral;
     }
-    private void setResourceConstant(int resourceConstant) {
-        this.resourceConstant = resourceConstant;
-    }
-
+    
     public int getResourceConstant() {
         return resourceConstant;
     }
     
     public int getNobleSystem() {
         return nobleSystem;
+    }
+
+    public int getBarbarianPoints() {
+        return barbarianPoints;
     }
 
     /**

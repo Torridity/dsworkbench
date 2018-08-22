@@ -15,39 +15,29 @@
  */
 package de.tor.tribes.ui.views;
 
-import com.jidesoft.swing.JideTabbedPane;
-import com.jidesoft.swing.TabEditingEvent;
-import com.jidesoft.swing.TabEditingListener;
-import com.jidesoft.swing.TabEditingValidator;
-import com.smardec.mousegestures.MouseGestures;
 import de.tor.tribes.control.GenericManagerListener;
-import de.tor.tribes.io.DataHolder;
-import de.tor.tribes.types.Marker;
 import de.tor.tribes.types.ext.Village;
-import de.tor.tribes.ui.windows.AbstractDSWorkbenchFrame;
 import de.tor.tribes.ui.panels.GenericTestPanel;
 import de.tor.tribes.ui.panels.MarkerTableTab;
+import de.tor.tribes.ui.windows.AbstractDSWorkbenchFrame;
 import de.tor.tribes.util.Constants;
-import java.util.List;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.JOptionPaneHelper;
-import de.tor.tribes.util.MouseGestureHandler;
-import de.tor.tribes.util.ProfileManager;
 import de.tor.tribes.util.PropertyHelper;
 import de.tor.tribes.util.mark.MarkerManager;
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.List;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import org.apache.commons.configuration.Configuration;
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.Logger;
+import org.apache.commons.configuration2.Configuration;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jdesktop.swingx.JXButton;
 import org.jdesktop.swingx.JXTaskPane;
 
@@ -56,7 +46,7 @@ import org.jdesktop.swingx.JXTaskPane;
  */
 public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements GenericManagerListener, ActionListener {
 
-    private static Logger logger = Logger.getLogger("MarkerView");
+    private static Logger logger = LogManager.getLogger("MarkerView");
     private static DSWorkbenchMarkerFrame SINGLETON = null;
     private GenericTestPanel centerPanel = null;
 
@@ -64,14 +54,24 @@ public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements 
     public void actionPerformed(ActionEvent e) {
         MarkerTableTab activeTab = getActiveTab();
         if (e.getActionCommand() != null && activeTab != null) {
-            if (e.getActionCommand().equals("BBCopy")) {
-                activeTab.transferSelection(MarkerTableTab.TRANSFER_TYPE.CLIPBOARD_BB);
-            } else if (e.getActionCommand().equals("Cut")) {
-                activeTab.transferSelection(MarkerTableTab.TRANSFER_TYPE.CUT_TO_INTERNAL_CLIPBOARD);
-            } else if (e.getActionCommand().equals("Paste")) {
-                activeTab.transferSelection(MarkerTableTab.TRANSFER_TYPE.FROM_EXTERNAL_CLIPBOARD);
-            } else if (e.getActionCommand().equals("Delete")) {
-                activeTab.deleteSelection(true);
+            switch (e.getActionCommand()) {
+                case "BBCopy":
+                    activeTab.transferSelection(MarkerTableTab.TRANSFER_TYPE.CLIPBOARD_BB);
+                    break;
+                case "Cut":
+                    activeTab.transferSelection(MarkerTableTab.TRANSFER_TYPE.CUT_TO_INTERNAL_CLIPBOARD);
+                    break;
+                case "Copy":
+                    activeTab.transferSelection(MarkerTableTab.TRANSFER_TYPE.COPY_TO_INTERNAL_CLIPBOARD);
+                    break;
+                case "Paste":
+                    activeTab.transferSelection(MarkerTableTab.TRANSFER_TYPE.FROM_INTERNAL_CLIPBOARD);
+                    break;
+                case "Delete":
+                    activeTab.deleteSelection(true);
+                    break;
+                default:
+                    break;
             }
         }
     }
@@ -103,60 +103,6 @@ public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements 
             buildMenu();
         }
         capabilityInfoPanel1.addActionListener(this);
-        jMarkerTabPane.setTabShape(JideTabbedPane.SHAPE_OFFICE2003);
-        jMarkerTabPane.setTabColorProvider(JideTabbedPane.ONENOTE_COLOR_PROVIDER);
-        jMarkerTabPane.setBoldActiveTab(true);
-        jMarkerTabPane.addTabEditingListener(new TabEditingListener() {
-
-            @Override
-            public void editingStarted(TabEditingEvent tee) {
-            }
-
-            @Override
-            public void editingStopped(TabEditingEvent tee) {
-                MarkerManager.getSingleton().renameGroup(tee.getOldTitle(), tee.getNewTitle());
-            }
-
-            @Override
-            public void editingCanceled(TabEditingEvent tee) {
-            }
-        });
-        jMarkerTabPane.setTabEditingValidator(new TabEditingValidator() {
-
-            @Override
-            public boolean alertIfInvalid(int tabIndex, String tabText) {
-                if (tabText.trim().length() == 0) {
-                    JOptionPaneHelper.showWarningBox(jMarkerTabPane, "'" + tabText + "' ist ein ungültiger Name für ein Markierungsset", "Fehler");
-                    return false;
-                }
-
-                if (MarkerManager.getSingleton().groupExists(tabText)) {
-                    JOptionPaneHelper.showWarningBox(jMarkerTabPane, "Es existiert bereits ein Markierungsset mit dem Namen '" + tabText + "'", "Fehler");
-                    return false;
-                }
-                return true;
-            }
-
-            @Override
-            public boolean isValid(int tabIndex, String tabText) {
-                return tabText.trim().length() != 0 && !MarkerManager.getSingleton().groupExists(tabText);
-
-            }
-
-            @Override
-            public boolean shouldStartEdit(int tabIndex, MouseEvent event) {
-                return !(tabIndex == 0);
-            }
-        });
-        jMarkerTabPane.setCloseAction(new AbstractAction("closeAction") {
-
-            public void actionPerformed(ActionEvent e) {
-                MarkerTableTab tab = (MarkerTableTab) e.getSource();
-                if (JOptionPaneHelper.showQuestionConfirmBox(jMarkerTabPane, "Das Markierungsset '" + tab.getMarkerSet() + "' und alle darin enthaltenen Markierungen wirklich löschen? ", "Löschen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
-                    MarkerManager.getSingleton().removeGroup(tab.getMarkerSet());
-                }
-            }
-        });
 
         jMarkerTabPane.getModel().addChangeListener(new ChangeListener() {
 
@@ -220,6 +166,7 @@ public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements 
         super.toBack();
     }
 
+    @Override
     public void storeCustomProperties(Configuration pConfig) {
         pConfig.setProperty(getPropertyPrefix() + ".menu.visible", centerPanel.isMenuVisible());
         pConfig.setProperty(getPropertyPrefix() + ".alwaysOnTop", jMarkerFrameAlwaysOnTop.isSelected());
@@ -233,6 +180,7 @@ public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements 
         PropertyHelper.storeTableProperties(tab.getMarkerTable(), pConfig, getPropertyPrefix());
     }
 
+    @Override
     public void restoreCustomProperties(Configuration pConfig) {
         centerPanel.setMenuVisible(pConfig.getBoolean(getPropertyPrefix() + ".menu.visible", true));
         try {
@@ -250,6 +198,7 @@ public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements 
         PropertyHelper.restoreTableProperties(tab.getMarkerTable(), pConfig, getPropertyPrefix());
     }
 
+    @Override
     public String getPropertyPrefix() {
         return "marker.view";
     }
@@ -284,7 +233,6 @@ public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements 
         LabelUIResource lr = new LabelUIResource();
         lr.setLayout(new BorderLayout());
         lr.add(jNewPlanPanel, BorderLayout.CENTER);
-        jMarkerTabPane.setTabLeadingComponent(lr);
         String[] plans = MarkerManager.getSingleton().getGroups();
 
         //insert default tab to first place
@@ -292,8 +240,6 @@ public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements 
             MarkerTableTab tab = new MarkerTableTab(plan, this);
             jMarkerTabPane.addTab(plan, tab);
         }
-
-        jMarkerTabPane.setTabClosableAt(0, false);
 
         jMarkerTabPane.setSelectedIndex(0);
         MarkerTableTab tab = getActiveTab();
@@ -313,7 +259,7 @@ public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements 
         java.awt.GridBagConstraints gridBagConstraints;
 
         jXMarkerPanel = new org.jdesktop.swingx.JXPanel();
-        jMarkerTabPane = new com.jidesoft.swing.JideTabbedPane();
+        jMarkerTabPane = new javax.swing.JTabbedPane();
         jNewPlanPanel = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         jMarkerFrameAlwaysOnTop = new javax.swing.JCheckBox();
@@ -321,11 +267,6 @@ public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements 
         capabilityInfoPanel1 = new de.tor.tribes.ui.components.CapabilityInfoPanel();
 
         jXMarkerPanel.setLayout(new java.awt.BorderLayout());
-
-        jMarkerTabPane.setScrollSelectedTabOnWheel(true);
-        jMarkerTabPane.setShowCloseButtonOnTab(true);
-        jMarkerTabPane.setShowGripper(true);
-        jMarkerTabPane.setTabEditingAllowed(true);
         jXMarkerPanel.add(jMarkerTabPane, java.awt.BorderLayout.CENTER);
 
         jNewPlanPanel.setOpaque(false);
@@ -356,7 +297,6 @@ public class DSWorkbenchMarkerFrame extends AbstractDSWorkbenchFrame implements 
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         jMarkerFrameAlwaysOnTop.setText("Immer im Vordergrund");
-        jMarkerFrameAlwaysOnTop.setOpaque(false);
         jMarkerFrameAlwaysOnTop.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 fireMarkerFrameOnTopEvent(evt);
@@ -425,48 +365,7 @@ private void fireCreateMarkerSetEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
     @Override
     public void fireVillagesDraggedEvent(List<Village> pVillages, Point pDropLocation) {
     }
-
-    public static void main(String[] args) {
-        MouseGestures mMouseGestures = new MouseGestures();
-        mMouseGestures.setMouseButton(MouseEvent.BUTTON3_MASK);
-        mMouseGestures.addMouseGesturesListener(new MouseGestureHandler());
-        mMouseGestures.start();
-        try {
-            //  UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
-        } catch (Exception ignored) {
-        }
-        Logger.getRootLogger().addAppender(new ConsoleAppender(new org.apache.log4j.PatternLayout("%d - %-5p - %-20c (%C [%L]) - %m%n")));
-        DSWorkbenchMarkerFrame.getSingleton().pack();
-        MarkerManager.getSingleton().addGroup("test1");
-        MarkerManager.getSingleton().addGroup("asd2");
-        MarkerManager.getSingleton().addGroup("awe3");
-        GlobalOptions.setSelectedServer("de68");
-        ProfileManager.getSingleton().loadProfiles();
-        GlobalOptions.setSelectedProfile(ProfileManager.getSingleton().getProfiles("de68")[0]);
-        DataHolder.getSingleton().loadData(false);
-        for (int i = 0; i < 5; i++) {
-            Marker a = new Marker();
-            a.setMarkerColor(Color.GREEN);
-            a.setMarkerID(DataHolder.getSingleton().getRandomVillage().getTribeID());
-            a.setMarkerType(Marker.TRIBE_MARKER_TYPE);
-            Marker a2 = new Marker();
-            a2.setMarkerColor(Color.RED);
-            a2.setMarkerID(DataHolder.getSingleton().getRandomVillage().getTribeID());
-            a2.setMarkerType(Marker.TRIBE_MARKER_TYPE);
-            Marker a3 = new Marker();
-            a3.setMarkerColor(Color.BLUE);
-            a3.setMarkerID(DataHolder.getSingleton().getRandomVillage().getTribeID());
-            a3.setMarkerType(Marker.TRIBE_MARKER_TYPE);
-            MarkerManager.getSingleton().addManagedElement(a);
-            MarkerManager.getSingleton().addManagedElement("test1", a2);
-            MarkerManager.getSingleton().addManagedElement("asd2", a3);
-        }
-        DSWorkbenchMarkerFrame.getSingleton().resetView();
-        DSWorkbenchMarkerFrame.getSingleton().setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        DSWorkbenchMarkerFrame.getSingleton().setVisible(true);
-
-    }
+    
     // <editor-fold defaultstate="collapsed" desc="Gesture handling">
 
     @Override
@@ -497,7 +396,7 @@ private void fireCreateMarkerSetEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
     public void fireRenameGestureEvent() {
         int idx = jMarkerTabPane.getSelectedIndex();
         if (idx != 0) {
-            jMarkerTabPane.editTabAt(idx);
+            jMarkerTabPane.setSelectedIndex(idx);
         }
     }
 // </editor-fold>
@@ -505,7 +404,7 @@ private void fireCreateMarkerSetEvent(java.awt.event.MouseEvent evt) {//GEN-FIRS
     private de.tor.tribes.ui.components.CapabilityInfoPanel capabilityInfoPanel1;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JCheckBox jMarkerFrameAlwaysOnTop;
-    private com.jidesoft.swing.JideTabbedPane jMarkerTabPane;
+    private javax.swing.JTabbedPane jMarkerTabPane;
     private javax.swing.JPanel jMarkersPanel;
     private javax.swing.JPanel jNewPlanPanel;
     private org.jdesktop.swingx.JXPanel jXMarkerPanel;

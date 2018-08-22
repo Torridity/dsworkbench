@@ -21,7 +21,6 @@ import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.ui.ImageManager;
 import de.tor.tribes.ui.TwoD.ShapeStroke;
-import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.attack.AttackManager;
 import java.awt.BasicStroke;

@@ -15,10 +15,10 @@
  */
 package de.tor.tribes.ui.windows;
 
-import de.tor.tribes.ui.panels.MapPanel;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.dnd.VillageTransferable;
+import de.tor.tribes.ui.panels.MapPanel;
 import de.tor.tribes.util.interfaces.DSWorkbenchFrameListener;
 import java.awt.Dimension;
 import java.awt.Point;
@@ -38,12 +38,18 @@ import java.awt.dnd.DropTargetDropEvent;
 import java.awt.dnd.DropTargetEvent;
 import java.awt.dnd.DropTargetListener;
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import org.apache.commons.configuration.Configuration;
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.PropertiesConfiguration;
-import org.apache.log4j.Logger;
+import org.apache.commons.configuration2.Configuration;
+import org.apache.commons.configuration2.PropertiesConfiguration;
+import org.apache.commons.configuration2.ex.ConfigurationException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 /**
  *
@@ -51,7 +57,7 @@ import org.apache.log4j.Logger;
  */
 public abstract class AbstractDSWorkbenchFrame extends DSWorkbenchGesturedFrame implements DropTargetListener, DragGestureListener, DragSourceListener {
 
-    private static Logger logger = Logger.getLogger("AbstractDSWorkbenchFrame");
+    private static Logger logger = LogManager.getLogger("AbstractDSWorkbenchFrame");
 
     @Override
     public void fireCloseGestureEvent() {
@@ -102,71 +108,71 @@ public abstract class AbstractDSWorkbenchFrame extends DSWorkbenchGesturedFrame 
 
     public abstract String getPropertyPrefix();
 
-    public void storeProperties() {
+    private static final List<AbstractDSWorkbenchFrame> toSave = new ArrayList<>();
+    private static PropertiesConfiguration frameProperties;
+    public static void saveAllProperties() {
         String dataDir = DataHolder.getSingleton().getDataDirectory();
         if (!new File(dataDir).exists()) {
             logger.warn("Data directory '" + dataDir + "' does not exist. Skip writing properties");
-            return;
-
-        }
-        String prefix = getPropertyPrefix();
-        PropertiesConfiguration config = null;
-        boolean newConfig = false;
-        if (!new File(dataDir + "/usergui.properties").exists()) {
-            config = new PropertiesConfiguration();
-            newConfig = true;
-        }
-        try {
-            if (config == null) {
-                config = new PropertiesConfiguration(dataDir + "/usergui.properties");
-            }
-            config.setProperty(prefix + ".width", getWidth());
-            config.setProperty(prefix + ".height", getHeight());
-            config.setProperty(prefix + ".x", getX());
-            config.setProperty(prefix + ".y", getY());
-            // config.setProperty(prefix + ".visible", isVisible());
-            config.setProperty(prefix + ".alwaysOnTop", isAlwaysOnTop());
-        } catch (ConfigurationException ex) {
-            logger.error("Failed to create properties", ex);
+            
+            //set to uninitialised
+            frameProperties = null;
+            toSave.clear();
+            
             return;
         }
+        
+        for(AbstractDSWorkbenchFrame s: toSave) {
+            String prefix = s.getPropertyPrefix();
+            frameProperties.setProperty(prefix + ".width", s.getWidth());
+            frameProperties.setProperty(prefix + ".height", s.getHeight());
+            frameProperties.setProperty(prefix + ".x", s.getX());
+            frameProperties.setProperty(prefix + ".y", s.getY());
+            frameProperties.setProperty(prefix + ".alwaysOnTop", s.isAlwaysOnTop());
 
-        storeCustomProperties(config);
+            s.storeCustomProperties(frameProperties);
+        }
 
         try {
-            if (newConfig) {
-                config.save(dataDir + "/usergui.properties");
-            } else {
-                config.save();
-            }
-        } catch (ConfigurationException ex) {
+            frameProperties.write(new FileWriter(dataDir + "/usergui.properties"));
+        } catch (IOException | ConfigurationException ex) {
             logger.error("Failed to write properties", ex);
         }
+        
+        //set to uninitialised
+        frameProperties = null;
+        toSave.clear();
     }
 
     public void restoreProperties() {
-        String dataDir = DataHolder.getSingleton().getDataDirectory();
-        if (!new File(dataDir).exists()) {
-            logger.warn("Data directory '" + dataDir + "' does not exist. Skip reading properties");
-            return;
+        if(frameProperties == null) {
+            frameProperties = new PropertiesConfiguration();
+            String dataDir = DataHolder.getSingleton().getDataDirectory();
+            if (!new File(dataDir).exists()) {
+                logger.warn("Data directory '" + dataDir + "' does not exist. Skip reading properties");
+                return;
+            }
+            
+            try {
+                frameProperties.read(new FileReader(dataDir + "/usergui.properties"));
+                frameProperties.setThrowExceptionOnMissing(false);
+            } catch (IOException | ConfigurationException ex) {
+                logger.info("Cannot read properties", ex);
+                return;
+            }
         }
         String prefix = getPropertyPrefix();
-        PropertiesConfiguration config = null;
-        try {
-            config = new PropertiesConfiguration(dataDir + "/usergui.properties");
-            config.setThrowExceptionOnMissing(false);
-            Dimension size = new Dimension(config.getInteger(prefix + ".width", getWidth()), config.getInteger(prefix + ".height", getHeight()));
-            setPreferredSize(size);
-            setSize(size);
-            setLocation(config.getInteger(prefix + ".x", getX()), config.getInteger(prefix + ".y", getY()));
-            //setVisible(config.getBoolean(prefix + ".visible", false));
-            setAlwaysOnTop(config.getBoolean(prefix + ".alwaysOnTop", false));
-        } catch (ConfigurationException ex) {
-            logger.info("Cannot read properties", ex);
-            return;
-        }
+        
+        Dimension size = new Dimension(frameProperties.getInteger(prefix + ".width", getWidth()),
+                frameProperties.getInteger(prefix + ".height", getHeight()));
+        setPreferredSize(size);
+        setSize(size);
+        setLocation(frameProperties.getInteger(prefix + ".x", getX()),
+                frameProperties.getInteger(prefix + ".y", getY()));
+        setAlwaysOnTop(frameProperties.getBoolean(prefix + ".alwaysOnTop", false));
 
-        restoreCustomProperties(config);
+        restoreCustomProperties(frameProperties);
+        toSave.add(this);
     }
 
     public synchronized void addFrameListener(DSWorkbenchFrameListener pListener) {

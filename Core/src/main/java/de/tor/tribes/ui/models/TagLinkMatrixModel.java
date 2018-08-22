@@ -72,7 +72,7 @@ public class TagLinkMatrixModel extends AbstractTableModel {
         for (int i = 0; i < usableTags.size(); i++) {
             for (int j = 0; j < columnNames.length; j++) {
                 if (j == 0) {
-                    values[i][j] = usableTags.get(i);
+                    values[i][j] = usableTags.get(i).toString();
                 } else {
                     values[i][j] = 0;
                 }
@@ -88,7 +88,7 @@ public class TagLinkMatrixModel extends AbstractTableModel {
     @Override
     public Class getColumnClass(int columnIndex) {
         if (columnIndex == 0) {
-            return Tag.class;
+            return String.class;
         }
         return Integer.class;
     }

@@ -15,12 +15,13 @@
  */
 package de.tor.tribes.ui.wiz;
 
+import java.net.HttpURLConnection;
 import java.net.Proxy;
 import java.net.URL;
-import java.net.HttpURLConnection;
 import java.util.HashMap;
 import java.util.Map;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.netbeans.spi.wizard.Wizard;
 import org.netbeans.spi.wizard.WizardController;
 import org.netbeans.spi.wizard.WizardPanel;
@@ -31,7 +32,7 @@ import org.netbeans.spi.wizard.WizardPanelNavResult;
  * @author Torridity
  */
 public class NetworkSettings extends javax.swing.JPanel implements WizardPanel {
-    private static Logger logger = Logger.getLogger("NetworkSettings");
+    private static Logger logger = LogManager.getLogger("NetworkSettings");
 
     private WizardController wizCtrl;
     private Map currentSettings = null;

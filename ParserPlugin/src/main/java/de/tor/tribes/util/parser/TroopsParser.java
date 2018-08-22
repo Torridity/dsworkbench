@@ -24,12 +24,11 @@ import de.tor.tribes.ui.windows.NotifierFrame;
 import de.tor.tribes.util.SilentParserInterface;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
-
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author Charon
@@ -151,7 +150,7 @@ public class TroopsParser implements SilentParserInterface {
         
         //update selected group, if any
         if(groupName != null && !groupName.equals(getVariable("groups.all"))){
-            Hashtable<String, List<Village>> groupTable = new Hashtable<>();
+            HashMap<String, List<Village>> groupTable = new HashMap<>();
             groupTable.put(groupName, villages);
             DSWorkbenchMainFrame.getSingleton().fireGroupParserEvent(groupTable);
         }

@@ -15,34 +15,16 @@
  */
 package de.tor.tribes.util;
 
-import com.jidesoft.swing.LabeledTextField;
+import java.awt.*;
+import javax.swing.*;
 import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.table.TableColumnExt;
-
-import javax.swing.*;
-import java.awt.*;
 
 /**
  *
  * @author Torridity
  */
 public class UIHelper {
-
-    public static int parseIntFromField(LabeledTextField jField) {
-        return parseIntFromField(jField, 0);
-    }
-
-    public static int parseIntFromField(LabeledTextField jField, int pDefault) {
-        int result = pDefault;
-        try {
-            result = Integer.parseInt(jField.getText());
-        } catch (NumberFormatException nfe) {
-            jField.setText(Integer.toString(pDefault));
-            result = pDefault;
-        }
-        return result;
-    }
-
     public static int parseIntFromLabel(JLabel jLabel) {
         return parseIntFromLabel(jLabel, 0);
     }

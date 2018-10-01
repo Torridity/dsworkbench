@@ -138,6 +138,10 @@ public class ClipboardWatch extends Thread {
                             logger.info("Movements successfully parsed.");
                             SystrayHelper.showInfoMessage("Befehle erfolgreich eingelesen");
                             playNotification();
+                        } else if (PluginManager.getSingleton().executeBuildingParser(data)) {
+                            logger.info("Buildings successfully parsed.");
+                            SystrayHelper.showInfoMessage("Gebäude erfolgreich eingelesen");
+                            playNotification();
                         }
                         lastCRC = currentCRC;
                     }

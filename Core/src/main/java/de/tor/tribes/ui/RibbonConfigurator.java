@@ -392,14 +392,18 @@ public class RibbonConfigurator {
         farmManagerButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                SwingUtilities.invokeLater(new Runnable() {
+                if (ServerSettings.getSingleton().isHaulActive()) {
+                    SwingUtilities.invokeLater(new Runnable() {
 
-                    @Override
-                    public void run() {
-                        DSWorkbenchFarmManager.getSingleton().setVisible(true);
-                        DSWorkbenchFarmManager.getSingleton().requestFocus();
-                    }
-                });
+                        @Override
+                        public void run() {
+                            DSWorkbenchFarmManager.getSingleton().setVisible(true);
+                            DSWorkbenchFarmManager.getSingleton().requestFocus();
+                        }
+                    });
+                } else {
+                    DSWorkbenchMainFrame.getSingleton().showInfo("Der Farmmanager ist nicht auf No-Farm Welten verfügbar");
+                }
             }
         });
 

@@ -231,7 +231,7 @@ public class KnownVillage extends ManageableType {
         buildings[id] = pLevel;
     }
     
-    private void setBuildingLevelById(int pBuildingId, int pLevel) {
+    public void setBuildingLevelById(int pBuildingId, int pLevel) {
         if(pLevel > getMaxBuildingLevel(Constants.BUILDING_NAMES[pBuildingId])) {
             logger.error("Building cannot be constructed that far " + pBuildingId + ": " + pLevel);
             return;

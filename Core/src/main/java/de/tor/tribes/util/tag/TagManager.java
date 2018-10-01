@@ -16,6 +16,7 @@
 package de.tor.tribes.util.tag;
 
 import de.tor.tribes.control.GenericManager;
+import de.tor.tribes.control.GenericManagerListener;
 import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.types.LinkedTag;
 import de.tor.tribes.types.Tag;
@@ -45,6 +46,18 @@ public class TagManager extends GenericManager<Tag> {
 
     TagManager() {
         super(false);
+        
+        this.addManagerListener(new GenericManagerListener() {
+            @Override
+            public void dataChangedEvent() {
+                updateLinkedTags();
+            }
+
+            @Override
+            public void dataChangedEvent(String pGroup) {
+                dataChangedEvent();
+            }
+        });
     }
 
     @Override

@@ -58,6 +58,11 @@ public class ServerSettings {
     public static final int NOBLESYSTEM_GOLD_COINS = 1;
     private int nobleSystem = 0;
     
+    private boolean haulActive = true;
+    private boolean haulLimitActive = false;
+    private int haulBase = 0;
+    private int haulMax = 0;
+    
     private static ServerSettings SINGLETON = null;
     private final List<ServerSettingsListener> listeners = new ArrayList<>();
 
@@ -187,20 +192,30 @@ public class ServerSettings {
                 this.moral = 0;
             }
             
-            logger.debug(" - reading resource Production base");
+            logger.debug(" - reading resource production base");
             try {
                 this.resourceConstant = Integer.parseInt(JDomUtils.getNodeValue(d, "game/base_production"));
             } catch (Exception inner) {
-                logger.warn("Unable to resource Production base", inner);
+                logger.warn("Unable to read resource production base", inner);
                 this.resourceConstant = 0;
             }
             
-            logger.debug(" - reading resource Production base");
+            logger.debug(" - reading barbarian points");
             try {
                 this.barbarianPoints = Integer.parseInt(JDomUtils.getNodeValue(d, "game/barbarian_max_points"));
             } catch (Exception inner) {
-                logger.warn("Unable to resource Production base", inner);
+                logger.warn("Unable to read barbarian points", inner);
                 this.barbarianPoints = 500;
+            }
+            
+            logger.debug(" - reading haul values");
+            try {
+                this.haulActive = Integer.parseInt(JDomUtils.getNodeValue(d, "game/hauls")) == 1;
+                this.haulLimitActive = Integer.parseInt(JDomUtils.getNodeValue(d, "game/farm_limit")) == 1;
+                this.haulBase = Integer.parseInt(JDomUtils.getNodeValue(d, "game/hauls_base"));
+                this.haulMax = Integer.parseInt(JDomUtils.getNodeValue(d, "game/hauls_max"));
+            } catch (Exception inner) {
+                logger.warn("Unable read haul values", inner);
             }
             
         } catch (Exception e) {
@@ -301,6 +316,22 @@ public class ServerSettings {
 
     public int getBarbarianPoints() {
         return barbarianPoints;
+    }
+    
+    public boolean isHaulActive() {
+        return haulActive;
+    }
+
+    public boolean isHaulLimitActive() {
+        return haulLimitActive;
+    }
+
+    public int getHaulLimitBase() {
+        return haulBase;
+    }
+
+    public int getHaulLimitMax() {
+        return haulMax;
     }
 
     /**

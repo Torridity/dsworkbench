@@ -410,11 +410,11 @@ public class SupportRefillFinishPanel extends WizardPage {
     private void fireTransferAllToAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireTransferAllToAttackPlanEvent
       List<Attack> attacks = new LinkedList<>();
       TroopAmountFixed split = SupportRefillSettingsPanel.getSingleton().getSplit();
-      StandardAttack standardAttackType = null;
+      StandardAttack used = null;
       for (ManageableType t : StandardAttackManager.getSingleton().getAllElements()) {
         StandardAttack a = (StandardAttack) t;
         if (a.equals(split)) {
-          standardAttackType = a;
+          used = a;
           break;
         }
       }
@@ -423,10 +423,10 @@ public class SupportRefillFinishPanel extends WizardPage {
         int modelRow = jxResultsTable.convertRowIndexToModel(row);
         REFResultElement move = getModel().getRow(modelRow);
         Attack a = move.asAttack();
-        if (standardAttackType != null) {
-          a.setType(standardAttackType.getIcon());
-          a.setTroops(split.transformToDynamic());
+        if (used != null) {
+          a.setType(used.getIcon());
         }
+        a.setTroops(split.transformToDynamic());
         attacks.add(a);
       }
       transferToAttackView(attacks);
@@ -451,8 +451,8 @@ public class SupportRefillFinishPanel extends WizardPage {
         Attack a = move.asAttack();
         if (used != null) {
           a.setType(used.getIcon());
-          a.setTroops(split.transformToDynamic());
         }
+        a.setTroops(split.transformToDynamic());
         attacks.add(a);
       }
       transferToAttackView(attacks);

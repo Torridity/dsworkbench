@@ -46,7 +46,7 @@ public class Attack extends ManageableType implements Serializable, Comparable<A
 
     private static Logger logger = LogManager.getLogger("AttackTableModel");
 
-    private final static String[] VARIABLES = new String[]{"%TYPE%", "%ATTACKER%", "%SOURCE%", "%UNIT%", "%DEFENDER%", "%TARGET%", "%SEND%", "%ARRIVE%", "%PLACE%", "%PLACE_URL%"};
+    private final static String[] VARIABLES = new String[]{"%TYPE%", "%STD_NAME%", "%ATTACKER%", "%SOURCE%", "%UNIT%", "%DEFENDER%", "%TARGET%", "%SEND%", "%ARRIVE%", "%PLACE%", "%PLACE_URL%"};
     private final static String STANDARD_TEMPLATE = "%TYPE% von %ATTACKER% aus %SOURCE% mit %UNIT% auf %DEFENDER% in %TARGET% startet am [color=#ff0e0e]%SEND%[/color] und kommt am [color=#2eb92e]%ARRIVE%[/color] an (%PLACE%)";
     public static final int NO_TYPE = StandardAttack.NO_ICON;
     public static final int CLEAN_TYPE = StandardAttack.OFF_ICON;
@@ -393,6 +393,12 @@ public class Attack extends ManageableType implements Serializable, Comparable<A
                 typeVal = "Angriff";
             }
         }
+        
+        String stdName = "Unbenannt";
+        StandardAttack a = StandardAttackManager.getSingleton().getElementByIcon(getType());
+        if(a != null) {
+            stdName = a.getName();
+        }
 
         String attackerVal = "";
         if (source.getTribe() != Barbarians.getSingleton()) {
@@ -454,7 +460,7 @@ public class Attack extends ManageableType implements Serializable, Comparable<A
         placeURL += source.getId() + "&screen=place&mode=command&target=" + target.getId();
 
         String placeURLVal = placeURL;
-        return new String[]{typeVal, attackerVal, sourceVal, unitVal, defenderVal, targetVal, sendVal, arrivetVal, "[url=\"" + placeURL + "\"]Versammlungsplatz[/url]", placeURLVal};
+        return new String[]{typeVal, stdName, attackerVal, sourceVal, unitVal, defenderVal, targetVal, sendVal, arrivetVal, "[url=\"" + placeURL + "\"]Versammlungsplatz[/url]", placeURLVal};
     }
     
     @Override

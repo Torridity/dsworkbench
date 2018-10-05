@@ -15,12 +15,14 @@
  */
 package de.tor.tribes.ui.views;
 
+import de.tor.tribes.control.GenericEventListener;
 import de.tor.tribes.control.GenericManagerListener;
 import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.types.*;
 import de.tor.tribes.types.ext.Ally;
 import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Village;
+import de.tor.tribes.ui.components.TabPaneComponent;
 import de.tor.tribes.ui.panels.GenericTestPanel;
 import de.tor.tribes.ui.panels.ReportTableTab;
 import de.tor.tribes.ui.windows.AbstractDSWorkbenchFrame;
@@ -238,13 +240,11 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
     }
 
     private void buildMenu() {
-
+        // <editor-fold defaultstate="collapsed" desc="view task pane">
         JXTaskPane viewTaskPane = new JXTaskPane();
         viewTaskPane.setTitle("Anzeigen");
-        JXButton viewReport = new JXButton(new ImageIcon(DSWorkbenchReportFrame.class.getResource("/res/ui/view_report.png")));
-        viewReport.setToolTipText("Die gewählten Berichte öffnen");
-        viewReport.addMouseListener(new MouseAdapter() {
-
+        
+        viewTaskPane.getContentPane().add(factoryButton("/res/ui/view_report.png", "Die gew&auml;hlten Berichte öffnen", new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
                 ReportTableTab tab = getActiveTab();
@@ -252,18 +252,13 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
                     tab.viewReport();
                 }
             }
-        });
-        viewTaskPane.getContentPane().add(viewReport);
-
-
+        }));
+        // </editor-fold>
+        // <editor-fold defaultstate="collapsed" desc="transfer task pane">
         JXTaskPane transferTaskPane = new JXTaskPane();
         transferTaskPane.setTitle("Übertragen");
 
-        JXButton transferTroopInfo = new JXButton(new ImageIcon(DSWorkbenchReportFrame.class.getResource("/res/ui/troop_info_add.png")));
-        transferTroopInfo.setToolTipText("<html>&Uuml;bertr&auml;gt die &uuml;berlebenden Truppen des Verteidigers<br/>"
-                + "aus den gew&auml;hlten Berichten in die Truppen&uuml;bersicht</html>");
-        transferTroopInfo.addMouseListener(new MouseAdapter() {
-
+        transferTaskPane.getContentPane().add(factoryButton("/res/ui/troop_info_add.png", "&Uuml;bertr&auml;gt die &uuml;berlebenden Truppen des Verteidigers", new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
                 ReportTableTab tab = getActiveTab();
@@ -271,13 +266,9 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
                     tab.transferTroopInfos();
                 }
             }
-        });
-        transferTaskPane.getContentPane().add(transferTroopInfo);
+        }));
 
-        JXButton transferVillageList = new JXButton(new ImageIcon(DSWorkbenchReportFrame.class.getResource("/res/ui/report_toAStar.png")));
-        transferVillageList.setToolTipText("Überträgt den gewählten Berichte nach A*Star");
-        transferVillageList.addMouseListener(new MouseAdapter() {
-
+        transferTaskPane.getContentPane().add(factoryButton("/res/ui/report_toAStar.png", "&Uuml;bertr&auml;gt den gew&auml;hlten Berichte nach A*Star", new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
                 ReportTableTab tab = getActiveTab();
@@ -285,15 +276,20 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
                     tab.transferSelection(ReportTableTab.TRANSFER_TYPE.ASTAR);
                 }
             }
-        });
-        transferTaskPane.getContentPane().add(transferVillageList);
-
+        }));
+        // </editor-fold>
+        // <editor-fold defaultstate="collapsed" desc="misc task pane">
         JXTaskPane miscPane = new JXTaskPane();
         miscPane.setTitle("Sonstiges");
-        JXButton createStats = new JXButton(new ImageIcon(DSWorkbenchReportFrame.class.getResource("/res/ui/medal.png")));
-        createStats.setToolTipText("Statistiken zu den gewählten Berichten erstellen");
-        createStats.addMouseListener(new MouseAdapter() {
-
+        
+        miscPane.getContentPane().add(factoryButton("/res/ui/document_new_24x24.png", "Neuen Plan erstellen", new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                fireCreateAttackPlanEvent(e);
+            }
+        }));
+        
+        miscPane.getContentPane().add(factoryButton("/res/ui/medal.png", "Statistiken zu den gew&auml;hlten Berichten erstellen", new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
                 ReportTableTab tab = getActiveTab();
@@ -309,52 +305,25 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
                     jCreateStatsFrame.setVisible(true);
                 }
             }
-        });
+        }));
 
-        miscPane.getContentPane().add(createStats);
-
-        JXButton cleanupReports = new JXButton(new ImageIcon(DSWorkbenchReportFrame.class.getResource("/res/ui/report_cleanup.png")));
-        cleanupReports.setSize(createStats.getSize());
-        cleanupReports.setMinimumSize(createStats.getMinimumSize());
-        cleanupReports.setMaximumSize(createStats.getMaximumSize());
-        cleanupReports.setPreferredSize(createStats.getPreferredSize());
-        cleanupReports.setToolTipText("Veraltete und doppelte Berichte im gewählten Berichtset löschen");
-        cleanupReports.addMouseListener(new MouseAdapter() {
-
+        miscPane.getContentPane().add(factoryButton("/res/ui/report_cleanup.png", "Veraltete und doppelte Berichte im gewählten Berichtset l&ouml;schen", new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
                 cleanupReports();
             }
-        });
+        }));
 
-        miscPane.getContentPane().add(cleanupReports);
-
-        JXButton showRuleDialog = new JXButton(new ImageIcon(DSWorkbenchReportFrame.class.getResource("/res/ui/index_edit.png")));
-        showRuleDialog.setSize(createStats.getSize());
-        showRuleDialog.setMinimumSize(createStats.getMinimumSize());
-        showRuleDialog.setMaximumSize(createStats.getMaximumSize());
-        showRuleDialog.setPreferredSize(createStats.getPreferredSize());
-        showRuleDialog.setToolTipText("Definierte Regeln bearbeiten oder neu erstellen");
-        showRuleDialog.addMouseListener(new MouseAdapter() {
-
+        miscPane.getContentPane().add(factoryButton("/res/ui/index_edit.png", "Definierte Regeln bearbeiten oder neu erstellen", new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
                 rulesDialog.rebuildRuleList();
                 rulesDialog.setLocationRelativeTo(DSWorkbenchReportFrame.this);
                 rulesDialog.setVisible(true);
             }
-        });
+        }));
 
-        miscPane.getContentPane().add(showRuleDialog);
-
-        JXButton applyRules = new JXButton(new ImageIcon(DSWorkbenchReportFrame.class.getResource("/res/ui/index_refresh.png")));
-        applyRules.setSize(createStats.getSize());
-        applyRules.setMinimumSize(createStats.getMinimumSize());
-        applyRules.setMaximumSize(createStats.getMaximumSize());
-        applyRules.setPreferredSize(createStats.getPreferredSize());
-        applyRules.setToolTipText("Definierte Regeln jetzt auf das gewählte Berichtset anwenden");
-        applyRules.addMouseListener(new MouseAdapter() {
-
+        miscPane.getContentPane().add(factoryButton("/res/ui/index_refresh.png", "Definierte Regeln jetzt auf das gew&auml;hlte Berichtset anwenden", new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
                 ReportTableTab tab = getActiveTab();
@@ -366,9 +335,8 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
                     }
                 }
             }
-        });
-
-        miscPane.getContentPane().add(applyRules);
+        }));
+        // </editor-fold>
 
         centerPanel.setupTaskPane(viewTaskPane, transferTaskPane, miscPane);
     }
@@ -451,19 +419,59 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
             tab.deregister();
             jReportsTabbedPane.removeTabAt(0);
         }
-
-        LabelUIResource lr = new LabelUIResource();
-        lr.setLayout(new BorderLayout());
-        lr.add(jNewPlanPanel, BorderLayout.CENTER);
+        
         String[] plans = ReportManager.getSingleton().getGroups();
 
         //insert default tab to first place
-        int cnt = 0;
         for (String plan : plans) {
             ReportTableTab tab = new ReportTableTab(plan, this);
             jReportsTabbedPane.addTab(plan, tab);
-            cnt++;
         }
+        
+        for(int i = 0; i < jReportsTabbedPane.getTabCount(); i++) {
+            final TabPaneComponent component = new TabPaneComponent(jReportsTabbedPane);
+            component.setStopEditingListener(new GenericEventListener() {
+                @Override
+                public void event() {
+                    int i = jReportsTabbedPane.indexOfTabComponent(component);
+                    ReportTableTab tab = (ReportTableTab) jReportsTabbedPane.getComponentAt(i);
+                    String newName = component.getEditedText();
+                    if(!newName.equals(tab.getReportSet())) {
+                        newName = newName.trim();
+                        if (newName.length() == 0) {
+                            JOptionPaneHelper.showWarningBox(jReportsTabbedPane, "'" + newName + "' ist ein ungültiger Setname", "Fehler");
+                            return;
+                        }
+                        if (ReportManager.getSingleton().groupExists(newName)) {
+                            JOptionPaneHelper.showWarningBox(jReportsTabbedPane, "Es existiert bereits ein Berichtset mit dem Namen '" + newName + "'", "Fehler");
+                            return;
+                        }
+                        
+                        ReportManager.getSingleton().renameGroup(tab.getReportSet(), newName);
+                    }
+                }
+            });
+            
+            component.setCloseTabListener(new GenericEventListener() {
+                @Override
+                public void event() {
+                    int i = jReportsTabbedPane.indexOfTabComponent(component);
+                    ReportTableTab tab = (ReportTableTab) jReportsTabbedPane.getComponentAt(i);
+                    if (JOptionPaneHelper.showQuestionConfirmBox(jReportsTabbedPane, "Befehlsplan '" + tab.getReportSet() +
+                            "' und alle darin enthaltenen Berichte wirklich löschen? ", "Löschen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
+                        ReportManager.getSingleton().removeGroup(tab.getReportSet());
+                    }
+                }
+            });
+            
+            if(i == 0 || i == 1) {
+                component.setCloseable(false);
+                component.setEditable(false);
+            }
+            
+            jReportsTabbedPane.setTabComponentAt(i, component);
+        }
+        
         jReportsTabbedPane.revalidate();
         ReportTableTab tab = getActiveTab();
         if (tab != null) {
@@ -1100,6 +1108,18 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
 
     @Override
     public void fireVillagesDraggedEvent(List<Village> pVillages, Point pDropLocation) {
+    }
+
+    /**
+     * Factory a new button
+     */
+    private JXButton factoryButton(String pIconResource, String pTooltip, MouseListener pListener) {
+        JXButton button = new JXButton(new ImageIcon(DSWorkbenchAttackFrame.class.getResource(pIconResource)));
+        if (pTooltip != null) {
+            button.setToolTipText("<html><div width='150px'>" + pTooltip + "</div></html>");
+        }
+        button.addMouseListener(pListener);
+        return button;
     }
 
     // <editor-fold defaultstate="collapsed" desc="Gesture Handling">

@@ -71,10 +71,10 @@ public class TabPaneComponent extends javax.swing.JPanel {
         jTextFieldName = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
 
+        setOpaque(false);
         setLayout(new java.awt.GridBagLayout());
 
         jLabelName.setText("jLabel1");
-        jLabelName.setOpaque(true);
         jLabelName.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 startEditing(evt);
@@ -94,6 +94,11 @@ public class TabPaneComponent extends javax.swing.JPanel {
                 stopEditing(evt);
             }
         });
+        jTextFieldName.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                keyEvent(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
@@ -103,8 +108,8 @@ public class TabPaneComponent extends javax.swing.JPanel {
         add(jTextFieldName, gridBagConstraints);
 
         jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/red_x.png"))); // NOI18N
-        jButton1.setToolTipText("Delete this plan");
         jButton1.setBorderPainted(false);
+        jButton1.setContentAreaFilled(false);
         jButton1.setFocusable(false);
         jButton1.setMaximumSize(new java.awt.Dimension(17, 17));
         jButton1.setMinimumSize(new java.awt.Dimension(17, 17));
@@ -156,6 +161,12 @@ public class TabPaneComponent extends javax.swing.JPanel {
             closeTabListener.event();
         }
     }//GEN-LAST:event_closeTab
+
+    private void keyEvent(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_keyEvent
+        if(evt.getKeyCode() == 10 || evt.getKeyCode() == 13) {
+            stopEditing(null);
+        }
+    }//GEN-LAST:event_keyEvent
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

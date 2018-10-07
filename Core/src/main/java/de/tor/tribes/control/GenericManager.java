@@ -286,7 +286,7 @@ public abstract class GenericManager<C extends ManageableType> {
      *
      * @param pElement
      */
-    public void addManagedElement(C pElement) {
+    protected void addManagedElement(C pElement) {
         addManagedElement(DEFAULT_GROUP, pElement);
     }
 

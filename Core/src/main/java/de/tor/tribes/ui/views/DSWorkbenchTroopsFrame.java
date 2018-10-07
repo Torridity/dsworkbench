@@ -235,17 +235,6 @@ public class DSWorkbenchTroopsFrame extends AbstractDSWorkbenchFrame implements 
           return;
         }
         addTroopsManuallyEvent();
-        /*  Village[] va = GlobalOptions.getSelectedProfile().getTribe().getVillageList();
-         TroopsManager.getSingleton().addManagedElement(null);
-        
-         for (Village v : va) {
-         VillageTroopsHolder h = new VillageTroopsHolder(v, new Date());
-         for (UnitHolder u : DataHolder.getSingleton().getUnits()) {
-         h.setAmountForUnit(u, 1000);
-         TroopsManager.getSingleton().addManagedElement(TroopsManager.OWN_GROUP, h);
-         }
-         }*/
-
       }
     });
     editTaskPane.getContentPane().add(createTroopInfo);

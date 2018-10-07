@@ -221,12 +221,13 @@ public class Marker extends ManageableType implements BBSupport {
         
         if(type != o.getMarkerType()) return false;
         if(markerID != o.getMarkerID()) return false;
-        if(markerColor != o.getMarkerColor()) return false;
-        if(type == MarkerType.ALLY) {
-            if(mAlly != o.getAlly()) return false;
-        } else if(type == MarkerType.TRIBE) {
-            if(mTribe != o.getTribe()) return false;
-        }
         return true;
+    }
+    
+    @Override
+    public String toString() {
+        if(type == MarkerType.ALLY) return mAlly.getName();
+        if(type == MarkerType.TRIBE) return mTribe.getName();
+        return "";
     }
 }

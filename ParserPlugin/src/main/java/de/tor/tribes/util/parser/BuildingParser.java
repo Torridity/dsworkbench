@@ -36,7 +36,7 @@ import org.apache.logging.log4j.Logger;
  * @author extremeCrazyCoder
  */
 public class BuildingParser implements SilentParserInterface {
-    private static Logger logger = LogManager.getLogger("MerchantParser");
+    private static Logger logger = LogManager.getLogger("BuildingParser");
 
     @Override
     public boolean parse(String pData) {

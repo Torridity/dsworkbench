@@ -170,7 +170,7 @@ public class TroopAmountFixed extends TroopAmount {
             int amountThis = getAmountForUnit(unit);
             int amountAdd = toAdd.getAmountForUnit(unit);
             
-            if(amountThis > 0 || amountAdd > 0) {
+            if(amountThis > -1 || amountAdd > -1) {
                 amountThis = Math.max(amountThis, 0);
                 amountAdd = Math.max(amountAdd, 0);
                 
@@ -199,7 +199,7 @@ public class TroopAmountFixed extends TroopAmount {
             int amountThis = getAmountForUnit(unit);
             int amountRemove = toRemove.getAmountForUnit(unit);
             
-            if(amountThis > 0 || amountRemove > 0) {
+            if(amountThis > -1 || amountRemove > -1) {
                 amountThis = Math.max(amountThis, 0);
                 amountRemove = Math.max(amountRemove, 0);
                 

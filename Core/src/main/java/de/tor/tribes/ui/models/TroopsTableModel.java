@@ -44,7 +44,6 @@ public class TroopsTableModel extends AbstractTableModel {
     private static Logger logger = LogManager.getLogger("TroopTable");
 
     public enum COL_CONTENT {
-
         TRIBE, VILLAGE, LAST_CHANGE, SPEAR, SWORD, AXE, ARCHER, SPY, LIGHT, MARCHER, HEAVY, RAM, CATA, KNIGHT, MILITIA, SNOB, OFF, DEF, DEF_CAV, DEF_ARCH, OUTSIDE, INSIDE, FARM
     }
     private String sSet = null;

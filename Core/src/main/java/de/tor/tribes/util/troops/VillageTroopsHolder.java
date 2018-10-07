@@ -49,6 +49,7 @@ public class VillageTroopsHolder extends ManageableType implements BBSupport {
     @Override
     public Element toXml(String elementName) {
         Element troopInfo = new Element(elementName);
+        troopInfo.setAttribute("type", "normal");
         troopInfo.addContent(new Element("id").setText(Integer.toString(village.getId())));
         troopInfo.addContent(new Element("state").setText(Long.toString(state.getTime())));
         troopInfo.addContent(troops.toXml("troops"));

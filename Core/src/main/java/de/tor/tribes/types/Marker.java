@@ -226,8 +226,18 @@ public class Marker extends ManageableType implements BBSupport {
     
     @Override
     public String toString() {
-        if(type == MarkerType.ALLY) return mAlly.getName();
-        if(type == MarkerType.TRIBE) return mTribe.getName();
+        if(type == MarkerType.ALLY) {
+            if(mAlly != null)
+                return mAlly.getName();
+            else
+                logger.warn("not fully initialized Ally marker found {}", markerID);
+        }
+        if(type == MarkerType.TRIBE) {
+            if(mTribe != null)
+                return mTribe.getName();
+            else
+                logger.warn("not fully initialized Tribe marker found {}", markerID);
+        }
         return "";
     }
 }

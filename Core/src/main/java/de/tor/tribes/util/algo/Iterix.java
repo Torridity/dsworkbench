@@ -538,7 +538,9 @@ public class Iterix extends AbstractAttackAlgorithm {
             }
         }
         swap += (System.currentTimeMillis() - s);
-        selectedSource = sourceIdx;
+        
+        //use modulo becaus pMappings contains each source once per unit
+        selectedSource = sourceIdx % pSources.size();
         selectedTarget = targetID;
 
         if (recurse && !isAborted()) {

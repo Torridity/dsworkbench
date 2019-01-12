@@ -1,0 +1,643 @@
+de/tor/tribes/control/GenericManager.java	Abstract Class for managing elements (used everywhere)
+de/tor/tribes/control/GenericManagerListener.java	Listener for GenericManager
+de/tor/tribes/control/ManageableType.java	Interface for GenericManager
+
+de/tor/tribes/io/DataHolder.java	Class that stores Villages / Allies
+de/tor/tribes/io/DataHolderListener.java	Listener for DataHolder
+de/tor/tribes/io/ServerManager.java	Class that stores Information about a server
+de/tor/tribes/io/TroopAmountDynamic.java	Holds a Dynamic TroopAmount (Map of TroopAmountElements)
+de/tor/tribes/io/TroopAmountElement.java	Element to Store / Parse a single DynTroopAmount
+de/tor/tribes/io/TroopAmountFixed.java	Holds a Fixed Troop Amount
+de/tor/tribes/io/TroopAmount.java	Abstract class für Dyn / Fixed Troop Amounts
+de/tor/tribes/io/UnitHolder.java	Stores Information about a Unit
+de/tor/tribes/io/WorldDecorationHolder.java	Stores / Loads the World Decoration
+
+de/tor/tribes/php/LuckViewInterface.java	Link to http://torridity.de/tools/luckView.php?luck= (used in FightReport)
+de/tor/tribes/php/UnitTableInterface.java	Link to http://torridity.de/tools/unitTable.php?in= (used in FightReport/SOSRequestAnalyzer/SupportRefillSettingsPanel)
+
+Statistics
+de/tor/tribes/types/AllyStatResult.java	Class for stats of allies (used in ReportFrame/OverallStatResult/BBCodeEditor/AllyReportStatsFormater)
+de/tor/tribes/types/FightStats.java	Stores Stats got From Reports
+de/tor/tribes/types/OverallStatResult.java	Class for Stats from Reports
+de/tor/tribes/types/SingleAttackerStat.java	Class for Stats from Reports (third.??? reduce!)
+de/tor/tribes/types/TribeStatResult.java	Class for Stats from Reports (fourth.??? reduce!)
+de/tor/tribes/types/TribeStatsElement.java	Class for Stats from Reports (fifth.??? reduce!)
+SOS
+de/tor/tribes/types/Attack.java	something like the TroopMovement class (search for diffs an maybe remove)
+de/tor/tribes/types/DefenseInformation.java	Something for SOS Analyzer / SOS Manager
+de/tor/tribes/types/Defense.java	Something for SOS Analyzer / SOS Manager
+de/tor/tribes/types/DefenseTask.java	Something for SOS Analyzer / SOS Manager
+de/tor/tribes/types/SOSRequest.java	Creates / (Stores?) a SOS Request
+de/tor/tribes/types/SupportType.java	stores information about a Support don't know what for? (Used at SupportTableModel/SupportDirectionRenderer/SupportDetailsDialog)
+de/tor/tribes/types/TargetInformation.java	Has something to do with SOS Analyzer
+Groups (TAGs)
+de/tor/tribes/types/LinkedTag.java	Subclass of Tag has something to do with Groups (purpose??)
+de/tor/tribes/types/NoTag.java	Subclass of Tag has something to do with Groups (purpose??)
+de/tor/tribes/types/Tag.java	Stores a group
+de/tor/tribes/types/TagMapMarker.java	Stores Icon & Colour of Tag (used at TagFrame for Rendering, but why??)
+
+de/tor/tribes/types/Conquer.java	Stores a Conquer that happened (maybe move somewhere else)
+de/tor/tribes/types/FarmInformation.java	Stores information about a Farm (FarmManager)
+de/tor/tribes/types/FightReport.java	Stores a FightReport (ReportManager)
+de/tor/tribes/types/ImpossibleSnobUnit.java	Unit to indicate that it is sure no SNOB (mostly because of Distance) ; (why here???!)
+de/tor/tribes/types/Marker.java	Stores a Marked Player / Ally
+de/tor/tribes/types/Note.java	Stores a Note with Villages
+de/tor/tribes/types/Resource.java	Stores the Value of a Resource (used in div. Transport Classes but why??)
+de/tor/tribes/types/StandardAttack.java	Stores a StandardAttack needed to use Manager
+de/tor/tribes/types/StorageStatus.java	Stored how big & full a Storage is used at ResourceDistributor & Farmmanager
+de/tor/tribes/types/TimedAttack.java	Has something to do with SOS Analyzer
+de/tor/tribes/types/TimeSpanDivider.java	something for TimeSpan (used in AttackTimePanel) look if really needed
+de/tor/tribes/types/TimeSpan.java	used at TAP for Send Arrive time selection 
+de/tor/tribes/types/Transport.java	used at Ressource Distributor as sub Class ExtendedTransport (remove one of them)
+de/tor/tribes/types/TroopFilterElement.java	Stores a troop Filter only used in TroopFilterDialog (move somewhere else)
+de/tor/tribes/types/TroopMovement.java	Stores a (planned) troop Movement
+de/tor/tribes/types/TroopSplit.java	Class to create splits from troop amounts (useless??) mabe implement function in DSCalculator or something like that
+de/tor/tribes/types/UnknownUnit.java	Unit to indicate that the unit is unknown (maybe just replace with null)
+de/tor/tribes/types/UserProfile.java	Stores a User Profile
+de/tor/tribes/types/VillageMerchantInfo.java	Class for Ressource Distributor
+
+de/tor/tribes/types/drawing/AbstractForm.java	"SuperClass" for all drawings
+de/tor/tribes/types/drawing/Arrow.java	Arrow drawing
+de/tor/tribes/types/drawing/Circle.java	Circle drawing
+de/tor/tribes/types/drawing/FreeForm.java	FreeForm drawing
+de/tor/tribes/types/drawing/Line.java	Line drawing
+de/tor/tribes/types/drawing/Rectangle.java	Rectangle drawing
+de/tor/tribes/types/drawing/Text.java	Text drawing
+
+de/tor/tribes/types/ext/Ally.java	Ally Parsed from Server Data (move to tribes/types/io ?)
+de/tor/tribes/types/ext/BarbarianAlly.java	Ally to indicate Barbarians
+de/tor/tribes/types/ext/Barbarians.java	Tribe (Player) to indicate Barbarians
+de/tor/tribes/types/ext/InvalidTribe.java	Tribe to indicate that this player does not exists
+de/tor/tribes/types/ext/NoAlly.java	Ally to indicate absence of ally
+de/tor/tribes/types/ext/Tribe.java	Stores information about a player
+de/tor/tribes/types/ext/Village.java	Stores information about a village
+
+de/tor/tribes/ui/ImageManager.java	Stores alls images
+de/tor/tribes/ui/LayerOrderConfigurationFrame.java	Window to re arrange Layer order (should be at views / windows)
+de/tor/tribes/ui/MapPanelListener.java	Listener for scroll (drag?) Events of main Map
+de/tor/tribes/ui/MinimapListener.java	Listener for Location Updates from minimap (currently not used? but why???)
+de/tor/tribes/ui/RibbonConfigurator.java	Class that creates the Main Interface (Buttons / Tabs)
+de/tor/tribes/ui/RibbonLayoutConstants.java	Helper Class for RibbonConfigurator won't work without
+de/tor/tribes/ui/UnitOrderBuilder.java	Shows Runtime Windows (should be at views / windows)
+
+de/tor/tribes/ui/algo/AttackTimePanel.java	used at time setting at TAP maybe merge with that form
+de/tor/tribes/ui/algo/SettingsChangedListener.java	Listener for AttackTimePanel Settings
+
+de/tor/tribes/ui/components/CapabilityInfoPanel.java	Panel for div. C&P actions
+de/tor/tribes/ui/components/ClickAccountPanel.java	Panel for the clickAccount
+de/tor/tribes/ui/components/CollapseExpandTrigger.java	Points on the side (check! not sure?) used in genericTestPanel/TroopSplitDialog  implement in genericTestPanel and build TroopSplitDialog with this
+de/tor/tribes/ui/components/ColoredProgressBar.java	generates a colored progress bar
+de/tor/tribes/ui/components/CoordinateSpinner.java	generates a coordinate input field 
+de/tor/tribes/ui/components/CrossedLabel.java	Label with optional red x in middle used in DatePicker/TimePicker (remove with them)
+de/tor/tribes/ui/components/DatePicker.java	Picker for DateTimeField
+de/tor/tribes/ui/components/DateTimeField.java	Used to show / modify time information (replace with something from libs)
+de/tor/tribes/ui/components/FillingLabel.java	Label that shows "filled" rectangles used at storageCellRender (merge with this)
+de/tor/tribes/ui/components/GroupSelectionList.java	UI element for selecting Village groups
+de/tor/tribes/ui/components/IconizedList.java	some sort of specific list that can show icons used in VillageSelctionPanel
+de/tor/tribes/ui/components/JOutlookBar.java	class is a tabbed pane with another design used at main window for map settings
+de/tor/tribes/ui/components/LayerOrderPanel.java	panel for user to change draw order of layers
+de/tor/tribes/ui/components/ProfileQuickChangePanel.java	panel for fast profile changes used in places where commands are sent
+de/tor/tribes/ui/components/ReportInfoPanel.java	panel with icons indicating type of report / damage done
+de/tor/tribes/ui/components/TimePicker.java	Picker for DateTimeField
+de/tor/tribes/ui/components/TimerPanel.java	Panel that shows a timer used at clock frame (inside List)
+de/tor/tribes/ui/components/VillageOverviewMapPanel.java	Panel that shows villages on map (minimap style) 
+de/tor/tribes/ui/components/VillageSelectionPanel.java	Generic Panel used everywhere to select villages (own / enemy)
+de/tor/tribes/ui/components/WelcomePanel.java	Page shown after first sucessfull startup (to welcome new users)
+
+de/tor/tribes/ui/decorator/GroupPredicate.java	Something for filtering at TroopTableTab
+
+de/tor/tribes/ui/dnd/VillageTransferable.java	used at main Frame (Map) for village Drag&Drop (also multi) only NO_CURSOR
+
+de/tor/tribes/ui/editors/BBPanelCellEditor.java	used at NoteFrame for Editing
+de/tor/tribes/ui/editors/ColorChooserCellEditor.java	used at MarkerTableTab/DSWorkbenchSettingsDialog for colour editing
+de/tor/tribes/ui/editors/CustomCheckBoxEditor.java	used to generate Table cell editors with custom pics
+de/tor/tribes/ui/editors/DateSpinEditor.java	used at AttackTableTab/DoItYourselfAttackPlaner for Date editing
+de/tor/tribes/ui/editors/LinkGroupColorCellEditor.java	used subframe of TagFrame (to combine Groups) at the Table
+de/tor/tribes/ui/editors/MultiBooleanTableCellEditor.java	editor for LinkGroupColorCellEditor (merge with that)
+de/tor/tribes/ui/editors/NoteIconCellEditor.java	has not very much to do with notes used to edit general icons
+de/tor/tribes/ui/editors/StandardAttackElementEditor.java	editor for StandardAttackElements (Dyn) simply a text field
+de/tor/tribes/ui/editors/TagMapMarkerCellEditor.java	used at tagFrame (groups) for editing colour&icon
+de/tor/tribes/ui/editors/TagMapMarkerEditorImpl.java	the real editor implentation for TagMapMarkerCellEditor
+de/tor/tribes/ui/editors/UnitCellEditor.java	editor for unit-table rows basically comboBox used (attackTableTab/DIY AttackPlanner)
+de/tor/tribes/ui/editors/VillageCellEditor.java	editor for village-table rows basically comboBox (attackTableTab/DIY AttackPlanner)
+
+Idee Interface (Tablepart oder sowas ähnliches) -> ein Modell für alle Tabellen
+de/tor/tribes/ui/models/AttackTableModel.java
+de/tor/tribes/ui/models/AttackTypeTableModel.java
+de/tor/tribes/ui/models/ChurchTableModel.java
+de/tor/tribes/ui/models/ConquerTableModel.java
+de/tor/tribes/ui/models/CoordinateSpinnerModel.java	spinner model for coordinate Selection
+de/tor/tribes/ui/models/DefenseToolModel.java
+de/tor/tribes/ui/models/DEPFilterTableModel.java
+de/tor/tribes/ui/models/DEPResultTableModel.java
+de/tor/tribes/ui/models/DEPSourceTableModel.java
+de/tor/tribes/ui/models/DistanceTableModel.java
+de/tor/tribes/ui/models/DoItYourselfAttackTableModel.java
+de/tor/tribes/ui/models/FarmTableModel.java
+de/tor/tribes/ui/models/FormTableModel.java
+de/tor/tribes/ui/models/MarkerTableModel.java
+de/tor/tribes/ui/models/NoteTableModel.java
+de/tor/tribes/ui/models/REDExtendedMerchantTableModel.java
+de/tor/tribes/ui/models/REDFinalDistributionTableModel.java
+de/tor/tribes/ui/models/REDFinalTransportsTableModel.java
+de/tor/tribes/ui/models/REDSourceTableModel.java
+de/tor/tribes/ui/models/REFResultTableModel.java
+de/tor/tribes/ui/models/REFSettingsTableModel.java
+de/tor/tribes/ui/models/REFSourceTableModel.java
+de/tor/tribes/ui/models/REFTargetTableModel.java
+de/tor/tribes/ui/models/ReportManagerTableModel.java
+de/tor/tribes/ui/models/RETAttackTableModel.java
+de/tor/tribes/ui/models/RETResultTableModel.java
+de/tor/tribes/ui/models/RETSourceFilterTableModel.java
+de/tor/tribes/ui/models/RETSourceTableModel.java
+de/tor/tribes/ui/models/SupportsModel.java
+de/tor/tribes/ui/models/SupportTableModel.java
+de/tor/tribes/ui/models/TagLinkMatrixModel.java
+de/tor/tribes/ui/models/TagTableModel.java
+de/tor/tribes/ui/models/TAPResultDetailsTableModel.java
+de/tor/tribes/ui/models/TAPResultTableModel.java
+de/tor/tribes/ui/models/TAPSourceFilterTableModel.java
+de/tor/tribes/ui/models/TAPSourceTableModel.java
+de/tor/tribes/ui/models/TAPTargetFilterTableModel.java
+de/tor/tribes/ui/models/TAPTargetTableModel.java
+de/tor/tribes/ui/models/TroopsTableModel.java
+de/tor/tribes/ui/models/WatchtowerTableModel.java
+
+de/tor/tribes/ui/panels/AttackTableTab.java	used only in DSWorkbenchAttackFrame maybe merge?
+de/tor/tribes/ui/panels/BBPanel.java	panel for displaying / editing BB-Codes
+de/tor/tribes/ui/panels/FormSamplePanel.java	used only in FormConfigFrame for preview merge?
+de/tor/tribes/ui/panels/GenericTestPanel.java	panel for collapsing elements (on the right)
+de/tor/tribes/ui/panels/MapPanel.java	panel for displaying main map (needs to be rewritten because of bad double Buffering)
+de/tor/tribes/ui/panels/MarkerTableTab.java	used only in DSWorkbenchMarkerFrame maybe merge?
+de/tor/tribes/ui/panels/MinimapPanel.java	panel for displaying mini-map
+de/tor/tribes/ui/panels/NoteTableTab.java	used only in DSWorkbenchNotepad maybe merge?
+de/tor/tribes/ui/panels/RankTableTab.java	used only in DSWorkbenchRankFrame maybe merge?
+de/tor/tribes/ui/panels/ReportTableTab.java	used in DSWorkbenchReportFrame/ReportShowDialog maybe merge?
+de/tor/tribes/ui/panels/ScreenshotPanel.java	used only in MinimapPanel maybe merge? / use also for normal map screenshots?
+de/tor/tribes/ui/panels/TAPAttackInfoPanel.java	panel for displaying Attack number in Tactic Planner
+de/tor/tribes/ui/panels/TroopSelectionPanelDynamic.java	panel to insert a Dynamic Troop Amount (used only in Farmmanager)
+de/tor/tribes/ui/panels/TroopSelectionPanelFixed.java	panel to insert a Fixed Troop Amount (used only in SupportRefillSettingsPanel)
+de/tor/tribes/ui/panels/TroopSelectionPanel.java	parent class for TroopSelectionPanelDynamic & Fixed (merge?)
+de/tor/tribes/ui/panels/TroopTableTab.java	panel for DSWorkbenchTroopsFrame (to view / change the troop informations)
+	
+de/tor/tribes/ui/renderer/BBCellRenderer.java	Renders a Cell with BB-Code content
+de/tor/tribes/ui/renderer/ColorCellRenderer.java	Renders a colour
+de/tor/tribes/ui/renderer/ColoredCoutdownCellRenderer.java	Renders coundown cells at Attack overview (& DIY Planner)
+de/tor/tribes/ui/renderer/ColoredDateCellRenderer.java	Renders start & end time cells at Attack overview (& DIY Planner)
+de/tor/tribes/ui/renderer/CustomBooleanRenderer.java	render for a boolean cell
+de/tor/tribes/ui/renderer/DateCellRenderer.java	Renders a date
+de/tor/tribes/ui/renderer/DefaultTableHeaderRenderer.java	renders all table headers
+de/tor/tribes/ui/renderer/DefenseStatusTableCellRenderer.java	render for SOS Status
+de/tor/tribes/ui/renderer/DistanceTableCellRenderer.java	renderer for DistanceFrame
+de/tor/tribes/ui/renderer/EnumImageCellRenderer.java	renders a cell with enum type (uses defined Images for that enums)
+de/tor/tribes/ui/renderer/GroupListCellRenderer.java	renders a group in experts View (e.g. tap)
+de/tor/tribes/ui/renderer/LossRatioTableCellRenderer.java	renders a coloured Progress bar (SOS)
+de/tor/tribes/ui/renderer/MarkerPanelCellRenderer.java	renders a marker cell (name / type of marker)
+de/tor/tribes/ui/renderer/MultiColorCellRenderer.java
+de/tor/tribes/ui/renderer/MultiColorLabel.java
+de/tor/tribes/ui/renderer/NoteIconCellRenderer.java
+de/tor/tribes/ui/renderer/NoteIconListCellRenderer.java
+de/tor/tribes/ui/renderer/NumberFormatCellRenderer.java
+de/tor/tribes/ui/renderer/PercentCellRenderer.java
+de/tor/tribes/ui/renderer/ProfileTreeNodeRenderer.java
+de/tor/tribes/ui/renderer/ReportWallCataCellRenderer.java	uses panel for final rendering merge!!!
+de/tor/tribes/ui/renderer/SortableTableHeaderRenderer.java
+de/tor/tribes/ui/renderer/StandardAttackTypeCellRenderer.java	do changes like in List cell render to be more compatible
+de/tor/tribes/ui/renderer/StandardAttackListCellRender.java	render for slection of lists
+de/tor/tribes/ui/renderer/StorageCellRenderer.java		uses Filling label for rendering (merge?)
+de/tor/tribes/ui/renderer/SupportTableHeaderRenderer.java
+de/tor/tribes/ui/renderer/TagMapMarkerRenderer.java
+de/tor/tribes/ui/renderer/TendencyTableCellRenderer.java
+de/tor/tribes/ui/renderer/TimeFrameListCellRenderer.java
+de/tor/tribes/ui/renderer/TradeDirectionCellRenderer.java
+de/tor/tribes/ui/renderer/TransportCellRenderer.java
+de/tor/tribes/ui/renderer/TribeCellRenderer.java
+de/tor/tribes/ui/renderer/TroopAmountListCellRenderer.java
+de/tor/tribes/ui/renderer/TroopSplitListCellRenderer.java
+de/tor/tribes/ui/renderer/TroopTableHeaderRenderer.java
+de/tor/tribes/ui/renderer/UnitCellRenderer.java
+de/tor/tribes/ui/renderer/UnitListCellRenderer.java
+de/tor/tribes/ui/renderer/UnitTableHeaderRenderer.java
+de/tor/tribes/ui/renderer/VillageCellRenderer.java
+de/tor/tribes/ui/renderer/VisibilityCellRenderer.java
+de/tor/tribes/ui/renderer/WallLevellCellRenderer.java
+
+de/tor/tribes/ui/renderer/map/AbstractBufferedLayerRenderer.java
+de/tor/tribes/ui/renderer/map/AbstractDirectLayerRenderer.java
+de/tor/tribes/ui/renderer/map/AnimatedVillageInfoRenderer.java
+de/tor/tribes/ui/renderer/map/AttackLayerRenderer.java
+de/tor/tribes/ui/renderer/map/ChurchLayerRenderer.java
+de/tor/tribes/ui/renderer/map/FarmLayerRenderer.java
+de/tor/tribes/ui/renderer/map/FormLayerRenderer.java
+de/tor/tribes/ui/renderer/map/MapLayerRenderer.java
+de/tor/tribes/ui/renderer/map/MapRenderer.java
+de/tor/tribes/ui/renderer/map/NoteLayerRenderer.java
+de/tor/tribes/ui/renderer/map/RenderSettings.java
+de/tor/tribes/ui/renderer/map/SupportLayerRenderer.java
+de/tor/tribes/ui/renderer/map/TagMarkerLayerRenderer.java
+de/tor/tribes/ui/renderer/map/TroopDensityLayerRenderer.java
+de/tor/tribes/ui/renderer/map/WatchtowerLayerRenderer.java
+
+de/tor/tribes/ui/tree/AbstractTreeNode.java
+de/tor/tribes/ui/tree/AllyNode.java
+de/tor/tribes/ui/tree/ContinentNode.java
+de/tor/tribes/ui/tree/NodeCellRenderer.java
+de/tor/tribes/ui/tree/SelectionTreeRootNode.java
+de/tor/tribes/ui/tree/TagNode.java
+de/tor/tribes/ui/tree/TribeNode.java
+de/tor/tribes/ui/tree/VillageNode.java
+
+de/tor/tribes/ui/TwoD/ShapeStroke.java
+
+de/tor/tribes/ui/util/ColorGradientHelper.java
+
+de/tor/tribes/ui/views/DSWorkbenchAttackFrame.form
+de/tor/tribes/ui/views/DSWorkbenchAttackFrame.java
+de/tor/tribes/ui/views/DSWorkbenchChurchFrame.form
+de/tor/tribes/ui/views/DSWorkbenchChurchFrame.java
+de/tor/tribes/ui/views/DSWorkbenchConquersFrame.form
+de/tor/tribes/ui/views/DSWorkbenchConquersFrame.java
+de/tor/tribes/ui/views/DSWorkbenchDistanceFrame.form
+de/tor/tribes/ui/views/DSWorkbenchDistanceFrame.java
+de/tor/tribes/ui/views/DSWorkbenchDoItYourselfAttackPlaner.form
+de/tor/tribes/ui/views/DSWorkbenchDoItYourselfAttackPlaner.java
+de/tor/tribes/ui/views/DSWorkbenchFarmManager.form
+de/tor/tribes/ui/views/DSWorkbenchFarmManager.java
+de/tor/tribes/ui/views/DSWorkbenchFormFrame.form
+de/tor/tribes/ui/views/DSWorkbenchFormFrame.java
+de/tor/tribes/ui/views/DSWorkbenchMarkerFrame.form
+de/tor/tribes/ui/views/DSWorkbenchMarkerFrame.java
+de/tor/tribes/ui/views/DSWorkbenchNotepad.form
+de/tor/tribes/ui/views/DSWorkbenchNotepad.java
+de/tor/tribes/ui/views/DSWorkbenchProfileDialog.form
+de/tor/tribes/ui/views/DSWorkbenchProfileDialog.java
+de/tor/tribes/ui/views/DSWorkbenchRankFrame.form
+de/tor/tribes/ui/views/DSWorkbenchRankFrame.java
+de/tor/tribes/ui/views/DSWorkbenchReportFrame.form
+de/tor/tribes/ui/views/DSWorkbenchReportFrame.java
+de/tor/tribes/ui/views/DSWorkbenchSearchFrame.form
+de/tor/tribes/ui/views/DSWorkbenchSearchFrame.java
+de/tor/tribes/ui/views/DSWorkbenchSelectionFrame.form
+de/tor/tribes/ui/views/DSWorkbenchSelectionFrame.java
+de/tor/tribes/ui/views/DSWorkbenchSettingsDialog.form
+de/tor/tribes/ui/views/DSWorkbenchSettingsDialog.java
+de/tor/tribes/ui/views/DSWorkbenchSOSRequestAnalyzer.form
+de/tor/tribes/ui/views/DSWorkbenchSOSRequestAnalyzer.java
+de/tor/tribes/ui/views/DSWorkbenchStatsFrame.form
+de/tor/tribes/ui/views/DSWorkbenchStatsFrame.java
+de/tor/tribes/ui/views/DSWorkbenchTagFrame.form
+de/tor/tribes/ui/views/DSWorkbenchTagFrame.java
+de/tor/tribes/ui/views/DSWorkbenchTroopsFrame.form
+de/tor/tribes/ui/views/DSWorkbenchTroopsFrame.java
+de/tor/tribes/ui/views/DSWorkbenchWatchtowerFrame.form
+de/tor/tribes/ui/views/DSWorkbenchWatchtowerFrame.java
+de/tor/tribes/ui/views/TroopSetupConfigurationFrame.form
+de/tor/tribes/ui/views/TroopSetupConfigurationFrame.java
+
+de/tor/tribes/ui/windows/AboutDialog.form
+de/tor/tribes/ui/windows/AboutDialog.java
+de/tor/tribes/ui/windows/AbstractDSWorkbenchFrame.java
+de/tor/tribes/ui/windows/AttackAddFrame.form
+de/tor/tribes/ui/windows/AttackAddFrame.java
+de/tor/tribes/ui/windows/AttacksToTextExportDialog.form
+de/tor/tribes/ui/windows/AttacksToTextExportDialog.java
+de/tor/tribes/ui/windows/AttackTransferDialog.form
+de/tor/tribes/ui/windows/AttackTransferDialog.java
+de/tor/tribes/ui/windows/BBCodeEditor.form
+de/tor/tribes/ui/windows/BBCodeEditor.java
+de/tor/tribes/ui/windows/ClockFrame.form
+de/tor/tribes/ui/windows/ClockFrame.java
+de/tor/tribes/ui/windows/DSWorkbenchGesturedFrame.java
+de/tor/tribes/ui/windows/DSWorkbenchMainFrame.form
+de/tor/tribes/ui/windows/DSWorkbenchMainFrame.java
+de/tor/tribes/ui/windows/DSWorkbenchSplashScreen.form
+de/tor/tribes/ui/windows/DSWorkbenchSplashScreen.java
+de/tor/tribes/ui/windows/FarmInformationDetailsDialog.form
+de/tor/tribes/ui/windows/FarmInformationDetailsDialog.java
+de/tor/tribes/ui/windows/FatalErrorDialog.form
+de/tor/tribes/ui/windows/FatalErrorDialog.java
+de/tor/tribes/ui/windows/FormConfigFrame.form
+de/tor/tribes/ui/windows/FormConfigFrame.java
+de/tor/tribes/ui/windows/LinkTagsDialog.form
+de/tor/tribes/ui/windows/LinkTagsDialog.java
+de/tor/tribes/ui/windows/MarkerAddFrame.form
+de/tor/tribes/ui/windows/MarkerAddFrame.java
+de/tor/tribes/ui/windows/MinimapZoomFrame.form
+de/tor/tribes/ui/windows/MinimapZoomFrame.java
+de/tor/tribes/ui/windows/NotifierFrame.form
+de/tor/tribes/ui/windows/NotifierFrame.java
+de/tor/tribes/ui/windows/ReportRulesDialog.form
+de/tor/tribes/ui/windows/ReportRulesDialog.java
+de/tor/tribes/ui/windows/ReportShowDialog.form
+de/tor/tribes/ui/windows/ReportShowDialog.java
+de/tor/tribes/ui/windows/SkinPreviewFrame.form
+de/tor/tribes/ui/windows/SkinPreviewFrame.java
+de/tor/tribes/ui/windows/SupportDetailsDialog.form
+de/tor/tribes/ui/windows/SupportDetailsDialog.java
+de/tor/tribes/ui/windows/TroopDetailsDialog.form
+de/tor/tribes/ui/windows/TroopDetailsDialog.java
+de/tor/tribes/ui/windows/TroopFilterDialog.form
+de/tor/tribes/ui/windows/TroopFilterDialog.java
+de/tor/tribes/ui/windows/TroopSplitDialog.form
+de/tor/tribes/ui/windows/TroopSplitDialog.java
+de/tor/tribes/ui/windows/VillageSupportFrame.form
+de/tor/tribes/ui/windows/VillageSupportFrame.java
+de/tor/tribes/ui/windows/VillageTagFrame.form
+de/tor/tribes/ui/windows/VillageTagFrame.java
+
+de/tor/tribes/ui/wiz/AttackWizardDisplayerImpl.java
+de/tor/tribes/ui/wiz/FinishPage.form
+de/tor/tribes/ui/wiz/FinishPage.java
+de/tor/tribes/ui/wiz/FirstStartWizard.java
+de/tor/tribes/ui/wiz/NetworkSettings.form
+de/tor/tribes/ui/wiz/NetworkSettings.java
+de/tor/tribes/ui/wiz/ProxyHelper.java
+de/tor/tribes/ui/wiz/ServerSettings.form
+de/tor/tribes/ui/wiz/ServerSettings.java
+de/tor/tribes/ui/wiz/WelcomePage.form
+de/tor/tribes/ui/wiz/WelcomePage.java
+
+de/tor/tribes/ui/wiz/dep/DefenseAnalysePanel.form
+de/tor/tribes/ui/wiz/dep/DefenseAnalysePanel.java
+de/tor/tribes/ui/wiz/dep/DefenseCalculationSettingsPanel.form
+de/tor/tribes/ui/wiz/dep/DefenseCalculationSettingsPanel.java
+de/tor/tribes/ui/wiz/dep/DefenseFilterPanel.form
+de/tor/tribes/ui/wiz/dep/DefenseFilterPanel.java
+de/tor/tribes/ui/wiz/dep/DefenseFinishPanel.form
+de/tor/tribes/ui/wiz/dep/DefenseFinishPanel.java
+de/tor/tribes/ui/wiz/dep/DefensePlanerWizard.java
+de/tor/tribes/ui/wiz/dep/DefenseSourcePanel.form
+de/tor/tribes/ui/wiz/dep/DefenseSourcePanel.java
+de/tor/tribes/ui/wiz/dep/WelcomePanel.form
+de/tor/tribes/ui/wiz/dep/WelcomePanel.java
+
+de/tor/tribes/ui/wiz/dep/types/SupportSourceElement.java
+
+de/tor/tribes/ui/wiz/red/ResourceDistributorBranchController.java
+de/tor/tribes/ui/wiz/red/ResourceDistributorCalculationPanel.form
+de/tor/tribes/ui/wiz/red/ResourceDistributorCalculationPanel.java
+de/tor/tribes/ui/wiz/red/ResourceDistributorDataReadPanel.form
+de/tor/tribes/ui/wiz/red/ResourceDistributorDataReadPanel.java
+de/tor/tribes/ui/wiz/red/ResourceDistributorFinishPanel.form
+de/tor/tribes/ui/wiz/red/ResourceDistributorFinishPanel.java
+de/tor/tribes/ui/wiz/red/ResourceDistributorSettingsPanel.form
+de/tor/tribes/ui/wiz/red/ResourceDistributorSettingsPanel.java
+de/tor/tribes/ui/wiz/red/ResourceDistributorWelcomePanel.form
+de/tor/tribes/ui/wiz/red/ResourceDistributorWelcomePanel.java
+de/tor/tribes/ui/wiz/red/ResourceDistributorWizard.java
+
+de/tor/tribes/ui/wiz/red/types/ExtendedTransport.java
+
+de/tor/tribes/ui/wiz/ref/SupportRefillCalculationPanel.form
+de/tor/tribes/ui/wiz/ref/SupportRefillCalculationPanel.java
+de/tor/tribes/ui/wiz/ref/SupportRefillFinishPanel.form
+de/tor/tribes/ui/wiz/ref/SupportRefillFinishPanel.java
+de/tor/tribes/ui/wiz/ref/SupportRefillSettingsPanel.form
+de/tor/tribes/ui/wiz/ref/SupportRefillSettingsPanel.java
+de/tor/tribes/ui/wiz/ref/SupportRefillSourcePanel.form
+de/tor/tribes/ui/wiz/ref/SupportRefillSourcePanel.java
+de/tor/tribes/ui/wiz/ref/SupportRefillTargetPanel.form
+de/tor/tribes/ui/wiz/ref/SupportRefillTargetPanel.java
+
+de/tor/tribes/ui/wiz/ref/types/REFResultElement.java
+de/tor/tribes/ui/wiz/ref/types/REFSourceElement.java
+de/tor/tribes/ui/wiz/ref/types/REFTargetElement.java
+
+de/tor/tribes/ui/wiz/ret/RetimerCalculationPanel.form
+de/tor/tribes/ui/wiz/ret/RetimerCalculationPanel.java
+de/tor/tribes/ui/wiz/ret/RetimerDataPanel.form
+de/tor/tribes/ui/wiz/ret/RetimerDataPanel.java
+de/tor/tribes/ui/wiz/ret/RetimerFinishPanel.form
+de/tor/tribes/ui/wiz/ret/RetimerFinishPanel.java
+de/tor/tribes/ui/wiz/ret/RetimerSourceFilterPanel.form
+de/tor/tribes/ui/wiz/ret/RetimerSourceFilterPanel.java
+de/tor/tribes/ui/wiz/ret/RetimerSourcePanel.form
+de/tor/tribes/ui/wiz/ret/RetimerSourcePanel.java
+
+de/tor/tribes/ui/wiz/ret/types/RETSourceElement.java
+
+de/tor/tribes/ui/wiz/tap/AttackCalculationPanel.form
+de/tor/tribes/ui/wiz/tap/AttackCalculationPanel.java
+de/tor/tribes/ui/wiz/tap/AttackFinishPanel.form
+de/tor/tribes/ui/wiz/tap/AttackFinishPanel.java
+de/tor/tribes/ui/wiz/tap/AttackSourceFilterPanel.form
+de/tor/tribes/ui/wiz/tap/AttackSourceFilterPanel.java
+de/tor/tribes/ui/wiz/tap/AttackSourcePanel.form
+de/tor/tribes/ui/wiz/tap/AttackSourcePanel.java
+de/tor/tribes/ui/wiz/tap/AttackTargetFilterPanel.form
+de/tor/tribes/ui/wiz/tap/AttackTargetFilterPanel.java
+de/tor/tribes/ui/wiz/tap/AttackTargetPanel.form
+de/tor/tribes/ui/wiz/tap/AttackTargetPanel.java
+de/tor/tribes/ui/wiz/tap/TacticsPlanerBranchController.java
+de/tor/tribes/ui/wiz/tap/TacticsPlanerWizard.java
+de/tor/tribes/ui/wiz/tap/TAPWelcomePanel.form
+de/tor/tribes/ui/wiz/tap/TAPWelcomePanel.java
+de/tor/tribes/ui/wiz/tap/TimeSettingsPanel.form
+de/tor/tribes/ui/wiz/tap/TimeSettingsPanel.java
+de/tor/tribes/ui/wiz/tap/ValidationPanel.form
+de/tor/tribes/ui/wiz/tap/ValidationPanel.java
+
+de/tor/tribes/ui/wiz/tap/types/TAPAttackSourceElement.java
+de/tor/tribes/ui/wiz/tap/types/TAPAttackTargetElement.java
+
+de/tor/tribes/util/AllyUtils.java
+de/tor/tribes/util/AttackToBBCodeFormater.java
+de/tor/tribes/util/AttackToPlainTextFormatter.java
+de/tor/tribes/util/AttackToTextWriter.java
+de/tor/tribes/util/BBCodeFormatter.java
+de/tor/tribes/util/BBSupport.java
+de/tor/tribes/util/BrowserInterface.java
+de/tor/tribes/util/ClipboardWatch.java
+de/tor/tribes/util/Constants.java
+de/tor/tribes/util/CoordinateFormatter.java
+de/tor/tribes/util/DebugLogger.java
+de/tor/tribes/util/DefenseAnalyzer.java
+de/tor/tribes/util/DSCalculator.java
+de/tor/tribes/util/EscapeChars.java
+de/tor/tribes/util/FilterableManager.java
+de/tor/tribes/util/Filter.java
+de/tor/tribes/util/GenericParserInterface.java
+de/tor/tribes/util/GithubVersionCheck.java
+de/tor/tribes/util/GlobalDefaults.java
+de/tor/tribes/util/GlobalOptions.java
+de/tor/tribes/util/ImageUtils.java
+de/tor/tribes/util/Intersection.java
+de/tor/tribes/util/JOptionPaneHelper.java
+de/tor/tribes/util/MainShutdownHook.java
+de/tor/tribes/util/MouseGestureHandler.java
+de/tor/tribes/util/OBSTReportSender.java
+de/tor/tribes/util/PatchFontMetrics.java
+de/tor/tribes/util/PluginManager.java
+de/tor/tribes/util/ProfileManager.java
+de/tor/tribes/util/PropertyHelper.java
+de/tor/tribes/util/RegExFormatter.java
+de/tor/tribes/util/RegExpHelper.java
+de/tor/tribes/util/ReportServer.java
+de/tor/tribes/util/ResourceComparator.java
+de/tor/tribes/util/ScreenshotSaver.java
+de/tor/tribes/util/ServerSettings.java
+de/tor/tribes/util/SilentParserInterface.java
+de/tor/tribes/util/Skin.java
+de/tor/tribes/util/SlashComparator.java
+de/tor/tribes/util/SplitSetHelper.java
+de/tor/tribes/util/StringHelper.java
+de/tor/tribes/util/SupportCalculator.java
+de/tor/tribes/util/SystrayHelper.java
+de/tor/tribes/util/TableHelper.java
+de/tor/tribes/util/TagUtils.java
+de/tor/tribes/util/ThreadDeadlockDetector.java
+de/tor/tribes/util/TribeUtils.java
+de/tor/tribes/util/TroopHelper.java
+de/tor/tribes/util/UIHelper.java
+de/tor/tribes/util/VillageUtils.java
+
+de/tor/tribes/util/algo/AbstractAttackAlgorithm.java
+de/tor/tribes/util/algo/AlgorithmListener.java
+de/tor/tribes/util/algo/BruteForce.java
+de/tor/tribes/util/algo/ChurchRangeCalculator.java
+de/tor/tribes/util/algo/DefenseBruteForce.java
+de/tor/tribes/util/algo/DefenseCalculator.java
+de/tor/tribes/util/algo/Iterix.java
+de/tor/tribes/util/algo/MerchantDistributor.java
+de/tor/tribes/util/algo/Optex.java
+
+de/tor/tribes/util/algo/types/AttackDestination.java
+de/tor/tribes/util/algo/types/AttackSource.java
+de/tor/tribes/util/algo/types/Coordinate.java
+de/tor/tribes/util/algo/types/Destination.java
+de/tor/tribes/util/algo/types/DistanceMapping.java
+de/tor/tribes/util/algo/types/MerchantDestination.java
+de/tor/tribes/util/algo/types/MerchantSource.java
+de/tor/tribes/util/algo/types/OffVillage.java
+de/tor/tribes/util/algo/types/Order.java
+de/tor/tribes/util/algo/types/Source.java
+de/tor/tribes/util/algo/types/TargetVillage.java
+de/tor/tribes/util/algo/types/TimeFrame.java
+de/tor/tribes/util/algo/types/Village.java
+
+de/tor/tribes/util/attack/AttackManager.java
+de/tor/tribes/util/attack/AttackManagerListener.java
+de/tor/tribes/util/attack/StandardAttackManager.java
+
+de/tor/tribes/util/bb/AllyReportStatsFormatter.java
+de/tor/tribes/util/bb/AttackListFormatter.java
+de/tor/tribes/util/bb/BasicFormatter.java
+de/tor/tribes/util/bb/DefStatsFormatter.java
+de/tor/tribes/util/bb/FormListFormatter.java
+de/tor/tribes/util/bb/KillStatsFormatter.java
+de/tor/tribes/util/bb/MarkerListFormatter.java
+de/tor/tribes/util/bb/NoteListFormatter.java
+de/tor/tribes/util/bb/OverallReportStatsFormatter.java
+de/tor/tribes/util/bb/PointStatsFormatter.java
+de/tor/tribes/util/bb/ReportListFormatter.java
+de/tor/tribes/util/bb/SosListFormatter.java
+de/tor/tribes/util/bb/TagListFormatter.java
+de/tor/tribes/util/bb/TribeReportStatsFormatter.java
+de/tor/tribes/util/bb/TroopListFormatter.java
+de/tor/tribes/util/bb/VillageListFormatter.java
+de/tor/tribes/util/bb/WinnerLoserStatsFormatter.java
+
+de/tor/tribes/util/conquer/AllyFilter.java
+de/tor/tribes/util/conquer/ConquerFilterInterface.java
+de/tor/tribes/util/conquer/ConquerManager.java
+de/tor/tribes/util/conquer/ConquerManagerListener.java
+de/tor/tribes/util/conquer/ContinentFilter.java
+de/tor/tribes/util/conquer/InternalEnoblementFilter.java
+de/tor/tribes/util/conquer/OwnEnoblementFilter.java
+de/tor/tribes/util/conquer/TribeFilter.java
+
+de/tor/tribes/util/dist/DistanceManager.java
+
+de/tor/tribes/util/dsreal/DSRealManager.java
+
+de/tor/tribes/util/dsreal/ui/ChartPanel.form
+de/tor/tribes/util/dsreal/ui/ChartPanel.java
+
+de/tor/tribes/util/farm/FarmManager.java
+
+de/tor/tribes/util/generator/ui/ReportGenerator.form
+de/tor/tribes/util/generator/ui/ReportGenerator.java
+de/tor/tribes/util/generator/ui/SOSGenerator.form
+de/tor/tribes/util/generator/ui/SOSGenerator.java
+
+de/tor/tribes/util/html/AttackPlanHTMLExporter.java
+de/tor/tribes/util/html/FightReportHTMLToolTipGenerator.java
+de/tor/tribes/util/html/SelectionHTMLExporter.java
+de/tor/tribes/util/html/VillageHTMLTooltipGenerator.java
+
+de/tor/tribes/util/interfaces/BBChangeListener.java
+de/tor/tribes/util/interfaces/BBFormatterInterface.java
+de/tor/tribes/util/interfaces/DSWorkbenchFrameListener.java
+de/tor/tribes/util/interfaces/LayerOrderTooltipListener.java
+de/tor/tribes/util/interfaces/MapShotListener.java
+de/tor/tribes/util/interfaces/ProfileManagerListener.java
+de/tor/tribes/util/interfaces/ServerChangeListener.java
+de/tor/tribes/util/interfaces/ToolChangeListener.java
+de/tor/tribes/util/interfaces/VillageSelectionListener.java
+
+de/tor/tribes/util/js/AttackScriptWriter.java
+
+de/tor/tribes/util/map/FormManager.java
+
+de/tor/tribes/util/mark/MarkerManager.java
+de/tor/tribes/util/mark/MarkerManagerListener.java
+
+de/tor/tribes/util/note/NoteManager.java
+
+de/tor/tribes/util/report/AgeFilter.java
+de/tor/tribes/util/report/AttackerAllyFilter.java
+de/tor/tribes/util/report/AttackerFilter.java
+de/tor/tribes/util/report/CataFilter.java
+de/tor/tribes/util/report/ColorFilter.java
+de/tor/tribes/util/report/ConqueredFilter.java
+de/tor/tribes/util/report/DateFilter.java
+de/tor/tribes/util/report/DefenderAllyFilter.java
+de/tor/tribes/util/report/DefenderFilter.java
+de/tor/tribes/util/report/FakeFilter.java
+de/tor/tribes/util/report/FarmReportFilter.java
+de/tor/tribes/util/report/OffFilter.java
+de/tor/tribes/util/report/ReportManager.java
+de/tor/tribes/util/report/ReportManagerListener.java
+de/tor/tribes/util/report/ReportRuleConfigurationException.java
+de/tor/tribes/util/report/ReportRuleInterface.java
+de/tor/tribes/util/report/ReportStatBuilder.java
+de/tor/tribes/util/report/WallFilter.java
+
+de/tor/tribes/util/roi/ROIManager.java
+
+de/tor/tribes/util/sos/SOSManager.java
+
+de/tor/tribes/util/stat/StatManager.java
+
+de/tor/tribes/util/support/SOSFormater.java
+
+de/tor/tribes/util/tag/TagManager.java
+de/tor/tribes/util/tag/TagManagerListener.java
+
+de/tor/tribes/util/troops/SupportVillageTroopsHolder.java
+de/tor/tribes/util/troops/TroopsFilterInterface.java
+de/tor/tribes/util/troops/TroopsManager.java
+de/tor/tribes/util/troops/TroopsManagerListener.java
+de/tor/tribes/util/troops/TroopsTagFilter.java
+de/tor/tribes/util/troops/VillageTroopsHolder.java
+
+de/tor/tribes/util/village/KnownVillage.java
+de/tor/tribes/util/village/KnownVillageManager.java
+
+de/tor/tribes/util/xml/JaxenUtils.java
+
+de/tor/tribes/util/parser/DiplomacyParser.java
+de/tor/tribes/util/parser/GroupParser70.java
+de/tor/tribes/util/parser/GroupParser.java
+de/tor/tribes/util/parser/MerchantParser.java
+de/tor/tribes/util/parser/MovementParser.java
+de/tor/tribes/util/parser/NonPAPlaceParser.java
+de/tor/tribes/util/parser/OBSTReportParser.java
+de/tor/tribes/util/parser/OBSTServerReportHandler.java
+de/tor/tribes/util/parser/ParserVariableManager.java
+de/tor/tribes/util/parser/ReportParser.java
+de/tor/tribes/util/parser/SOSParser.java
+de/tor/tribes/util/parser/SupportParser.java
+de/tor/tribes/util/parser/TroopsParser70.java
+de/tor/tribes/util/parser/TroopsParser.java
+de/tor/tribes/util/parser/VillageParser.java

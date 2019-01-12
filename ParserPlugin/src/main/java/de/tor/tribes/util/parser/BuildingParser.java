@@ -89,7 +89,7 @@ public class BuildingParser implements SilentParserInterface {
                 
                 if(logger.isDebugEnabled()) {
                     StringBuilder s = new StringBuilder();
-                    s.append("Gefunden:");
+                    s.append("Got:");
                     for(int i = 0; i < levels.length; i++) {
                         s.append(" ").append(levels[i]);
                     }
@@ -105,7 +105,7 @@ public class BuildingParser implements SilentParserInterface {
         for(Map.Entry<Village, int[]> levels: buildingValues.entrySet()) {
             KnownVillage v = KnownVillageManager.getSingleton().getKnownVillage(levels.getKey());
             for(int i = 0; i < levels.getValue().length; i++) {
-                if(availableBuildings.get(i) > 0) {
+                if(availableBuildings.get(i) >= 0) {
                     v.setBuildingLevelById(availableBuildings.get(i), levels.getValue()[i]);
                 }
                 //special case handling

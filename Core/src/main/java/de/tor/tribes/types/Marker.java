@@ -199,6 +199,11 @@ public class Marker extends ManageableType implements BBSupport {
         }
     }
 
+    public boolean isValid() {
+        return (mAlly != null && type == MarkerType.ALLY) ||
+               (mTribe != null && type == MarkerType.TRIBE);
+    }
+
     /**
      * @return the shownOnMap
      */

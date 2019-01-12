@@ -74,7 +74,7 @@ public class MarkerCellRenderer extends DefaultTableRenderer {
             
             l.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
             l.setIcon(ALLY_ICON);
-            l.setText(mAlly.getName());
+            l.setText(mAlly.getName() + " [" + mAlly.getTag() + "]");
             l.setToolTipText(mAlly.getToolTipText());
         }
         return l;

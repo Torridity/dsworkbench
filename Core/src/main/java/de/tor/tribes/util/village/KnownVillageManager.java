@@ -87,7 +87,8 @@ public class KnownVillageManager extends GenericManager<KnownVillage> {
                     }
                     result++;
                 } catch (Exception inner) {
-                    //ignored, marker invalid
+                    logger.debug("Got invalid knownvillage:", inner);
+                    //ignored, village invalid
                 }
             }
             logger.debug("KnownVillages successfully loaded");

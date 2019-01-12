@@ -73,8 +73,19 @@ public class KnownVillage extends ManageableType {
         this.village = DataHolder.getSingleton().getVillagesById().get(Integer.parseInt(pElement.getChild("id").getText()));
         this.lastUpdate = Long.parseLong(pElement.getChild("update").getText());
         
+        Element buildingElm = pElement.getChild("buildings");
         for(int i = 0; i < Constants.BUILDING_NAMES.length; i++) {
-            this.buildings[i] = Integer.parseInt(pElement.getChild(Constants.BUILDING_NAMES[i]).getText());
+            String val = buildingElm.getAttributeValue(Constants.BUILDING_NAMES[i]);
+            if(val != null) {
+                try {
+                    this.buildings[i] = Integer.parseInt(val);
+                } catch(NumberFormatException e) {
+                    this.buildings[i] = -1;
+                    logger.debug("unable to decode property: {} with {}", Constants.BUILDING_NAMES[i], val, e);
+                }
+            }
+            else
+                logger.debug("property null: {}", Constants.BUILDING_NAMES[i]);
         }
     }
 

@@ -843,6 +843,17 @@ private void fireAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRS
             jProgressBar1.setValue(0);
             jProgressBar1.setString("Analysiere Daten...");
             jButton1.setEnabled(false);
+            
+            TroopAmountFixed stdOffense = DSWorkbenchSettingsDialog.getSingleton().getOffense();
+            TroopAmountFixed stdDefense = DSWorkbenchSettingsDialog.getSingleton().getDefense();
+            if(stdOffense.getTroopPopCount() == 0 || stdDefense.getTroopPopCount() == 0) {
+                showInfo("kann die daten nicht analysieren, weil standard Off / Unterstützung nicht gesetzt sind (in den Einstellungen)");
+                jProgressBar1.setString("Bereit");
+                jButton1.setEnabled(true);
+                updateSupportTable();
+                return;
+            }
+            
             a = new DefenseAnalyzer(new DefenseAnalyzer.DefenseAnalyzerListener() {
 
                 @Override
@@ -860,8 +871,7 @@ private void fireAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRS
                     jProgressBar1.setString("Bereit");
                     updateSupportTable();
                 }
-            }, DSWorkbenchSettingsDialog.getSingleton().getOffense(),
-                    DSWorkbenchSettingsDialog.getSingleton().getDefense(),
+            }, stdOffense, stdDefense,
                     GlobalOptions.getProperties().getInt("max.sim.rounds"),
                     GlobalOptions.getProperties().getInt("max.loss.ratio"),
                     pReAnalyze);

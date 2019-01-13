@@ -98,10 +98,13 @@ public class DefenseAnalyzer extends Thread {
     public void run() {
         running = true;
         try {
+            //set units inside DSSim
             UnitManager.getSingleton().setUnits("./servers/" + GlobalOptions.getSelectedServer() + "/units.xml");
         } catch (Exception ignored) {
         }
+        logger.debug("Stating analyzing of Data");
         updateStatus();
+        logger.debug("Finished analyzing of Data");
         running = false;
         listener.fireFinishedEvent();
     }
@@ -111,7 +114,9 @@ public class DefenseAnalyzer extends Thread {
         int currentTarget = 0;
         for (ManageableType e : SOSManager.getSingleton().getAllElements()) {
             SOSRequest request = (SOSRequest) e;
+            logger.debug("Stating analyzing of Player: {}", request.getDefender());
             for(Village target: request.getTargets()) {
+                logger.debug("Stating analyzing of Village: {}", target.getCoordAsString());
                 if (aborted) {
                     return;
                 }

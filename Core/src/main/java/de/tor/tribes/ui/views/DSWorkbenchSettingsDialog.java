@@ -185,6 +185,8 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jMaxFarmSpace.setText(GlobalOptions.getProperty("max.farm.space"));
         jBrowserPath.setText(GlobalOptions.getProperty("default.browser"));
         jUseStandardBrowser.setSelected(jBrowserPath.getText().length() < 1);
+        
+        //TODO workaround for now to avoid wrong loading (using data Holder Listener...)
         setOffense(new TroopAmountFixed(0).loadFromProperty(GlobalOptions.getProperty("standard.off")));
         setDefense(new TroopAmountFixed(0).loadFromProperty(GlobalOptions.getProperty("standard.defense.split")));
         jMaxSimRounds.setText(GlobalOptions.getProperty("max.sim.rounds"));
@@ -2910,6 +2912,10 @@ private void fireProfileActionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
                 if (GlobalOptions.isStarted()) {
                     DSWorkbenchMainFrame.getSingleton().serverSettingsChangedEvent();
                 }
+                
+                //TODO workaround for now to avoid wrong loading
+                setOffense(new TroopAmountFixed(0).loadFromProperty(GlobalOptions.getProperty("standard.off")));
+                setDefense(new TroopAmountFixed(0).loadFromProperty(GlobalOptions.getProperty("standard.defense.split")));
             } catch (Exception e) {
                 logger.error("Failed to setup tribe list", e);
             }

@@ -36,6 +36,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jdom2.Element;
 
 /**
@@ -43,6 +45,8 @@ import org.jdom2.Element;
  * @author Torridity
  */
 public class SOSRequest extends ManageableType implements BBSupport {
+    
+    private static Logger logger = LogManager.getLogger("SOSManager");
 
     private final String[] VARIABLES = new String[]{"%SOS_ICON%", "%TARGET%", "%ATTACKS%", "%DEFENDERS%", "%WALL_INFO%", "%WALL_LEVEL%", "%FIRST_ATTACK%", "%LAST_ATTACK%", "%SOURCE_LIST%", "%SOURCE_DATE_TYPE_LIST%", "%ATTACK_LIST%", "%SOURCE_DATE_LIST%", "%SOURCE_TYPE_LIST%", "%SUMMARY%"};
     private final static String STANDARD_TEMPLATE = "[quote]%SOS_ICON% %TARGET% (%ATTACKS%)\n[quote]%DEFENDERS%\n%WALL_INFO%[/quote]\n\n%FIRST_ATTACK%\n%SOURCE_DATE_LIST%\n%LAST_ATTACK%\n\n%SUMMARY%[/quote]";
@@ -298,7 +302,8 @@ public class SOSRequest extends ManageableType implements BBSupport {
         if (mDefender == null || pOther == null || pOther.getDefender() == null || mDefender.getId() != pOther.getDefender().getId()) {
             throw new IllegalArgumentException("Cannot merge with unequal defender");
         }
-
+        
+        logger.debug("Starting merge for {}", mDefender.getName());
         for(Village otherTarget: pOther.getTargets()) {
             TargetInformation otherInfo = pOther.getTargetInformation(otherTarget);
             TargetInformation thisInfo = addTarget(otherTarget);
@@ -312,6 +317,7 @@ public class SOSRequest extends ManageableType implements BBSupport {
                     getDefenseInformation(otherTarget).setAnalyzed(false);
                 }
             }
+            logger.debug("Got delta of {} for Village {}", addCount, otherTarget.getCoordAsString());
             thisInfo.setDelta(addCount);
         }
     }

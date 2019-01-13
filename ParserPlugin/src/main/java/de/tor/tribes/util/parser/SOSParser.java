@@ -404,9 +404,7 @@ public class SOSParser implements GenericParserInterface<SOSRequest> {
     }
 
     private void print(String pText) {
-        if (logger.isDebugEnabled()) {
-            logger.debug(pText);
-        }
+        logger.debug(pText);
 
         /*
          * if (debug) { System.out.println(pText); }

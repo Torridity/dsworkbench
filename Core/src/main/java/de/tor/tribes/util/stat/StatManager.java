@@ -23,6 +23,7 @@ import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.util.GlobalOptions;
 import java.io.File;
 import java.io.FileFilter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -221,6 +222,7 @@ public class StatManager {
         }
 
         logger.debug("  - Removing empty ally stats");
+        List<Integer> toRemove = new ArrayList<>();
         for(Integer allyKey: data.keySet()) {
             HashMap<Integer, TribeStatsElement> tribesData = data.get(allyKey);
             Ally a = NoAlly.getSingleton();
@@ -232,10 +234,13 @@ public class StatManager {
             if (tribesData == null || tribesData.isEmpty()) {
                 logger.debug("  - Removing ally stats for ally '" + a + "'");
                 //remove empty ally data table
-                data.remove(allyKey);
+                toRemove.add(allyKey);
                 //remove existing ally dir
                 deleteDirectory(new File(allyPath));
             }
+        }
+        for(Integer allyKey: toRemove) {
+            data.remove(allyKey);
         }
         logger.debug(" * Finished updating ally changes");
     }

@@ -75,19 +75,12 @@ public class ClipboardWatch extends Thread {
                 }
 
                 try {
-                    if (org.apache.commons.lang3.SystemUtils.IS_OS_WINDOWS) {
-                        if (clip == null) {
-                            clip = AudioSystem.getClip();
-                            AudioInputStream inputStream = AudioSystem.getAudioInputStream(ClockFrame.class.getResourceAsStream("/res/Ding.wav"));
-                            clip.open(inputStream);
-                        }
-                        clip.start();
-                    } else {
-                        if (ac == null) {
-                            ac = Applet.newAudioClip(ClockFrame.class.getResource("/res/Ding.wav"));
-                        }
-                        ac.play();
+                    if (clip == null) {
+                        clip = AudioSystem.getClip();
+                        AudioInputStream inputStream = AudioSystem.getAudioInputStream(ClockFrame.class.getResourceAsStream("/res/Ding.wav"));
+                        clip.open(inputStream);
                     }
+                    clip.start();
                 } catch (Exception e) {
                     logger.error("Failed to play notification", e);
                 }

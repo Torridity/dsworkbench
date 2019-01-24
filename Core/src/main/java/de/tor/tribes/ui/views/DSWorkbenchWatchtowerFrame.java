@@ -476,7 +476,7 @@ public class DSWorkbenchWatchtowerFrame extends AbstractDSWorkbenchFrame impleme
         jWatchtowerTable.setDefaultRenderer(Color.class, new ColorCellRenderer());
         
         DefaultComboBoxModel model = new DefaultComboBoxModel();
-        for(int i = 1; i <= KnownVillage.getMaxBuildingLevel("watchtower"); i++)
+        for(int i = 1; i <= BuildingSettings.getMaxBuildingLevel("watchtower"); i++)
             model.addElement(i);
         jWatchtowerTable.setDefaultEditor(Integer.class, new DefaultCellEditor(new JComboBox(model)));
         BufferedImage back = ImageUtils.createCompatibleBufferedImage(5, 5, BufferedImage.BITMASK);

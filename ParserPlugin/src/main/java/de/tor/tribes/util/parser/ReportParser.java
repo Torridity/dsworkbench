@@ -23,11 +23,10 @@ import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
 import de.tor.tribes.ui.windows.NotifierFrame;
-import de.tor.tribes.util.Constants;
+import de.tor.tribes.util.BuildingSettings;
 import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.SilentParserInterface;
 import de.tor.tribes.util.report.ReportManager;
-import de.tor.tribes.util.village.KnownVillage;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -261,17 +260,17 @@ public class ReportParser implements SilentParserInterface {
                 }
             }
 
-            for(int i = 0; i < Constants.BUILDING_NAMES.length; i++) {
-                if (line.contains(getVariable("report.buildings." + Constants.BUILDING_NAMES[i]))) {
-                    logger.debug("Parse " + Constants.BUILDING_NAMES[i]);
+            for(int i = 0; i < BuildingSettings.BUILDING_NAMES.length; i++) {
+                if (line.contains(getVariable("report.buildings." + BuildingSettings.BUILDING_NAMES[i]))) {
+                    logger.debug("Parse " + BuildingSettings.BUILDING_NAMES[i]);
                     int val = parseIntFromReportTable(line, getVariable(
-                            "report.buildings." + Constants.BUILDING_NAMES[i]));
+                            "report.buildings." + BuildingSettings.BUILDING_NAMES[i]));
                     if (val != -1) {
-                        logger.debug("Got " + Constants.BUILDING_NAMES[i] + " level " + val);
+                        logger.debug("Got " + BuildingSettings.BUILDING_NAMES[i] + " level " + val);
                         result.setBuilding(i, val);
                         break;
                     } else {
-                        logger.debug("No valid " + Constants.BUILDING_NAMES[i] + " level from " + line);
+                        logger.debug("No valid " + BuildingSettings.BUILDING_NAMES[i] + " level from " + line);
                     }
                 }
             }
@@ -279,7 +278,7 @@ public class ReportParser implements SilentParserInterface {
             if (searchChurch && line.contains(getVariable("report.buildings.first.church"))) {
                 logger.debug("Try adding first church");
                 try {
-                    result.setBuilding(KnownVillage.getBuildingIdByName("church"), 2);
+                    result.setBuilding(BuildingSettings.getBuildingIdByName("church"), 2);
                     continue;
                 } catch (Exception e) {
                     logger.debug("Failed to add first church");
@@ -464,8 +463,8 @@ public class ReportParser implements SilentParserInterface {
     }
 
     private int getBuildingId(String translatedBuilding) {
-        for(int i = 0; i < Constants.BUILDING_NAMES.length; i++) {
-            if(translatedBuilding.equals(getVariable("report.buildings." + Constants.BUILDING_NAMES[i])))
+        for(int i = 0; i < BuildingSettings.BUILDING_NAMES.length; i++) {
+            if(translatedBuilding.equals(getVariable("report.buildings." + BuildingSettings.BUILDING_NAMES[i])))
                 return i;
         }
         logger.error("Could not find Building " + translatedBuilding);

@@ -19,12 +19,10 @@ import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.TroopAmountFixed;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.ext.Village;
-import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.xml.JDomUtils;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 import org.jdom2.Element;
 
 /**
@@ -96,21 +94,6 @@ public class SupportVillageTroopsHolder extends VillageTroopsHolder {
     public void clear() {
         super.clear();
         clearSupports();
-    }
-
-    @Override
-    public float getFarmSpace() {
-        double farmSpace = 0;
-        Set<Village> villageKeys = incomingSupports.keySet();
-        for (Village key: villageKeys) {
-            farmSpace += incomingSupports.get(key).getTroopPopCount();
-        }
-
-        int max = GlobalOptions.getProperties().getInt("max.farm.space");
-        //calculate farm space depending on pop bonus
-        float res = (float) (farmSpace / (double) max);
-
-        return (res > 1.0f) ? 1.0f : res;
     }
 
     public void clearSupports() {

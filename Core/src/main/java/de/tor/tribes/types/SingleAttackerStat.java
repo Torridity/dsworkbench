@@ -19,7 +19,7 @@ import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.TroopAmountFixed;
 import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Village;
-import de.tor.tribes.util.village.KnownVillage;
+import de.tor.tribes.util.BuildingSettings;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -76,7 +76,7 @@ public class SingleAttackerStat {
             elem.addEnoblement();
         }
 
-        elem.addDestroyedBuildingLevel(KnownVillage.getBuildingIdByName("Bauernhof"),
+        elem.addDestroyedBuildingLevel(BuildingSettings.getBuildingIdByName("Bauernhof"),
                 ((int) Math.rint(Math.random() * 30)));
         elem.addDestroyedWallLevels(((int) Math.rint(Math.random() * 60)));
         

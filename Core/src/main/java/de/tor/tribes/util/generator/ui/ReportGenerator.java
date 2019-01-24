@@ -22,11 +22,11 @@ import de.tor.tribes.types.FightReport;
 import de.tor.tribes.types.ext.InvalidTribe;
 import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Village;
+import de.tor.tribes.util.BuildingSettings;
 import de.tor.tribes.util.PluginManager;
 import de.tor.tribes.util.UIHelper;
 import de.tor.tribes.util.farm.FarmManager;
 import de.tor.tribes.util.report.ReportManager;
-import de.tor.tribes.util.village.KnownVillage;
 import de.tor.tribes.util.xml.JDomUtils;
 import java.util.List;
 import org.apache.logging.log4j.LogManager;
@@ -466,11 +466,11 @@ public class ReportGenerator extends javax.swing.JFrame {
 
         int[] spyInfo = getSpyInfo();
         if (spyInfo != null) {
-            r.setBuilding(KnownVillage.getBuildingIdByName("timber"), spyInfo[0]);
-            r.setBuilding(KnownVillage.getBuildingIdByName("clay"), spyInfo[1]);
-            r.setBuilding(KnownVillage.getBuildingIdByName("iron"), spyInfo[2]);
-            r.setBuilding(KnownVillage.getBuildingIdByName("storage"), spyInfo[3]);
-            r.setBuilding(KnownVillage.getBuildingIdByName("hide"), spyInfo[4]);
+            r.setBuilding(BuildingSettings.getBuildingIdByName("wood"), spyInfo[0]);
+            r.setBuilding(BuildingSettings.getBuildingIdByName("stone"), spyInfo[1]);
+            r.setBuilding(BuildingSettings.getBuildingIdByName("iron"), spyInfo[2]);
+            r.setBuilding(BuildingSettings.getBuildingIdByName("storage"), spyInfo[3]);
+            r.setBuilding(BuildingSettings.getBuildingIdByName("hide"), spyInfo[4]);
         }
 
         if (jTroopsOutside.isSelected()) {
@@ -489,7 +489,7 @@ public class ReportGenerator extends javax.swing.JFrame {
         if (jBuildingDamaged.isSelected()) {
             r.setBuildingBefore((byte) 20);
             r.setBuildingAfter((byte) 10);
-            r.setAimedBuildingId(KnownVillage.getBuildingIdByName("farm"));
+            r.setAimedBuildingId(BuildingSettings.getBuildingIdByName("farm"));
         }
 
         System.out.println("---Adding generated report (Valid:" + r.isValid() + ")----");

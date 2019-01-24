@@ -23,12 +23,11 @@ import de.tor.tribes.types.UnknownUnit;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
 import de.tor.tribes.ui.windows.NotifierFrame;
-import de.tor.tribes.util.Constants;
+import de.tor.tribes.util.BuildingSettings;
 import de.tor.tribes.util.RegExpHelper;
 import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.SilentParserInterface;
 import de.tor.tribes.util.report.ReportManager;
-import de.tor.tribes.util.village.KnownVillage;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -281,24 +280,24 @@ public class OBSTServerReportHandler implements SilentParserInterface {
             logger.info("No spy information found");
         }
 
-        for(int i = 0; i < Constants.BUILDING_NAMES.length; i++) {
+        for(int i = 0; i < BuildingSettings.BUILDING_NAMES.length; i++) {
             m = Pattern.compile(getVariable("report.buildings." +
-                    Constants.BUILDING_NAMES[i]) + "\\s+([0-9]+)").matcher(data);
+                    BuildingSettings.BUILDING_NAMES[i]) + "\\s+([0-9]+)").matcher(data);
             if (m.find()) {
                 try {
                     report.setBuilding(i, Integer.parseInt(m.group(1)));
                 } catch (Exception e) {
-                    logger.error("Failed to parse " + Constants.BUILDING_NAMES[i] + " level from " + m.group(1));
+                    logger.error("Failed to parse " + BuildingSettings.BUILDING_NAMES[i] + " level from " + m.group(1));
                 }
             } else {
-                logger.info("No " + Constants.BUILDING_NAMES[i] + " level information found");
+                logger.info("No " + BuildingSettings.BUILDING_NAMES[i] + " level information found");
             }
         }
 
         //m = Pattern.compile("Erste Kirche\\s+\\(Stufe\\s+([0-9]+)\\)").matcher(data);
         m = Pattern.compile(getVariable("report.buildings.first.church") + "\\s+([0-9]+)").matcher(data);
         if (m.find()) {
-            report.setBuilding(KnownVillage.getBuildingIdByName("church"), 2);
+            report.setBuilding(BuildingSettings.getBuildingIdByName("church"), 2);
         }
 
         m = Pattern.compile(getVariable("report.damage.ram") + ":\\s+"
@@ -348,8 +347,8 @@ public class OBSTServerReportHandler implements SilentParserInterface {
     }
 
     private int getBuildingId(String translatedBuilding) {
-        for(int i = 0; i < Constants.BUILDING_NAMES.length; i++) {
-            if(translatedBuilding.equals(getVariable("report.buildings." + Constants.BUILDING_NAMES[i])))
+        for(int i = 0; i < BuildingSettings.BUILDING_NAMES.length; i++) {
+            if(translatedBuilding.equals(getVariable("report.buildings." + BuildingSettings.BUILDING_NAMES[i])))
                 return i;
         }
         logger.error("Could not find Building " + translatedBuilding);

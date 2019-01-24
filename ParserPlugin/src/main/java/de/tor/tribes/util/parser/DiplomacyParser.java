@@ -16,7 +16,6 @@
 package de.tor.tribes.util.parser;
 
 import de.tor.tribes.io.DataHolder;
-import de.tor.tribes.types.Marker;
 import de.tor.tribes.types.ext.Ally;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.SilentParserInterface;

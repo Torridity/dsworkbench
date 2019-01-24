@@ -467,7 +467,7 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
         jChurchTable.setDefaultRenderer(Color.class, new ColorCellRenderer());
         
         DefaultComboBoxModel model = new DefaultComboBoxModel();
-        for(int i = 1; i <= KnownVillage.getMaxBuildingLevel("church"); i++)
+        for(int i = 1; i <= BuildingSettings.getMaxBuildingLevel("church"); i++)
             model.addElement(i);
         jChurchTable.setDefaultEditor(Integer.class, new DefaultCellEditor(new JComboBox(model)));
         BufferedImage back = ImageUtils.createCompatibleBufferedImage(5, 5, BufferedImage.BITMASK);

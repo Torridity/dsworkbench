@@ -26,8 +26,7 @@ import de.tor.tribes.types.ext.InvalidTribe;
 import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.BBSupport;
-import de.tor.tribes.util.Constants;
-import de.tor.tribes.util.village.KnownVillage;
+import de.tor.tribes.util.BuildingSettings;
 import de.tor.tribes.util.xml.JDomUtils;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
@@ -105,7 +104,7 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
                 ? "[b]Schaden durch Rammen:[/b] Wall beschädigt von Level " + getWallBefore() + " auf Level " + getWallAfter()
                 : "";
         String cataChangeVal = (wasBuildingDamaged())
-                ? "[b]Schaden durch Katapultbeschuss:[/b] " + Constants.BUILDING_NAMES[aimedBuildingId] + " beschädigt von Level " + getBuildingBefore() + " auf Level " + getBuildingAfter()
+                ? "[b]Schaden durch Katapultbeschuss:[/b] " + BuildingSettings.BUILDING_NAMES[aimedBuildingId] + " beschädigt von Level " + getBuildingBefore() + " auf Level " + getBuildingAfter()
                 : "";
         return new String[]{attackerVal, sourceVal, defenderVal, targetVal, sendDateVal, resultVal, luckVal, moraleVal, attackerTroopsVal, defenderTroopsVal, troopsOutsideVal, troopsEnRouteVal, loyalityChangeVal, wallChangeVal, cataChangeVal};
     }
@@ -165,7 +164,7 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
         defendersOutside = new HashMap<>();
         defendersOnTheWay = new TroopAmountFixed();
         
-        buildingLevels = new int[Constants.BUILDING_NAMES.length];
+        buildingLevels = new int[BuildingSettings.BUILDING_NAMES.length];
         Arrays.fill(buildingLevels, -1);
     }
 
@@ -296,7 +295,7 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
                 
                 for(int i = 0; i < buildingLevels.length; i++) {
                     buildingLevels[i] = Integer.parseInt(e.getChildText(
-                            Constants.BUILDING_NAMES[i]));
+                            BuildingSettings.BUILDING_NAMES[i]));
                 }
             } catch (Exception e) {
                 logger.debug("Failed to read buildings", e);
@@ -388,7 +387,7 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
 
             Element spyBuildings = new Element("spyBuildings");
             for(int i = 0; i < buildingLevels.length; i++) {
-                spyBuildings.setAttribute(Constants.BUILDING_NAMES[i], Integer.toString(buildingLevels[i]));
+                spyBuildings.setAttribute(BuildingSettings.BUILDING_NAMES[i], Integer.toString(buildingLevels[i]));
             }
             report.addContent(spyBuildings);
             
@@ -994,7 +993,7 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
             result.append("Wall zerstört von Stufe ").append(getWallBefore()).append(" auf ").append(getWallAfter()).append("\n");
         }
         if (wasBuildingDamaged()) {
-            result.append(Constants.BUILDING_NAMES[aimedBuildingId]).append(" zerstört von Stufe ").append(getBuildingBefore()).append(" auf ").append(getBuildingAfter()).append("\n");
+            result.append(BuildingSettings.BUILDING_NAMES[aimedBuildingId]).append(" zerstört von Stufe ").append(getBuildingBefore()).append(" auf ").append(getBuildingAfter()).append("\n");
         }
         if (wasSnobAttack()) {
             result.append("Zustimmung gesenkt von ").append(getAcceptanceBefore()).append(" auf ").append(getAcceptanceAfter()).append("\n");
@@ -1105,7 +1104,7 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
 
         //set wall destruction (works also without spying)
         if (wallAfter != -1 && spyLevel < SPY_LEVEL_BUILDINGS) {
-            buildingLevels[KnownVillage.getBuildingIdByName("wall")] = wallAfter;
+            buildingLevels[BuildingSettings.getBuildingIdByName("wall")] = wallAfter;
         }
 
         switch (spyLevel) {

@@ -39,9 +39,6 @@ public class Constants {
     public final static HashMap<String, Integer> LAYERS = new HashMap<>();
     public final static int LAYER_COUNT = 10;
     public final static boolean DEBUG = false;
-    public static final String[] BUILDING_NAMES = {"main", "barracks", "stable", "workshop",
-        "church", "watchtower", "academy", "smithy", "rally", "statue", "market", "timber",
-        "clay", "iron", "farm", "storage", "hide", "wall"};
     
     static {
         LAYERS.put("Markierungen", 0);

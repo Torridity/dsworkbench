@@ -18,6 +18,7 @@ package de.tor.tribes.io;
 import de.tor.tribes.types.UnknownUnit;
 import de.tor.tribes.types.ext.*;
 import de.tor.tribes.ui.views.DSWorkbenchSettingsDialog;
+import de.tor.tribes.util.BuildingSettings;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalDefaults;
 import de.tor.tribes.util.GlobalOptions;
@@ -157,6 +158,7 @@ public class DataHolder {
         try {
             if (settings.exists()) {
                 ServerSettings.getSingleton().loadSettings(GlobalOptions.getSelectedServer());
+                BuildingSettings.loadSettings(GlobalOptions.getSelectedServer());
                 try {
                     currentBonusType = ServerSettings.getSingleton().getNewBonus();
                 } catch (Exception e) {
@@ -182,6 +184,10 @@ public class DataHolder {
                         throw new Exception("Failed to load server settings");
                     }
 
+                    if (!BuildingSettings.loadSettings(GlobalOptions.getSelectedServer())) {
+                        throw new Exception("Failed to load buildings");
+                    }
+                    
                     try {
                         currentBonusType = ServerSettings.getSingleton().getNewBonus();
                     } catch (Exception e) {

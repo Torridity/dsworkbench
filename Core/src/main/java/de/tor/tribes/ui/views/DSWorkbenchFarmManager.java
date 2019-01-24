@@ -38,6 +38,7 @@ import de.tor.tribes.ui.windows.AbstractDSWorkbenchFrame;
 import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
 import de.tor.tribes.ui.windows.FarmInformationDetailsDialog;
 import de.tor.tribes.util.BrowserInterface;
+import de.tor.tribes.util.BuildingSettings;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.GlobalOptions;
@@ -96,7 +97,7 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
     private TroopSelectionPanelDynamic cTroops = null;
     private TroopSelectionPanelDynamic rTroops = null;
     private CoordinateSpinner coordSpinner = null;
-    private final static String[] TargetID = { "main", "barracks", "stable", "workshop", "smithy", "market", "none" };
+    private final static String[] TargetID = { "main", "barracks", "stable", "garage", "smith", "market", "none" };
     private static int SelectedCataTarget = 6;
     private static String SelectedFarmGroup = "Alle";
       
@@ -667,9 +668,9 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
             hauledWood += info.getHauledWood();
             hauledClay += info.getHauledClay();
             hauledIron += info.getHauledIron();
-            woodPerHour += DSCalculator.calculateResourcesPerHour(info.getWoodLevel());
-            clayPerHour += DSCalculator.calculateResourcesPerHour(info.getClayLevel());
-            ironPerHour += DSCalculator.calculateResourcesPerHour(info.getIronLevel());
+            woodPerHour += BuildingSettings.calculateResourcesPerHour(info.getWoodLevel());
+            clayPerHour += BuildingSettings.calculateResourcesPerHour(info.getClayLevel());
+            ironPerHour += BuildingSettings.calculateResourcesPerHour(info.getIronLevel());
             farmCount++;
         }
 

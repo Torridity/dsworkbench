@@ -18,7 +18,7 @@ package de.tor.tribes.util.parser;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.UnknownUnit;
 import de.tor.tribes.types.ext.Village;
-import de.tor.tribes.util.Constants;
+import de.tor.tribes.util.BuildingSettings;
 import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.SilentParserInterface;
 import de.tor.tribes.util.village.KnownVillage;
@@ -43,9 +43,9 @@ public class BuildingParser implements SilentParserInterface {
         StringTokenizer lineTok = new StringTokenizer(pData, "\n\r");
         Map<Village, int[]> buildingValues = new HashMap<>();
         List<Integer> availableBuildings = new ArrayList<>();
-        for(int i = 0; i < Constants.BUILDING_NAMES.length; i++) {
+        for(int i = 0; i < BuildingSettings.BUILDING_NAMES.length; i++) {
             //Filter Buildings that are not availaible at this World
-            switch (Constants.BUILDING_NAMES[i]) {
+            switch (BuildingSettings.BUILDING_NAMES[i]) {
                 case "church":
                     if(ServerSettings.getSingleton().isChurch()) {
                         availableBuildings.add(i);

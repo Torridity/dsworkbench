@@ -21,7 +21,6 @@ import de.tor.tribes.io.TroopAmountFixed;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.BBSupport;
-import de.tor.tribes.util.GlobalOptions;
 import java.util.Date;
 import org.jdom2.Element;
 
@@ -84,16 +83,6 @@ public class VillageTroopsHolder extends ManageableType implements BBSupport {
 
     public TroopAmountFixed getTroops() {
         return troops;
-    }
-
-    public float getFarmSpace() {
-        double farmSpace = troops.getTroopPopCount();
-        int max = GlobalOptions.getProperties().getInt("max.farm.space");
-
-        //calculate farm space depending on pop bonus
-        float res = (float) (farmSpace / (double) max);
-
-        return (res > 1.0f) ? 1.0f : res;
     }
 
     public Date getState() {

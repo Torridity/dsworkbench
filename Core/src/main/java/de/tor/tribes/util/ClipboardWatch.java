@@ -17,7 +17,6 @@ package de.tor.tribes.util;
 
 import de.tor.tribes.ui.windows.ClockFrame;
 import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
-import java.applet.Applet;
 import java.applet.AudioClip;
 import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;

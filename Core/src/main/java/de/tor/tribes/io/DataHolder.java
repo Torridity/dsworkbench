@@ -179,7 +179,15 @@ public class DataHolder {
                     logger.debug("Try downloading server settings from " + sURL + "/interface.php?func=get_config");
                     downloadDataFile(file, "settings_tmp.xml");
                     copyFile(new File("settings_tmp.xml"), settings);
-
+                    
+                    //download building information, but only once
+                    logger.debug("Loading building config file from server");
+                    fireDataHolderEvents("Lade Information über Gebäude");
+                    file = new URL(sURL + "/interface.php?func=get_building_info");
+                    downloadDataFile(file, "buildings_tmp.xml");
+                    // new File("buildings_tmp.xml").renameTo(target);
+                    copyFile(new File("buildings_tmp.xml"), new File(getDataDirectory() + "/buildings.xml"));
+                    
                     if (!ServerSettings.getSingleton().loadSettings(GlobalOptions.getSelectedServer())) {
                         throw new Exception("Failed to load server settings");
                     }

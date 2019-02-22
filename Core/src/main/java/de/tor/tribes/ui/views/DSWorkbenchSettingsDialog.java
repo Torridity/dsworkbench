@@ -2852,6 +2852,7 @@ private void fireProfileActionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
             model = new DefaultComboBoxModel(profiles);
         } else {
             model = new DefaultComboBoxModel(new Object[]{"Kein Profil vorhanden"});
+            logger.fatal("no Profile");
         }
 
         long profileId = -1;

@@ -453,8 +453,15 @@ public abstract class GenericManager<C extends ManageableType> {
         initialize();
         
         try {
-            if(importData(JDomUtils.getDocument(new File(pFile)).getRootElement(), null) < 0) {
+            int amount = importData(JDomUtils.getDocument(new File(pFile)).getRootElement(), null);
+            if(amount < 0) {
                 logger.debug("Failed to load data");
+            } else if(amount == 0) {
+                //try old version loading
+                amount = importData(JDomUtils.getOldDocument(new File(pFile)).getRootElement(), null);
+                if(amount < 0) {
+                    logger.debug("Failed to load data");
+                }
             }
         } catch (Exception ex) {
             logger.debug("Failed loading data", ex);

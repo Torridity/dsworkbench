@@ -209,6 +209,16 @@ public class PluginManager {
     }
     return false;
   }
+  
+  public boolean executeBuildingParser(String pData) {
+    try {
+      Object parser = loadParser("de.tor.tribes.util.parser.BuildingParser");
+      return ((SilentParserInterface) parser).parse(pData);
+    } catch (Exception e) {
+      logger.error("Failed to execute Movemen parser", e);
+    }
+    return false;
+  }
 
   public String getVariableValue(String pName) {
     if (mVariableManager == null) {

@@ -152,9 +152,12 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jShowPopupConquers.setSelected(GlobalOptions.getProperties().getBoolean("show.popup.conquers"));
         jShowPopupRanks.setSelected(GlobalOptions.getProperties().getBoolean("show.popup.ranks"));
         jShowPopupFarmSpace.setSelected(GlobalOptions.getProperties().getBoolean("show.popup.farm.space"));
+        jMaxFarmSpace.setText(GlobalOptions.getProperty("max.farm.space"));
+        jPopupFarmUseRealValues.setSelected(GlobalOptions.getProperties().getBoolean("farm.popup.use.real"));
+        updateFarmSpaceUI();
         jShowContinents.setSelected(GlobalOptions.getProperties().getBoolean("map.showcontinents"));
-        jShowSectorsBox.setSelected(GlobalOptions.getProperties().getBoolean("show.sectors"));
-        jShowBarbarianBox.setSelected(GlobalOptions.getProperties().getBoolean("show.barbarian"));
+        jShowSectors.setSelected(GlobalOptions.getProperties().getBoolean("show.sectors"));
+        jShowBarbarian.setSelected(GlobalOptions.getProperties().getBoolean("show.barbarian"));
         jMarkerTransparency.setValue(GlobalOptions.getProperties().getInt("map.marker.transparency"));
         jShowAttackMovementBox.setSelected(GlobalOptions.getProperties().getBoolean("attack.movement"));
         jDrawAttacksByDefaultBox.setSelected(GlobalOptions.getProperties().getBoolean("draw.attacks.by.default"));
@@ -167,8 +170,8 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jFooterPath.setText(GlobalOptions.getProperty("attack.template.footer"));
         //reload templates
         AttackPlanHTMLExporter.loadCustomTemplate();
-        jMarkOwnVillagesOnMinimapBox.setSelected(GlobalOptions.getProperties().getBoolean("mark.villages.on.minimap"));
-        jDefaultMarkBox.setSelectedIndex(GlobalOptions.getProperties().getInt("default.mark"));
+        jMarkOwnVillagesOnMinimap.setSelected(GlobalOptions.getProperties().getBoolean("mark.villages.on.minimap"));
+        jDefaultMark.setSelectedIndex(GlobalOptions.getProperties().getInt("default.mark"));
         jCheckForUpdatesBox.setSelected(GlobalOptions.getProperties().getBoolean("check.updates.on.startup"));
         int villageOrder = GlobalOptions.getProperties().getInt("village.order");
         Village.setOrderType(villageOrder);
@@ -182,9 +185,10 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jEnableSystray.setEnabled(SystrayHelper.isSystraySupported());
         jEnableSystray.setSelected(GlobalOptions.getProperties().getBoolean("systray.enabled"));
         jDeleteFarmReportsOnExit.setSelected(GlobalOptions.getProperties().getBoolean("delete.farm.reports.on.exit"));
-        jMaxFarmSpace.setText(GlobalOptions.getProperty("max.farm.space"));
         jBrowserPath.setText(GlobalOptions.getProperty("default.browser"));
         jUseStandardBrowser.setSelected(jBrowserPath.getText().length() < 1);
+        
+        //TODO workaround for now to avoid wrong loading (using data Holder Listener...)
         setOffense(new TroopAmountFixed(0).loadFromProperty(GlobalOptions.getProperty("standard.off")));
         setDefense(new TroopAmountFixed(0).loadFromProperty(GlobalOptions.getProperty("standard.defense.split")));
         jMaxSimRounds.setText(GlobalOptions.getProperty("max.sim.rounds"));
@@ -403,29 +407,26 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jScrollPane1 = new javax.swing.JScrollPane();
         jStatusArea = new javax.swing.JTextArea();
         jMapSettings = new javax.swing.JPanel();
-        jPanel1 = new javax.swing.JPanel();
         jShowContinents = new javax.swing.JCheckBox();
-        jShowSectorsBox = new javax.swing.JCheckBox();
-        jMarkOwnVillagesOnMinimapBox = new javax.swing.JCheckBox();
-        jShowBarbarianBox = new javax.swing.JCheckBox();
+        jShowSectors = new javax.swing.JCheckBox();
+        jMarkOwnVillagesOnMinimap = new javax.swing.JCheckBox();
+        jShowBarbarian = new javax.swing.JCheckBox();
         jMarkerTransparency = new javax.swing.JSlider();
-        jPanel2 = new javax.swing.JPanel();
         jShowContinentsLabel = new javax.swing.JLabel();
-        jLabel7 = new javax.swing.JLabel();
-        jAttackMovementLabel2 = new javax.swing.JLabel();
-        jLabel17 = new javax.swing.JLabel();
-        jLabel30 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
-        jDefaultMarkBox = new javax.swing.JComboBox();
-        jLabel3 = new javax.swing.JLabel();
-        jPanel5 = new javax.swing.JPanel();
-        jShowPopupRanks = new javax.swing.JCheckBox();
-        jShowPopupConquers = new javax.swing.JCheckBox();
-        jShowPopupMoral = new javax.swing.JCheckBox();
-        jShowPopupFarmSpace = new javax.swing.JCheckBox();
-        jPanel3 = new javax.swing.JPanel();
-        jLabel22 = new javax.swing.JLabel();
+        jShowSectorsLabel = new javax.swing.JLabel();
+        jMarkOwnVillagesOnMinimapLabel = new javax.swing.JLabel();
+        jShowBarbarianLabel = new javax.swing.JLabel();
+        jMarkerTransparencyLabel = new javax.swing.JLabel();
+        jDefaultMarkLabel = new javax.swing.JLabel();
+        jDefaultMark = new javax.swing.JComboBox();
+        jPanelPopupinfos = new javax.swing.JPanel();
         jMaxFarmSpace = new javax.swing.JTextField();
+        jShowPopupConquers = new javax.swing.JCheckBox();
+        jShowPopupFarmSpace = new javax.swing.JCheckBox();
+        jShowPopupMoral = new javax.swing.JCheckBox();
+        jMaxFarmSpacelabel = new javax.swing.JLabel();
+        jShowPopupRanks = new javax.swing.JCheckBox();
+        jPopupFarmUseRealValues = new javax.swing.JCheckBox();
         jAttackSettings = new javax.swing.JPanel();
         jPanel12 = new javax.swing.JPanel();
         jAttackMovementLabel = new javax.swing.JLabel();
@@ -660,7 +661,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             .addGroup(jPanel10Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jProfileBox, 0, 264, Short.MAX_VALUE)
+                    .addComponent(jProfileBox, 0, 287, Short.MAX_VALUE)
                     .addGroup(jPanel10Layout.createSequentialGroup()
                         .addComponent(jNewProfileButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -696,13 +697,13 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel11Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 552, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 576, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel11Layout.setVerticalGroup(
             jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel11Layout.createSequentialGroup()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 219, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 243, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -736,9 +737,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
 
         jMapSettings.setBackground(new java.awt.Color(239, 235, 223));
         jMapSettings.setPreferredSize(new java.awt.Dimension(620, 400));
-
-        jPanel1.setOpaque(false);
-        jPanel1.setLayout(new java.awt.GridBagLayout());
+        jMapSettings.setLayout(new java.awt.GridBagLayout());
 
         jShowContinents.setToolTipText("Anzeiger der Kontinente auf der Minimap");
         jShowContinents.setContentAreaFilled(false);
@@ -751,58 +750,57 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.weightx = 1.0;
-        jPanel1.add(jShowContinents, gridBagConstraints);
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        jMapSettings.add(jShowContinents, gridBagConstraints);
 
-        jShowSectorsBox.setToolTipText("Sektoren in Hauptkarte einzeichnen");
-        jShowSectorsBox.setMaximumSize(new java.awt.Dimension(25, 25));
-        jShowSectorsBox.setMinimumSize(new java.awt.Dimension(25, 25));
-        jShowSectorsBox.setPreferredSize(new java.awt.Dimension(25, 25));
-        jShowSectorsBox.addChangeListener(new javax.swing.event.ChangeListener() {
+        jShowSectors.setToolTipText("Sektoren in Hauptkarte einzeichnen");
+        jShowSectors.setMaximumSize(new java.awt.Dimension(25, 25));
+        jShowSectors.setMinimumSize(new java.awt.Dimension(25, 25));
+        jShowSectors.setPreferredSize(new java.awt.Dimension(25, 25));
+        jShowSectors.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 fireChangeShowSectorsEvent(evt);
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.weightx = 1.0;
-        jPanel1.add(jShowSectorsBox, gridBagConstraints);
+        gridBagConstraints.weightx = 0.5;
+        jMapSettings.add(jShowSectors, gridBagConstraints);
 
-        jMarkOwnVillagesOnMinimapBox.setToolTipText("Markiert die Dörfer des aktuellen Spielers auf der Minimap");
-        jMarkOwnVillagesOnMinimapBox.setMaximumSize(new java.awt.Dimension(25, 25));
-        jMarkOwnVillagesOnMinimapBox.setMinimumSize(new java.awt.Dimension(25, 25));
-        jMarkOwnVillagesOnMinimapBox.setPreferredSize(new java.awt.Dimension(25, 25));
-        jMarkOwnVillagesOnMinimapBox.addActionListener(new java.awt.event.ActionListener() {
+        jMarkOwnVillagesOnMinimap.setToolTipText("Markiert die Dörfer des aktuellen Spielers auf der Minimap");
+        jMarkOwnVillagesOnMinimap.setMaximumSize(new java.awt.Dimension(25, 25));
+        jMarkOwnVillagesOnMinimap.setMinimumSize(new java.awt.Dimension(25, 25));
+        jMarkOwnVillagesOnMinimap.setPreferredSize(new java.awt.Dimension(25, 25));
+        jMarkOwnVillagesOnMinimap.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 fireChangeMarkOwnVillagesOnMinimapEvent(evt);
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.weightx = 1.0;
-        jPanel1.add(jMarkOwnVillagesOnMinimapBox, gridBagConstraints);
+        gridBagConstraints.weightx = 0.5;
+        jMapSettings.add(jMarkOwnVillagesOnMinimap, gridBagConstraints);
 
-        jShowBarbarianBox.setToolTipText("Anzeige von Barbarendörfern auf der Karte");
-        jShowBarbarianBox.setMaximumSize(new java.awt.Dimension(25, 25));
-        jShowBarbarianBox.setMinimumSize(new java.awt.Dimension(25, 25));
-        jShowBarbarianBox.setPreferredSize(new java.awt.Dimension(25, 25));
-        jShowBarbarianBox.addActionListener(new java.awt.event.ActionListener() {
+        jShowBarbarian.setToolTipText("Anzeige von Barbarendörfern auf der Karte");
+        jShowBarbarian.setMaximumSize(new java.awt.Dimension(25, 25));
+        jShowBarbarian.setMinimumSize(new java.awt.Dimension(25, 25));
+        jShowBarbarian.setPreferredSize(new java.awt.Dimension(25, 25));
+        jShowBarbarian.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 fireShowBarbarianChangedEvent(evt);
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.weightx = 1.0;
-        jPanel1.add(jShowBarbarianBox, gridBagConstraints);
+        gridBagConstraints.weightx = 0.5;
+        jMapSettings.add(jShowBarbarian, gridBagConstraints);
 
         jMarkerTransparency.setMajorTickSpacing(10);
         jMarkerTransparency.setMinimum(10);
@@ -810,155 +808,203 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jMarkerTransparency.setPaintLabels(true);
         jMarkerTransparency.setPaintTicks(true);
         gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 4;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.weightx = 1.0;
-        jPanel1.add(jMarkerTransparency, gridBagConstraints);
-
-        jPanel2.setMaximumSize(new java.awt.Dimension(190, 125));
-        jPanel2.setMinimumSize(new java.awt.Dimension(190, 125));
-        jPanel2.setOpaque(false);
-        jPanel2.setPreferredSize(new java.awt.Dimension(190, 125));
-        jPanel2.setLayout(new javax.swing.BoxLayout(jPanel2, javax.swing.BoxLayout.Y_AXIS));
+        gridBagConstraints.weightx = 0.5;
+        jMapSettings.add(jMarkerTransparency, gridBagConstraints);
 
         jShowContinentsLabel.setText("Kontinente anzeigen");
-        jShowContinentsLabel.setMaximumSize(new java.awt.Dimension(190, 25));
-        jShowContinentsLabel.setMinimumSize(new java.awt.Dimension(190, 25));
-        jShowContinentsLabel.setPreferredSize(new java.awt.Dimension(190, 25));
-        jPanel2.add(jShowContinentsLabel);
+        jShowContinentsLabel.setMaximumSize(new java.awt.Dimension(250, 25));
+        jShowContinentsLabel.setMinimumSize(new java.awt.Dimension(250, 25));
+        jShowContinentsLabel.setPreferredSize(new java.awt.Dimension(250, 25));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        jMapSettings.add(jShowContinentsLabel, gridBagConstraints);
 
-        jLabel7.setText("Sektoren anzeigen");
-        jLabel7.setMaximumSize(new java.awt.Dimension(190, 25));
-        jLabel7.setMinimumSize(new java.awt.Dimension(190, 25));
-        jLabel7.setPreferredSize(new java.awt.Dimension(190, 25));
-        jPanel2.add(jLabel7);
+        jShowSectorsLabel.setText("Sektoren anzeigen");
+        jShowSectorsLabel.setMaximumSize(new java.awt.Dimension(250, 25));
+        jShowSectorsLabel.setMinimumSize(new java.awt.Dimension(250, 25));
+        jShowSectorsLabel.setPreferredSize(new java.awt.Dimension(250, 25));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        jMapSettings.add(jShowSectorsLabel, gridBagConstraints);
 
-        jAttackMovementLabel2.setText("Eigene Dörfer auf Minimap");
-        jAttackMovementLabel2.setMaximumSize(new java.awt.Dimension(190, 25));
-        jAttackMovementLabel2.setMinimumSize(new java.awt.Dimension(190, 25));
-        jAttackMovementLabel2.setPreferredSize(new java.awt.Dimension(190, 25));
-        jPanel2.add(jAttackMovementLabel2);
+        jMarkOwnVillagesOnMinimapLabel.setText("Eigene Dörfer auf Minimap");
+        jMarkOwnVillagesOnMinimapLabel.setMaximumSize(new java.awt.Dimension(250, 25));
+        jMarkOwnVillagesOnMinimapLabel.setMinimumSize(new java.awt.Dimension(250, 25));
+        jMarkOwnVillagesOnMinimapLabel.setPreferredSize(new java.awt.Dimension(250, 25));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        jMapSettings.add(jMarkOwnVillagesOnMinimapLabel, gridBagConstraints);
 
-        jLabel17.setText("Barbarendörfer anzeigen");
-        jLabel17.setMaximumSize(new java.awt.Dimension(190, 25));
-        jLabel17.setMinimumSize(new java.awt.Dimension(190, 25));
-        jLabel17.setPreferredSize(new java.awt.Dimension(190, 25));
-        jPanel2.add(jLabel17);
+        jShowBarbarianLabel.setText("Barbarendörfer anzeigen");
+        jShowBarbarianLabel.setToolTipText("");
+        jShowBarbarianLabel.setMaximumSize(new java.awt.Dimension(250, 25));
+        jShowBarbarianLabel.setMinimumSize(new java.awt.Dimension(250, 25));
+        jShowBarbarianLabel.setPreferredSize(new java.awt.Dimension(250, 25));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        jMapSettings.add(jShowBarbarianLabel, gridBagConstraints);
 
-        jLabel30.setText("Deckkraft von Markierungen [%]");
-        jLabel30.setMaximumSize(new java.awt.Dimension(190, 25));
-        jLabel30.setMinimumSize(new java.awt.Dimension(190, 25));
-        jLabel30.setPreferredSize(new java.awt.Dimension(190, 25));
-        jPanel2.add(jLabel30);
+        jMarkerTransparencyLabel.setText("Deckkraft von Markierungen [%]");
+        jMarkerTransparencyLabel.setMaximumSize(new java.awt.Dimension(250, 25));
+        jMarkerTransparencyLabel.setMinimumSize(new java.awt.Dimension(250, 25));
+        jMarkerTransparencyLabel.setPreferredSize(new java.awt.Dimension(250, 25));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        jMapSettings.add(jMarkerTransparencyLabel, gridBagConstraints);
 
-        jLabel4.setText("Standardmarkierung");
-        jLabel4.setMaximumSize(new java.awt.Dimension(150, 25));
-        jLabel4.setMinimumSize(new java.awt.Dimension(150, 25));
-        jLabel4.setPreferredSize(new java.awt.Dimension(150, 25));
+        jDefaultMarkLabel.setText("Standardmarkierung");
+        jDefaultMarkLabel.setMaximumSize(new java.awt.Dimension(250, 25));
+        jDefaultMarkLabel.setMinimumSize(new java.awt.Dimension(250, 25));
+        jDefaultMarkLabel.setPreferredSize(new java.awt.Dimension(250, 25));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        jMapSettings.add(jDefaultMarkLabel, gridBagConstraints);
 
-        jDefaultMarkBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "DS 6.0", "Rot", "Weiß" }));
-        jDefaultMarkBox.setToolTipText("Standardfarbe von Dorfmarkierungen");
-        jDefaultMarkBox.setMinimumSize(new java.awt.Dimension(52, 25));
-        jDefaultMarkBox.setPreferredSize(new java.awt.Dimension(57, 25));
-        jDefaultMarkBox.addItemListener(new java.awt.event.ItemListener() {
+        jDefaultMark.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "DS 6.0", "Rot", "Weiß" }));
+        jDefaultMark.setToolTipText("Standardfarbe von Dorfmarkierungen");
+        jDefaultMark.setMinimumSize(new java.awt.Dimension(52, 25));
+        jDefaultMark.setPreferredSize(new java.awt.Dimension(57, 25));
+        jDefaultMark.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 fireStandardMarkChangedEvent(evt);
             }
         });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 0.5;
+        jMapSettings.add(jDefaultMark, gridBagConstraints);
 
-        jLabel3.setText("Popupoptionen");
-        jLabel3.setMaximumSize(new java.awt.Dimension(97, 25));
-        jLabel3.setMinimumSize(new java.awt.Dimension(97, 25));
-        jLabel3.setPreferredSize(new java.awt.Dimension(97, 25));
+        jPanelPopupinfos.setBorder(javax.swing.BorderFactory.createTitledBorder("Popup Infos"));
+        jPanelPopupinfos.setLayout(new java.awt.GridBagLayout());
 
-        jPanel5.setOpaque(false);
-        jPanel5.setLayout(new java.awt.GridLayout(5, 0));
-
-        jShowPopupRanks.setText("Erweiterte Informationen anzeigen");
-        jShowPopupRanks.setToolTipText("Anzeige von Gesamtpunkten und Platzierungen für Spieler und Stamm");
-        jShowPopupRanks.setMaximumSize(new java.awt.Dimension(193, 25));
-        jShowPopupRanks.setMinimumSize(new java.awt.Dimension(193, 25));
-        jShowPopupRanks.setPreferredSize(new java.awt.Dimension(193, 25));
-        jPanel5.add(jShowPopupRanks);
+        jMaxFarmSpace.setText("20000");
+        jMaxFarmSpace.setToolTipText("Anzahl der durch Truppen belegten Bauernhofplätze, bei der ein Dorf zu 100% gefüllt ist");
+        jMaxFarmSpace.setMinimumSize(new java.awt.Dimension(50, 25));
+        jMaxFarmSpace.setPreferredSize(new java.awt.Dimension(100, 25));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.ipadx = 30;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.PAGE_START;
+        jPanelPopupinfos.add(jMaxFarmSpace, gridBagConstraints);
 
         jShowPopupConquers.setText("Besiegte Gegner anzeigen");
         jShowPopupConquers.setToolTipText("Besiegte Gegner des Spielers im Angriff und der Verteididung anzeigen");
         jShowPopupConquers.setMaximumSize(new java.awt.Dimension(193, 25));
-        jShowPopupConquers.setMinimumSize(new java.awt.Dimension(193, 25));
-        jShowPopupConquers.setPreferredSize(new java.awt.Dimension(193, 25));
-        jPanel5.add(jShowPopupConquers);
+        jShowPopupConquers.setMinimumSize(new java.awt.Dimension(250, 25));
+        jShowPopupConquers.setPreferredSize(new java.awt.Dimension(250, 25));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.PAGE_START;
+        gridBagConstraints.weightx = 1.0;
+        jPanelPopupinfos.add(jShowPopupConquers, gridBagConstraints);
+
+        jShowPopupFarmSpace.setText("Bauernhof Füllstand anzeigen");
+        jShowPopupFarmSpace.setToolTipText("Füllstand des Bauernhofes eines Dorfes anzeigen");
+        jShowPopupFarmSpace.setMaximumSize(new java.awt.Dimension(193, 25));
+        jShowPopupFarmSpace.setMinimumSize(new java.awt.Dimension(250, 25));
+        jShowPopupFarmSpace.setPreferredSize(new java.awt.Dimension(250, 25));
+        jShowPopupFarmSpace.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jPopupFarmActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.PAGE_START;
+        gridBagConstraints.weightx = 1.0;
+        jPanelPopupinfos.add(jShowPopupFarmSpace, gridBagConstraints);
 
         jShowPopupMoral.setText("Moral anzeigen");
         jShowPopupMoral.setToolTipText("Moral anzeigen");
         jShowPopupMoral.setMaximumSize(new java.awt.Dimension(193, 25));
-        jShowPopupMoral.setMinimumSize(new java.awt.Dimension(193, 25));
-        jShowPopupMoral.setPreferredSize(new java.awt.Dimension(193, 25));
+        jShowPopupMoral.setMinimumSize(new java.awt.Dimension(250, 25));
+        jShowPopupMoral.setPreferredSize(new java.awt.Dimension(250, 25));
         jShowPopupMoral.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jShowPopupMoralActionPerformed(evt);
             }
         });
-        jPanel5.add(jShowPopupMoral);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.PAGE_START;
+        gridBagConstraints.weightx = 1.0;
+        jPanelPopupinfos.add(jShowPopupMoral, gridBagConstraints);
 
-        jShowPopupFarmSpace.setText("Bauernhof Füllstand anzeigen");
-        jShowPopupFarmSpace.setToolTipText("Füllstand des Bauernhofes eines Dorfes anzeigen");
-        jShowPopupFarmSpace.setMaximumSize(new java.awt.Dimension(193, 25));
-        jShowPopupFarmSpace.setMinimumSize(new java.awt.Dimension(193, 25));
-        jShowPopupFarmSpace.setPreferredSize(new java.awt.Dimension(193, 25));
-        jPanel5.add(jShowPopupFarmSpace);
+        jMaxFarmSpacelabel.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jMaxFarmSpacelabel.setText("Max. Bauernhofplätze");
+        jMaxFarmSpacelabel.setMinimumSize(new java.awt.Dimension(180, 25));
+        jMaxFarmSpacelabel.setPreferredSize(new java.awt.Dimension(180, 25));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.PAGE_START;
+        gridBagConstraints.weightx = 1.0;
+        jPanelPopupinfos.add(jMaxFarmSpacelabel, gridBagConstraints);
 
-        jPanel3.setOpaque(false);
-        jPanel3.setLayout(new javax.swing.BoxLayout(jPanel3, javax.swing.BoxLayout.X_AXIS));
+        jShowPopupRanks.setText("Erweiterte Informationen anzeigen");
+        jShowPopupRanks.setToolTipText("Anzeige von Gesamtpunkten und Platzierungen für Spieler und Stamm");
+        jShowPopupRanks.setMaximumSize(new java.awt.Dimension(193, 25));
+        jShowPopupRanks.setMinimumSize(new java.awt.Dimension(250, 25));
+        jShowPopupRanks.setPreferredSize(new java.awt.Dimension(250, 25));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.PAGE_START;
+        gridBagConstraints.weightx = 1.0;
+        jPanelPopupinfos.add(jShowPopupRanks, gridBagConstraints);
 
-        jLabel22.setText("Max. Bauernhofplätze");
-        jLabel22.setMaximumSize(new java.awt.Dimension(150, 25));
-        jLabel22.setMinimumSize(new java.awt.Dimension(150, 25));
-        jLabel22.setPreferredSize(new java.awt.Dimension(150, 25));
-        jPanel3.add(jLabel22);
+        jPopupFarmUseRealValues.setText("Echte Werte benutzen");
+        jPopupFarmUseRealValues.setToolTipText("Benutzt die eingelesenen Gebäudeinfos um die freien Bauernhofplätze zu bestimmen");
+        jPopupFarmUseRealValues.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jPopupFarmActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridwidth = 2;
+        jPanelPopupinfos.add(jPopupFarmUseRealValues, gridBagConstraints);
 
-        jMaxFarmSpace.setText("20000");
-        jMaxFarmSpace.setToolTipText("Anzahl der durch Truppen belegten Bauernhofplätze, bei der ein Dorf zu 100% gefüllt ist");
-        jMaxFarmSpace.setMinimumSize(new java.awt.Dimension(6, 25));
-        jMaxFarmSpace.setPreferredSize(new java.awt.Dimension(36, 25));
-        jPanel3.add(jMaxFarmSpace);
-
-        jPanel5.add(jPanel3);
-
-        javax.swing.GroupLayout jMapSettingsLayout = new javax.swing.GroupLayout(jMapSettings);
-        jMapSettings.setLayout(jMapSettingsLayout);
-        jMapSettingsLayout.setHorizontalGroup(
-            jMapSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jMapSettingsLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jMapSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(36, 36, 36)
-                .addGroup(jMapSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 362, Short.MAX_VALUE)
-                    .addComponent(jDefaultMarkBox, 0, 362, Short.MAX_VALUE)
-                    .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, 362, Short.MAX_VALUE))
-                .addContainerGap())
-        );
-        jMapSettingsLayout.setVerticalGroup(
-            jMapSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jMapSettingsLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jMapSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jMapSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jDefaultMarkBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jMapSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(176, 176, 176))
-        );
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 6;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        jMapSettings.add(jPanelPopupinfos, gridBagConstraints);
 
         jSettingsTabbedPane.addTab("Karten", new javax.swing.ImageIcon(getClass().getResource("/res/ui/map.gif")), jMapSettings); // NOI18N
 
@@ -1119,14 +1165,14 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             jAttackSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jAttackSettingsLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel12, javax.swing.GroupLayout.DEFAULT_SIZE, 600, Short.MAX_VALUE)
+                .addComponent(jPanel12, javax.swing.GroupLayout.DEFAULT_SIZE, 610, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jAttackSettingsLayout.setVerticalGroup(
             jAttackSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jAttackSettingsLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel12, javax.swing.GroupLayout.DEFAULT_SIZE, 446, Short.MAX_VALUE)
+                .addComponent(jPanel12, javax.swing.GroupLayout.DEFAULT_SIZE, 476, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -1568,8 +1614,8 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             .addGroup(jNetworkSettingsLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jNetworkSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 588, Short.MAX_VALUE)
-                    .addComponent(jPanel8, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 588, Short.MAX_VALUE))
+                    .addComponent(jPanel4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 610, Short.MAX_VALUE)
+                    .addComponent(jPanel8, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 610, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jNetworkSettingsLayout.setVerticalGroup(
@@ -1762,7 +1808,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             jTemplateSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jTemplateSettingsLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, 588, Short.MAX_VALUE)
+                .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, 610, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jTemplateSettingsLayout.setVerticalGroup(
@@ -1770,7 +1816,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             .addGroup(jTemplateSettingsLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(321, Short.MAX_VALUE))
+                .addContainerGap(334, Short.MAX_VALUE))
         );
 
         jSettingsTabbedPane.addTab("Templates", new javax.swing.ImageIcon(getClass().getResource("/res/ui/component.png")), jTemplateSettings); // NOI18N
@@ -2073,7 +2119,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 .addContainerGap()
                 .addGroup(jMiscSettingsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jPanel13, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, 588, Short.MAX_VALUE))
+                    .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, 610, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jMiscSettingsLayout.setVerticalGroup(
@@ -2082,7 +2128,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 .addContainerGap()
                 .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jPanel13, javax.swing.GroupLayout.DEFAULT_SIZE, 162, Short.MAX_VALUE)
+                .addComponent(jPanel13, javax.swing.GroupLayout.DEFAULT_SIZE, 192, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -2124,14 +2170,14 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                         .addComponent(jCancelButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jOKButton, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jSettingsTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 659, Short.MAX_VALUE))
+                    .addComponent(jSettingsTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 638, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jSettingsTabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 536, Short.MAX_VALUE)
+                .addComponent(jSettingsTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 558, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jCancelButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -2325,8 +2371,9 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             GlobalOptions.addProperty("show.popup.conquers", Boolean.toString(jShowPopupConquers.isSelected()));
             GlobalOptions.addProperty("show.popup.ranks", Boolean.toString(jShowPopupRanks.isSelected()));
             GlobalOptions.addProperty("show.popup.farm.space", Boolean.toString(jShowPopupFarmSpace.isSelected()));
-            GlobalOptions.addProperty("max.density.troops", jMaxTroopDensity.getText());
             GlobalOptions.addProperty("max.farm.space", jMaxFarmSpace.getText());
+            GlobalOptions.addProperty("farm.popup.use.real", Boolean.toString(jPopupFarmUseRealValues.isSelected()));
+            GlobalOptions.addProperty("max.density.troops", jMaxTroopDensity.getText());
             GlobalOptions.addProperty("show.live.countdown", Boolean.toString(jShowLiveCountdown.isSelected()));
             GlobalOptions.addProperty("extended.attack.vectors", Boolean.toString(jExtendedAttackLineDrawing.isSelected()));
             GlobalOptions.addProperty("max.sim.rounds", jMaxSimRounds.getText());
@@ -2366,14 +2413,14 @@ private void fireChangeShowAttackMovementEvent(java.awt.event.ActionEvent evt) {
 }//GEN-LAST:event_fireChangeShowAttackMovementEvent
 
 private void fireChangeMarkOwnVillagesOnMinimapEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireChangeMarkOwnVillagesOnMinimapEvent
-    GlobalOptions.addProperty("mark.villages.on.minimap", Boolean.toString(jMarkOwnVillagesOnMinimapBox.isSelected()));
+    GlobalOptions.addProperty("mark.villages.on.minimap", Boolean.toString(jMarkOwnVillagesOnMinimap.isSelected()));
     MinimapPanel.getSingleton().resetBuffer();
     MinimapPanel.getSingleton().redraw();
 }//GEN-LAST:event_fireChangeMarkOwnVillagesOnMinimapEvent
 
 private void fireStandardMarkChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireStandardMarkChangedEvent
     if (evt.getStateChange() == ItemEvent.SELECTED) {
-        int idx = jDefaultMarkBox.getSelectedIndex();
+        int idx = jDefaultMark.getSelectedIndex();
         if (idx < 0) {
             idx = 0;
         }
@@ -2390,11 +2437,11 @@ private void fireCheckForUpdatesEvent(javax.swing.event.ChangeEvent evt) {//GEN-
 }//GEN-LAST:event_fireCheckForUpdatesEvent
 
 private void fireChangeShowSectorsEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fireChangeShowSectorsEvent
-    GlobalOptions.addProperty("show.sectors", Boolean.toString(jShowSectorsBox.isSelected()));
+    GlobalOptions.addProperty("show.sectors", Boolean.toString(jShowSectors.isSelected()));
 }//GEN-LAST:event_fireChangeShowSectorsEvent
 
 private void fireShowBarbarianChangedEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireShowBarbarianChangedEvent
-    GlobalOptions.addProperty("show.barbarian", Boolean.toString(jShowBarbarianBox.isSelected()));
+    GlobalOptions.addProperty("show.barbarian", Boolean.toString(jShowBarbarian.isSelected()));
 }//GEN-LAST:event_fireShowBarbarianChangedEvent
 
 private void fireAcceptDeffStrengthEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireAcceptDeffStrengthEvent
@@ -2743,6 +2790,26 @@ private void fireProfileActionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
         }
     }//GEN-LAST:event_fireSelectProfile
 
+    private void jPopupFarmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jPopupFarmActionPerformed
+        updateFarmSpaceUI();
+    }//GEN-LAST:event_jPopupFarmActionPerformed
+
+    private void updateFarmSpaceUI() {
+        if(jShowPopupFarmSpace.isSelected()) {
+            if(jPopupFarmUseRealValues.isSelected()) {
+                jMaxFarmSpace.setEnabled(false);
+                jMaxFarmSpacelabel.setEnabled(false);
+            } else {
+                jMaxFarmSpace.setEnabled(true);
+                jMaxFarmSpacelabel.setEnabled(true);
+            }
+            jPopupFarmUseRealValues.setEnabled(true);
+        } else {
+            jPopupFarmUseRealValues.setEnabled(false);
+            jMaxFarmSpace.setEnabled(false);
+            jMaxFarmSpacelabel.setEnabled(false);
+        }
+    }
     // </editor-fold>
     /**
      * Update the server list
@@ -2785,6 +2852,7 @@ private void fireProfileActionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
             model = new DefaultComboBoxModel(profiles);
         } else {
             model = new DefaultComboBoxModel(new Object[]{"Kein Profil vorhanden"});
+            logger.fatal("no Profile");
         }
 
         long profileId = -1;
@@ -2910,6 +2978,10 @@ private void fireProfileActionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
                 if (GlobalOptions.isStarted()) {
                     DSWorkbenchMainFrame.getSingleton().serverSettingsChangedEvent();
                 }
+                
+                //TODO workaround for now to avoid wrong loading
+                setOffense(new TroopAmountFixed(0).loadFromProperty(GlobalOptions.getProperty("standard.off")));
+                setDefense(new TroopAmountFixed(0).loadFromProperty(GlobalOptions.getProperty("standard.defense.split")));
             } catch (Exception e) {
                 logger.error("Failed to setup tribe list", e);
             }
@@ -2932,7 +3004,6 @@ private void fireProfileActionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
     private javax.swing.ButtonGroup connectionTypeGroup;
     private javax.swing.JTable jAttackColorTable;
     private javax.swing.JLabel jAttackMovementLabel;
-    private javax.swing.JLabel jAttackMovementLabel2;
     private javax.swing.JLabel jAttackMovementLabel3;
     private javax.swing.JPanel jAttackSettings;
     private javax.swing.JTextField jBlockPath;
@@ -2946,7 +3017,8 @@ private void fireProfileActionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
     private javax.swing.JButton jCancelButton;
     private javax.swing.JCheckBox jCheckForUpdatesBox;
     private javax.swing.JCheckBox jClipboardSound;
-    private javax.swing.JComboBox jDefaultMarkBox;
+    private javax.swing.JComboBox jDefaultMark;
+    private javax.swing.JLabel jDefaultMarkLabel;
     private javax.swing.JPanel jDefenseSettings;
     private javax.swing.JButton jDeffStrengthOKButton;
     private javax.swing.JCheckBox jDeleteFarmReportsOnExit;
@@ -2967,13 +3039,11 @@ private void fireProfileActionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
-    private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel21;
-    private javax.swing.JLabel jLabel22;
     private javax.swing.JLabel jLabel23;
     private javax.swing.JLabel jLabel24;
     private javax.swing.JLabel jLabel25;
@@ -2981,21 +3051,20 @@ private void fireProfileActionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
     private javax.swing.JLabel jLabel27;
     private javax.swing.JLabel jLabel28;
     private javax.swing.JLabel jLabel29;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel30;
     private javax.swing.JLabel jLabel31;
     private javax.swing.JLabel jLabel32;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JLabel jLabelServer;
     private javax.swing.JPanel jMapSettings;
-    private javax.swing.JCheckBox jMarkOwnVillagesOnMinimapBox;
+    private javax.swing.JCheckBox jMarkOwnVillagesOnMinimap;
+    private javax.swing.JLabel jMarkOwnVillagesOnMinimapLabel;
     private javax.swing.JSlider jMarkerTransparency;
+    private javax.swing.JLabel jMarkerTransparencyLabel;
     private javax.swing.JTextField jMaxFarmSpace;
+    private javax.swing.JLabel jMaxFarmSpacelabel;
     private javax.swing.JTextField jMaxLossRatio;
     private javax.swing.JTextField jMaxSimRounds;
     private javax.swing.JTextField jMaxTroopDensity;
@@ -3006,21 +3075,19 @@ private void fireProfileActionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
     private javax.swing.JComboBox jNotifyDurationBox;
     private javax.swing.JButton jOKButton;
     private javax.swing.JTextField jObstServer;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel10;
     private javax.swing.JPanel jPanel11;
     private javax.swing.JPanel jPanel12;
     private javax.swing.JPanel jPanel13;
     private javax.swing.JPanel jPanel15;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
-    private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
     private javax.swing.JPanel jPanel9;
+    private javax.swing.JPanel jPanelPopupinfos;
     private javax.swing.JPanel jPlayerServerSettings;
+    private javax.swing.JCheckBox jPopupFarmUseRealValues;
     private javax.swing.JComboBox jProfileBox;
     private javax.swing.JLabel jProxyAdressLabel;
     private javax.swing.JRadioButton jProxyConnectOption;
@@ -3042,7 +3109,8 @@ private void fireProfileActionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
     private javax.swing.JButton jSelectHeaderButton;
     private javax.swing.JTabbedPane jSettingsTabbedPane;
     private javax.swing.JCheckBox jShowAttackMovementBox;
-    private javax.swing.JCheckBox jShowBarbarianBox;
+    private javax.swing.JCheckBox jShowBarbarian;
+    private javax.swing.JLabel jShowBarbarianLabel;
     private javax.swing.JCheckBox jShowContinents;
     private javax.swing.JLabel jShowContinentsLabel;
     private javax.swing.JCheckBox jShowLiveCountdown;
@@ -3050,7 +3118,8 @@ private void fireProfileActionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
     private javax.swing.JCheckBox jShowPopupFarmSpace;
     private javax.swing.JCheckBox jShowPopupMoral;
     private javax.swing.JCheckBox jShowPopupRanks;
-    private javax.swing.JCheckBox jShowSectorsBox;
+    private javax.swing.JCheckBox jShowSectors;
+    private javax.swing.JLabel jShowSectorsLabel;
     private javax.swing.JPanel jSingleSupportPanel;
     private javax.swing.JPanel jStandardAttackerPanel;
     private javax.swing.JTextArea jStatusArea;

@@ -16,7 +16,6 @@
 package de.tor.tribes.util.parser;
 
 import de.tor.tribes.io.DataHolder;
-import de.tor.tribes.types.Marker;
 import de.tor.tribes.types.ext.Ally;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.SilentParserInterface;
@@ -25,8 +24,9 @@ import java.awt.Color;
 import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.StringTokenizer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -41,7 +41,7 @@ public class DiplomacyParser implements SilentParserInterface {
     
     public boolean parse(String pData) {
         StringTokenizer lineTok = new StringTokenizer(pData, "\n\r");
-        List<Marker> markers = new ArrayList<>();
+        Map<Ally, Color> markers = new HashMap<>();
         boolean allies = false;
         boolean naps = false;
         boolean enemies = false;
@@ -67,22 +67,22 @@ public class DiplomacyParser implements SilentParserInterface {
                 allies = false;
             } else {
                 if (allies) {
-                    Marker m = getMarkerFromLine(line, Constants.ALLY_MARKER);
-                    if (m != null) {
-                        logger.debug("Adding ally marker for tag " + m.getAlly());
-                        markers.add(m);
+                    Ally a = getAllyFromLine(line);
+                    if (a != null) {
+                        logger.debug("Adding ally marker for tag " + a);
+                        markers.put(a, Constants.ALLY_MARKER);
                     }
                 } else if (naps) {
-                    Marker m = getMarkerFromLine(line, Constants.NAP_MARKER);
-                    if (m != null) {
-                        logger.debug("Adding nap marker for tag " + m.getAlly());
-                        markers.add(m);
+                    Ally a = getAllyFromLine(line);
+                    if (a != null) {
+                        logger.debug("Adding nap marker for tag " + a);
+                        markers.put(a, Constants.NAP_MARKER);
                     }
                 } else if (enemies) {
-                    Marker m = getMarkerFromLine(line, Constants.ENEMY_MARKER);
-                    if (m != null) {
-                        logger.debug("Adding enemy marker for tag " + m.getAlly());
-                        markers.add(m);
+                    Ally a = getAllyFromLine(line);
+                    if (a != null) {
+                        logger.debug("Adding enemy marker for tag " + a);
+                        markers.put(a, Constants.ENEMY_MARKER);
                     }
                 }
             }
@@ -90,13 +90,14 @@ public class DiplomacyParser implements SilentParserInterface {
 
         if(markers.isEmpty())return false;
         
-        for(Marker mark : markers) MarkerManager.getSingleton().addManagedElement(mark);
+        for(Entry<Ally, Color> mark: markers.entrySet()) {
+            MarkerManager.getSingleton().addMarker(mark.getKey(), mark.getValue());
+        }
         
         return true;
-        
     }
 
-    private Marker getMarkerFromLine(String pLine, Color pMarkerColor) {
+    private Ally getAllyFromLine(String pLine) {
         StringTokenizer allySplit = new StringTokenizer(pLine, " \t");
         String tag = null;
         while (allySplit.hasMoreTokens()) {
@@ -109,11 +110,7 @@ public class DiplomacyParser implements SilentParserInterface {
             logger.debug("Trying tag '" + tag + "'");
             Ally a = DataHolder.getSingleton().getAllyByTagName(tag);
             if (a != null) {
-                Marker m = new Marker();
-                m.setMarkerType(Marker.MarkerType.ALLY);
-                m.setMarkerID(a.getId());
-                m.setMarkerColor(pMarkerColor);
-                return m;
+                return a;
             }
         }
         return null;

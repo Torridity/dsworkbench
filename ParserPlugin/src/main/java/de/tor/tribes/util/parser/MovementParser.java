@@ -16,7 +16,6 @@
 package de.tor.tribes.util.parser;
 
 import de.tor.tribes.control.ManageableType;
-import de.tor.tribes.util.xml.JDomUtils;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.TroopAmountFixed;
 import de.tor.tribes.io.UnitHolder;
@@ -27,6 +26,7 @@ import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.SilentParserInterface;
 import de.tor.tribes.util.attack.AttackManager;
 import de.tor.tribes.util.attack.StandardAttackManager;
+import de.tor.tribes.util.xml.JDomUtils;
 import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;

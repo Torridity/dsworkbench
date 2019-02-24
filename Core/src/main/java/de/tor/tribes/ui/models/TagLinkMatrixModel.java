@@ -36,6 +36,7 @@ public class TagLinkMatrixModel extends AbstractTableModel {
 
     private String[] columnNames = null;
     private Object[][] values = null;
+    private Tag[] rowTags = null;
 
     public TagLinkMatrixModel() {
         initModel();
@@ -66,13 +67,13 @@ public class TagLinkMatrixModel extends AbstractTableModel {
                 usableTags.add((Tag) e);
             }
         }
-
+        rowTags = usableTags.toArray(new Tag[]{});
 
         values = new Object[usableTags.size()][columnNames.length];
         for (int i = 0; i < usableTags.size(); i++) {
             for (int j = 0; j < columnNames.length; j++) {
                 if (j == 0) {
-                    values[i][j] = usableTags.get(i).toString();
+                    values[i][j] = usableTags.get(i).getName();
                 } else {
                     values[i][j] = 0;
                 }
@@ -144,7 +145,7 @@ public class TagLinkMatrixModel extends AbstractTableModel {
 
         for (Object[] value : values) {
             //handle tags (rows)
-            Tag t = (Tag) value[0];
+            String name = (String) value[0];
 
             for (int j = 1; j < columnNames.length; j++) {
                 String relation = "";
@@ -153,9 +154,9 @@ public class TagLinkMatrixModel extends AbstractTableModel {
                         group1.append(" UND ");
                     }
                     if (j == 1) {
-                        relation += t.getName();
+                        relation += name;
                     } else {
-                        relation += "(" + t.getName() + " UND " + columnNames[j] + ")";
+                        relation += "(" + name + " UND " + columnNames[j] + ")";
                     }
                     group1.append(relation);
                 }
@@ -165,9 +166,9 @@ public class TagLinkMatrixModel extends AbstractTableModel {
                         group2.append(" UND ");
                     }
                     if (j == 1) {
-                        relation += t.getName();
+                        relation += name;
                     } else {
-                        relation += "(" + t.getName() + " UND " + columnNames[j] + ")";
+                        relation += "(" + name + " UND " + columnNames[j] + ")";
                     }
                     group2.append(relation);
                 }
@@ -177,9 +178,9 @@ public class TagLinkMatrixModel extends AbstractTableModel {
                         group3.append(" UND ");
                     }
                     if (j == 1) {
-                        relation += t.getName();
+                        relation += name;
                     } else {
-                        relation += "(" + t.getName() + " UND " + columnNames[j] + ")";
+                        relation += "(" + name + " UND " + columnNames[j] + ")";
                     }
                     group3.append(relation);
                 }
@@ -189,9 +190,9 @@ public class TagLinkMatrixModel extends AbstractTableModel {
                         group4.append(" UND ");
                     }
                     if (j == 1) {
-                        relation += t.getName();
+                        relation += name;
                     } else {
-                        relation += "(" + t.getName() + " UND " + columnNames[j] + ")";
+                        relation += "(" + name + " UND " + columnNames[j] + ")";
                     }
                     group4.append(relation);
                 }
@@ -231,7 +232,7 @@ public class TagLinkMatrixModel extends AbstractTableModel {
 
         for (Object[] value : values) {
             //handle tags (rows)
-            Tag t = (Tag) value[0];
+            String name = (String) value[0];
 
             for (int j = 1; j < columnNames.length; j++) {
                 String relation = "";
@@ -240,9 +241,9 @@ public class TagLinkMatrixModel extends AbstractTableModel {
                         group1.append(" und ");
                     }
                     if (j == 1) {
-                        relation += "in Gruppe '" + t.getName() + "'";
+                        relation += "in Gruppe '" + name + "'";
                     } else {
-                        relation += "in Gruppe '" + t.getName() + "' sowie auf Kontinent " + columnNames[j];
+                        relation += "in Gruppe '" + name + "' sowie auf Kontinent " + columnNames[j];
                     }
                     group1.append(relation);
                 }
@@ -252,9 +253,9 @@ public class TagLinkMatrixModel extends AbstractTableModel {
                         group2.append(" und ");
                     }
                     if (j == 1) {
-                        relation += "in Gruppe '" + t.getName() + "'";
+                        relation += "in Gruppe '" + name + "'";
                     } else {
-                        relation += "in Gruppe '" + t.getName() + "' sowie auf Kontinent " + columnNames[j];
+                        relation += "in Gruppe '" + name + "' sowie auf Kontinent " + columnNames[j];
                     }
                     group2.append(relation);
                 }
@@ -264,9 +265,9 @@ public class TagLinkMatrixModel extends AbstractTableModel {
                         group3.append(" und ");
                     }
                     if (j == 1) {
-                        relation += "in Gruppe '" + t.getName() + "'";
+                        relation += "in Gruppe '" + name + "'";
                     } else {
-                        relation += "in Gruppe '" + t.getName() + "' sowie auf Kontinent " + columnNames[j];
+                        relation += "in Gruppe '" + name + "' sowie auf Kontinent " + columnNames[j];
                     }
                     group3.append(relation);
                 }
@@ -276,9 +277,9 @@ public class TagLinkMatrixModel extends AbstractTableModel {
                         group4.append(" und ");
                     }
                     if (j == 1) {
-                        relation += "in Gruppe '" + t.getName() + "'";
+                        relation += "in Gruppe '" + name + "'";
                     } else {
-                        relation += "in Gruppe '" + t.getName() + "' sowie auf Kontinent " + columnNames[j];
+                        relation += "in Gruppe '" + name + "' sowie auf Kontinent " + columnNames[j];
                     }
                     group4.append(relation);
                 }

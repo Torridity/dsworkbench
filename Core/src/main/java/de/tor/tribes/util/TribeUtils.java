@@ -15,7 +15,6 @@
  */
 package de.tor.tribes.util;
 
-import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.ext.Barbarians;
 import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Village;

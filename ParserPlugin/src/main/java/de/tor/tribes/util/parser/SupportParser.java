@@ -30,11 +30,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.regex.Pattern;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * @author Charon
  */
 public class SupportParser implements SilentParserInterface {
+    private static Logger logger = LogManager.getLogger("SupportParser");
 
     /*
     [001]PICO (453|581) K40     im Dorf    936    178    0    0    2    0    0    98    0    0    0    0    Truppen
@@ -57,7 +60,7 @@ public class SupportParser implements SilentParserInterface {
         while (lineTok.hasMoreElements()) {
             //parse single line for village
             String line = lineTok.nextToken();
-            if (line.indexOf(getVariable("troops.in.village")) > 0) {
+            if (line.contains(getVariable("troops.in.village"))) {
                 try {
                     supportSender = VillageParser.parseSingleLine(line);
                 } catch (Exception e) {
@@ -111,9 +114,8 @@ public class SupportParser implements SilentParserInterface {
     }
 
     private TroopAmountFixed parseUnits(String pLine) {
-        String line = pLine.replaceAll(getVariable("troops.own"), "").replaceAll(getVariable("troops.commands"), "").replaceAll(getVariable("troops"), "");
         // System.out.println("Line after: " + line);
-        StringTokenizer t = new StringTokenizer(line, " \t");
+        StringTokenizer t = new StringTokenizer(pLine, " \t");
 
         int uCount = DataHolder.getSingleton().getUnits().size();
         if (!DataHolder.getSingleton().getUnitByPlainName("militia").equals(UnknownUnit.getSingleton())) {
@@ -133,6 +135,7 @@ public class SupportParser implements SilentParserInterface {
                 //token with no troops
             }
         }
+        
         if (cnt != uCount) {
             //invalid troops line
             return null;

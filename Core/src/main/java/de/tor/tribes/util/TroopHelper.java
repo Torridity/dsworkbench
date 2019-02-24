@@ -186,8 +186,8 @@ public class TroopHelper {
     public static List<Village> fillSourcesWithAttacksForUnit(Village source,
             HashMap<UnitHolder, List<Village>> villagesForUnitHolder, List<Village> existingSources,
             UnitHolder unitHolder) {
-        List<Village> sourcesForUnit = existingSources != null ? existingSources
-                : villagesForUnitHolder.get(unitHolder);
+        
+        List<Village> sourcesForUnit = existingSources != null ? existingSources : villagesForUnitHolder.get(unitHolder);
         if (sourcesForUnit == null) {
             sourcesForUnit = new LinkedList<>();
             sourcesForUnit.add(source);
@@ -253,54 +253,58 @@ public class TroopHelper {
             boolean pAllowSimilar) {
         boolean useArcher = !DataHolder.getSingleton().getUnitByPlainName("archer").equals(UnknownUnit.getSingleton());
 
-		VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(pVillage,
-				TroopsManager.TROOP_TYPE.IN_VILLAGE);
-		TroopAmountFixed troops;
-		if (holder == null) {
-			troops = new TroopAmountFixed(0);
-		} else {
-			troops = holder.getTroops();
-		}
+        VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(pVillage,
+                TroopsManager.TROOP_TYPE.IN_VILLAGE);
+        TroopAmountFixed troops;
+        if (holder == null) {
+            holder = TroopsManager.getSingleton().getTroopsForVillage(pVillage, TroopsManager.TROOP_TYPE.SUPPORT);
+        }
+        
+        if(holder == null) {
+            troops = new TroopAmountFixed(0);
+        } else {
+            troops = holder.getTroops();
+        }
 
-		if (pAllowSimilar) {
-			int defSplit = pSplitAmount.getDefValue();
-			int defCavSplit = pSplitAmount.getDefCavalryValue();
-			int defArchSplit = pSplitAmount.getDefArcherValue();
+        if (pAllowSimilar) {
+            int defSplit = pSplitAmount.getDefValue();
+            int defCavSplit = pSplitAmount.getDefCavalryValue();
+            int defArchSplit = pSplitAmount.getDefArcherValue();
 
-			int defDiff = pTargetAmount.getDefValue() - troops.getDefValue();
-			int defCavDiff = pTargetAmount.getDefCavalryValue() - troops.getDefCavalryValue();
-			int defArchDiff = pTargetAmount.getDefArcherValue() - troops.getDefArcherValue();
+            int defDiff = pTargetAmount.getDefValue() - troops.getDefValue();
+            int defCavDiff = pTargetAmount.getDefCavalryValue() - troops.getDefCavalryValue();
+            int defArchDiff = pTargetAmount.getDefArcherValue() - troops.getDefArcherValue();
 
-			int defSupport = (defDiff == 0) ? 0 : (int) (Math.ceil((double) defDiff / (double) defSplit));
-			int defCavSupport = (defCavDiff == 0) ? 0 : (int) (Math.ceil((double) defCavDiff / (double) defCavSplit));
-			int defArchSupport = (defArchDiff == 0) ? 0
-					: (int) (Math.ceil((double) defArchDiff / (double) defArchSplit));
+            int defSupport = (defDiff == 0) ? 0 : (int) (Math.ceil((double) defDiff / (double) defSplit));
+            int defCavSupport = (defCavDiff == 0) ? 0 : (int) (Math.ceil((double) defCavDiff / (double) defCavSplit));
+            int defArchSupport = (defArchDiff == 0) ? 0
+                    : (int) (Math.ceil((double) defArchDiff / (double) defArchSplit));
 
-			int supportsNeeded = Math.max(defSupport, defCavSupport);
-			if (useArcher)
-				supportsNeeded = Math.max(supportsNeeded, defArchSupport);
-			return supportsNeeded;
-		} else {
-			int supportsNeeded = 0;
-			for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
-				if (unit.isDefense() && !unit.getPlainName().equals("knight")) {
-					int diff = pTargetAmount.getAmountForUnit(unit) - troops.getAmountForUnit(unit);
-					int unitSupports = (pSplitAmount.getAmountForUnit(unit) == 0) ? 0
-							: (int) (Math.ceil((double) diff / (double) pSplitAmount.getAmountForUnit(unit)));
+            int supportsNeeded = Math.max(defSupport, defCavSupport);
+            if (useArcher)
+                    supportsNeeded = Math.max(supportsNeeded, defArchSupport);
+            return supportsNeeded;
+        } else {
+            int supportsNeeded = 0;
+            for (UnitHolder unit : DataHolder.getSingleton().getUnits()) {
+                if (unit.isDefense() && !unit.getPlainName().equals("knight")) {
+                    int diff = pTargetAmount.getAmountForUnit(unit) - troops.getAmountForUnit(unit);
+                    int unitSupports = (pSplitAmount.getAmountForUnit(unit) == 0) ? 0
+                            : (int) (Math.ceil((double) diff / (double) pSplitAmount.getAmountForUnit(unit)));
 
-					supportsNeeded = Math.max(supportsNeeded, unitSupports);
-				}
-			}
+                    supportsNeeded = Math.max(supportsNeeded, unitSupports);
+                }
+            }
 
-			return supportsNeeded;
-		}
-	}
+            return supportsNeeded;
+        }
+    }
 
-	public static TroopAmountFixed getRequiredTroops(Village pVillage, TroopAmountFixed pTargetAmounts) {
-		VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(pVillage,
-				TroopsManager.TROOP_TYPE.IN_VILLAGE);
-		TroopAmountFixed result = pTargetAmounts.clone();
-		result.removeAmount(holder.getTroops());
-		return result;
-	}
+    public static TroopAmountFixed getRequiredTroops(Village pVillage, TroopAmountFixed pTargetAmounts) {
+        VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(pVillage,
+                TroopsManager.TROOP_TYPE.IN_VILLAGE);
+        TroopAmountFixed result = pTargetAmounts.clone();
+        result.removeAmount(holder.getTroops());
+        return result;
+    }
 }

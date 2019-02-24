@@ -93,6 +93,7 @@ public class GlobalDefaults {
         GLOBAL_DEFAULTS.addProperty("mark.villages.on.minimap", true);
         GLOBAL_DEFAULTS.addProperty("max.density.troops", 65000);
         GLOBAL_DEFAULTS.addProperty("max.farm.space", 20000);
+        GLOBAL_DEFAULTS.addProperty("farm.popup.use.real", false);
         GLOBAL_DEFAULTS.addProperty("max.loss.ratio", 50);
         GLOBAL_DEFAULTS.addProperty("max.sim.rounds", 500);
         GLOBAL_DEFAULTS.addProperty("no.welcome", false);

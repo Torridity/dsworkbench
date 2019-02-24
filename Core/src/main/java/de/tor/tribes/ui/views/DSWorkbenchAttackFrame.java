@@ -15,11 +15,13 @@
  */
 package de.tor.tribes.ui.views;
 
+import de.tor.tribes.control.GenericEventListener;
 import de.tor.tribes.control.GenericManagerListener;
 import de.tor.tribes.types.UserProfile;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.components.ClickAccountPanel;
 import de.tor.tribes.ui.components.ProfileQuickChangePanel;
+import de.tor.tribes.ui.components.TabPaneComponent;
 import de.tor.tribes.ui.panels.AttackTableTab;
 import de.tor.tribes.ui.panels.GenericTestPanel;
 import de.tor.tribes.ui.windows.AbstractDSWorkbenchFrame;
@@ -154,7 +156,6 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
 
 
         jAttackTabPane.getModel().addChangeListener(new ChangeListener() {
-
             @Override
             public void stateChanged(ChangeEvent e) {
                 AttackTableTab activeTab = getActiveTab();
@@ -243,6 +244,13 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         // <editor-fold defaultstate="collapsed" desc="Edit task pane">
         JXTaskPane editTaskPane = new JXTaskPane();
         editTaskPane.setTitle("Bearbeiten");
+        editTaskPane.getContentPane().add(factoryButton("/res/ui/document_new_24x24.png", "Neuen Plan erstellen", new MouseAdapter() {
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                fireCreateAttackPlanEvent(e);
+            }
+        }));
         editTaskPane.getContentPane().add(factoryButton("/res/ui/garbage.png", "Abgelaufene Befehle entfernen", new MouseAdapter() {
 
             @Override
@@ -707,18 +715,55 @@ private void fireCreateAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
             tab.deregister();
             jAttackTabPane.removeTabAt(0);
         }
-        LabelUIResource lr = new LabelUIResource();
-        lr.setLayout(new BorderLayout());
-        lr.add(jNewPlanPanel, BorderLayout.CENTER);
         String[] plans = AttackManager.getSingleton().getGroups();
-
-        //insert default tab to first place
-        int cnt = 0;
 
         for (String plan : plans) {
             AttackTableTab tab = new AttackTableTab(plan, this);
             jAttackTabPane.addTab(plan, tab);
-            cnt++;
+        }
+        
+        for(int i = 0; i < jAttackTabPane.getTabCount(); i++) {
+            final TabPaneComponent component = new TabPaneComponent(jAttackTabPane);
+            component.setStopEditingListener(new GenericEventListener() {
+                @Override
+                public void event() {
+                    int i = jAttackTabPane.indexOfTabComponent(component);
+                    AttackTableTab tab = (AttackTableTab) jAttackTabPane.getComponentAt(i);
+                    String newName = component.getEditedText();
+                    if(!newName.equals(tab.getAttackPlan())) {
+                        newName = newName.trim();
+                        if (newName.length() == 0) {
+                            JOptionPaneHelper.showWarningBox(jAttackTabPane, "'" + newName + "' ist ein ungültiger Planname", "Fehler");
+                            return;
+                        }
+                        if (AttackManager.getSingleton().groupExists(newName)) {
+                            JOptionPaneHelper.showWarningBox(jAttackTabPane, "Es existiert bereits ein Plan mit dem Namen '" + newName + "'", "Fehler");
+                            return;
+                        }
+                        
+                        AttackManager.getSingleton().renameGroup(tab.getAttackPlan(), newName);
+                    }
+                }
+            });
+            
+            component.setCloseTabListener(new GenericEventListener() {
+                @Override
+                public void event() {
+                    int i = jAttackTabPane.indexOfTabComponent(component);
+                    AttackTableTab tab = (AttackTableTab) jAttackTabPane.getComponentAt(i);
+                    if (JOptionPaneHelper.showQuestionConfirmBox(jAttackTabPane, "Befehlsplan '" + tab.getAttackPlan() +
+                            "' und alle darin enthaltenen Befehle wirklich löschen? ", "Löschen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
+                        AttackManager.getSingleton().removeGroup(tab.getAttackPlan());
+                    }
+                }
+            });
+            
+            if(i == 0 || i == 1) {
+                component.setCloseable(false);
+                component.setEditable(false);
+            }
+            
+            jAttackTabPane.setTabComponentAt(i, component);
         }
 
         jAttackTabPane.revalidate();

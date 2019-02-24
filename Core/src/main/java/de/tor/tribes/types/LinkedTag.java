@@ -140,10 +140,4 @@ public class LinkedTag extends Tag {
             }
         }
     }
-
-    public static void main(String[] args) {
-        LinkedTag tag = new LinkedTag("test", true);
-        tag.updateVillageList();
-
-    }
 }

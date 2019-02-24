@@ -17,7 +17,6 @@ package de.tor.tribes.util;
 
 import de.tor.tribes.ui.windows.ClockFrame;
 import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
-import java.applet.Applet;
 import java.applet.AudioClip;
 import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
@@ -75,19 +74,12 @@ public class ClipboardWatch extends Thread {
                 }
 
                 try {
-                    if (org.apache.commons.lang3.SystemUtils.IS_OS_WINDOWS) {
-                        if (clip == null) {
-                            clip = AudioSystem.getClip();
-                            AudioInputStream inputStream = AudioSystem.getAudioInputStream(ClockFrame.class.getResourceAsStream("/res/Ding.wav"));
-                            clip.open(inputStream);
-                        }
-                        clip.start();
-                    } else {
-                        if (ac == null) {
-                            ac = Applet.newAudioClip(ClockFrame.class.getResource("/res/Ding.wav"));
-                        }
-                        ac.play();
+                    if (clip == null) {
+                        clip = AudioSystem.getClip();
+                        AudioInputStream inputStream = AudioSystem.getAudioInputStream(ClockFrame.class.getResourceAsStream("/res/Ding.wav"));
+                        clip.open(inputStream);
                     }
+                    clip.start();
                 } catch (Exception e) {
                     logger.error("Failed to play notification", e);
                 }
@@ -137,6 +129,10 @@ public class ClipboardWatch extends Thread {
                         } else if (PluginManager.getSingleton().executeMovementParser(data)) {
                             logger.info("Movements successfully parsed.");
                             SystrayHelper.showInfoMessage("Befehle erfolgreich eingelesen");
+                            playNotification();
+                        } else if (PluginManager.getSingleton().executeBuildingParser(data)) {
+                            logger.info("Buildings successfully parsed.");
+                            SystrayHelper.showInfoMessage("Gebäude erfolgreich eingelesen");
                             playNotification();
                         }
                         lastCRC = currentCRC;

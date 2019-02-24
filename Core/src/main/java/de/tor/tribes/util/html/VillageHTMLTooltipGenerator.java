@@ -235,7 +235,7 @@ public class VillageHTMLTooltipGenerator {
         VillageTroopsHolder own = TroopsManager.getSingleton().getTroopsForVillage(pVillage, TroopsManager.TROOP_TYPE.OWN);   
                 
         if (own != null) {
-            float farmSpace = own.getFarmSpace() * 100.f;
+            float farmSpace = DSCalculator.getFarmSpaceRatio(pVillage) * 100.f;
             URL red = VillageHTMLTooltipGenerator.class.getResource("/res/balken_pech.png");
             URL green = VillageHTMLTooltipGenerator.class.getResource("/res/balken_glueck.png");
             if (farmSpace == 100) {

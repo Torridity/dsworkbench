@@ -24,7 +24,7 @@ import java.util.HashMap;
  * @author Torridity
  */
 public class Constants {
-    public final static double VERSION = 3.62;
+    public final static double VERSION = 3.7;
     public final static String VERSION_ADDITION = "";
     public final static Color DS_BACK = new Color(225, 213, 190);
     public final static Color DS_BACK_LIGHT = new Color(239, 235, 223);
@@ -39,9 +39,6 @@ public class Constants {
     public final static HashMap<String, Integer> LAYERS = new HashMap<>();
     public final static int LAYER_COUNT = 10;
     public final static boolean DEBUG = false;
-    public static final String[] BUILDING_NAMES = {"main", "barracks", "stable", "workshop",
-        "church", "watchtower", "academy", "smithy", "rally", "statue", "market", "timber",
-        "clay", "iron", "farm", "storage", "hide", "wall"};
     
     static {
         LAYERS.put("Markierungen", 0);

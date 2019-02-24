@@ -19,14 +19,20 @@ import de.tor.tribes.util.ServerSettings;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Objects;
 import org.apache.commons.lang3.Range;
 import org.apache.commons.lang3.time.DateUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  *
  * @author Charon
  */
 public class TimeSpan implements Comparable<TimeSpan> {
+
+  private static Logger logger = LogManager.getLogger("AttackTableModel");
+  
   @Override
   public TimeSpan clone() throws CloneNotSupportedException {
     if (getDirection().equals(DIRECTION.NONE)) {
@@ -44,6 +50,11 @@ public class TimeSpan implements Comparable<TimeSpan> {
   }
   
   public TimeSpan(Range<Long> pSpan, boolean repeatDaily) {
+      if(pSpan == null) {
+        logger.error("Got null at setSpan", new NullPointerException());
+        return;
+      }
+      
       this.exactSpan = pSpan;
       this.daily = repeatDaily;
   }
@@ -94,7 +105,7 @@ public class TimeSpan implements Comparable<TimeSpan> {
   }
 
   public boolean isValidAtExactTime() {
-      return exactSpan.getMinimum() == exactSpan.getMaximum();
+      return Objects.equals(exactSpan.getMinimum(), exactSpan.getMaximum());
   }
 
   public boolean isValidAtEveryDay() {
@@ -168,6 +179,10 @@ public class TimeSpan implements Comparable<TimeSpan> {
   }
   
   public void setSpan(Range<Long> pSpan) {
+    if(pSpan == null) {
+      logger.error("Got null at setSpan", new NullPointerException());
+      return;
+    }
     exactSpan = pSpan;
   }
 

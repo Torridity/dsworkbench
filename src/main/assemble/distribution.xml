@@ -40,13 +40,6 @@
             </includes>
         </fileSet>
         <fileSet>
-            <directory>ParserPlugin/target/</directory>
-            <outputDirectory>lib</outputDirectory>
-            <includes>
-                <include>*.jar</include>
-            </includes>
-        </fileSet>
-        <fileSet>
             <directory>resources</directory>
             <outputDirectory></outputDirectory>
             <includes>

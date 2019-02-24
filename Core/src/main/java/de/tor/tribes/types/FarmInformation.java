@@ -22,6 +22,7 @@ import de.tor.tribes.types.ext.Barbarians;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.views.DSWorkbenchFarmManager;
 import de.tor.tribes.util.BrowserInterface;
+import de.tor.tribes.util.BuildingSettings;
 import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.TroopHelper;
@@ -135,10 +136,10 @@ public class FarmInformation extends ManageableType {
      * Get the storage capacity of this farm excluding hidden resources
      */
     public int getStorageCapacity() {
-        int storageCapacity = DSCalculator.calculateMaxResourcesInStorage(getBuilding("storage"));
+        int storageCapacity = BuildingSettings.calculateStorageCapacity(getBuilding("storage"));
         int hiddenResources = 0;
         if (getBuilding("hide") > 0) {
-            hiddenResources = DSCalculator.calculateMaxHiddenResources(getBuilding("hide"));
+            hiddenResources = BuildingSettings.calculateHideCapacity(getBuilding("hide"));
         }
         // limit capacity to 0
         return Math.max(0, storageCapacity - hiddenResources);
@@ -242,7 +243,7 @@ public class FarmInformation extends ManageableType {
      * Get the wood amount in storage at a specific timestamp
      */
     public int getWoodInStorage(long pTimestamp) {
-        return (int) (Math.round(getGeneratedResources(woodInStorage, getBuilding("timber"), pTimestamp)));
+        return (int) (Math.round(getGeneratedResources(woodInStorage, getBuilding("wood"), pTimestamp)));
     }
 
     /**
@@ -256,7 +257,7 @@ public class FarmInformation extends ManageableType {
      * Get the clay amount in storage at a specific timestamp
      */
     public int getClayInStorage(long pTimestamp) {
-        return (int) (Math.round(getGeneratedResources(clayInStorage, getBuilding("clay"), pTimestamp)));
+        return (int) (Math.round(getGeneratedResources(clayInStorage, getBuilding("stone"), pTimestamp)));
     }
 
     /**
@@ -299,7 +300,7 @@ public class FarmInformation extends ManageableType {
             timeSinceLastFarmInfo = 0;
         }
         double timeFactor = (double) timeSinceLastFarmInfo / (double) DateUtils.MILLIS_PER_HOUR;
-        double resourcesPerHour = DSCalculator.calculateResourcesPerHour(pBuildingLevel);
+        double resourcesPerHour = BuildingSettings.calculateResourcesPerHour(pBuildingLevel);
         double generatedResources = resourcesPerHour * timeFactor;
         // Take the minimum from generated ressources and the farm limit
         if (DSWorkbenchFarmManager.getSingleton().isUseFarmLimit()) {
@@ -367,10 +368,10 @@ public class FarmInformation extends ManageableType {
             int resourceBuildingLevel = DSCalculator.calculateEstimatedResourceBuildingLevel(dResource, dt);
             switch (i) {
             case 0:
-                setBuilding("timber", Math.max(getBuilding("timber"), resourceBuildingLevel));
+                setBuilding("wood", Math.max(getBuilding("wood"), resourceBuildingLevel));
                 break;
             case 1:
-                setBuilding("clay", Math.max(getBuilding("clay"), resourceBuildingLevel));
+                setBuilding("stone", Math.max(getBuilding("stone"), resourceBuildingLevel));
                 break;
             case 2:
                 setBuilding("iron", Math.max(getBuilding("iron"), resourceBuildingLevel));
@@ -403,8 +404,8 @@ public class FarmInformation extends ManageableType {
         int woodBuildingLevel = DSCalculator.calculateEstimatedResourceBuildingLevel(wood, dt);
         int clayBuildingLevel = DSCalculator.calculateEstimatedResourceBuildingLevel(clay, dt);
         int ironBuildingLevel = DSCalculator.calculateEstimatedResourceBuildingLevel(iron, dt);
-        setBuilding("timber", Math.max(getBuilding("timber"), woodBuildingLevel));
-        setBuilding("clay", Math.max(getBuilding("clay"), clayBuildingLevel));
+        setBuilding("wood", Math.max(getBuilding("wood"), woodBuildingLevel));
+        setBuilding("stone", Math.max(getBuilding("stone"), clayBuildingLevel));
         setBuilding("iron", Math.max(getBuilding("iron"), ironBuildingLevel));
     }
 
@@ -495,8 +496,8 @@ public class FarmInformation extends ManageableType {
             lastResult = FARM_RESULT.UNKNOWN;
             if (!inactive && !isFinal) {
                 setSiegeStatus(SIEGE_STATUS.AT_HOME);
-                if (getBuilding("main") == 1 && getBuilding("smithy") == 0 && getBuilding("barracks") == 0 &&
-                        getBuilding("stable") == 0 && getBuilding("workshop") == 0 &&
+                if (getBuilding("main") == 1 && getBuilding("smith") == 0 && getBuilding("barracks") == 0 &&
+                        getBuilding("stable") == 0 && getBuilding("garage") == 0 &&
                         getBuilding("market") == 0 && getBuilding("wall") == 0 &&
                         this.getVillage().getPoints() >= ServerSettings.getSingleton().getBarbarianPoints()) {
                 setSiegeStatus(SIEGE_STATUS.FINAL_FARM);
@@ -928,11 +929,11 @@ public class FarmInformation extends ManageableType {
     }
 
     public int getWoodLevel() {
-        return getBuilding("timber");
+        return getBuilding("wood");
     }
 
     public int getClayLevel() {
-        return getBuilding("clay");
+        return getBuilding("stone");
     }
 
     public int getIronLevel() {

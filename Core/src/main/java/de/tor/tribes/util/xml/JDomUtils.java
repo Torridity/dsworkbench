@@ -22,6 +22,8 @@ import java.io.FileWriter;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
+import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jdom2.Document;
@@ -50,6 +52,21 @@ public class JDomUtils {
 
     public static Document getDocument(InputStream inStream) throws Exception {
         return new SAXBuilder().build(inStream);
+    }
+    
+    //TODO remove this at next version
+    public static Document getOldDocument(String pDocument) throws Exception {
+        return getOldDocument(new ByteArrayInputStream(pDocument.getBytes()));
+    }
+
+    public static Document getOldDocument(File xmlFile) throws Exception {
+        return getOldDocument(new FileInputStream(xmlFile));
+    }
+    
+    public static Document getOldDocument(InputStream inStream) throws Exception {
+        InputStream s1 = IOUtils.toInputStream("<data>");
+        InputStream s2 = IOUtils.toInputStream("</data>");
+        return getDocument(new java.io.SequenceInputStream(new java.io.SequenceInputStream(s1, inStream), s2));
     }
     
     public static List<Element> getNodes(Document document, String path) {

@@ -22,6 +22,7 @@ import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.ImageManager;
 import de.tor.tribes.ui.panels.MapPanel;
 import de.tor.tribes.ui.renderer.map.MapRenderer;
+import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.text.NumberFormat;
@@ -44,7 +45,6 @@ public class TroopsTableModel extends AbstractTableModel {
     private static Logger logger = LogManager.getLogger("TroopTable");
 
     public enum COL_CONTENT {
-
         TRIBE, VILLAGE, LAST_CHANGE, SPEAR, SWORD, AXE, ARCHER, SPY, LIGHT, MARCHER, HEAVY, RAM, CATA, KNIGHT, MILITIA, SNOB, OFF, DEF, DEF_CAV, DEF_ARCH, OUTSIDE, INSIDE, FARM
     }
     private String sSet = null;
@@ -340,7 +340,7 @@ public class TroopsTableModel extends AbstractTableModel {
             case INSIDE:
                 return 0;
             case FARM:
-                return h.getFarmSpace();
+                return DSCalculator.getFarmSpaceRatio(h.getVillage());
         }
         return null;
     }

@@ -19,12 +19,10 @@ import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.TroopAmountFixed;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.ext.Village;
-import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.xml.JDomUtils;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 import org.jdom2.Element;
 
 /**
@@ -72,6 +70,7 @@ public class SupportVillageTroopsHolder extends VillageTroopsHolder {
     @Override
     public Element toXml(String elementName) {
         Element support = super.toXml(elementName);
+        support.setAttribute("type", "support");
         
         Element supportTargets = new Element("supportTargets");
         for (Village key: outgoingSupports.keySet()) {
@@ -97,21 +96,6 @@ public class SupportVillageTroopsHolder extends VillageTroopsHolder {
         clearSupports();
     }
 
-    @Override
-    public float getFarmSpace() {
-        double farmSpace = 0;
-        Set<Village> villageKeys = incomingSupports.keySet();
-        for (Village key: villageKeys) {
-            farmSpace += incomingSupports.get(key).getTroopPopCount();
-        }
-
-        int max = GlobalOptions.getProperties().getInt("max.farm.space");
-        //calculate farm space depending on pop bonus
-        float res = (float) (farmSpace / (double) max);
-
-        return (res > 1.0f) ? 1.0f : res;
-    }
-
     public void clearSupports() {
         //remove supports to this village
         incomingSupports.clear();
@@ -119,22 +103,11 @@ public class SupportVillageTroopsHolder extends VillageTroopsHolder {
     }
 
     public void addOutgoingSupport(Village pTarget, TroopAmountFixed pTroops) {
-        if (outgoingSupports.get(pTarget) != null) {
-            TroopAmountFixed existingTroops = outgoingSupports.get(pTarget);
-            existingTroops.addAmount(pTroops);
-        } else {
-            outgoingSupports.put(pTarget, (TroopAmountFixed) pTroops.clone());
-        }
-
+        outgoingSupports.put(pTarget, (TroopAmountFixed) pTroops.clone());
     }
 
     public void addIncomingSupport(Village pSource, TroopAmountFixed pTroops) {
-        if (incomingSupports.get(pSource) != null) {
-            TroopAmountFixed existingTroops = incomingSupports.get(pSource);
-            existingTroops.addAmount(pTroops);
-        } else {
-            incomingSupports.put(pSource, (TroopAmountFixed) pTroops.clone());
-        }
+        incomingSupports.put(pSource, (TroopAmountFixed) pTroops.clone());
     }
 
     public HashMap<Village, TroopAmountFixed> getIncomingSupports() {
@@ -148,20 +121,14 @@ public class SupportVillageTroopsHolder extends VillageTroopsHolder {
     @Override
     public TroopAmountFixed getTroops() {
         TroopAmountFixed troopsInVillage = new TroopAmountFixed();
-        Set<Village> villageKeys = incomingSupports.keySet();
-        for (Village key: villageKeys) {
-            troopsInVillage.addAmount(incomingSupports.get(key));
+        for (TroopAmountFixed amount: incomingSupports.values()) {
+            troopsInVillage.addAmount(amount);
         }
         return troopsInVillage;
     }
 
     @Override
     public String toString() {
-        /*
-         * String result = ""; result += "Village: " + getVillage() + "\n"; Enumeration<UnitHolder> keys = getTroops().keys(); result +=
-         * "Truppen\n"; while (keys.hasMoreElements()) { UnitHolder unit = keys.nextElement(); result += unit.getName() + " " +
-         * getTroops().get(unit) + "\n"; } return result;
-         */
         if (getVillage() != null) {
             return getVillage().toString();
         }

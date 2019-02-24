@@ -87,8 +87,12 @@ public class MarkerManager extends GenericManager<Marker> {
                     if (!groupExists(setKey)) {
                         addGroup(setKey);
                     }
-                    addManagedElement(setKey, m);
-                    result++;
+                    
+                    if(m.isValid()) {
+                        //check for validity (existance of ally / tribe marker belongs to
+                        addManagedElement(setKey, m);
+                        result++;
+                    }
                 }
             }
             logger.debug("Markers successfully loaded");

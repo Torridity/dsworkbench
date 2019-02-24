@@ -19,7 +19,6 @@ import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.DataHolderListener;
 import de.tor.tribes.io.WorldDecorationHolder;
 import de.tor.tribes.types.UserProfile;
-import de.tor.tribes.ui.views.*;
 import de.tor.tribes.ui.windows.AbstractDSWorkbenchFrame;
 import de.tor.tribes.util.attack.AttackManager;
 import de.tor.tribes.util.attack.StandardAttackManager;
@@ -294,6 +293,9 @@ public class GlobalOptions {
      */
     public static void loadUserData() {
         if (SELECTED_SERVER != null && mSelectedProfile != null) {
+            logger.debug("Loading standard attacks");
+            fireDataHolderEvent("Lade Standardangriffe");
+            StandardAttackManager.getSingleton().loadElements(mSelectedProfile.getProfileDirectory() + "/stdAttacks.xml");
             logger.debug("Loading markers");
             fireDataHolderEvent("Lade Markierungen");
             MarkerManager.getSingleton().loadElements(mSelectedProfile.getProfileDirectory() + "/markers.xml");
@@ -321,9 +323,6 @@ public class GlobalOptions {
             logger.debug("Loading notes");
             fireDataHolderEvent("Lade Notizen");
             NoteManager.getSingleton().loadElements(mSelectedProfile.getProfileDirectory() + "/notes.xml");
-            logger.debug("Loading standard attacks");
-            fireDataHolderEvent("Lade Standardangriffe");
-            StandardAttackManager.getSingleton().loadElements(mSelectedProfile.getProfileDirectory() + "/stdAttacks.xml");
             logger.debug("Loading reports");
             fireDataHolderEvent("Lade Berichte");
             ReportManager.getSingleton().loadElements(mSelectedProfile.getProfileDirectory() + "/reports.xml");

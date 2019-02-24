@@ -19,7 +19,7 @@ import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.FightReport;
 import de.tor.tribes.types.ext.Village;
-import de.tor.tribes.util.Constants;
+import de.tor.tribes.util.BuildingSettings;
 import de.tor.tribes.util.ServerSettings;
 import java.awt.Color;
 import java.util.Arrays;
@@ -35,35 +35,21 @@ import org.jdom2.Element;
  *  watchtower / church Range
  */
 public class KnownVillage extends ManageableType {
-    
     private static Logger logger = LogManager.getLogger("KnownVillage");
     
     private int[] buildings;
-
-    /**
-     * -1 Building not Available
-     * -2 Special Building depends on World Settings
-     */
-    private static final int[] BUILDING_MAX_LEVEL = {30, 25, 20, 15, -2, -2, -2,
-            20, 1, 1, 30, 30, 30, 30, 30, 30, 10, 20};
-    
     private Village village;
-    
     private long lastUpdate;
-
-    public static final int[] CHURCH_RANGE = {0, 4, 6, 8};
-    public static final double[] WATCHTOWER_RANGE = {0, 1.1, 1.3, 1.5, 1.7, 2.0, 2.3,
-            2.6, 3.0, 3.4, 3.9, 4.4, 5.1, 5.8, 6.7, 7.6, 8.7, 10.0, 11.5, 13.1, 15.0};
     
     public KnownVillage(Village pVillage) {
-        buildings = new int[Constants.BUILDING_NAMES.length];
+        buildings = new int[BuildingSettings.BUILDING_NAMES.length];
         Arrays.fill(buildings, -1);
         this.village = pVillage;
         updateTime();
     }
     
     public KnownVillage(Element e) {
-        buildings = new int[Constants.BUILDING_NAMES.length];
+        buildings = new int[BuildingSettings.BUILDING_NAMES.length];
         Arrays.fill(buildings, -1);
         loadFromXml(e);
     }
@@ -73,8 +59,19 @@ public class KnownVillage extends ManageableType {
         this.village = DataHolder.getSingleton().getVillagesById().get(Integer.parseInt(pElement.getChild("id").getText()));
         this.lastUpdate = Long.parseLong(pElement.getChild("update").getText());
         
-        for(int i = 0; i < Constants.BUILDING_NAMES.length; i++) {
-            this.buildings[i] = Integer.parseInt(pElement.getChild(Constants.BUILDING_NAMES[i]).getText());
+        Element buildingElm = pElement.getChild("buildings");
+        for(int i = 0; i < BuildingSettings.BUILDING_NAMES.length; i++) {
+            String val = buildingElm.getAttributeValue(BuildingSettings.BUILDING_NAMES[i]);
+            if(val != null) {
+                try {
+                    this.buildings[i] = Integer.parseInt(val);
+                } catch(NumberFormatException e) {
+                    this.buildings[i] = -1;
+                    logger.debug("unable to decode property: {} with {}", BuildingSettings.BUILDING_NAMES[i], val, e);
+                }
+            }
+            else
+                logger.debug("property null: {}", BuildingSettings.BUILDING_NAMES[i]);
         }
     }
 
@@ -86,8 +83,8 @@ public class KnownVillage extends ManageableType {
             kVillage.addContent(new Element("update").setText(Long.toString(lastUpdate)));
             
             Element buildingsE = new Element("buildings");
-            for(int i = 0; i < Constants.BUILDING_NAMES.length; i++) {
-                buildingsE.setAttribute(Constants.BUILDING_NAMES[i], Integer.toString(buildings[i]));
+            for(int i = 0; i < BuildingSettings.BUILDING_NAMES.length; i++) {
+                buildingsE.setAttribute(BuildingSettings.BUILDING_NAMES[i], Integer.toString(buildings[i]));
             }
             kVillage.addContent(buildingsE);
         } catch (Exception e) {
@@ -104,16 +101,16 @@ public class KnownVillage extends ManageableType {
     public void updateInformation(KnownVillage other) {
         if(lastUpdate > other.getLastUpdate()) {
             //This is newer.... Just get Information that has not been discovered here
-            for(int i = 0; i < Constants.BUILDING_NAMES.length; i++) {
+            for(int i = 0; i < BuildingSettings.BUILDING_NAMES.length; i++) {
                 if(buildings[i] == -1) {
-                    buildings[i] = other.getBuildingLevelByName(Constants.BUILDING_NAMES[i]);
+                    buildings[i] = other.getBuildingLevelByName(BuildingSettings.BUILDING_NAMES[i]);
                 }
             }
         }
         else {
             //Other is newer ... Copy everything that is valid
-            for(int i = 0; i < Constants.BUILDING_NAMES.length; i++) {
-                int level = other.getBuildingLevelByName(Constants.BUILDING_NAMES[i]);
+            for(int i = 0; i < BuildingSettings.BUILDING_NAMES.length; i++) {
+                int level = other.getBuildingLevelByName(BuildingSettings.BUILDING_NAMES[i]);
                 if(level != -1) {
                     buildings[i] = level;
                 }
@@ -128,7 +125,7 @@ public class KnownVillage extends ManageableType {
     public int getChurchRange() {
         int level = getBuildingLevelByName("church");
         if(level == -1) return -1;
-        return CHURCH_RANGE[level];
+        return BuildingSettings.CHURCH_RANGE[level];
     }
 
     /**
@@ -137,7 +134,7 @@ public class KnownVillage extends ManageableType {
     public double getWatchtowerRange() {
         int level = getBuildingLevelByName("watchtower");
         if(level == -1) return -1;
-        return WATCHTOWER_RANGE[level];
+        return BuildingSettings.WATCHTOWER_RANGE[level];
     }
 
     /**
@@ -207,7 +204,7 @@ public class KnownVillage extends ManageableType {
      * @return: The Level
      */
     public int getBuildingLevelByName(String pBuilding) {
-        int id = getBuildingIdByName(pBuilding);
+        int id = BuildingSettings.getBuildingIdByName(pBuilding);
         if(id == -2) {
             logger.info("Building " + pBuilding + " not found");
         return -2;
@@ -217,23 +214,23 @@ public class KnownVillage extends ManageableType {
     }
 
     public void setBuildingLevelByName(String pBuilding, int pLevel) {
-        int id = getBuildingIdByName(pBuilding);
+        int id = BuildingSettings.getBuildingIdByName(pBuilding);
         if(id == -2) {
             logger.info("Building " + pBuilding + " not found");
             return;
         }
         
-        if(pLevel > getMaxBuildingLevel(pBuilding)) {
-            logger.error("Building cannot be constructed that far " + pBuilding + ": " + pLevel);
+        if(BuildingSettings.isBuildingLevelValid(pBuilding, pLevel)) {
+            logger.error("Building level invalid " + pBuilding + ": " + pLevel);
             return;
         }
 
         buildings[id] = pLevel;
     }
     
-    private void setBuildingLevelById(int pBuildingId, int pLevel) {
-        if(pLevel > getMaxBuildingLevel(Constants.BUILDING_NAMES[pBuildingId])) {
-            logger.error("Building cannot be constructed that far " + pBuildingId + ": " + pLevel);
+    public void setBuildingLevelById(int pBuildingId, int pLevel) {
+        if(!BuildingSettings.isBuildingLevelValid(pBuildingId, pLevel)) {
+            logger.error("Building level invalid " + pBuildingId + ": " + pLevel);
             return;
         }
 
@@ -244,66 +241,13 @@ public class KnownVillage extends ManageableType {
     public String toString() {
         return village.getFullName();
     }
-    
-    /**
-     * 
-     * @param pBuilding Name of Building
-     * @return maximum level will be returned
-     * returns -1 if a building cannot be built
-     * returns -2 if the building was not found
-     */
-    public static int getMaxBuildingLevel(String pBuilding) {
-        int id = getBuildingIdByName(pBuilding);
-        if(id == -2) {
-            logger.info("Building " + pBuilding + " not found");
-            return -2;
-        }
-        if(BUILDING_MAX_LEVEL[id] != -2) {
-            return BUILDING_MAX_LEVEL[id];
-        }
-        //Buildings that depend on world settings
-        switch(pBuilding) {
-            case "church":
-                if(ServerSettings.getSingleton().isChurch())
-                    return 3;
-                return -1;
-            case "watchtower":
-                if(ServerSettings.getSingleton().isWatchtower())
-                    return 20;
-                return -1;
-            case "academy":
-                if(ServerSettings.getSingleton().getNobleSystem() ==
-                        ServerSettings.NOBLESYSTEM_PACKETS)
-                    return 3;
-                return 1;
-        }
-        
-        logger.error("came to position in code that should never be reached: "
-                + pBuilding);
-        return -2;
-    }
-    
-    /**
-     * 
-     * @param pBuilding Name of Building
-     * @return id of building will be returned
-     * returns -2 if the building was not found
-     */
-    public static int getBuildingIdByName(String pName) {
-        for(int i = 0; i < Constants.BUILDING_NAMES.length; i++) {
-            if(Constants.BUILDING_NAMES[i].equals(pName)) {
-                return i;
-            }   
-        }
-        return -2;
-    }
 
     void updateInformation(FightReport pReport) {
         if (pReport.getSpyLevel() >= pReport.SPY_LEVEL_BUILDINGS) {
             for(int i = 0; i < buildings.length; i++) {
                 if(pReport.getBuilding(i) != -1) {
                     //Building was spyed
-                    if(getMaxBuildingLevel(Constants.BUILDING_NAMES[i]) > 0) {
+                    if(BuildingSettings.getMaxBuildingLevel(BuildingSettings.BUILDING_NAMES[i]) > 0) {
                         //Building can be build
                         setBuildingLevelById(i, pReport.getBuilding(i));
                         updateTime();
@@ -314,5 +258,18 @@ public class KnownVillage extends ManageableType {
             // set wall destruction (works also without spying)
             setBuildingLevelByName("wall", pReport.getWallAfter());
         }
+    }
+    
+    public int getFarmSpace() {
+        if(getBuildingLevelByName("farm") < 0) return -1; //building not yet read
+        int maxFarmSpace = BuildingSettings.getMaxFarmSpace(getBuildingLevelByName("farm"));
+        
+        int buildingPop = 0;
+        for(int i = 0; i < BuildingSettings.BUILDING_NAMES.length; i++) {
+            buildingPop += BuildingSettings.getPopUsageById(i, buildings[i]);
+        } 
+        
+        logger.debug("Getting Farm Space {} / {} / {}", village.getCoordAsString(), maxFarmSpace, buildingPop);
+        return maxFarmSpace - buildingPop;
     }
 }

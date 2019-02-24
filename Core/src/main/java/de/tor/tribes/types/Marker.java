@@ -199,6 +199,11 @@ public class Marker extends ManageableType implements BBSupport {
         }
     }
 
+    public boolean isValid() {
+        return (mAlly != null && type == MarkerType.ALLY) ||
+               (mTribe != null && type == MarkerType.TRIBE);
+    }
+
     /**
      * @return the shownOnMap
      */
@@ -221,12 +226,23 @@ public class Marker extends ManageableType implements BBSupport {
         
         if(type != o.getMarkerType()) return false;
         if(markerID != o.getMarkerID()) return false;
-        if(markerColor != o.getMarkerColor()) return false;
-        if(type == MarkerType.ALLY) {
-            if(mAlly != o.getAlly()) return false;
-        } else if(type == MarkerType.TRIBE) {
-            if(mTribe != o.getTribe()) return false;
-        }
         return true;
+    }
+    
+    @Override
+    public String toString() {
+        if(type == MarkerType.ALLY) {
+            if(mAlly != null)
+                return mAlly.getName();
+            else
+                logger.warn("not fully initialized Ally marker found {}", markerID);
+        }
+        if(type == MarkerType.TRIBE) {
+            if(mTribe != null)
+                return mTribe.getName();
+            else
+                logger.warn("not fully initialized Tribe marker found {}", markerID);
+        }
+        return "";
     }
 }

@@ -26,8 +26,7 @@ import de.tor.tribes.types.ext.InvalidTribe;
 import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.BBSupport;
-import de.tor.tribes.util.Constants;
-import de.tor.tribes.util.village.KnownVillage;
+import de.tor.tribes.util.BuildingSettings;
 import de.tor.tribes.util.xml.JDomUtils;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
@@ -104,8 +103,9 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
         String wallChangeVal = (wasWallDamaged())
                 ? "[b]Schaden durch Rammen:[/b] Wall beschädigt von Level " + getWallBefore() + " auf Level " + getWallAfter()
                 : "";
+        //TODO use building names from Translation file
         String cataChangeVal = (wasBuildingDamaged())
-                ? "[b]Schaden durch Katapultbeschuss:[/b] " + Constants.BUILDING_NAMES[aimedBuildingId] + " beschädigt von Level " + getBuildingBefore() + " auf Level " + getBuildingAfter()
+                ? "[b]Schaden durch Katapultbeschuss:[/b] " + BuildingSettings.BUILDING_NAMES[aimedBuildingId] + " beschädigt von Level " + getBuildingBefore() + " auf Level " + getBuildingAfter()
                 : "";
         return new String[]{attackerVal, sourceVal, defenderVal, targetVal, sendDateVal, resultVal, luckVal, moraleVal, attackerTroopsVal, defenderTroopsVal, troopsOutsideVal, troopsEnRouteVal, loyalityChangeVal, wallChangeVal, cataChangeVal};
     }
@@ -165,7 +165,7 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
         defendersOutside = new HashMap<>();
         defendersOnTheWay = new TroopAmountFixed();
         
-        buildingLevels = new int[Constants.BUILDING_NAMES.length];
+        buildingLevels = new int[BuildingSettings.BUILDING_NAMES.length];
         Arrays.fill(buildingLevels, -1);
     }
 
@@ -201,8 +201,8 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
             if (attElement != null) {
                 setAttacker(attElement);
             } else {
-                if (attackerId != -666 && sourceVillage != null && sourceVillage.getTribe() != null) {
-                    setAttacker(sourceVillage.getTribe());
+                if (attackerId != -666 && this.sourceVillage != null && this.sourceVillage.getTribe() != null) {
+                    setAttacker(this.sourceVillage.getTribe());
                 } else {
                     setAttacker(InvalidTribe.getSingleton());
                 }
@@ -215,8 +215,8 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
             if (defendingTribe != null) {
                 setDefender(defendingTribe);
             } else {
-                if (defenderId > 0 && targetVillage != null && targetVillage.getTribe() != null) {
-                    setDefender(targetVillage.getTribe());
+                if (defenderId > 0 && this.targetVillage != null && this.targetVillage.getTribe() != null) {
+                    setDefender(this.targetVillage.getTribe());
                 } else {
                     if (defenderId == -666) {
                         setDefender(InvalidTribe.getSingleton());
@@ -226,12 +226,12 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
                 }
             }
 
-            attackers = new TroopAmountFixed(attackerElement.getChild("before"));
-            diedAttackers = new TroopAmountFixed(attackerElement.getChild("died"));
-            defenders = new TroopAmountFixed(defenderElement.getChild("before"));
-            diedDefenders = new TroopAmountFixed(defenderElement.getChild("died"));
+            this.attackers = new TroopAmountFixed(attackerElement.getChild("before"));
+            this.diedAttackers = new TroopAmountFixed(attackerElement.getChild("died"));
+            this.defenders = new TroopAmountFixed(defenderElement.getChild("before"));
+            this.diedDefenders = new TroopAmountFixed(defenderElement.getChild("died"));
             try {
-                defendersOnTheWay = new TroopAmountFixed(defenderElement.getChild("otw"));
+                this.defendersOnTheWay = new TroopAmountFixed(defenderElement.getChild("otw"));
             } catch (Exception ignored) {
             }
 
@@ -241,19 +241,19 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
             } catch (Exception ignored) {
             }
 
-            defendersOutside = new HashMap<>();
+            this.defendersOutside = new HashMap<>();
             if (dDefendersOutside != null) {
                 for (Element e : (List<Element>) JDomUtils.getNodes(dDefendersOutside, "support")) {
                     int villageId = e.getAttribute("trg").getIntValue();
                     Village v = DataHolder.getSingleton().getVillagesById().get(villageId);
                     if(v != null) {
-                        TroopAmountFixed unitsInvillage = defendersOutside.get(v);
+                        TroopAmountFixed unitsInvillage = this.defendersOutside.get(v);
                         if (unitsInvillage == null) {
                             unitsInvillage = new TroopAmountFixed(e);
                         } else {
                             unitsInvillage.addAmount(new TroopAmountFixed(e));
                         }
-                        defendersOutside.put(v, unitsInvillage);
+                        this.defendersOutside.put(v, unitsInvillage);
                     }
                 }
             }
@@ -261,8 +261,8 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
             try {
                 Element e = pElement.getChild("wall");
                 if(e != null) {
-                    this.wallBefore = Byte.parseByte(e.getAttribute("before").getValue());
-                    this.wallAfter = Byte.parseByte(e.getAttribute("after").getValue());
+                    this.wallBefore = Byte.parseByte(e.getAttributeValue("before"));
+                    this.wallAfter = Byte.parseByte(e.getAttributeValue("after"));
                 }
             } catch (Exception e) {
                 this.wallBefore = -1;
@@ -271,9 +271,9 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
             try {
                 Element e = pElement.getChild("building");
                 if(e != null) {
-                    this.aimedBuildingId =  Byte.parseByte(e.getAttribute("target").getValue());
-                    this.buildingBefore = Byte.parseByte(e.getAttribute("before").getValue());
-                    this.buildingAfter = Byte.parseByte(e.getAttribute("after").getValue());
+                    this.aimedBuildingId =  Byte.parseByte(e.getAttributeValue("target"));
+                    this.buildingBefore = Byte.parseByte(e.getAttributeValue("before"));
+                    this.buildingAfter = Byte.parseByte(e.getAttributeValue("after"));
                 }
             } catch (Exception e) {
                 this.buildingBefore = -1;
@@ -283,8 +283,8 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
             try {
                 Element e = pElement.getChild("acceptance");
                 if(e != null) {
-                    this.acceptanceBefore = Byte.parseByte(e.getAttribute("before").getValue());
-                    this.acceptanceAfter = Byte.parseByte(e.getAttribute("after").getValue());
+                    this.acceptanceBefore = Byte.parseByte(e.getAttributeValue("before"));
+                    this.acceptanceAfter = Byte.parseByte(e.getAttributeValue("after"));
                 }
             } catch (Exception e) {
                 this.acceptanceBefore = 100;
@@ -294,17 +294,43 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
             try {
                 Element e = pElement.getChild("spyBuildings");
                 
-                for(int i = 0; i < buildingLevels.length; i++) {
-                    buildingLevels[i] = Integer.parseInt(e.getChildText(
-                            Constants.BUILDING_NAMES[i]));
+                for(int i = 0; i < this.buildingLevels.length; i++) {
+                    this.buildingLevels[i] = Integer.parseInt(e.getChildText(
+                            BuildingSettings.BUILDING_NAMES[i]));
                 }
             } catch (Exception e) {
                 logger.debug("Failed to read buildings", e);
             }
             try {
-                spyLevel = Integer.parseInt(pElement.getChildText("spyLevel"));
+                this.spyLevel = Integer.parseInt(pElement.getChildText("spyLevel"));
             } catch (Exception e) {
                 logger.debug("Failed to read spy Level", e);
+            }
+            
+            try {
+                Element haulElm = pElement.getChild("haul");
+                if(haulElm != null) {
+                    this.haul = new int[3];
+                    this.haul[0] = Integer.parseInt(haulElm.getAttributeValue("wood"));
+                    this.haul[1] = Integer.parseInt(haulElm.getAttributeValue("clay"));
+                    this.haul[2] = Integer.parseInt(haulElm.getAttributeValue("iron"));
+                }
+            } catch (Exception e) {
+                logger.debug("Failed to read haul information", e);
+                this.haul = null;
+            }
+            
+            try {
+                Element spyElm = pElement.getChild("spy");
+                if(spyElm != null) {
+                    this.spyedResources = new int[3];
+                    this.spyedResources[0] = Integer.parseInt(spyElm.getAttributeValue("wood"));
+                    this.spyedResources[1] = Integer.parseInt(spyElm.getAttributeValue("clay"));
+                    this.spyedResources[2] = Integer.parseInt(spyElm.getAttributeValue("iron"));
+                }
+            } catch (Exception e) {
+                logger.debug("Failed to read spyed resources", e);
+                this.spyedResources = null;
             }
         } catch (Exception e) {
             logger.warn("failed to fully read the report", e);
@@ -379,7 +405,7 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
             }
 
             if (spyedResources != null) {
-                Element spy = new Element("haul");
+                Element spy = new Element("spy");
                 spy.setAttribute("wood", Integer.toString(spyedResources[0]));
                 spy.setAttribute("clay", Integer.toString(spyedResources[1]));
                 spy.setAttribute("iron", Integer.toString(spyedResources[2]));
@@ -388,7 +414,7 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
 
             Element spyBuildings = new Element("spyBuildings");
             for(int i = 0; i < buildingLevels.length; i++) {
-                spyBuildings.setAttribute(Constants.BUILDING_NAMES[i], Integer.toString(buildingLevels[i]));
+                spyBuildings.setAttribute(BuildingSettings.BUILDING_NAMES[i], Integer.toString(buildingLevels[i]));
             }
             report.addContent(spyBuildings);
             
@@ -994,7 +1020,7 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
             result.append("Wall zerstört von Stufe ").append(getWallBefore()).append(" auf ").append(getWallAfter()).append("\n");
         }
         if (wasBuildingDamaged()) {
-            result.append(Constants.BUILDING_NAMES[aimedBuildingId]).append(" zerstört von Stufe ").append(getBuildingBefore()).append(" auf ").append(getBuildingAfter()).append("\n");
+            result.append(BuildingSettings.BUILDING_NAMES[aimedBuildingId]).append(" zerstört von Stufe ").append(getBuildingBefore()).append(" auf ").append(getBuildingAfter()).append("\n");
         }
         if (wasSnobAttack()) {
             result.append("Zustimmung gesenkt von ").append(getAcceptanceBefore()).append(" auf ").append(getAcceptanceAfter()).append("\n");
@@ -1105,7 +1131,7 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
 
         //set wall destruction (works also without spying)
         if (wallAfter != -1 && spyLevel < SPY_LEVEL_BUILDINGS) {
-            buildingLevels[KnownVillage.getBuildingIdByName("wall")] = wallAfter;
+            buildingLevels[BuildingSettings.getBuildingIdByName("wall")] = wallAfter;
         }
 
         switch (spyLevel) {

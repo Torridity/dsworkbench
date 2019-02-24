@@ -92,51 +92,51 @@ public class ProfileManager {
         mProfiles = new LinkedList<>();
         File serversDir = new File("./servers/");
         for (File f : serversDir.listFiles()) {
-            if (f.isDirectory()) {
-                //server dir
-                File profilesDir = new File(f.getPath() + "/profiles/");
-                if (profilesDir.exists()) {
-                    File[] profiles = profilesDir.listFiles();
-                    if (profiles != null && profiles.length != 0) {
-                        logger.debug("Got " + profiles.length + "profile directories");
+            if (!f.isDirectory()) continue;
+            
+            //server dir
+            File profilesDir = new File(f.getPath() + "/profiles/");
+            if (!profilesDir.exists() || !profilesDir.isDirectory()) continue;
+            
+            File[] profiles = profilesDir.listFiles();
+            if (profiles.length != 0) {
+                logger.debug("Got " + profiles.length + "profile directories");
+            }
+            for (File profileDir : profiles) {
+                logger.debug("Got profile directory '" + profileDir.getPath() + "'");
+                if (new File(profileDir.getPath() + File.separator + "deleted").exists()) {
+                    logger.debug("Profile dir " + profileDir.getName() + " is sheduled for deletion");
+                    if (FileUtils.deleteQuietly(new File(profileDir.getPath()))) {
+                        logger.debug("Profile dir deleted");
+                    } else {
+                        logger.debug("Could not delete profile dir, yet");
                     }
-                    for (File profileDir : profiles) {
-                        logger.debug("Got profile directory '" + profileDir.getPath() + "'");
-                        if (new File(profileDir.getPath() + File.separator + "deleted").exists()) {
-                            logger.debug("Profile dir " + profileDir.getName() + " is sheduled for deletion");
-                            if (FileUtils.deleteQuietly(new File(profileDir.getPath()))) {
-                                logger.debug("Profile dir deleted");
-                            } else {
-                                logger.debug("Could not delete profile dir, yet");
+                } else {
+                    if (!profileDir.isDirectory()) continue;
+                    if (profileDir.list().length != 0) {
+                        //profile directory
+                        String profileId = profileDir.getName();
+                        String serverName = f.getName();
+                        logger.debug("Found profile #'" + profileId + "' on server '" + serverName + "'");
+                        try {
+                            UserProfile profile = UserProfile.loadProfile(serverName, Long.parseLong(profileId));
+                            if (profile != null) {
+                                logger.info("Adding loaded profile #" + profileId);
+                                mProfiles.add(profile);
                             }
-                        } else {
-                            if (profileDir.isDirectory() && profileDir.list().length != 0) {
-                                //profile directory
-                                String profileId = profileDir.getName();
-                                String serverName = f.getName();
-                                logger.debug("Found profile #'" + profileId + "' on server '" + serverName + "'");
-                                try {
-                                    UserProfile profile = UserProfile.loadProfile(serverName, Long.parseLong(profileId));
-                                    if (profile != null) {
-                                        logger.info("Adding loaded profile #" + profileId);
-                                        mProfiles.add(profile);
-                                    }
-                                } catch (Exception e) {
-                                    logger.error("Failed to load profile", e);
-                                }
-                            } else {
-                                if (profileDir.list().length == 0) {
-                                    try {
-                                        FileUtils.deleteDirectory(profileDir);
-                                    } catch (IOException ignored) {
-                                    }
-                                }
+                        } catch (Exception e) {
+                            logger.error("Failed to load profile", e);
+                        }
+                    } else {
+                        if (profileDir.list().length == 0) {
+                            try {
+                                FileUtils.deleteDirectory(profileDir);
+                            } catch (IOException ignored) {
                             }
                         }
                     }
                 }
             }
-
         }
         fireProfilesLoadedEvents();
     }

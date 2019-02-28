@@ -26,7 +26,7 @@ All *official* releases you can find [here](https://github.com/Torridity/dsworkb
 
 In order to build DS Workbench you'll need:
 
-* Java SE Development Kit 8 or newer
+* OpenJDK 9 or newer
 * Apache Maven 3
 
 After obtaining the sources change to the folder where the sources are located and just call:

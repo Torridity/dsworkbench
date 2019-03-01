@@ -78,13 +78,13 @@ public class BuildingParser implements SilentParserInterface {
             if(v == null) continue;
             logger.debug("Got village '" + v + "'");
             
-            String split[] = line.split("\t");
+            String split[] = line.trim().split("\t");
             if(split.length < 2 + availableBuildings.size()) continue;
             
             try {
                 int[] levels = new int[availableBuildings.size()];
                 for(int i = 0; i < levels.length; i++) {
-                    levels[i] = Integer.parseInt(split[i + 3].trim());
+                    levels[i] = Integer.parseInt(split[i + 2].trim());
                 }
                 
                 if(logger.isDebugEnabled()) {

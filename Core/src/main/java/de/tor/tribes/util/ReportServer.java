@@ -173,12 +173,16 @@ public class ReportServer {
                 url = url.substring((url.startsWith("/")?1:0));
                 
                 String report = null;
-                //workaround for finding start & end because "&", "/" are not escaped in URL
-                report = url.substring(url.indexOf("&report=") + 8, url.indexOf("&user="));
-                
-                report = URLDecoder.decode(report, "UTF-8");
-                logger.debug("Report raw: {}", report);
+                try {
+                    //workaround for finding start & end because "&", "/" are not escaped in URL
+                    report = url.substring(url.indexOf("&report=") + 8, url.indexOf("&user="));
 
+                    report = URLDecoder.decode(report, "UTF-8");
+                    logger.debug("Report raw: {}", report);
+                } catch(Exception e) {
+                    report = null;
+                }
+                
                 if (PluginManager.getSingleton().executeObstReportParser(report)) {
                     logger.debug("Successfully parsed report. Sending response.");
                     w.write("HTTP/1.0 200 OK");

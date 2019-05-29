@@ -210,7 +210,7 @@ public class ServerSettings {
             
             logger.debug(" - reading haul values");
             try {
-                this.haulActive = Integer.parseInt(JDomUtils.getNodeValue(d, "game/hauls")) == 1;
+                this.haulActive = Integer.parseInt(JDomUtils.getNodeValue(d, "game/hauls")) != 0;
                 this.haulLimitActive = Integer.parseInt(JDomUtils.getNodeValue(d, "game/farm_limit")) == 1;
                 this.haulBase = Integer.parseInt(JDomUtils.getNodeValue(d, "game/hauls_base"));
                 this.haulMax = Integer.parseInt(JDomUtils.getNodeValue(d, "game/hauls_max"));

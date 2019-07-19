@@ -58,8 +58,8 @@ public class ServerSettings {
     public static final int NOBLESYSTEM_GOLD_COINS = 1;
     private int nobleSystem = 0;
     
-    private boolean haulActive = true;
-    private boolean haulLimitActive = false;
+    private int haulType = 1;
+    private int haulLimitActive = 0;
     private int haulBase = 0;
     private int haulMax = 0;
     
@@ -210,8 +210,8 @@ public class ServerSettings {
             
             logger.debug(" - reading haul values");
             try {
-                this.haulActive = Integer.parseInt(JDomUtils.getNodeValue(d, "game/hauls")) != 0;
-                this.haulLimitActive = Integer.parseInt(JDomUtils.getNodeValue(d, "game/farm_limit")) == 1;
+                this.haulType = Integer.parseInt(JDomUtils.getNodeValue(d, "game/hauls"));
+                this.haulLimitActive = Integer.parseInt(JDomUtils.getNodeValue(d, "game/farm_limit"));
                 this.haulBase = Integer.parseInt(JDomUtils.getNodeValue(d, "game/hauls_base"));
                 this.haulMax = Integer.parseInt(JDomUtils.getNodeValue(d, "game/hauls_max"));
             } catch (Exception inner) {
@@ -319,11 +319,15 @@ public class ServerSettings {
     }
     
     public boolean isHaulActive() {
-        return haulActive;
+        return haulType != 0;
+    }
+    
+    public int getHaulType() {
+        return haulType;
     }
 
     public boolean isHaulLimitActive() {
-        return haulLimitActive;
+        return haulLimitActive != 0;
     }
 
     public int getHaulLimitBase() {

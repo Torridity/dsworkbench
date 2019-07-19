@@ -21,6 +21,8 @@ import java.applet.AudioClip;
 import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
+import java.io.BufferedInputStream;
+import java.io.InputStream;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.zip.CRC32;
@@ -54,7 +56,6 @@ public class ClipboardWatch extends Thread {
         setPriority(MIN_PRIORITY);
     }
     private Clip clip = null;
-    private AudioClip ac = null;
 
     private synchronized void playNotification() {
         if (!GlobalOptions.getProperties().getBoolean("clipboard.notification")) {
@@ -69,14 +70,12 @@ public class ClipboardWatch extends Thread {
                     clip.stop();
                     clip.setMicrosecondPosition(0);
                 }
-                if (ac != null) {
-                    ac.stop();
-                }
 
                 try {
                     if (clip == null) {
                         clip = AudioSystem.getClip();
-                        AudioInputStream inputStream = AudioSystem.getAudioInputStream(ClockFrame.class.getResourceAsStream("/res/Ding.wav"));
+                        InputStream data = new BufferedInputStream(ClockFrame.class.getResourceAsStream("/res/Ding.wav"));
+                        AudioInputStream inputStream = AudioSystem.getAudioInputStream(data);
                         clip.open(inputStream);
                     }
                     clip.start();

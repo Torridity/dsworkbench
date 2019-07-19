@@ -320,7 +320,8 @@ public class ResourceDistributorFinishPanel extends WizardPage {
         gridBagConstraints.weighty = 0.7;
         jPanel1.add(jTransportsPanel, gridBagConstraints);
 
-        jFinalDistributionPanel.setPreferredSize(new java.awt.Dimension(314, 100));
+        jFinalDistributionPanel.setMinimumSize(new java.awt.Dimension(200, 46));
+        jFinalDistributionPanel.setPreferredSize(new java.awt.Dimension(350, 100));
         jFinalDistributionPanel.setLayout(new java.awt.BorderLayout());
 
         jScrollPane2.setBorder(javax.swing.BorderFactory.createTitledBorder("Resultierende Rohstoffverteilung"));
@@ -344,13 +345,13 @@ public class ResourceDistributorFinishPanel extends WizardPage {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weightx = 0.8;
         gridBagConstraints.weighty = 0.3;
         jPanel1.add(jFinalDistributionPanel, gridBagConstraints);
 
         jFinalStatusPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Sonstige Informationen"));
-        jFinalStatusPanel.setMinimumSize(new java.awt.Dimension(195, 100));
-        jFinalStatusPanel.setPreferredSize(new java.awt.Dimension(195, 100));
+        jFinalStatusPanel.setMinimumSize(new java.awt.Dimension(220, 100));
+        jFinalStatusPanel.setPreferredSize(new java.awt.Dimension(220, 100));
         jFinalStatusPanel.setLayout(new java.awt.GridBagLayout());
 
         jLabel2.setText("Errechnete Transporte");
@@ -424,7 +425,8 @@ public class ResourceDistributorFinishPanel extends WizardPage {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 0.2;
         gridBagConstraints.weighty = 0.3;
         jPanel1.add(jFinalStatusPanel, gridBagConstraints);
 

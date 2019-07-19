@@ -220,7 +220,7 @@ public class KnownVillage extends ManageableType {
             return;
         }
         
-        if(BuildingSettings.isBuildingLevelValid(pBuilding, pLevel)) {
+        if(!BuildingSettings.isBuildingLevelValid(pBuilding, pLevel)) {
             logger.error("Building level invalid " + pBuilding + ": " + pLevel);
             return;
         }
@@ -266,6 +266,7 @@ public class KnownVillage extends ManageableType {
         
         int buildingPop = 0;
         for(int i = 0; i < BuildingSettings.BUILDING_NAMES.length; i++) {
+            logger.trace("Building Farm {} / {} / {}", i, buildings[i], BuildingSettings.getPopUsageById(i, buildings[i]));
             buildingPop += BuildingSettings.getPopUsageById(i, buildings[i]);
         } 
         

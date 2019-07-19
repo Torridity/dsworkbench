@@ -64,9 +64,12 @@ public class JDomUtils {
     }
     
     public static Document getOldDocument(InputStream inStream) throws Exception {
-        InputStream s1 = IOUtils.toInputStream("<data>");
-        InputStream s2 = IOUtils.toInputStream("</data>");
-        return getDocument(new java.io.SequenceInputStream(new java.io.SequenceInputStream(s1, inStream), s2));
+        String data = IOUtils.toString(inStream);
+        
+        if(data.startsWith("<?xml")) {
+            data = data.substring(data.indexOf("?>") + 2);
+        }
+        return getDocument("<data>" + data + "</data>");
     }
     
     public static List<Element> getNodes(Document document, String path) {

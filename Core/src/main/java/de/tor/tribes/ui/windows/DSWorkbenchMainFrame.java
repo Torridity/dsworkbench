@@ -2443,7 +2443,8 @@ private void fireDSWorkbenchClosingEvent(java.awt.event.WindowEvent evt) {//GEN-
     logger.error("Failed to store profile settings on shutdown");
   }
   dispose();
-  MainShutdownHook.getSingleton().run();
+  new Thread(MainShutdownHook.getSingleton()).run();
+  JOptionPaneHelper.showInformationBox(this, "Beende ...", "Beende ...");
 }//GEN-LAST:event_fireDSWorkbenchClosingEvent
 
 private void fireGraphicPackChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireGraphicPackChangedEvent

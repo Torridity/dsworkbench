@@ -39,7 +39,7 @@ public class BuildingSettings {
     private static final int[] BUILD_STONE = new int[BUILDING_NAMES.length];
     private static final int[] BUILD_IRON = new int[BUILDING_NAMES.length];
     private static final int[] BUILD_POP = new int[BUILDING_NAMES.length];
-    private static final int[] BUILD_TIME = new int[BUILDING_NAMES.length];
+    private static final double[] BUILD_TIME = new double[BUILDING_NAMES.length];
     private static final double[] BUILD_WOOD_FACTOR = new double[BUILDING_NAMES.length];
     private static final double[] BUILD_STONE_FACTOR = new double[BUILDING_NAMES.length];
     private static final double[] BUILD_IRON_FACTOR = new double[BUILDING_NAMES.length];
@@ -94,7 +94,7 @@ public class BuildingSettings {
                     BUILD_STONE[index] = Integer.parseInt(b.getChildTextTrim("stone"));
                     BUILD_IRON[index] = Integer.parseInt(b.getChildTextTrim("iron"));
                     BUILD_POP[index] = Integer.parseInt(b.getChildTextTrim("pop"));
-                    BUILD_TIME[index] = Integer.parseInt(b.getChildTextTrim("build_time"));
+                    BUILD_TIME[index] = Double.parseDouble(b.getChildTextTrim("build_time"));
                     BUILD_WOOD_FACTOR[index] = Double.parseDouble(b.getChildTextTrim("wood_factor"));
                     BUILD_STONE_FACTOR[index] = Double.parseDouble(b.getChildTextTrim("stone_factor"));
                     BUILD_IRON_FACTOR[index] = Double.parseDouble(b.getChildTextTrim("iron_factor"));

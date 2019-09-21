@@ -100,7 +100,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
     // <editor-fold defaultstate="collapsed" desc="Generated Code">                          
     private void initComponents() {
 
-        jProfileDialog = new javax.swing.JDialog();
+        jProfileDialog = new javax.swing.JDialog(this);
         jScrollPane2 = new javax.swing.JScrollPane();
         jTree1 = new javax.swing.JTree();
         jButton1 = new javax.swing.JButton();

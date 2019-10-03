@@ -238,18 +238,24 @@ public class Tribe implements Comparable<Tribe>, Serializable {
     }
 
     public Color getMarkerColor() {
-        Marker m = MarkerManager.getSingleton().getMarker(this);
-        if (m != null) {
-            return m.getMarkerColor();
-        }
-
-        if (this.equals(Barbarians.getSingleton())) {
-            return Color.LIGHT_GRAY;
+        Marker mTribe = MarkerManager.getSingleton().getMarker(this);
+        if (mTribe != null) {
+            return mTribe.getMarkerColor();
         }
 
         if (getId() == GlobalOptions.getSelectedProfile().getTribe().getId()) {
             return Color.YELLOW;
         }
+        
+        Marker mAlly = MarkerManager.getSingleton().getMarker(getAlly());
+        if(mAlly != null) {
+            return mAlly.getMarkerColor();
+        }
+
+        if (this.equals(Barbarians.getSingleton())) {
+            return Color.LIGHT_GRAY;
+        }
+        
         Color DEFAULT = null;
         switch(GlobalOptions.getProperties().getInt("default.mark")) {
             case 1:

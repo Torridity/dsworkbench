@@ -207,7 +207,7 @@ public class TagMarkerLayerRenderer extends AbstractBufferedLayerRenderer {
                 int xcnt = 1;
                 int ycnt = 2;
                 int cnt = 0;
-                for (Tag tag : TagManager.getSingleton().getTags(v)) {
+                for (Tag tag : villageTags) {
                     // <editor-fold defaultstate="collapsed" desc="Draw tag if active">
                     if (tag.isShowOnMap()) {
                         boolean isDrawable = false;

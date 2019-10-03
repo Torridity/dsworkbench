@@ -475,8 +475,7 @@ public class MapLayerRenderer extends AbstractBufferedLayerRenderer {
         boolean showBarbarian = GlobalOptions.getProperties().getBoolean("show.barbarian");
         Village currentUserVillage = DSWorkbenchMainFrame.getSingleton().getCurrentUserVillage();
 
-        if (v != null && !(v.getTribe().equals(Barbarians.getSingleton()) && !showBarbarian) //&& !(MarkerManager.getSingleton().getMarker(v) == null && !v.getTribe().getName().equals(GlobalOptions.getSelectedProfile().getTribeName()))
-                ) {
+        if (v != null && (!v.getTribe().equals(Barbarians.getSingleton()) || showBarbarian)) {
             v.setVisibleOnMap(true);
             tribeId = v.getTribeID();
             copyRect = renderedMarkerBounds.get(tribeId);

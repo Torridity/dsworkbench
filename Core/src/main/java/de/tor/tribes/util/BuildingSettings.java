@@ -194,6 +194,10 @@ public class BuildingSettings {
      * returns false if building was not found
      */
     public static boolean isBuildingLevelValid(int pBuildingID, int pLevel) {
+        if(pLevel == -1) {
+            //Always allow -1 as it means unknown
+            return true;
+        }
         if(pLevel > MAX_LEVEL[pBuildingID]) {
             logger.debug("Level too hight {} / {} / {}", pBuildingID, pLevel, MAX_LEVEL[pBuildingID]);
             return false;

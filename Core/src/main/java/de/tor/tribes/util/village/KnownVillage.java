@@ -171,7 +171,7 @@ public class KnownVillage extends ManageableType {
     }
 
     public void setWatchtowerLevel(int pLevel) {
-        if(!ServerSettings.getSingleton().isChurch()) {
+        if(!ServerSettings.getSingleton().isWatchtower()) {
             logger.info("Tried to set Watchtower level " + pLevel + "on server without");
             return;
         }
@@ -180,7 +180,7 @@ public class KnownVillage extends ManageableType {
     }
 
     public void removeWatchtowerInfo() {
-        if(!ServerSettings.getSingleton().isChurch()) {
+        if(!ServerSettings.getSingleton().isWatchtower()) {
             logger.info("Tried to remove Watchtower on server without");
             return;
         }

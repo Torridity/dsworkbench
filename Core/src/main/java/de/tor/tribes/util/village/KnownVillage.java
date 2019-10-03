@@ -215,13 +215,14 @@ public class KnownVillage extends ManageableType {
 
     public void setBuildingLevelByName(String pBuilding, int pLevel) {
         int id = BuildingSettings.getBuildingIdByName(pBuilding);
+        logger.debug("Setting building {} ({}) to level {}", pBuilding, id, pLevel);
         if(id == -2) {
-            logger.info("Building " + pBuilding + " not found");
+            logger.info("Building {} not found", pBuilding);
             return;
         }
         
         if(!BuildingSettings.isBuildingLevelValid(pBuilding, pLevel)) {
-            logger.error("Building level invalid " + pBuilding + ": " + pLevel);
+            logger.error("Building level invalid {}: {}", pBuilding, pLevel);
             return;
         }
 
@@ -229,6 +230,7 @@ public class KnownVillage extends ManageableType {
     }
     
     public void setBuildingLevelById(int pBuildingId, int pLevel) {
+        logger.debug("Setting building {} to level {}", pBuildingId, pLevel);
         if(!BuildingSettings.isBuildingLevelValid(pBuildingId, pLevel)) {
             logger.error("Building level invalid " + pBuildingId + ": " + pLevel);
             return;

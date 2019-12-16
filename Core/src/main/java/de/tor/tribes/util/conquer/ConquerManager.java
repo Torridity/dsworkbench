@@ -94,6 +94,7 @@ public class ConquerManager extends GenericManager<Conquer> {
         try {
             String lastup = JDomUtils.getNodeValue(pElm, "conquers/lastUpdate");
             this.lastUpdate = Long.parseLong(lastup);
+            result++;
             for (Element e : (List<Element>) JDomUtils.getNodes(pElm, "conquers/conquer")) {
                 try {
                     Conquer c = new Conquer();

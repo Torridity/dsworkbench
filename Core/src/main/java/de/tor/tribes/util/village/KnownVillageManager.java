@@ -55,11 +55,13 @@ public class KnownVillageManager extends GenericManager<KnownVillage> {
         addManagerListener(new GenericManagerListener() {
             @Override
             public void dataChangedEvent() {
+                logger.debug("invalidating cache");
                 cacheValid = false;
             }
 
             @Override
             public void dataChangedEvent(String pGroup) {
+                logger.debug("invalidating cache grouped");
                 cacheValid = false;
             }
         });
@@ -220,6 +222,7 @@ public class KnownVillageManager extends GenericManager<KnownVillage> {
     }
     
     private void rebuildWatchtowerChurchCache() {
+        logger.debug("rebuilding cache");
         churchVillages.clear();
         watchtowerVillages.clear();
         
@@ -233,6 +236,7 @@ public class KnownVillageManager extends GenericManager<KnownVillage> {
             }
         }
         
+        logger.debug("rebuilded cache");
         cacheValid = true;
     }
 }

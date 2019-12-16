@@ -49,7 +49,7 @@ public class AttackScriptWriter {
         String tmpl = "";
         try {
             logger.debug(" - reading template");
-            BufferedReader r = new BufferedReader(new InputStreamReader(new FileInputStream("./scripts/show.tmpl")));
+            BufferedReader r = new BufferedReader(new InputStreamReader(new FileInputStream("./templates/scriptShow.tmpl")));
             String line = "";
             while ((line = r.readLine()) != null) {
                 tmpl += line + "\n";

@@ -39,6 +39,8 @@ public class TroopAmountElement {
     private String dynamicAmount = "";
     //buffer to speed up
     private boolean fixed = false;
+    
+    private boolean testRun = false;
 
     public TroopAmountElement(UnitHolder pUnit, int pAmount) {
         this(pUnit, Integer.toString(pAmount));
@@ -61,14 +63,15 @@ public class TroopAmountElement {
         //Try if we can parse this
         Object val;
         try {
-            val = parse(pAmount, 0, 0);
+            testRun = false;
+            val = parse(pAmount, null, 0);
         } catch (Exception e) {
             logger.debug("Parser Crashed ", e);
             throw new IllegalArgumentException("Parser returned error ", e);
         }
         if (val instanceof String) {
             logger.debug("Can't parse Amount " + (String) val);
-            throw new IllegalArgumentException("Unable to parse Math");
+            throw new IllegalArgumentException("Unable to parse first remaining dynamic variable will be most likely the problem: " + val);
         }
         //ok we can parse look if its fixed
         String pAmountLower = pAmount.toLowerCase();
@@ -78,7 +81,9 @@ public class TroopAmountElement {
             fixed = false;
             dynamicAmount = pAmount;
         } else {
-            val = parse(pAmount, -1, -1);
+            testRun = true;
+            val = parse(pAmount, null, -1);
+            testRun = false;
             if (val instanceof Double) {
                 fixed = true;
                 dynamicAmount = Integer.toString(((Double) val).intValue());
@@ -95,17 +100,20 @@ public class TroopAmountElement {
             logger.error("Tried to read fixed troops from Dynamic amount");
             throw new IllegalArgumentException("Tried to read fixed troops from Dynamic amount");
         }
-        int availableAmount = getAvailable(pVillage);
+        TroopAmountFixed availableAmounts = getAvailable(pVillage);
+        int availableAmount = (availableAmounts != null)?(availableAmounts.getAmountForUnit(unit)):(0);
         
         int fakeMinAmount = 0;
         if(pVillage != null) {
             //amount nedds to rounded down so we can simply use int Calculation
             fakeMinAmount = pVillage.getPoints() * ServerSettings.getSingleton().getFakeLimitPercent() / 100;
+            if(fakeMinAmount == 0) fakeMinAmount = 1; //there is at least 1 one needed even on servers without Fake Limit
         }
 
-        Object val = parse(dynamicAmount, availableAmount, fakeMinAmount);
+        testRun = false;
+        Object val = parse(dynamicAmount, availableAmounts, fakeMinAmount);
         if (val instanceof String) {
-            logger.error("cant get Amount " + availableAmount + "/" + dynamicAmount);
+            logger.error("cant get Amount ({})/{}", (availableAmounts != null)?(availableAmounts.toProperty()):("null"), dynamicAmount);
             throw new RuntimeException("cant get Amount");
         } else if (val instanceof Double) {
             int wanted = ((Double) val).intValue();
@@ -187,7 +195,7 @@ public class TroopAmountElement {
      * @return returns a double if able to parse returns a String if unable to
      * parse
      */
-    Object parse(String math, int pDynValue, int pFakeValue) {
+    Object parse(String math, TroopAmountFixed pDynValue, int pFakeValue) {
         if (math.length() == 0) {
             return (double) 0;
         }
@@ -248,9 +256,9 @@ public class TroopAmountElement {
      * @return returns a double if able to parse returns a String if unable to
      * parse
      */
-    private final String[] mathChars = {"+", "-", "*", "/", "%", "^", "<", ">", "="};
+    private final String[] mathChars = {"+", "-", "*", "/", "%", "^", "<=", ">=", "=<", "=>", "<>", "><", "<", ">", "="};
 
-    private Object innerParse(String noBrackets, int pDynValue, int pFakeValue, int level) {
+    private Object innerParse(String noBrackets, TroopAmountFixed pDynValue, int pFakeValue, int level) {
         if (noBrackets.length() == 0) {
             return (double) 0;
         }
@@ -337,20 +345,32 @@ public class TroopAmountElement {
                         case "=":
                             dAll = (dAll == dInner) ? (1.0) : (0.0);
                             break;
+                        case ">=":
+                        case "=>":
+                            dAll = (dAll >= dInner) ? (1.0) : (0.0);
+                            break;
+                        case "<=":
+                        case "=<":
+                            dAll = (dAll <= dInner) ? (1.0) : (0.0);
+                            break;
+                        case "<>":
+                        case "><":
+                            dAll = (dAll != dInner) ? (1.0) : (0.0);
+                            break;
                     }
                     result = dAll;
                 }
             }
-            currentIndex = next + 1;
+            currentIndex = next + mathChars[level].length();
         }
 
-        return result;
+        return (result != null)?(result):((double) 0);
     }
 
     private final String[] elementPostChars = {"%"};
-    private final String[] elementPreChars = {"_"};
+    private final String[] elementPreChars = {"_", "!"};
 
-    private Object elementParse(String element, int pDynValue, int pFakeValue) {
+    private Object elementParse(String element, TroopAmountFixed pDynValue, int pFakeValue) {
         if (element.length() == 0) {
             return (double) 0;
         }
@@ -358,11 +378,33 @@ public class TroopAmountElement {
 
         if (element.equalsIgnoreCase(ALL_TROOPS)) {
             //element is all Troops placeholder
-            if (pDynValue >= 0) {
-                return (double) pDynValue;
-            } else {
+            if (testRun) {
                 //no dynamic Value given
                 return element;
+            }
+            else if (pDynValue != null) {
+                return (double) pDynValue.getAmountForUnit(unit);
+            } else {
+                return 0;
+            }
+        }
+        if (element.length() > ALL_TROOPS.length() + 1 &&
+                element.substring(0, ALL_TROOPS.length()+1).equalsIgnoreCase(ALL_TROOPS + "_")) {
+            //element could be placeholder of "external" all Troops placeholder (for another unit)
+            String name = element.substring((ALL_TROOPS + "_").length());
+            for(UnitHolder otherUnit: DataHolder.getSingleton().getUnits()) {
+                if(name.equalsIgnoreCase(otherUnit.getPlainName()) ||
+                        name.equalsIgnoreCase(otherUnit.getName())) {
+                    if (testRun) {
+                        //no dynamic Value given
+                        return element;
+                    }
+                    else if (pDynValue != null) {
+                        return (double) pDynValue.getAmountForUnit(otherUnit);
+                    } else {
+                        return 0;
+                    }
+                }
             }
         }
         if (element.equalsIgnoreCase(RND_VALUE)) {
@@ -371,11 +413,11 @@ public class TroopAmountElement {
         }
         if (element.equalsIgnoreCase(FAKE_VALUE)) {
             //element is fake placeholder
-            if (pFakeValue >= 0) {
-                return (double) pFakeValue;
-            } else {
+            if (testRun) {
                 //no dynamic Value given
                 return element;
+            } else {
+                return (double) pFakeValue;
             }
         }
 
@@ -392,10 +434,13 @@ public class TroopAmountElement {
                     //able to parse
                     switch (elementPostChar) {
                         case "%":
-                            if (pDynValue >= 0) {
-                                return (double) pDynValue * dVal / 100;
-                            } else {
+                            if (testRun) {
                                 return val.toString() + elementPostChar;
+                            }
+                            else if (pDynValue != null) {
+                                return (double) pDynValue.getAmountForUnit(unit) * dVal / 100;
+                            } else {
+                                return 0;
                             }
                     }
                 }
@@ -414,6 +459,8 @@ public class TroopAmountElement {
                     switch (elementPreChar) {
                         case "_":
                             return (double) dVal * -1;
+                        case "!":
+                            return (dVal == 0) ? (1.0) : (0.0);
                     }
                 }
             }
@@ -476,10 +523,10 @@ public class TroopAmountElement {
         return next;
     }
 
-    private int getAvailable(Village pVillage) {
+    private TroopAmountFixed getAvailable(Village pVillage) {
         if (pVillage == null) {
             //don't care
-            return 0;
+            return null;
         } else {
             VillageTroopsHolder own = TroopsManager.getSingleton().getTroopsForVillage(pVillage, TroopsManager.TROOP_TYPE.OWN);
             if (own == null) {
@@ -488,9 +535,9 @@ public class TroopAmountElement {
                     logger.debug("No troop information found for village '" + pVillage + "'");
                 }
                 //just use 0 for all Units
-                return 0;
+                return null;
             }
-            return own.getTroops().getAmountForUnit(unit);
+            return own.getTroops();
         }
     }
 }

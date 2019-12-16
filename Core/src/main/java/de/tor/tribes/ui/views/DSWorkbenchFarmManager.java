@@ -106,7 +106,8 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
     }
     
     private void setSelectedFarmGroup() {
-        DSWorkbenchFarmManager.SelectedFarmGroup = (String) jFarmGroup.getSelectedItem();
+        if(jFarmGroup.getSelectedItem() != null)
+            DSWorkbenchFarmManager.SelectedFarmGroup = (String) jFarmGroup.getSelectedItem();
     }
     
     public static String getSelectedCataTarget() {        
@@ -2254,7 +2255,8 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
         }
         
         try {
-            DSWorkbenchFarmManager.SelectedFarmGroup = pConfig.getString(getPropertyPrefix() + ".farm.group");
+            if(pConfig.getString(getPropertyPrefix() + ".farm.group") != null)
+                DSWorkbenchFarmManager.SelectedFarmGroup = pConfig.getString(getPropertyPrefix() + ".farm.group");
         } catch (Exception ignored) {
         }
         

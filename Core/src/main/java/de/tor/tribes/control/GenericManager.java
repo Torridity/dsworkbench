@@ -467,6 +467,9 @@ public abstract class GenericManager<C extends ManageableType> {
             logger.debug("Failed loading data", ex);
             checkValues();
         }
+        if(!valid) {
+            revalidate(true);
+        }
     }
 
     public void saveElements(String pFile) {
@@ -490,7 +493,7 @@ public abstract class GenericManager<C extends ManageableType> {
     public abstract Element getExportData(final List<String> pGroupsToExport);
 
     /**
-     * @return number of imported Elements<br>negativ (-x-1) if failed
+     * @return number of imported Elements<br>negative (-x-1) if failed
      */
     public abstract int importData(Element pElm, String pExtension);
 }

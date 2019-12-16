@@ -2798,9 +2798,7 @@ private void fireChangeClipboardWatchEvent(java.awt.event.MouseEvent evt) {//GEN
       return;
     }
 
-    jCenterX.setText(Integer.toString(pVillage.getX()));
-    jCenterY.setText(Integer.toString(pVillage.getY()));
-    refreshMap();
+    centerPosition(pVillage.getX(), pVillage.getY());
   }
 
   public void centerPosition(double xPos, double yPos) {

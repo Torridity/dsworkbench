@@ -52,7 +52,7 @@
             <directory>resources/Scripts</directory>
             <outputDirectory></outputDirectory>
             <includes>
-                <include>show.tmpl</include>
+                <include>BuildStartScript.sh</include>
                 <include>DSWorkbench*</include>
                 <include>Launcher.bat</include>
                 <include>hidecmd.vbs</include>

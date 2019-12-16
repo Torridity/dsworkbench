@@ -1446,7 +1446,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
                 showInfo("Keine Befehle ausgewählt");
                 return;
             }
-            int answer = JOptionPaneHelper.showQuestionThreeChoicesBox(this, "Welcher BB-Codes Typ soll verwendet werden?\n(Erweiterte BB-Codes sind nur für das Forum und die Notizen geeignet)", "Erweiterter BB-Code", "IGM", "Normal", "Erweitert");
+            int answer = JOptionPaneHelper.showQuestionThreeChoicesBox(this, "Welcher BB-Codes Typ soll verwendet werden?\n(Erweiterte BB-Codes sind nur für das Forum und die Notizen geeignet)", "Erweiterter BB-Code", "Normal", "IGM", "Erweitert");
             
             StringBuilder buffer = new StringBuilder();
             switch (answer) {
@@ -1473,6 +1473,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
                     buffer.append(" mit DS Workbench ");
                     buffer.append(Constants.VERSION).append(Constants.VERSION_ADDITION + "[/size]\n");
                     break;
+                case JOptionPane.NO_OPTION:
                 default:
                     //Normal
                     buffer.append("[u]Geplante Befehle[/u]\n\n");

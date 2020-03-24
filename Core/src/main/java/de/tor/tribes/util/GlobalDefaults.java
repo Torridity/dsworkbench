@@ -79,7 +79,7 @@ public class GlobalDefaults {
         GLOBAL_DEFAULTS.addProperty("extended.attack.vectors", false);
         GLOBAL_DEFAULTS.addProperty("extended.text.attacks", false);
         GLOBAL_DEFAULTS.addProperty("form.config.frame.alwaysOnTop", false);
-        GLOBAL_DEFAULTS.addProperty("half.ribbon.size", false);
+        GLOBAL_DEFAULTS.addProperty("ribbon.size", 1.0);
         GLOBAL_DEFAULTS.addProperty("highlight.tribes.villages", false);
         GLOBAL_DEFAULTS.addProperty("include.support", true);
         GLOBAL_DEFAULTS.addProperty("inform.on.updates", true);

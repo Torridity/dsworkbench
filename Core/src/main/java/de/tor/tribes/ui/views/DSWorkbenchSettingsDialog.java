@@ -24,6 +24,7 @@ import de.tor.tribes.types.UserProfile;
 import de.tor.tribes.types.ext.InvalidTribe;
 import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Village;
+import de.tor.tribes.ui.RibbonLayoutConstants;
 import de.tor.tribes.ui.editors.ColorChooserCellEditor;
 import de.tor.tribes.ui.panels.MapPanel;
 import de.tor.tribes.ui.panels.MinimapPanel;
@@ -41,6 +42,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.io.File;
+import java.math.BigDecimal;
+import java.math.MathContext;
 import java.net.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -179,7 +182,6 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jNotifyDurationBox.setSelectedIndex(GlobalOptions.getProperties().getInt("notify.duration"));
         jInformOnUpdates.setSelected(GlobalOptions.getProperties().getBoolean("inform.on.updates"));
         jMaxTroopDensity.setText(GlobalOptions.getProperty("max.density.troops"));
-        jHalfSizeMainMenu.setSelected(GlobalOptions.getProperties().getBoolean("half.ribbon.size"));
         jClipboardSound.setSelected(GlobalOptions.getProperties().getBoolean("clipboard.notification"));
         jLabel24.setEnabled(SystrayHelper.isSystraySupported());
         jEnableSystray.setEnabled(SystrayHelper.isSystraySupported());
@@ -196,6 +198,9 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jMaxLossRatio.setText(GlobalOptions.getProperty("max.loss.ratio"));
         jReportServerPort.setText(GlobalOptions.getProperty("report.server.port"));
         jObstServer.setText(GlobalOptions.getProperty("obst.server"));
+        
+        jMenueSize.setValue(menueSizeToSlider(GlobalOptions.getProperties().getDouble("ribbon.size")));
+        jMenueSizeStateChanged(null);
     }
 
     private void setDefense(TroopAmountFixed pDefense) {
@@ -503,13 +508,15 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jMaxTroopDensity = new javax.swing.JTextField();
         jButton8 = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
-        jHalfSizeMainMenu = new javax.swing.JCheckBox();
         jLabel8 = new javax.swing.JLabel();
         jClipboardSound = new javax.swing.JCheckBox();
         jLabel20 = new javax.swing.JLabel();
         jDeleteFarmReportsOnExit = new javax.swing.JCheckBox();
         jLabel24 = new javax.swing.JLabel();
         jEnableSystray = new javax.swing.JCheckBox();
+        jPanelMenueSize = new javax.swing.JPanel();
+        jLabelMenueSize = new javax.swing.JLabel();
+        jMenueSize = new javax.swing.JSlider();
         jPanel13 = new javax.swing.JPanel();
         jLabel31 = new javax.swing.JLabel();
         jReportServerPort = new javax.swing.JTextField();
@@ -1947,33 +1954,17 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel6.add(jButton8, gridBagConstraints);
 
-        jLabel2.setText("Hauptmenü in halber Größe anzeigen");
+        jLabel2.setText("Hauptmenü größe");
         jLabel2.setMaximumSize(new java.awt.Dimension(34, 18));
         jLabel2.setMinimumSize(new java.awt.Dimension(34, 18));
         jLabel2.setPreferredSize(new java.awt.Dimension(34, 18));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 5;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel6.add(jLabel2, gridBagConstraints);
-
-        jHalfSizeMainMenu.setToolTipText("<html>Zeigt das Hauptmen&uuml; in halber Gr&ouml;sse an.<br/>Dies Option kann verwendet werden, um z.B. bei Monitoren mit kleiner Aufl&ouml;sung Platz zu sparen.</html>");
-        jHalfSizeMainMenu.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fireShowHalfSizeMainMenuEvent(evt);
-            }
-        });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 5;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel6.add(jHalfSizeMainMenu, gridBagConstraints);
 
         jLabel8.setText("Hinweis bei gelesenen Clipboard-Daten");
         jLabel8.setMaximumSize(new java.awt.Dimension(34, 18));
@@ -2062,6 +2053,48 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel6.add(jEnableSystray, gridBagConstraints);
 
+        jPanelMenueSize.setMinimumSize(new java.awt.Dimension(206, 46));
+        jPanelMenueSize.setPreferredSize(new java.awt.Dimension(206, 46));
+        jPanelMenueSize.setLayout(new java.awt.GridBagLayout());
+
+        jLabelMenueSize.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabelMenueSize.setText("20");
+        jLabelMenueSize.setMaximumSize(new java.awt.Dimension(10, 18));
+        jLabelMenueSize.setMinimumSize(new java.awt.Dimension(10, 18));
+        jLabelMenueSize.setPreferredSize(new java.awt.Dimension(10, 18));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+        gridBagConstraints.ipadx = 30;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        jPanelMenueSize.add(jLabelMenueSize, gridBagConstraints);
+
+        jMenueSize.setMaximum(20);
+        jMenueSize.setSnapToTicks(true);
+        jMenueSize.setPreferredSize(new java.awt.Dimension(50, 46));
+        jMenueSize.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                jMenueSizeStateChanged(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.ipadx = 271;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        jPanelMenueSize.add(jMenueSize, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        jPanel6.add(jPanelMenueSize, gridBagConstraints);
+
         jPanel13.setBorder(javax.swing.BorderFactory.createTitledBorder("Berichtserver"));
         jPanel13.setOpaque(false);
         jPanel13.setPreferredSize(new java.awt.Dimension(72, 50));
@@ -2128,7 +2161,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
                 .addContainerGap()
                 .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jPanel13, javax.swing.GroupLayout.DEFAULT_SIZE, 192, Short.MAX_VALUE)
+                .addComponent(jPanel13, javax.swing.GroupLayout.DEFAULT_SIZE, 172, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -2391,6 +2424,11 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             DSWorkbenchMainFrame.getSingleton().serverSettingsChangedEvent();
             MapPanel.getSingleton().getMapRenderer().initiateRedraw(MapRenderer.ALL_LAYERS);
             MinimapPanel.getSingleton().redraw();
+            
+            if(Math.abs(GlobalOptions.getProperties().getDouble("ribbon.size") - menueSizeFromSlider()) > 0.1) {
+                GlobalOptions.addProperty("ribbon.size", Double.toString(menueSizeFromSlider()));
+                JOptionPaneHelper.showInformationBox(DSWorkbenchSettingsDialog.this, "Für die Größenänderung des Hauptmenüs ist ein Neustart von DS Workbench erforderlich.", "Neustart erforderlich");
+            }
         } catch (Throwable t) {
             logger.error("Failed to close settings dialog", t);
         }
@@ -2689,11 +2727,6 @@ private void fireProfileActionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
     updateProfileList();
 }//GEN-LAST:event_fireProfileActionEvent
 
-    private void fireShowHalfSizeMainMenuEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireShowHalfSizeMainMenuEvent
-        GlobalOptions.addProperty("half.ribbon.size", Boolean.toString(jHalfSizeMainMenu.isSelected()));
-        JOptionPaneHelper.showInformationBox(DSWorkbenchSettingsDialog.this, "Für die Größenänderung des Hauptmenüs ist ein Neustart von DS Workbench erforderlich.", "Neustart erforderlich");
-    }//GEN-LAST:event_fireShowHalfSizeMainMenuEvent
-
     private void fireEnableClipboardNotificationEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireEnableClipboardNotificationEvent
         GlobalOptions.addProperty("clipboard.notification", Boolean.toString(jClipboardSound.isSelected()));
     }//GEN-LAST:event_fireEnableClipboardNotificationEvent
@@ -2794,6 +2827,33 @@ private void fireProfileActionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
         updateFarmSpaceUI();
     }//GEN-LAST:event_jPopupFarmActionPerformed
 
+    private void jMenueSizeStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jMenueSizeStateChanged
+        jLabelMenueSize.setText(Double.toString(menueSizeFromSlider()));
+    }//GEN-LAST:event_jMenueSizeStateChanged
+
+    private double menueSizeFromSlider() {
+        int sliderVal = jMenueSize.getValue(), sliderMin = jMenueSize.getMinimum(),
+                sliderMax = jMenueSize.getMaximum();
+        double min = 0.2f, max = 5f;
+        
+        double percentage = ((double) sliderVal - sliderMin) / (sliderMax - sliderMin);
+        double minLog = Math.log(min), maxLog = Math.log(max);
+        double size = Math.exp(minLog + (maxLog - minLog) * percentage);
+        
+        return new BigDecimal(size).round(new MathContext(2)).doubleValue();
+    }
+    
+    private int menueSizeToSlider(double value) {
+        double min = 0.2f, max = 5f;
+        
+        double sizeLog = Math.log(value), minLog = Math.log(min), maxLog = Math.log(max);
+        double percentage = (sizeLog - minLog) / (maxLog - minLog);
+        
+        int sliderMin = jMenueSize.getMinimum(), sliderMax = jMenueSize.getMaximum();
+        int sliderVal = (int) Math.round(sliderMin + (sliderMax - sliderMin) * percentage);
+        return sliderVal;
+    }
+    
     private void updateFarmSpaceUI() {
         if(jShowPopupFarmSpace.isSelected()) {
             if(jPopupFarmUseRealValues.isSelected()) {
@@ -3029,7 +3089,6 @@ private void fireProfileActionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
     private javax.swing.JCheckBox jEnableSystray;
     private javax.swing.JCheckBox jExtendedAttackLineDrawing;
     private javax.swing.JTextField jFooterPath;
-    private javax.swing.JCheckBox jHalfSizeMainMenu;
     private javax.swing.JTextField jHeaderPath;
     private javax.swing.JCheckBox jInformOnUpdates;
     private javax.swing.JLabel jLabel10;
@@ -3057,6 +3116,7 @@ private void fireProfileActionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
+    private javax.swing.JLabel jLabelMenueSize;
     private javax.swing.JLabel jLabelServer;
     private javax.swing.JPanel jMapSettings;
     private javax.swing.JCheckBox jMarkOwnVillagesOnMinimap;
@@ -3068,6 +3128,7 @@ private void fireProfileActionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
     private javax.swing.JTextField jMaxLossRatio;
     private javax.swing.JTextField jMaxSimRounds;
     private javax.swing.JTextField jMaxTroopDensity;
+    private javax.swing.JSlider jMenueSize;
     private javax.swing.JPanel jMiscSettings;
     private javax.swing.JButton jModifyProfileButton;
     private javax.swing.JPanel jNetworkSettings;
@@ -3085,6 +3146,7 @@ private void fireProfileActionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
     private javax.swing.JPanel jPanel9;
+    private javax.swing.JPanel jPanelMenueSize;
     private javax.swing.JPanel jPanelPopupinfos;
     private javax.swing.JPanel jPlayerServerSettings;
     private javax.swing.JCheckBox jPopupFarmUseRealValues;

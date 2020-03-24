@@ -561,6 +561,7 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
 
             @Override
             public void actionPerformed(ActionEvent e) {
+                FarmManager.getSingleton().revalidateFarms();
                 showInfo("Prüfung abgeschlossen");
             }
         });

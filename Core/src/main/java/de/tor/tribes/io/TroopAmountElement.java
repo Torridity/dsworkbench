@@ -101,6 +101,11 @@ public class TroopAmountElement {
             throw new IllegalArgumentException("Tried to read fixed troops from Dynamic amount");
         }
         TroopAmountFixed availableAmounts = getAvailable(pVillage);
+        
+        if(availableAmounts != null) {
+            //add 0 in order to remove problems with not set amounts however this can happen...
+            availableAmounts.addAmount(new TroopAmountFixed(0));
+        }
         int availableAmount = (availableAmounts != null)?(availableAmounts.getAmountForUnit(unit)):(0);
         
         int fakeMinAmount = 0;

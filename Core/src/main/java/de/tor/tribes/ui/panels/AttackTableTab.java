@@ -1604,32 +1604,38 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         }
         int sentAttacks = 0;
         int ignoredAttacks = 0;
+        int errors = 0;
         UserProfile profile = DSWorkbenchAttackFrame.getSingleton().getQuickProfile();
         boolean clickAccountEmpty = false;
 
         for (Attack a : attacks) {
-            if (!a.isTransferredToBrowser()) {
-                if (attacks.size() > 1) {//try to use click in case of multiple attacks
-                    if (!DSWorkbenchAttackFrame.getSingleton().decreaseClickAccountValue()) {
-                        //no click left
-                        clickAccountEmpty = true;
-                        break;
+            try {
+                if (!a.isTransferredToBrowser()) {
+                    if (attacks.size() > 1) {//try to use click in case of multiple attacks
+                        if (!DSWorkbenchAttackFrame.getSingleton().decreaseClickAccountValue()) {
+                            //no click left
+                            clickAccountEmpty = true;
+                            break;
+                        }
                     }
-                }
 
-                if (BrowserInterface.sendAttack(a, profile)) {
-                    a.setTransferredToBrowser(true);
-                    sentAttacks++;
-                } else {//give click back in case of an error and for multiple attacks
-                    if (attacks.size() > 1) {
-                        DSWorkbenchAttackFrame.getSingleton().increaseClickAccountValue();
+                    if (BrowserInterface.sendAttack(a, profile)) {
+                        a.setTransferredToBrowser(true);
+                        sentAttacks++;
+                    } else {//give click back in case of an error and for multiple attacks
+                        if (attacks.size() > 1) {
+                            DSWorkbenchAttackFrame.getSingleton().increaseClickAccountValue();
+                        }
                     }
+                } else {
+                    ignoredAttacks++;
                 }
-            } else {
-                ignoredAttacks++;
+            } catch(Exception e) {
+                logger.error("Unhandled exception while sending attacks\n{}", a.toInternalRepresentation(), e);
+                errors++;
             }
         }
-
+        
         if (sentAttacks == 1) {
             jxAttackTable.getSelectionModel().setSelectionInterval(jxAttackTable.getSelectedRow() + 1, jxAttackTable.getSelectedRow() + 1);
         } else {
@@ -1641,6 +1647,9 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
             usedProfile = "als " + profile.toString();
         }
         String message = "<html>" + sentAttacks + " von " + attacks.size() + " Befehle(n) " + usedProfile + " in den Browser &uuml;bertragen";
+        if(errors != 0) {
+            message += "<br/>" + errors + " Befehl(e) haben einen internen fehler produziert. Bitte stelle sicher, dass die Truppen eingelesen sind. Sollte dies nicht helfen erstelle im Forum einen Post";
+        }
         if (ignoredAttacks != 0) {
             message += "<br/>" + ignoredAttacks + " Befehl(e) ignoriert, da sie bereits &uuml;bertragen wurden";
         }

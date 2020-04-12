@@ -92,6 +92,14 @@ public class AttackTableModel extends AbstractTableModel {
 
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
+        if(columnNames.get(columnIndex).equals("Einheit")) {
+            Attack a = (Attack) AttackManager.getSingleton().getAllElements(sPlan).get(rowIndex);
+            
+            UnitHolder slowest = a.getTroops().getSlowestUnit();
+            if(slowest != null) {
+                return false;
+            }
+        }
         return editable.get(columnIndex);
     }
 
@@ -152,7 +160,7 @@ public class AttackTableModel extends AbstractTableModel {
             } else if(columnIndex == 5) {
                 return a.getTarget();
             } else if(columnIndex == 6) {
-                return a.getUnit();
+                return a.getRealUnit();
             } else if(columnIndex == 7) {
                 return a.getType();
             } else if(columnIndex > 7 && columnIndex < unitAfter) {

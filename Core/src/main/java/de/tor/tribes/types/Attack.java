@@ -219,14 +219,7 @@ public class Attack extends ManageableType implements Serializable, Comparable<A
             return;
         }
         
-        TroopAmountDynamic typeAmount = byType.getTroops();
-
-        for(UnitHolder u: DataHolder.getSingleton().getUnits()) {
-            if(u.getSpeed() <= unit.getSpeed()) {
-                //faster or equal
-                this.amounts.setAmount(typeAmount.getElementForUnit(u));
-            }
-        }
+        this.amounts = byType.getTroops().clone();
     }
     
     @Override

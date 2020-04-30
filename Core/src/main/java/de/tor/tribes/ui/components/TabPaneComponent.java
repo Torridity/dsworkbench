@@ -91,7 +91,7 @@ public class TabPaneComponent extends javax.swing.JPanel {
         jTextFieldName.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
         jTextFieldName.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusLost(java.awt.event.FocusEvent evt) {
-                stopEditing(evt);
+                fireStopEditing(evt);
             }
         });
         jTextFieldName.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -144,7 +144,13 @@ public class TabPaneComponent extends javax.swing.JPanel {
         pane.setSelectedIndex(i);
     }//GEN-LAST:event_startEditing
 
-    private void stopEditing(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_stopEditing
+    private void fireStopEditing(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_fireStopEditing
+        stopEditing();
+    }//GEN-LAST:event_fireStopEditing
+
+    public void stopEditing() {
+        if(!editing) return;
+        
         editing = false;
         rebuildUI();
         if(!editable) return;
@@ -152,8 +158,8 @@ public class TabPaneComponent extends javax.swing.JPanel {
         if(stopEditingListener != null) {
             stopEditingListener.event();
         }
-    }//GEN-LAST:event_stopEditing
-
+    }
+    
     private void closeTab(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_closeTab
         if(!closeable) return;
         
@@ -164,7 +170,7 @@ public class TabPaneComponent extends javax.swing.JPanel {
 
     private void keyEvent(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_keyEvent
         if(evt.getKeyCode() == 10 || evt.getKeyCode() == 13) {
-            stopEditing(null);
+            stopEditing();
         }
     }//GEN-LAST:event_keyEvent
 

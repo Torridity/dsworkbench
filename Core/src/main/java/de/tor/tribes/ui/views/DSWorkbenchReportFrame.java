@@ -285,7 +285,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         miscPane.getContentPane().add(factoryButton("/res/ui/document_new_24x24.png", "Neuen Plan erstellen", new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
-                fireCreateAttackPlanEvent(e);
+                createNewReportSet();
             }
         }));
         
@@ -409,14 +409,22 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         generateReportTabs();
     }
 
+    boolean generatingTabs = false;
     /**
      * Initialize and add one tab for each report set to jTabbedPane1
      */
     public void generateReportTabs() {
-        jReportsTabbedPane.invalidate();
+        if(generatingTabs) return;
+        generatingTabs = true;
+        
         while (jReportsTabbedPane.getTabCount() > 0) {
-            ReportTableTab tab = (ReportTableTab) jReportsTabbedPane.getComponentAt(0);
-            tab.deregister();
+            if(jReportsTabbedPane.getComponentAt(0) instanceof ReportTableTab) {
+                ReportTableTab tab = (ReportTableTab) jReportsTabbedPane.getComponentAt(0);
+                tab.deregister();
+            }
+            if(jReportsTabbedPane.getTabComponentAt(0) instanceof TabPaneComponent) {
+                ((TabPaneComponent) jReportsTabbedPane.getTabComponentAt(0)).stopEditing();
+            }
             jReportsTabbedPane.removeTabAt(0);
         }
         
@@ -457,7 +465,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
                 public void event() {
                     int i = jReportsTabbedPane.indexOfTabComponent(component);
                     ReportTableTab tab = (ReportTableTab) jReportsTabbedPane.getComponentAt(i);
-                    if (JOptionPaneHelper.showQuestionConfirmBox(jReportsTabbedPane, "Befehlsplan '" + tab.getReportSet() +
+                    if (JOptionPaneHelper.showQuestionConfirmBox(jReportsTabbedPane, "Berichtset '" + tab.getReportSet() +
                             "' und alle darin enthaltenen Berichte wirklich löschen? ", "Löschen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
                         ReportManager.getSingleton().removeGroup(tab.getReportSet());
                     }
@@ -472,7 +480,11 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
             jReportsTabbedPane.setTabComponentAt(i, component);
         }
         
-        jReportsTabbedPane.revalidate();
+        jReportsTabbedPane.addTab("", new javax.swing.ImageIcon(getClass().getResource("/res/ui/document_new_24x24.png")),
+                new JPanel(), "neues Berichtset erstellen");
+        
+        generatingTabs = false;
+        
         ReportTableTab tab = getActiveTab();
         if (tab != null) {
             tab.updateSet();
@@ -525,8 +537,6 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         capabilityInfoPanel2 = new de.tor.tribes.ui.components.CapabilityInfoPanel();
         jXReportsPanel = new org.jdesktop.swingx.JXPanel();
         jReportsTabbedPane = new javax.swing.JTabbedPane();
-        jNewPlanPanel = new javax.swing.JPanel();
-        jLabel10 = new javax.swing.JLabel();
         jxSearchPane = new org.jdesktop.swingx.JXPanel();
         jXPanel2 = new org.jdesktop.swingx.JXPanel();
         jButton15 = new javax.swing.JButton();
@@ -617,11 +627,11 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jResultTabbedPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 570, Short.MAX_VALUE)
+                    .addComponent(jResultTabbedPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 626, Short.MAX_VALUE)
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addComponent(jLabel7)
                         .addGap(18, 18, 18)
-                        .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 457, Short.MAX_VALUE)))
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 469, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
@@ -632,7 +642,7 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
                     .addComponent(jLabel7)
                     .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jResultTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 215, Short.MAX_VALUE)
+                .addComponent(jResultTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 238, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -692,30 +702,13 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         );
 
         jXReportsPanel.setLayout(new java.awt.BorderLayout());
-        jXReportsPanel.add(jReportsTabbedPane, java.awt.BorderLayout.CENTER);
 
-        jNewPlanPanel.setOpaque(false);
-        jNewPlanPanel.setLayout(new java.awt.BorderLayout());
-
-        jLabel10.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel10.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/document_new_24x24.png"))); // NOI18N
-        jLabel10.setToolTipText("Leeres Berichtset erstellen");
-        jLabel10.setEnabled(false);
-        jLabel10.setMaximumSize(new java.awt.Dimension(40, 40));
-        jLabel10.setMinimumSize(new java.awt.Dimension(40, 40));
-        jLabel10.setPreferredSize(new java.awt.Dimension(40, 40));
-        jLabel10.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                fireEnterEvent(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                fireExitEvent(evt);
-            }
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                fireCreateAttackPlanEvent(evt);
+        jReportsTabbedPane.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                selectedTabChanged(evt);
             }
         });
-        jNewPlanPanel.add(jLabel10, java.awt.BorderLayout.CENTER);
+        jXReportsPanel.add(jReportsTabbedPane, java.awt.BorderLayout.CENTER);
 
         jxSearchPane.setOpaque(false);
         jxSearchPane.setLayout(new java.awt.GridBagLayout());
@@ -954,8 +947,20 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         updateFilter();
 }//GEN-LAST:event_jFilterCaseSensitivefireUpdateFilterEvent
 
-    private void fireCreateAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCreateAttackPlanEvent
-        int unusedId = 1;
+    private void selectedTabChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_selectedTabChanged
+        if(generatingTabs) {
+            return;
+        }
+        if(jReportsTabbedPane.getSelectedIndex() == jReportsTabbedPane.getTabCount() - 1) {
+            int index = jReportsTabbedPane.getSelectedIndex();
+            //new Tab has been selected
+            createNewReportSet();
+            jReportsTabbedPane.setSelectedIndex(index);
+        }
+    }//GEN-LAST:event_selectedTabChanged
+    
+    private void createNewReportSet() {
+      int unusedId = 1;
         while (unusedId < 1000) {
             if (ReportManager.getSingleton().addGroup("Neues Set " + unusedId)) {
                 break;
@@ -965,16 +970,8 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
         if (unusedId == 1000) {
             JOptionPaneHelper.showErrorBox(DSWorkbenchReportFrame.this, "Du hast mehr als 1000 Berichtsets. Bitte lösche zuerst ein paar bevor du Neue erstellst.", "Fehler");
         }
-}//GEN-LAST:event_fireCreateAttackPlanEvent
-
-    private void fireExitEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireExitEvent
-        jLabel10.setEnabled(false);
-}//GEN-LAST:event_fireExitEvent
-
-    private void fireEnterEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireEnterEvent
-        jLabel10.setEnabled(true);
-}//GEN-LAST:event_fireEnterEvent
-
+    }
+    
     private void fireRebuildStatsEvent() {
         List selection = jList1.getSelectedValuesList();
         if (selection == null || selection.isEmpty()) {
@@ -1176,13 +1173,11 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
     private javax.swing.JCheckBox jFilterCaseSensitive;
     private javax.swing.JCheckBox jFilterRows;
     private javax.swing.JCheckBox jGuessUnknownLosses;
-    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel21;
     private javax.swing.JLabel jLabel22;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JList jList1;
-    private javax.swing.JPanel jNewPlanPanel;
     private javax.swing.JTextPane jOverallStatsArea;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;

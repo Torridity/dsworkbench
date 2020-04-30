@@ -136,6 +136,11 @@ public class FarmInformation extends ManageableType {
      * Get the storage capacity of this farm excluding hidden resources
      */
     public int getStorageCapacity() {
+        if(getBuilding("storage") == -1) {
+            //no information use fallback
+            return Integer.MAX_VALUE;
+        }
+        
         int storageCapacity = BuildingSettings.calculateStorageCapacity(getBuilding("storage"));
         int hiddenResources = 0;
         if (getBuilding("hide") > 0) {

@@ -21,59 +21,43 @@ package de.tor.tribes.types;
  */
 public class StorageStatus implements Comparable<StorageStatus> {
 
-    private double woodStatus = 0;
-    private double clayStatus = 0;
-    private double ironStatus = 0;
-    private double capacity = 0;
+    private int wood = 0;
+    private int clay = 0;
+    private int iron = 0;
+    private int capacity = 0;
 
     public StorageStatus(int pWood, int pClay, int pIron, int pStorageCapacity) {
-        if(pStorageCapacity > 0) {
-            woodStatus = (double) pWood / (double) pStorageCapacity;
-            clayStatus = (double) pClay / (double) pStorageCapacity;
-            ironStatus = (double) pIron / (double) pStorageCapacity;
-        }
-        else {
-            //Hide bigger than Storage -> nothing to get
-            woodStatus = 0;
-            clayStatus = 0;
-            ironStatus = 0;
-        }
+        wood = pWood;
+        clay = pClay;
+        iron = pIron;
         capacity = pStorageCapacity;
     }
 
     public void update(int pWood, int pClay, int pIron, int pStorageCapacity) {
-        if(pStorageCapacity > 0) {
-            woodStatus = (double) pWood / (double) pStorageCapacity;
-            clayStatus = (double) pClay / (double) pStorageCapacity;
-            ironStatus = (double) pIron / (double) pStorageCapacity;
-        }
-        else {
-            //Hide bigger than Storage -> nothing to get
-            woodStatus = 0;
-            clayStatus = 0;
-            ironStatus = 0;
-        }
+        wood = pWood;
+        clay = pClay;
+        iron = pIron;
         capacity = pStorageCapacity;
     }
 
-    public double getCapacity() {
+    public int getCapacity() {
         return capacity;
     }
 
-    public double getWoodStatus() {
-        return woodStatus;
+    public int getWoodInStorage() {
+        return wood;
     }
 
-    public double getClayStatus() {
-        return clayStatus;
+    public int getClayInStorage() {
+        return clay;
     }
 
-    public double getIronStatus() {
-        return ironStatus;
+    public int getIronInStorage() {
+        return iron;
     }
 
     @Override
     public int compareTo(StorageStatus o) {
-        return new Double(woodStatus * capacity + clayStatus * capacity + ironStatus * capacity).compareTo(o.getWoodStatus() * o.getCapacity() + o.getClayStatus() * o.getCapacity() + o.getIronStatus() * o.getCapacity());
+        return new Integer(wood + clay + iron).compareTo(o.getWoodInStorage() + o.getClayInStorage() + o.getIronInStorage());
     }
 }

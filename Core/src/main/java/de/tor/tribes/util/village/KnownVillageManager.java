@@ -80,6 +80,11 @@ public class KnownVillageManager extends GenericManager<KnownVillage> {
             for (Element e : (List<Element>) JDomUtils.getNodes(pElm, "villages/village")) {
                 try {
                     KnownVillage v = new KnownVillage(e);
+                    if(v.getVillage() == null) {
+                        logger.warn("Known Village without Village {}", e.getChild("id").getText());
+                        //ignore this entry maybe village got delete
+                        continue;
+                    }
                     if (getKnownVillage(v.getVillage()) == null) {
                         addManagedElement(v);
                     } else {

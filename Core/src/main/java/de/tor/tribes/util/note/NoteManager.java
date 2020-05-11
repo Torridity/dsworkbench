@@ -139,8 +139,11 @@ public class NoteManager extends GenericManager<Note> {
                 noteSet.setAttribute("name", URLEncoder.encode(set, "UTF-8"));
                 
                 Element notes = new Element("notes");
-                for (ManageableType elem : getAllElements(set)) {
-                    notes.addContent(elem.toXml("note"));
+                for (ManageableType t : getAllElements(set)) {
+                    Element e = t.toXml("note");
+                    if(e != null) {
+                        notes.addContent(e);
+                    }
                 }
                 noteSet.addContent(notes);
                 noteSets.addContent(noteSet);

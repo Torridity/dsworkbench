@@ -28,6 +28,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jdom2.Element;
 
 /**
@@ -36,6 +38,7 @@ import org.jdom2.Element;
  */
 public class LinkedTag extends Tag {
 
+    private static Logger logger = LogManager.getLogger("LinkedTag");
     private String sEquation = null;
 
     @Override
@@ -85,6 +88,8 @@ public class LinkedTag extends Tag {
             tag.addContent(new Element("villages"));
             tag.addContent(new Element("equation").setText(URLEncoder.encode(sEquation, "UTF-8")));
         } catch (Exception e) {
+            logger.error("Exception during generating XML", e);
+            return null;
         }
         return tag;
     }

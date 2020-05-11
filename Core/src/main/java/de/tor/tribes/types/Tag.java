@@ -29,6 +29,8 @@ import java.net.URLEncoder;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jdom2.Element;
 
 /**
@@ -49,6 +51,8 @@ public class Tag extends ManageableType implements Comparable<Tag>, BBSupport {
     //-1 means no icon
     private TagMapMarker mapMarker = null;
     private boolean showOnMap = true;
+    
+    private static Logger logger = LogManager.getLogger("Tag");
 
     @Override
     public String[] getBBVariables() {
@@ -237,7 +241,9 @@ public class Tag extends ManageableType implements Comparable<Tag>, BBSupport {
                 villages.addContent(new Element("village").setText(Integer.toString(i)));
             }
             tag.addContent(villages);
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            logger.error("Exception during generating XML", e);
+            return null;
         }
         return tag;
     }

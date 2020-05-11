@@ -100,8 +100,11 @@ public class TagManager extends GenericManager<Tag> {
         try {
             logger.debug("Generating tag data");
 
-            for (ManageableType e : getAllElements()) {
-                tags.addContent(e.toXml("tag"));
+            for (ManageableType t : getAllElements()) {
+                Element e = t.toXml("tag");
+                if(e != null) {
+                    tags.addContent(e);
+                }
             }
             logger.debug("Data generated successfully");
         } catch (Exception e) {

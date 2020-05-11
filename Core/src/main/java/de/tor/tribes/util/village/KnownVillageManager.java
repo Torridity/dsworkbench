@@ -109,7 +109,10 @@ public class KnownVillageManager extends GenericManager<KnownVillage> {
         
         logger.debug("Generating KnownVillages data");
         for (ManageableType t : getAllElements()) {
-            villages.addContent(t.toXml("village"));
+            Element e = t.toXml("village");
+            if(e != null) {
+                villages.addContent(e);
+            }
         }
         logger.debug("Data generated successfully");
         return villages;

@@ -128,8 +128,11 @@ public class AttackManager extends GenericManager<Attack> {
                 planE.setAttribute("key", URLEncoder.encode(plan, "UTF-8"));
 
                 Element attacks = new Element("attacks");
-                for (ManageableType elem : getAllElements(plan)) {
-                    attacks.addContent(elem.toXml("attack"));
+                for (ManageableType t : getAllElements(plan)) {
+                    Element e = t.toXml("attack");
+                    if(e != null) {
+                      attacks.addContent(e);
+                    }
                 }
                 planE.addContent(attacks);
                 plans.addContent(planE);

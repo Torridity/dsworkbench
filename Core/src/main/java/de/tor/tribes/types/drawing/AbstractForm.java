@@ -141,7 +141,9 @@ public abstract class AbstractForm extends ManageableType implements BBSupport {
             form.addContent(color);
             form.addContent(new Element("textSize").setText(Integer.toString(textSize)));
             form.addContent(formToXml("extra"));
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            logger.error("Exception during generating XML", e);
+            return null;
         }
         return form;
     }

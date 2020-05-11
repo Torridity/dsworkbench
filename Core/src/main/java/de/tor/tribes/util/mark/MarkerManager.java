@@ -117,7 +117,10 @@ public class MarkerManager extends GenericManager<Marker> {
                 
                 Element markers = new Element("markers");
                 for (ManageableType t : getAllElements(set)) {
-                    markers.addContent(t.toXml("marker"));
+                    Element e = t.toXml("marker");
+                    if(e != null) {
+                        markers.addContent(e);
+                    }
                 }
                 markerSet.addContent(markers);
                 markerSets.addContent(markerSet);

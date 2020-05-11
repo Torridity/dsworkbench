@@ -29,6 +29,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jdom2.Element;
 
 /**
@@ -37,6 +39,7 @@ import org.jdom2.Element;
  */
 public class Note extends ManageableType implements BBSupport {
 
+    private static Logger logger = LogManager.getLogger("Note");
     private final static String[] VARIABLES = new String[]{"%LAST_CHANGE%", "%NOTE_TEXT%", "%VILLAGE_LIST%", "%NOTE_ICON%"};
     private final static String STANDARD_TEMPLATE = "[quote][b]Notiz vom:[/b] %LAST_CHANGE%\n\n[b]Zugeordnete Dörfer:[/b]\n%VILLAGE_LIST%\n\n[b]Notizsymbol:[/b] %NOTE_ICON%\n\n[b]Notiztext:[/b]\n\n%NOTE_TEXT%[/quote]";
     private String sNoteText = null;
@@ -129,7 +132,9 @@ public class Note extends ManageableType implements BBSupport {
                 villages.addContent(new Element("village").setText(Integer.toString(id)));
             }
             note.addContent(villages);
-        } catch (UnsupportedEncodingException ignored) {
+        } catch (UnsupportedEncodingException e) {
+            logger.error("Exception during generating XML", e);
+            return null;
         }
         return note;
     }

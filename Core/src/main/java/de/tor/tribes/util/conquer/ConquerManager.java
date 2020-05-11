@@ -133,7 +133,10 @@ public class ConquerManager extends GenericManager<Conquer> {
             conquers.addContent(new Element("lastUpdate").setText(Long.toString(lastUpdate)));
             
             for (ManageableType t : getAllElements()) {
-                conquers.addContent(t.toXml("conquer"));
+                Element e = t.toXml("conquer");
+                if(e != null) {
+                  conquers.addContent(e);
+                }
             }
             logger.debug("Conquers XML successfully generated");
         } catch (Exception e) {

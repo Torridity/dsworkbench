@@ -45,7 +45,7 @@ public class BBPanel extends javax.swing.JPanel {
     private String buffer = "";
     private ColorChooser colorChooser = null;
     private BBChangeListener changeListener = null;
-
+    
     public BBPanel() {
         this(null);
     }
@@ -184,17 +184,7 @@ public class BBPanel extends javax.swing.JPanel {
         jPanel2.setMinimumSize(new java.awt.Dimension(50, 50));
         jPanel2.setPreferredSize(new java.awt.Dimension(50, 50));
         jPanel2.setLayout(new java.awt.GridLayout(1, 1));
-
-        javax.swing.GroupLayout jColorChooseDialogLayout = new javax.swing.GroupLayout(jColorChooseDialog.getContentPane());
-        jColorChooseDialog.getContentPane().setLayout(jColorChooseDialogLayout);
-        jColorChooseDialogLayout.setHorizontalGroup(
-            jColorChooseDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-        );
-        jColorChooseDialogLayout.setVerticalGroup(
-            jColorChooseDialogLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-        );
+        jColorChooseDialog.getContentPane().add(jPanel2, java.awt.BorderLayout.CENTER);
 
         jSizeChooseDialog.setUndecorated(true);
 
@@ -209,7 +199,6 @@ public class BBPanel extends javax.swing.JPanel {
         jSlider1.setValue(12);
         jSlider1.setMaximumSize(new java.awt.Dimension(30, 130));
         jSlider1.setMinimumSize(new java.awt.Dimension(30, 130));
-        jSlider1.setOpaque(false);
         jSlider1.setPreferredSize(new java.awt.Dimension(30, 130));
         jSlider1.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
@@ -262,7 +251,7 @@ public class BBPanel extends javax.swing.JPanel {
         jScrollPane2.setMinimumSize(new java.awt.Dimension(23, 150));
         jScrollPane2.setPreferredSize(new java.awt.Dimension(8, 150));
 
-        jTextPane2.setContentType("text/html");
+        jTextPane2.setContentType("text/html"); // NOI18N
         jScrollPane2.setViewportView(jTextPane2);
 
         infoPanel.add(jScrollPane2, java.awt.BorderLayout.CENTER);

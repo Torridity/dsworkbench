@@ -68,7 +68,7 @@ public class Iterix extends AbstractAttackAlgorithm {
         logText("Berechne Offs");
         
         troops = new LinkedList<>(pSources.keySet());
-        for(UnitHolder unit: new LinkedList<>(pFakes.keySet())) {
+        for(UnitHolder unit: pFakes.keySet()) {
             if(!troops.contains(unit)) troops.add(unit);
         }
         
@@ -390,7 +390,8 @@ public class Iterix extends AbstractAttackAlgorithm {
                     long runtime = Math.round(DSCalculator.calculateMoveTimeInSeconds(pSources.get(i),
                             pTargets.get(j), troops.get(z).getSpeed())  * 1000);
                     
-                    if (pTimeFrame.isMovementPossible(runtime) && !pSources.get(i).equals(pTargets.get(j))) {
+                    if (pTimeFrame.isMovementPossible(runtime) && !pSources.get(i).equals(pTargets.get(j)) &&
+                            sourceAmounts[z][i] > 0) {
                         tMappings[z * pSources.size() + i][j] = pMaxAttacksTable.get(pTargets.get(j));
                         cnt++;
                     } else {

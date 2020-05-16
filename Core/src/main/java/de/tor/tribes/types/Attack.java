@@ -221,6 +221,28 @@ public class Attack extends ManageableType implements Serializable, Comparable<A
         
         this.amounts = byType.getTroops().clone();
     }
+
+    public void setTroopsByTypeIgnoreToSlow() {
+        this.amounts = new TroopAmountDynamic(0);
+        if(this.type == NO_TYPE) {
+            return;
+        }
+        
+        StandardAttack byType = StandardAttackManager.getSingleton().getElementByIcon(this.type);
+        if(byType == null) {
+            //no StandardAttack exists for that type
+            return;
+        }
+
+        TroopAmountDynamic typeAmount = byType.getTroops();
+
+        for(UnitHolder u: DataHolder.getSingleton().getUnits()) {
+            if(u.getSpeed() <= unit.getSpeed()) {
+                //faster or equal
+                this.amounts.setAmount(typeAmount.getElementForUnit(u));
+            }
+        }
+    }
     
     @Override
     public String toString() {

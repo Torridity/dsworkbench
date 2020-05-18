@@ -82,7 +82,7 @@ public class KnownVillageManager extends GenericManager<KnownVillage> {
                     KnownVillage v = new KnownVillage(e);
                     if(v.getVillage() == null) {
                         logger.warn("Known Village without Village {}", e.getChild("id").getText());
-                        //ignore this entry maybe village got delete
+                        //ignore this entry maybe village got deleted
                         continue;
                     }
                     if (getKnownVillage(v.getVillage()) == null) {
@@ -236,6 +236,7 @@ public class KnownVillageManager extends GenericManager<KnownVillage> {
         
         for(ManageableType e :getAllElements()) {
             KnownVillage v = (KnownVillage) e;
+            if(v.getVillage() == null) continue; //maybe a bug during loading??
             if (v.hasChurch()) {
                 churchVillages.add(v);
             }

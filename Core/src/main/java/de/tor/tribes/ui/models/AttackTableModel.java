@@ -72,7 +72,7 @@ public class AttackTableModel extends AbstractTableModel {
         columnNames.add("Verbleibend"); columnTypes.add(Long.class); editable.add(false);
         columnNames.add("Einzeichnen"); columnTypes.add(Boolean.class); editable.add(true);
         columnNames.add("Übertragen"); columnTypes.add(Boolean.class); editable.add(true);
-        
+        columnNames.add("Mult"); columnTypes.add(Short.class); editable.add(true);
     }
 
     public void setPlan(String pPlan) {
@@ -177,6 +177,8 @@ public class AttackTableModel extends AbstractTableModel {
                 return a.isShowOnMap();
             } else if(columnIndex == unitAfter + 4) {
                 return a.isTransferredToBrowser();
+            } else if(columnIndex == unitAfter + 5) {
+                return a.getMultiplier();
             }
         } catch (Exception ignored) {};
         return null;
@@ -229,6 +231,8 @@ public class AttackTableModel extends AbstractTableModel {
                 a.setShowOnMap((Boolean) pValue);
             } else if(pCol == unitAfter + 4) {
                 a.setTransferredToBrowser((Boolean) pValue);
+            } else if(pCol == unitAfter + 5) {
+                a.setMultiplier((Short) pValue);
             }
         } catch (Exception ignored) {
         }

@@ -1618,13 +1618,29 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
                             break;
                         }
                     }
-
-                    if (BrowserInterface.sendAttack(a, profile)) {
-                        a.setTransferredToBrowser(true);
-                        sentAttacks++;
-                    } else {//give click back in case of an error and for multiple attacks
-                        if (attacks.size() > 1) {
-                            DSWorkbenchAttackFrame.getSingleton().increaseClickAccountValue();
+                    
+                    //decrease multiple times in case of multiplier > 1
+                    for(int i = 0; i < a.getMultiplier() - 1; i++) {
+                        if(!DSWorkbenchAttackFrame.getSingleton().decreaseClickAccountValue()) {
+                            //clicks empty / not enough for sending full attack
+                            //give clicks back that were used to much
+                            for(int j = 0; j < i+1; j++) {
+                                DSWorkbenchAttackFrame.getSingleton().increaseClickAccountValue();
+                            }
+                            clickAccountEmpty = true;
+                            break;
+                       }
+                    }
+                    if(clickAccountEmpty) break;
+                    
+                    for(int i = 0; i < a.getMultiplier(); i++) {
+                        if (BrowserInterface.sendAttack(a, profile)) {
+                            a.setTransferredToBrowser(true);
+                            sentAttacks++;
+                        } else {//give click back in case of an error and for multiple attacks
+                            if (attacks.size() > 1) {
+                                DSWorkbenchAttackFrame.getSingleton().increaseClickAccountValue();
+                            }
                         }
                     }
                 } else {

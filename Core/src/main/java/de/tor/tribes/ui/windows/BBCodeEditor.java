@@ -381,7 +381,11 @@ public class BBCodeEditor extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jButton3 = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                onClose(evt);
+            }
+        });
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         jScrollPane1.setBorder(javax.swing.BorderFactory.createTitledBorder("Vorschau"));
@@ -658,6 +662,10 @@ public class BBCodeEditor extends javax.swing.JFrame {
         bBPanel2.setBBCode(element.getStandardTemplate());
         updatePreview();
     }//GEN-LAST:event_fireResetEvent
+
+    private void onClose(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_onClose
+        bBPanel2.hideAllSubelements();
+    }//GEN-LAST:event_onClose
 
     private void updatePreview() {
         String result = "";

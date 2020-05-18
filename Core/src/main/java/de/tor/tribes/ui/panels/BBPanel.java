@@ -673,8 +673,9 @@ public class BBPanel extends javax.swing.JPanel {
 
 
     }
+
+    public void hideAllSubelements() {
+        jColorChooseDialog.setVisible(false);
+        jSizeChooseDialog.setVisible(false);
+    }
 }
-/*[tribe]Amr al as[/tribe]
-[i]test test
-[/i]
- */

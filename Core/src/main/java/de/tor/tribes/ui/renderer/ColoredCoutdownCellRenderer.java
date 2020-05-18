@@ -18,9 +18,14 @@ package de.tor.tribes.ui.renderer;
 import de.tor.tribes.util.Constants;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JTable;
 import org.apache.commons.lang3.time.DurationFormatUtils;
+import org.apache.logging.log4j.LogManager;
 import org.jdesktop.swingx.renderer.DefaultTableRenderer;
 
 /**
@@ -39,11 +44,8 @@ public class ColoredCoutdownCellRenderer extends DefaultTableRenderer {
         Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
         try {
             JLabel renderComponent = ((JLabel) c);
-            Long d = (Long) value;
+            long diff = (Long) value;
 
-            // renderComponent.setText(DurationFormatUtils.formatDuration(d, "HHH:mm:ss.SSS", true));
-
-            long diff = d;
             long five_minutes = 5 * MINUTE;
             long ten_minutes = 10 * MINUTE;
             Color color = null;
@@ -52,11 +54,11 @@ public class ColoredCoutdownCellRenderer extends DefaultTableRenderer {
             } else {
                 color = Constants.DS_ROW_B;
             }
+            renderComponent.setText(DurationFormatUtils.formatDuration(diff, "HHH:mm:ss.SSS", true));
 
             if (diff <= 0) {
                 //value is expired, stroke result
-                //renderComponent.setText(specialFormat.format(d));
-                //renderComponent.setForeground(Color.RED);
+                renderComponent.setText("<html><nobr><s>" + renderComponent.getText() + "</s></nobr></html>");
             } else if (diff <= ten_minutes && diff > five_minutes) {
                 float ratio = (float) (diff - five_minutes) / (float) five_minutes;
                 Color c1 = Color.YELLOW;
@@ -74,13 +76,14 @@ public class ColoredCoutdownCellRenderer extends DefaultTableRenderer {
                 int blue = (int) (c2.getBlue() * ratio + c1.getBlue() * (1 - ratio));
                 color = new Color(red, green, blue);
             }
-            renderComponent.setText(DurationFormatUtils.formatDuration(d, "HHH:mm:ss.SSS", true));
             if (isSelected) {
                 color = c.getBackground();
             }
             renderComponent.setOpaque(true);
             renderComponent.setBackground(color);
-            return renderComponent;
+            JPanel panel = new JPanel(new GridBagLayout());
+            panel.add(renderComponent, new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, 1, new Insets(0, 0, 0, 0), 0, 0));
+            return panel;
         } catch (Exception e) {
             return c;
         }

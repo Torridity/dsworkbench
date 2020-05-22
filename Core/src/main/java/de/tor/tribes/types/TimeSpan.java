@@ -158,10 +158,31 @@ public class TimeSpan implements Comparable<TimeSpan> {
     if (!ServerSettings.getSingleton().isNightBonusActive()) {
         return false;
     }
-    TimeSpan nightBonusSpan = new TimeSpan(
-            Range.between(ServerSettings.getSingleton().getNightBonusStartHour() * DateUtils.MILLIS_PER_HOUR,
-            ServerSettings.getSingleton().getNightBonusEndHour() * DateUtils.MILLIS_PER_HOUR), true);
-    return nightBonusSpan.intersects(this);
+    
+    return intersectsWithDailyRange(ServerSettings.getSingleton().getNightBonusStartHour(),
+            ServerSettings.getSingleton().getNightBonusEndHour());
+  }
+  
+  public boolean partlyOutOfNightBonus() {
+    if (!ServerSettings.getSingleton().isNightBonusActive()) {
+        return true;
+    }
+    
+    return intersectsWithDailyRange(ServerSettings.getSingleton().getNightBonusEndHour(),
+            ServerSettings.getSingleton().getNightBonusStartHour());
+  }
+  
+  private boolean intersectsWithDailyRange(int startHour, int endHour) {
+    if(startHour < endHour) {
+      TimeSpan other = new TimeSpan(
+          Range.between(startHour * DateUtils.MILLIS_PER_HOUR,
+          endHour * DateUtils.MILLIS_PER_HOUR - 1), true);
+
+      other.setDirection(this.getDirection());
+      return other.intersects(this);
+    }
+    if(intersectsWithDailyRange(startHour, 24)) return true;
+    return intersectsWithDailyRange(0, endHour);
   }
 
   /**
@@ -197,16 +218,22 @@ public class TimeSpan implements Comparable<TimeSpan> {
     Range<Long> theOtherSpan = pSpan.getSpan();
     
     if(this.isValidAtEveryDay() || pSpan.isValidAtEveryDay()) {
-        if(this.isValidAtSpecificDay() || pSpan.isValidAtSpecificDay()) {
+        if(this.isValidAtSpecificDay() || this.isValidAtExactTime() ||
+                pSpan.isValidAtSpecificDay() || pSpan.isValidAtExactTime() ||
+                (this.isValidAtEveryDay() && pSpan.isValidAtEveryDay())) {
           //remove day Information
-          Long thisStart = DateUtils.getFragmentInMilliseconds(new Date(thisSpan.getMinimum()), Calendar.DATE);
-          Long thisEnd = DateUtils.getFragmentInMilliseconds(new Date(thisSpan.getMaximum()), Calendar.DATE);
-          thisSpan = Range.between(thisStart, thisEnd);
+          //do not convert spans valid at ervery day (these don't use Time Zone)
+          if(!this.isValidAtEveryDay()) {
+            Long thisStart = DateUtils.getFragmentInMilliseconds(new Date(thisSpan.getMinimum()), Calendar.DATE);
+            Long thisEnd = DateUtils.getFragmentInMilliseconds(new Date(thisSpan.getMaximum()), Calendar.DATE);
+            thisSpan = Range.between(thisStart, thisEnd);
+          }
           
-          Long otherStart = DateUtils.getFragmentInMilliseconds(new Date(theOtherSpan.getMinimum()), Calendar.DATE);
-          Long otherEnd = DateUtils.getFragmentInMilliseconds(new Date(theOtherSpan.getMaximum()), Calendar.DATE);
-          
-          theOtherSpan = Range.between(otherStart, otherEnd);
+          if(!pSpan.isValidAtEveryDay()) {
+            Long otherStart = DateUtils.getFragmentInMilliseconds(new Date(theOtherSpan.getMinimum()), Calendar.DATE);
+            Long otherEnd = DateUtils.getFragmentInMilliseconds(new Date(theOtherSpan.getMaximum()), Calendar.DATE);
+            theOtherSpan = Range.between(otherStart, otherEnd);
+          }
           
           return thisSpan.isOverlappedBy(theOtherSpan);
         } else if(this.isValidAtEveryDay() && pSpan.isValidAtEveryDay()) {

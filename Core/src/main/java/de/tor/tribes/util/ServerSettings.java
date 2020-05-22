@@ -178,7 +178,7 @@ public class ServerSettings {
             
             logger.debug(" - reading night bonus end hour");
             try {
-                this.nightBonusStartHour = Integer.parseInt(JDomUtils.getNodeValue(d, "night/end_hour"));
+                this.nightBonusEndHour = Integer.parseInt(JDomUtils.getNodeValue(d, "night/end_hour"));
             } catch (Exception inner) {
                 logger.warn("Unable to read night bonus end hour", inner);
                 this.nightBonusEndHour = 8;

@@ -26,7 +26,7 @@ import java.util.List;
 public class TribeReportStatsFormatter extends BasicFormatter<TribeStatResult> {
 
     private static final String[] VARIABLES = new String[] {LIST_START, LIST_END, ELEMENT_COUNT, ELEMENT_ID};
-    public static final String STANDARD_TEMPLATE = new TribeStatResult().getStandardTemplate();
+    private static final String STANDARD_TEMPLATE = new TribeStatResult().getStandardTemplate();
     private static final String TEMPLATE_PROPERTY = "tribe.report.stats.bbexport.template";
 
     @Override
@@ -45,5 +45,10 @@ public class TribeReportStatsFormatter extends BasicFormatter<TribeStatResult> {
         vars.addAll(Arrays.asList(VARIABLES));
         vars.addAll(Arrays.asList(new TribeStatResult().getBBVariables()));
         return vars.toArray(new String[vars.size()]);
+    }
+    
+    @Override
+    public Class<TribeStatResult> getConvertableType() {
+        return TribeStatResult.class;
     }
 }

@@ -120,7 +120,7 @@ public class SOSRequest extends ManageableType implements BBSupport {
             }
         }
 
-        attackList = new AttackListFormatter().formatElements(thisAttacks, pExtended);
+        attackList = new AttackListFormatter(false).formatElements(thisAttacks, pExtended);
 
         for (TimedAttack att : atts) {
             try {

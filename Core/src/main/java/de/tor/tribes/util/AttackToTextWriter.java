@@ -70,7 +70,7 @@ public class AttackToTextWriter {
                     }
                 }
 
-                String fileContent = new AttackListFormatter().formatElements(attsForBlock, pExtendedInfo);
+                String fileContent = new AttackListFormatter(false).formatElements(attsForBlock, pExtendedInfo);
                 blocks.add(fileContent);
             }
             if (!pZipResults) {

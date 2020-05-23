@@ -39,7 +39,7 @@ public class WinnerLoserStatsFormatter extends BasicFormatter<Stats> {
     private static final String LOSER_BY_OFFENSE = "%LOSER_BY_OFFENSE%";
     private static final String LOSER_BY_DEFENSE = "%LOSER_BY_DEFENSE%";
     private static final String[] VARIABLES = new String[] {};
-    public static final String STANDARD_TEMPLATE = "[b]Gewinner und Verlierer[/b]\n\n"
+    private static final String STANDARD_TEMPLATE = "[b]Gewinner und Verlierer[/b]\n\n"
             + "[table]\n[**]Titel[||]Spieler[/**]\n"
             + "[*][u][b]Gewinner[/b][/u][|][/*]\n"
             + "[*][b]Punktesammler[/b][|]%WINNER_BY_POINTS%[/*]\n"
@@ -150,5 +150,10 @@ public class WinnerLoserStatsFormatter extends BasicFormatter<Stats> {
         Collections.addAll(vars, VARIABLES);
         Collections.addAll(vars, STAT_SPECIFIC_VARIABLES);
         return vars.toArray(new String[vars.size()]);
+    }
+    
+    @Override
+    public Class<Stats> getConvertableType() {
+        return Stats.class;
     }
 }

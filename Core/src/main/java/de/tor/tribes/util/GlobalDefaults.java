@@ -17,6 +17,7 @@ package de.tor.tribes.util;
 
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
+import de.tor.tribes.util.bb.BasicFormatter;
 import java.awt.Toolkit;
 import org.apache.commons.configuration2.PropertiesConfiguration;
 import org.apache.logging.log4j.LogManager;
@@ -164,59 +165,24 @@ public class GlobalDefaults {
         GLOBAL_DEFAULTS.addProperty("attack.template.block.internal", "templates/attack_block.tmpl");
         GLOBAL_DEFAULTS.addProperty("attack.template.footer", "<Standard>");
         GLOBAL_DEFAULTS.addProperty("attack.template.footer.internal", "templates/attack_footer.tmpl");
-        GLOBAL_DEFAULTS.addProperty("report.list.bbexport.template",
-                de.tor.tribes.util.bb.ReportListFormatter.STANDARD_TEMPLATE);
         
-        GLOBAL_DEFAULTS.addProperty("attack.bbexport.template",
-                de.tor.tribes.util.AttackToBBCodeFormater.STANDARD_TEMPLATE);
-        
-        GLOBAL_DEFAULTS.addProperty("ally.report.stats.bbexport.template",
-                de.tor.tribes.util.bb.AllyReportStatsFormatter.STANDARD_TEMPLATE);
-        
-        GLOBAL_DEFAULTS.addProperty("attack.list.bbexport.template",
-                de.tor.tribes.util.bb.AttackListFormatter.STANDARD_TEMPLATE);
-        
-        GLOBAL_DEFAULTS.addProperty("def.stats.bbexport.template",
-                de.tor.tribes.util.bb.DefStatsFormatter.STANDARD_TEMPLATE);
-        
-        GLOBAL_DEFAULTS.addProperty("form.list.bbexport.template",
-                de.tor.tribes.util.bb.FormListFormatter.STANDARD_TEMPLATE);
-        
-        GLOBAL_DEFAULTS.addProperty("kills.stats.bbexport.template",
-                de.tor.tribes.util.bb.KillStatsFormatter.STANDARD_TEMPLATE);
-        
-        GLOBAL_DEFAULTS.addProperty("marker.list.bbexport.template",
-                de.tor.tribes.util.bb.MarkerListFormatter.STANDARD_TEMPLATE);
-        
-        GLOBAL_DEFAULTS.addProperty("note.list.bbexport.template",
-                de.tor.tribes.util.bb.NoteListFormatter.STANDARD_TEMPLATE);
-        
-        GLOBAL_DEFAULTS.addProperty("overall.report.stats.bbexport.template",
-                de.tor.tribes.util.bb.OverallReportStatsFormatter.STANDARD_TEMPLATE);
-        
-        GLOBAL_DEFAULTS.addProperty("point.stats.bbexport.template",
-                de.tor.tribes.util.bb.PointStatsFormatter.STANDARD_TEMPLATE);
-        
-        GLOBAL_DEFAULTS.addProperty("report.list.bbexport.template",
-                de.tor.tribes.util.bb.ReportListFormatter.STANDARD_TEMPLATE);
-        
-        GLOBAL_DEFAULTS.addProperty("sos.list.bbexport.template",
-                de.tor.tribes.util.bb.SosListFormatter.STANDARD_TEMPLATE);
-        
-        GLOBAL_DEFAULTS.addProperty("tag.list.bbexport.template",
-                de.tor.tribes.util.bb.TagListFormatter.STANDARD_TEMPLATE);
-        
-        GLOBAL_DEFAULTS.addProperty("tribe.report.stats.bbexport.template",
-                de.tor.tribes.util.bb.TribeReportStatsFormatter.STANDARD_TEMPLATE);
-        
-        GLOBAL_DEFAULTS.addProperty("troops.list.bbexport.template",
-                de.tor.tribes.util.bb.TroopListFormatter.STANDARD_TEMPLATE);
-        
-        GLOBAL_DEFAULTS.addProperty("village.list.bbexport.template",
-                de.tor.tribes.util.bb.VillageListFormatter.STANDARD_TEMPLATE);
-        
-        GLOBAL_DEFAULTS.addProperty("winner.loser.stats.bbexport.template",
-                de.tor.tribes.util.bb.WinnerLoserStatsFormatter.STANDARD_TEMPLATE);
+        addBasicFormatter(new de.tor.tribes.util.bb.ReportListFormatter());
+        addBasicFormatter(new de.tor.tribes.util.bb.AllyReportStatsFormatter());
+        addBasicFormatter(new de.tor.tribes.util.bb.AttackListFormatter(false));
+        addBasicFormatter(new de.tor.tribes.util.bb.AttackListFormatter(true));
+        addBasicFormatter(new de.tor.tribes.util.bb.DefStatsFormatter());
+        addBasicFormatter(new de.tor.tribes.util.bb.FormListFormatter());
+        addBasicFormatter(new de.tor.tribes.util.bb.KillStatsFormatter());
+        addBasicFormatter(new de.tor.tribes.util.bb.MarkerListFormatter());
+        addBasicFormatter(new de.tor.tribes.util.bb.NoteListFormatter());
+        addBasicFormatter(new de.tor.tribes.util.bb.OverallReportStatsFormatter());
+        addBasicFormatter(new de.tor.tribes.util.bb.PointStatsFormatter());
+        addBasicFormatter(new de.tor.tribes.util.bb.SosListFormatter());
+        addBasicFormatter(new de.tor.tribes.util.bb.TagListFormatter());
+        addBasicFormatter(new de.tor.tribes.util.bb.TribeReportStatsFormatter());
+        addBasicFormatter(new de.tor.tribes.util.bb.TroopListFormatter());
+        addBasicFormatter(new de.tor.tribes.util.bb.VillageListFormatter());
+        addBasicFormatter(new de.tor.tribes.util.bb.WinnerLoserStatsFormatter());
         
         //TODO set to true after Moral is working
         GLOBAL_DEFAULTS.addProperty("show.popup.moral", ServerSettings.getSingleton()
@@ -248,5 +214,10 @@ public class GlobalDefaults {
     public static void reinit() {
         GLOBAL_DEFAULTS.clear();
         loadDefaults();
+    }
+
+    private static <T extends BasicFormatter> void addBasicFormatter(T formatterInstance) {
+        GLOBAL_DEFAULTS.addProperty(formatterInstance.getPropertyKey(),
+                formatterInstance.getStandardTemplate());
     }
 }

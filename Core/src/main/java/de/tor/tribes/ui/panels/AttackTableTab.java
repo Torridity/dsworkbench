@@ -17,7 +17,6 @@ package de.tor.tribes.ui.panels;
 
 import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;
-import de.tor.tribes.io.ServerManager;
 import de.tor.tribes.io.TroopAmountElement;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Attack;
@@ -1467,47 +1466,8 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
                 showInfo("Keine Befehle ausgewählt");
                 return;
             }
-            int answer = JOptionPaneHelper.showQuestionThreeChoicesBox(this, "Welcher BB-Codes Typ soll verwendet werden?\n(Erweiterte BB-Codes sind nur für das Forum und die Notizen geeignet)", "Erweiterter BB-Code", "Normal", "IGM", "Erweitert");
             
-            StringBuilder buffer = new StringBuilder();
-            switch (answer) {
-                case JOptionPane.YES_OPTION:
-                    //IGM
-                    buffer.append("[u]Geplante Befehle[/u]\n\n");
-                    String sUrl = ServerManager.getServerURL(GlobalOptions.getSelectedServer()) + "/";
-                    for (Attack a : attacks) {
-                        buffer.append(AttackToBBCodeFormater.formatAttack(a, sUrl, false));
-                    }
-                    
-                    buffer.append("\nErstellt am ");
-                    buffer.append(new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss").format(Calendar.getInstance().getTime()));
-                    buffer.append(" mit DS Workbench ");
-                    buffer.append(Constants.VERSION).append(Constants.VERSION_ADDITION + "\n");
-                    break;
-                case JOptionPane.CANCEL_OPTION:
-                    //Erweitert
-                    buffer.append("[u][size=12]Geplante Befehle[/size][/u]\n\n");
-                    buffer.append(new AttackListFormatter().formatElements(attacks, true));
-                    
-                    buffer.append("\n[size=8]Erstellt am ");
-                    buffer.append(new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss").format(Calendar.getInstance().getTime()));
-                    buffer.append(" mit DS Workbench ");
-                    buffer.append(Constants.VERSION).append(Constants.VERSION_ADDITION + "[/size]\n");
-                    break;
-                case JOptionPane.NO_OPTION:
-                default:
-                    //Normal
-                    buffer.append("[u]Geplante Befehle[/u]\n\n");
-                    buffer.append(new AttackListFormatter().formatElements(attacks, false));
-                    
-                    buffer.append("\nErstellt am ");
-                    buffer.append(new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss").format(Calendar.getInstance().getTime()));
-                    buffer.append(" mit DS Workbench ");
-                    buffer.append(Constants.VERSION).append(Constants.VERSION_ADDITION + "\n");
-                    break;
-            }
-
-            String b = buffer.toString();
+            String b = AttackListFormatter.AttackListToBBCodes(this, attacks, "Angriffsplan");
             StringTokenizer t = new StringTokenizer(b, "[");
             int cnt = t.countTokens();
             if (cnt > 1000) {

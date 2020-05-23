@@ -26,7 +26,7 @@ import java.util.List;
 public class NoteListFormatter extends BasicFormatter<Note> {
 
     private static final String[] VARIABLES = new String[] {LIST_START, LIST_END, ELEMENT_COUNT, ELEMENT_ID};
-    public static final String STANDARD_TEMPLATE = new Note().getStandardTemplate();
+    private static final String STANDARD_TEMPLATE = new Note().getStandardTemplate();
     private static final String TEMPLATE_PROPERTY = "note.list.bbexport.template";
 
     @Override
@@ -45,5 +45,10 @@ public class NoteListFormatter extends BasicFormatter<Note> {
         Collections.addAll(vars, VARIABLES);
         Collections.addAll(vars, new Note().getBBVariables());
         return vars.toArray(new String[vars.size()]);
+    }
+    
+    @Override
+    public Class<Note> getConvertableType() {
+        return Note.class;
     }
 }

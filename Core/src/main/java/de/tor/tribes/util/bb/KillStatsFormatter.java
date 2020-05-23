@@ -33,7 +33,7 @@ public class KillStatsFormatter extends BasicFormatter<Stats> {
     private static final String KILLS_DIFFERENCE = "%KILLS_DIFFERENCE%";
     private static final String PERCENT_DIFFERENCE = "%PERCENT_DIFFERENCE%";
     private static final String[] VARIABLES = new String[] {LIST_START, LIST_END, ELEMENT_COUNT, ELEMENT_ID};
-    public static final String STANDARD_TEMPLATE = "[b]Angriffsstatistik[/b]\nBerücksichtigte Spieler: %ELEMENT_COUNT%\n[table]\n"
+    private static final String STANDARD_TEMPLATE = "[b]Angriffsstatistik[/b]\nBerücksichtigte Spieler: %ELEMENT_COUNT%\n[table]\n"
             + "[**]Platz[||]Spieler[||]Kills (Anfang)[||]Zuwachs[||]Kills (Ende)[/**]\n"
             + "%LIST_START%[*]%ELEMENT_ID%[|]%TRIBE%[|]%KILLS_START%[|]%KILLS_DIFFERENCE%[|]%KILLS_END%[/*]%LIST_END%\n"
             + "[/table]";
@@ -117,5 +117,10 @@ public class KillStatsFormatter extends BasicFormatter<Stats> {
         Collections.addAll(vars, VARIABLES);
         Collections.addAll(vars, STAT_SPECIFIC_VARIABLES);
         return vars.toArray(new String[vars.size()]);
+    }
+    
+    @Override
+    public Class<Stats> getConvertableType() {
+        return Stats.class;
     }
 }

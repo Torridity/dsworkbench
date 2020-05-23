@@ -847,37 +847,17 @@ public class DSWorkbenchDoItYourselfAttackPlaner extends AbstractDSWorkbenchFram
         try {
             List<Attack> attacks = getSelectedAttacks();
             if (attacks.isEmpty()) {
-                showInfo("Keine Angriffe ausgewählt");
+                showInfo("Keine Befehle ausgewählt");
                 return;
             }
-            boolean extended = (JOptionPaneHelper.showQuestionConfirmBox(this, "Erweiterte BB-Codes verwenden (nur für Forum und Notizen geeignet)?", "Erweiterter BB-Code", "Nein", "Ja") == JOptionPane.YES_OPTION);
-
-            StringBuilder buffer = new StringBuilder();
-            if (extended) {
-                buffer.append("[u][size=12]Angriffsplan[/size][/u]\n\n");
-            } else {
-                buffer.append("[u]Angriffsplan[/u]\n\n");
-            }
-
-            buffer.append(new AttackListFormatter().formatElements(attacks, extended));
-
-            if (extended) {
-                buffer.append("\n[size=8]Erstellt am ");
-                buffer.append(new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss").format(Calendar.getInstance().getTime()));
-                buffer.append(" mit DS Workbench ");
-                buffer.append(Constants.VERSION).append(Constants.VERSION_ADDITION + "[/size]\n");
-            } else {
-                buffer.append("\nErstellt am ");
-                buffer.append(new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss").format(Calendar.getInstance().getTime()));
-                buffer.append(" mit DS Workbench ");
-                buffer.append(Constants.VERSION).append(Constants.VERSION_ADDITION + "\n");
-            }
-
-            String b = buffer.toString();
+            
+            String b = AttackListFormatter.AttackListToBBCodes(this, attacks, "Angriffsplan");
             StringTokenizer t = new StringTokenizer(b, "[");
             int cnt = t.countTokens();
             if (cnt > 1000) {
-                if (JOptionPaneHelper.showQuestionConfirmBox(this, "Die ausgewählten Angriffe benötigen mehr als 1000 BB-Codes\n" + "und können daher im Spiel (Forum/IGM/Notizen) nicht auf einmal dargestellt werden.\nTrotzdem exportieren?", "Zu viele BB-Codes", "Nein", "Ja") == JOptionPane.NO_OPTION) {
+                if (JOptionPaneHelper.showQuestionConfirmBox(this, "Die ausgewählten Befehle benötigen mehr als 1000 BB-Codes\n"
+                        + "und können daher im Spiel (Forum/IGM/Notizen) nicht auf einmal dargestellt werden.\n"
+                        + "Trotzdem exportieren?", "Zu viele BB-Codes", "Nein", "Ja") == JOptionPane.NO_OPTION) {
                     return;
                 }
             }

@@ -139,8 +139,8 @@ public class Village implements Comparable<Village>, Serializable, BBSupport {
             String n = URLDecoder.decode(tokenizer.nextToken(), "UTF-8");
             //replace HTML characters 
             if (n.contains("&")) {
-                n = n.replaceAll("&gt;", ">").replaceAll("&lt;", "<").replaceAll("&quot;",
-                        "\"").replaceAll("&amp;", "&").replaceAll("&tilde;", "~");
+                n = n.replace("&gt;", ">").replace("&lt;", "<").replace("&quot;",
+                        "\"").replace("&amp;", "&").replace("&tilde;", "~");
             }
             entry.setName(n);
             entry.setX(Short.parseShort(tokenizer.nextToken()));

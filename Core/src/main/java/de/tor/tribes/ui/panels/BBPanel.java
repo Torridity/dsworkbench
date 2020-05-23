@@ -517,7 +517,7 @@ public class BBPanel extends javax.swing.JPanel {
             }
             String trimmedFirst = first.substring(0, lastOpenInFirst) + first.substring(lastCloseInFirst + 1);
             String trimmedLast = last.substring(0, firstOpenInLast) + last.substring(firstCloseInLast + 1);
-            jTextPane1.setText(text.replaceAll(Matcher.quoteReplacement(first), trimmedFirst).replaceAll(Matcher.quoteReplacement(last), trimmedLast));
+            jTextPane1.setText(text.replace(first, trimmedFirst).replace(last, trimmedLast));
         } catch (Exception e) {
             //something strange happened
         }

@@ -130,10 +130,10 @@ public class LinkedTag extends Tag {
         for (Village v : GlobalOptions.getSelectedProfile().getTribe().getVillageList()) {
             String equation = sEquation;
             for (Tag t : lTags) {
-                equation = equation.replaceAll(Matcher.quoteReplacement(t.getName()), Boolean.toString(t.tagsVillage(v.getId())));
+                equation = equation.replace(t.getName(), Boolean.toString(t.tagsVillage(v.getId())));
             }
 
-            equation = equation.replaceAll(("K" + ((v.getContinent() < 10) ? "0" : "") + v.getContinent()), "true");
+            equation = equation.replace(("K" + ((v.getContinent() < 10) ? "0" : "") + v.getContinent()), "true");
             try {
                 engine.eval("var b = eval(\"" + equation + "\")");
                 Boolean b = (Boolean) engine.get("b");

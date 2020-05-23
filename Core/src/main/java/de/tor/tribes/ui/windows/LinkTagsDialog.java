@@ -63,8 +63,8 @@ public class LinkTagsDialog extends javax.swing.JDialog {
         if (bCreateLinkedTag) {
             LinkedTag t = new LinkedTag(jTagName.getText(), true);
             String equation = ((TagLinkMatrixModel) jXTable1.getModel()).getEquation();
-            equation = equation.replaceAll("UND", "&&");
-            equation = equation.replaceAll("ODER", "||");
+            equation = equation.replace("UND", "&&");
+            equation = equation.replace("ODER", "||");
             t.setEquation(equation);
             t.updateVillageList();
             return t;
@@ -218,15 +218,15 @@ public class LinkTagsDialog extends javax.swing.JDialog {
 
             for (Tag t : lTags) {
                 //for (Tag t : pTags) {
-                equation = equation.replaceAll(Matcher.quoteReplacement(t.getName()), "true");
+                equation = equation.replace(t.getName(), "true");
             }
 
             for (int i = 0; i < 99; i++) {
-                equation = equation.replaceAll(("K" + ((i < 10) ? "0" : "") + i), "true");
+                equation = equation.replace(("K" + ((i < 10) ? "0" : "") + i), "true");
             }
 
-            equation = equation.replaceAll("UND", "&&");
-            equation = equation.replaceAll("ODER", "||");
+            equation = equation.replace("UND", "&&");
+            equation = equation.replace("ODER", "||");
             ScriptEngineManager factory = new ScriptEngineManager();
             // create a JavaScript engine
             ScriptEngine engine = factory.getEngineByName("JavaScript");

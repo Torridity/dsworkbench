@@ -153,7 +153,7 @@ public class ReportServer {
                 
                 logger.debug("Trying to parse Header.");
                 //we need the request URI
-                String splited[] = head.replaceAll("\r", "").split("\n");
+                String splited[] = head.replace("\r", "").split("\n");
                 String url = null;
                 for(String part: splited) {
                     if(part.contains("GET"))

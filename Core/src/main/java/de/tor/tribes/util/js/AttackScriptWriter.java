@@ -122,8 +122,8 @@ public class AttackScriptWriter {
         param += "win.showAttackOnCommandPage = " + ((pShowAttacksOnCommandPage) ? 1 : 0) + ";\n";
         param += "win.showAttacksInOverview = " + ((pShowAttacksInOverview) ? 1 : 0) + ";\n";
 
-        tmpl = tmpl.replaceAll("\\$\\$DATA_LOCATION", data);
-        tmpl = tmpl.replaceAll("\\$\\$PARAMETER_LOCATION", param);
+        tmpl = tmpl.replace("$$DATA_LOCATION", data);
+        tmpl = tmpl.replace("$$PARAMETER_LOCATION", param);
         try {
             logger.debug(" - writing data to 'zz_attack_info.user.js'");
             FileWriter f = new FileWriter("./zz_attack_info.user.js");

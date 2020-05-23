@@ -219,7 +219,7 @@ private void fireSelectServerEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:e
       try (BufferedReader r = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream("tribe.tmp"))))) {
           List<Tribe> tribes = new ArrayList<>();
           while ((line = r.readLine()) != null) {
-              line = line.replaceAll(",,", ", ,");
+              line = line.replace(",,", ", ,");
               Tribe t = Tribe.parseFromPlainData(line);
               if (t != null) {
                   tribes.add(t);

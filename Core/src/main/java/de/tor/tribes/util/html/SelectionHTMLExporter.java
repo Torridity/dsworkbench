@@ -54,45 +54,45 @@ public class SelectionHTMLExporter {
     private static String VILLAGE_BLOCK = "";
     private static boolean TEMPLATE_ERROR = false;
     //header variables
-    private static final String CREATOR = "\\$CREATOR";
-    private static final String SERVER = "\\$SERVER";
-    private static final String PLANNAME = "\\$PLANNAME";
-    private static final String ATTACK_COUNT = "\\$ATTACK_COUNT";
+    private static final String CREATOR = "$CREATOR";
+    private static final String SERVER = "$SERVER";
+    private static final String PLANNAME = "$PLANNAME";
+    private static final String ATTACK_COUNT = "$ATTACK_COUNT";
     //ally block variables
-    private static final String ALLY_DIV_ID = "\\$ALLY_DIV_ID";
-    private static final String ALLY_TAB_ID = "\\$ALLY_TAB_ID";
-    private static final String ALLY_NAME = "\\$ALLY_NAME";
-    private static final String ALLY_MEMBER = "\\$ALLY_MEMBER";
-    private static final String ALLY_VILLAGES = "\\$ALLY_VILLAGES";
-    private static final String ALLY_POINTS = "\\$ALLY_POINTS";
-    private static final String ALLY_OFF = "\\$ALLY_OFF";
-    private static final String ALLY_DEFF = "\\$ALLY_DEFF";
-    private static final String ALLY_GUEST_LINK = "\\$ALLY_GUEST_LINK";
-    private static final String ALLY_DSREAL_LINK = "\\$ALLY_DSREAL_LINK";
-    private static final String ALLY_TWPLUS_LINK = "\\$ALLY_TWPLUS_LINK";
-    private static final String TRIBE_DATA = "\\$TRIBE_DATA";
+    private static final String ALLY_DIV_ID = "$ALLY_DIV_ID";
+    private static final String ALLY_TAB_ID = "$ALLY_TAB_ID";
+    private static final String ALLY_NAME = "$ALLY_NAME";
+    private static final String ALLY_MEMBER = "$ALLY_MEMBER";
+    private static final String ALLY_VILLAGES = "$ALLY_VILLAGES";
+    private static final String ALLY_POINTS = "$ALLY_POINTS";
+    private static final String ALLY_OFF = "$ALLY_OFF";
+    private static final String ALLY_DEFF = "$ALLY_DEFF";
+    private static final String ALLY_GUEST_LINK = "$ALLY_GUEST_LINK";
+    private static final String ALLY_DSREAL_LINK = "$ALLY_DSREAL_LINK";
+    private static final String ALLY_TWPLUS_LINK = "$ALLY_TWPLUS_LINK";
+    private static final String TRIBE_DATA = "$TRIBE_DATA";
     //tribe block variables
-    private static final String TRIBE_DIV_ID = "\\$TRIBE_DIV_ID";
-    private static final String TRIBE_TAB_ID = "\\$TRIBE_TAB_ID";
-    private static final String TRIBE_NAME = "\\$TRIBE_NAME";
-    private static final String TRIBE_VILLAGES = "\\$TRIBE_VILLAGES";
-    private static final String TRIBE_POINTS = "\\$TRIBE_POINTS";
-    private static final String TRIBE_OFF = "\\$TRIBE_OFF";
-    private static final String TRIBE_DEFF = "\\$TRIBE_DEFF";
-    private static final String TRIBE_GUEST_LINK = "\\$TRIBE_GUEST_LINK";
-    private static final String TRIBE_DSREAL_LINK = "\\$TRIBE_DSREAL_LINK";
-    private static final String TRIBE_TWPLUS_LINK = "\\$TRIBE_TWPLUS_LINK";
-    private static final String VILLAGE_DATA = "\\$VILLAGE_DATA";
+    private static final String TRIBE_DIV_ID = "$TRIBE_DIV_ID";
+    private static final String TRIBE_TAB_ID = "$TRIBE_TAB_ID";
+    private static final String TRIBE_NAME = "$TRIBE_NAME";
+    private static final String TRIBE_VILLAGES = "$TRIBE_VILLAGES";
+    private static final String TRIBE_POINTS = "$TRIBE_POINTS";
+    private static final String TRIBE_OFF = "$TRIBE_OFF";
+    private static final String TRIBE_DEFF = "$TRIBE_DEFF";
+    private static final String TRIBE_GUEST_LINK = "$TRIBE_GUEST_LINK";
+    private static final String TRIBE_DSREAL_LINK = "$TRIBE_DSREAL_LINK";
+    private static final String TRIBE_TWPLUS_LINK = "$TRIBE_TWPLUS_LINK";
+    private static final String VILLAGE_DATA = "$VILLAGE_DATA";
     //village block variables
-    private static final String VILLAGE_DIV_ID = "\\$VILLAGE_DIV_ID";
-    private static final String VILLAGE_TAB_ID = "\\$VILLAGE_TAB_ID";
-    private static final String VILLAGE_NAME = "\\$VILLAGE_NAME";
-    private static final String VILLAGE_POINTS = "\\$VILLAGE_POINTS";
-    private static final String VILLAGE_CONTINENT = "\\$VILLAGE_CONTINENT";
-    private static final String VILLAGE_INGAME_LINK = "\\$VILLAGE_INGAME_LINK";
+    private static final String VILLAGE_DIV_ID = "$VILLAGE_DIV_ID";
+    private static final String VILLAGE_TAB_ID = "$VILLAGE_TAB_ID";
+    private static final String VILLAGE_NAME = "$VILLAGE_NAME";
+    private static final String VILLAGE_POINTS = "$VILLAGE_POINTS";
+    private static final String VILLAGE_CONTINENT = "$VILLAGE_CONTINENT";
+    private static final String VILLAGE_INGAME_LINK = "$VILLAGE_INGAME_LINK";
     //footer variables
-    private static final String VERSION = "\\$VERSION";
-    private static final String CREATION_DATE = "\\$CREATION_DATE";
+    private static final String VERSION = "$VERSION";
+    private static final String CREATION_DATE = "$CREATION_DATE";
 
     static {
         try {
@@ -181,13 +181,13 @@ public class SelectionHTMLExporter {
             String allyBlock = ALLY_BLOCK;
             //add general data
 
-            allyBlock = allyBlock.replaceAll(ALLY_DIV_ID, "ALLYDIV" + a.getId());
-            allyBlock = allyBlock.replaceAll(ALLY_TAB_ID, "ALLYTAB" + a.getId());
-            allyBlock = allyBlock.replaceAll(ALLY_NAME, EscapeChars.forHTML(a.getName()) + " [" + EscapeChars.forHTML(a.getTag()) + "]");
+            allyBlock = allyBlock.replace(ALLY_DIV_ID, "ALLYDIV" + a.getId());
+            allyBlock = allyBlock.replace(ALLY_TAB_ID, "ALLYTAB" + a.getId());
+            allyBlock = allyBlock.replace(ALLY_NAME, EscapeChars.forHTML(a.getName()) + " [" + EscapeChars.forHTML(a.getTag()) + "]");
 
-            allyBlock = allyBlock.replaceAll(ALLY_MEMBER, nf.format(a.getMembers()));
-            allyBlock = allyBlock.replaceAll(ALLY_VILLAGES, nf.format(a.getVillages()));
-            allyBlock = allyBlock.replaceAll(ALLY_POINTS, nf.format(a.getPoints()) + " (" + nf.format(a.getRank()) + ")");
+            allyBlock = allyBlock.replace(ALLY_MEMBER, nf.format(a.getMembers()));
+            allyBlock = allyBlock.replace(ALLY_VILLAGES, nf.format(a.getVillages()));
+            allyBlock = allyBlock.replace(ALLY_POINTS, nf.format(a.getPoints()) + " (" + nf.format(a.getRank()) + ")");
             //add bash data
             double off = 0;
             double deff = 0;
@@ -195,23 +195,23 @@ public class SelectionHTMLExporter {
                 off += t.getKillsAtt();
                 deff += t.getKillsDef();
             }
-            allyBlock = allyBlock.replaceAll(ALLY_OFF, nf.format(off));
-            allyBlock = allyBlock.replaceAll(ALLY_DEFF, nf.format(deff));
+            allyBlock = allyBlock.replace(ALLY_OFF, nf.format(off));
+            allyBlock = allyBlock.replace(ALLY_DEFF, nf.format(deff));
             if (!a.equals(BarbarianAlly.getSingleton()) && !a.equals(NoAlly.getSingleton())) {
                 //add info links
                 String allyGuest = guestBaseURL;
                 allyGuest += "guest.php?screen=info_ally&id=" + a.getId();
-                allyBlock = allyBlock.replaceAll(ALLY_GUEST_LINK, "<a href=\"" + allyGuest + "\" target=\"_blank\">Gastzugang</a>");
+                allyBlock = allyBlock.replace(ALLY_GUEST_LINK, "<a href=\"" + allyGuest + "\" target=\"_blank\">Gastzugang</a>");
                 
                 String dsRealLink = "http://dsreal.de/index.php?tool=akte&mode=ally&world=" + server + "&id=" + a.getId();
-                allyBlock = allyBlock.replaceAll(ALLY_DSREAL_LINK, "<a href=\"" + dsRealLink + "\" target=\"_blank\">DS Real</a>");
+                allyBlock = allyBlock.replace(ALLY_DSREAL_LINK, "<a href=\"" + dsRealLink + "\" target=\"_blank\">DS Real</a>");
                 String twPlusLink = "http://" + server + ".twplus.org/file/ally/" + a.getId() + "/";
-                allyBlock = allyBlock.replaceAll(ALLY_TWPLUS_LINK, "<a href=\"" + twPlusLink + "\" target=\"_blank\">TWPlus</a>");
+                allyBlock = allyBlock.replace(ALLY_TWPLUS_LINK, "<a href=\"" + twPlusLink + "\" target=\"_blank\">TWPlus</a>");
             } else {
                 //no addional information for barbarian or no ally
-                allyBlock = allyBlock.replaceAll(ALLY_GUEST_LINK, "");
-                allyBlock = allyBlock.replaceAll(ALLY_DSREAL_LINK, "");
-                allyBlock = allyBlock.replaceAll(ALLY_TWPLUS_LINK, "");
+                allyBlock = allyBlock.replace(ALLY_GUEST_LINK, "");
+                allyBlock = allyBlock.replace(ALLY_DSREAL_LINK, "");
+                allyBlock = allyBlock.replace(ALLY_TWPLUS_LINK, "");
             }
             //build tribe data
             String tribeBlocks = "";
@@ -219,28 +219,28 @@ public class SelectionHTMLExporter {
             for(Tribe t: tribeData.keySet()) {
                 //build new tribe block
                 String tribeBlock = TRIBE_BLOCK;
-                tribeBlock = tribeBlock.replaceAll(TRIBE_DIV_ID, "TRIBEDIV" + t.getId());
-                tribeBlock = tribeBlock.replaceAll(TRIBE_TAB_ID, "TRIBETAB" + t.getId());
-                tribeBlock = tribeBlock.replaceAll(TRIBE_NAME, EscapeChars.forHTML(t.getName()));
-                tribeBlock = tribeBlock.replaceAll(TRIBE_VILLAGES, nf.format(t.getVillages()));
-                tribeBlock = tribeBlock.replaceAll(TRIBE_POINTS, nf.format(t.getPoints()) + " (" + nf.format(t.getRank()) + ")");
-                tribeBlock = tribeBlock.replaceAll(TRIBE_OFF, nf.format(t.getKillsAtt()) + " (" + nf.format(t.getRankAtt()) + ")");
-                tribeBlock = tribeBlock.replaceAll(TRIBE_DEFF, nf.format(t.getKillsDef()) + " (" + nf.format(t.getRankDef()) + ")");
+                tribeBlock = tribeBlock.replace(TRIBE_DIV_ID, "TRIBEDIV" + t.getId());
+                tribeBlock = tribeBlock.replace(TRIBE_TAB_ID, "TRIBETAB" + t.getId());
+                tribeBlock = tribeBlock.replace(TRIBE_NAME, EscapeChars.forHTML(t.getName()));
+                tribeBlock = tribeBlock.replace(TRIBE_VILLAGES, nf.format(t.getVillages()));
+                tribeBlock = tribeBlock.replace(TRIBE_POINTS, nf.format(t.getPoints()) + " (" + nf.format(t.getRank()) + ")");
+                tribeBlock = tribeBlock.replace(TRIBE_OFF, nf.format(t.getKillsAtt()) + " (" + nf.format(t.getRankAtt()) + ")");
+                tribeBlock = tribeBlock.replace(TRIBE_DEFF, nf.format(t.getKillsDef()) + " (" + nf.format(t.getRankDef()) + ")");
                 //add info links
                 if (!t.equals(Barbarians.getSingleton())) {
                     String tribeGuest = guestBaseURL;
                     tribeGuest += "guest.php?screen=info_player&id=" + t.getId();
-                    tribeBlock = tribeBlock.replaceAll(TRIBE_GUEST_LINK, "<a href=\"" + tribeGuest + "\" target=\"_blank\">Gastzugang</a>");
+                    tribeBlock = tribeBlock.replace(TRIBE_GUEST_LINK, "<a href=\"" + tribeGuest + "\" target=\"_blank\">Gastzugang</a>");
                     
                     String dsRealLink = "http://dsreal.de/index.php?tool=akte&mode=player&world=" + server + "&id=" + t.getId();
-                    tribeBlock = tribeBlock.replaceAll(TRIBE_DSREAL_LINK, "<a href=\"" + dsRealLink + "\" target=\"_blank\">DS Real</a>");
+                    tribeBlock = tribeBlock.replace(TRIBE_DSREAL_LINK, "<a href=\"" + dsRealLink + "\" target=\"_blank\">DS Real</a>");
                     String twPlusLink = "http://" + server + ".twplus.org/file/player/" + t.getId() + "/";
-                    tribeBlock = tribeBlock.replaceAll(TRIBE_TWPLUS_LINK, "<a href=\"" + twPlusLink + "\" target=\"_blank\">TWPlus</a>");
+                    tribeBlock = tribeBlock.replace(TRIBE_TWPLUS_LINK, "<a href=\"" + twPlusLink + "\" target=\"_blank\">TWPlus</a>");
                 } else {
                     //no additional information for barbarians
-                    tribeBlock = tribeBlock.replaceAll(TRIBE_GUEST_LINK, "");
-                    tribeBlock = tribeBlock.replaceAll(TRIBE_DSREAL_LINK, "");
-                    tribeBlock = tribeBlock.replaceAll(TRIBE_TWPLUS_LINK, "");
+                    tribeBlock = tribeBlock.replace(TRIBE_GUEST_LINK, "");
+                    tribeBlock = tribeBlock.replace(TRIBE_DSREAL_LINK, "");
+                    tribeBlock = tribeBlock.replace(TRIBE_TWPLUS_LINK, "");
                 }
 
                 //build village blocks for current tribe
@@ -248,33 +248,33 @@ public class SelectionHTMLExporter {
                 for (Village v : tribeData.get(t)) {
                     //build new village block
                     String villageBlock = VILLAGE_BLOCK;
-                    villageBlock = villageBlock.replaceAll(VILLAGE_DIV_ID, "VILLAGEDIV" + v.getId());
-                    villageBlock = villageBlock.replaceAll(VILLAGE_TAB_ID, "VILLAGETAB" + v.getId());
-                    villageBlock = villageBlock.replaceAll(VILLAGE_NAME, EscapeChars.forHTML(v.toString()));
-                    villageBlock = villageBlock.replaceAll(VILLAGE_POINTS, nf.format(v.getPoints()));
-                    villageBlock = villageBlock.replaceAll(VILLAGE_CONTINENT, "K" + v.getContinent());
+                    villageBlock = villageBlock.replace(VILLAGE_DIV_ID, "VILLAGEDIV" + v.getId());
+                    villageBlock = villageBlock.replace(VILLAGE_TAB_ID, "VILLAGETAB" + v.getId());
+                    villageBlock = villageBlock.replace(VILLAGE_NAME, EscapeChars.forHTML(v.toString()));
+                    villageBlock = villageBlock.replace(VILLAGE_POINTS, nf.format(v.getPoints()));
+                    villageBlock = villageBlock.replace(VILLAGE_CONTINENT, "K" + v.getContinent());
 
                     String villageURL = guestBaseURL + "guest.php?screen=map&x=" + v.getX() + "&y=" + v.getY();
-                    villageBlock = villageBlock.replaceAll(VILLAGE_INGAME_LINK, "<a href=\"" + villageURL + "\" target=\"_blank\">Gastzugang</a>");
+                    villageBlock = villageBlock.replace(VILLAGE_INGAME_LINK, "<a href=\"" + villageURL + "\" target=\"_blank\">Gastzugang</a>");
                     villageBlocks += villageBlock;
                 }
                 //put village blocks in current tribe block
-                tribeBlock = tribeBlock.replaceAll(VILLAGE_DATA, villageBlocks);
+                tribeBlock = tribeBlock.replace(VILLAGE_DATA, villageBlocks);
                 tribeBlocks += tribeBlock;
             }
             //put tribe blocks in current ally block
-            allyBlock = allyBlock.replaceAll(TRIBE_DATA, tribeBlocks);
+            allyBlock = allyBlock.replace(TRIBE_DATA, tribeBlocks);
             //appen ally to result
             result.append(allyBlock);
         }
 
         // <editor-fold defaultstate="collapsed" desc=" build footer">
         String foot = FOOTER;
-        foot = foot.replaceAll(VERSION, Double.toString(Constants.VERSION) + Constants.VERSION_ADDITION);
+        foot = foot.replace(VERSION, Double.toString(Constants.VERSION) + Constants.VERSION_ADDITION);
 
         SimpleDateFormat f = new SimpleDateFormat("dd.MM.yyyy 'um' HH:mm:ss 'Uhr'");
 
-        foot = foot.replaceAll(CREATION_DATE, f.format(new Date()));
+        foot = foot.replace(CREATION_DATE, f.format(new Date()));
         result.append(foot);
         // </editor-fold>
 

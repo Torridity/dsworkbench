@@ -563,7 +563,7 @@ public class DataHolder {
             BufferedReader r = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(pServerDir + "/village.txt.gz"))));
             String line;
             while ((line = r.readLine()) != null) {
-                line = line.replaceAll(",,", ", ,");
+                line = line.replace(",,", ", ,");
                 Village v = Village.parseFromPlainData(line);
                 try {
                     if(v != null) {
@@ -614,7 +614,7 @@ public class DataHolder {
             String line;
 
             while ((line = r.readLine()) != null) {
-                line = line.replaceAll(",,", ", ,");
+                line = line.replace(",,", ", ,");
                 Tribe t = Tribe.parseFromPlainData(line);
                 if (t != null) {
                     pTribes.put(t.getId(), t);
@@ -642,7 +642,7 @@ public class DataHolder {
             String line;
 
             while ((line = r.readLine()) != null) {
-                line = line.replaceAll(",,", ", ,");
+                line = line.replace(",,", ", ,");
                 Ally a = Ally.parseFromPlainData(line);
                 if (a != null) {
                     pAllies.put(a.getId(), a);
@@ -705,7 +705,7 @@ public class DataHolder {
             logger.debug(" + Start parsing villages");
 
             while ((line = r.readLine()) != null) {
-                line = line.replaceAll(",,", ", ,");
+                line = line.replace(",,", ", ,");
                 Village v = Village.parseFromPlainData(line);
                 if (v != null && v.getX() >= 0 && v.getX() < mVillages.length && v.getY() >= 0 && v.getY() < mVillages[0].length) {
                     mVillages[v.getX()][v.getY()] = v;
@@ -728,7 +728,7 @@ public class DataHolder {
             line = "";
             logger.debug(" + Start parsing tribes");
             while ((line = r.readLine()) != null) {
-                line = line.replaceAll(",,", ", ,");
+                line = line.replace(",,", ", ,");
                 Tribe t = Tribe.parseFromPlainData(line);
                 if (t != null && t.getName() != null) {
                     mTribes.put(t.getId(), t);
@@ -750,7 +750,7 @@ public class DataHolder {
             line = "";
             logger.debug(" + Start parsing allies");
             while ((line = r.readLine()) != null) {
-                line = line.replaceAll(",,", ", ,");
+                line = line.replace(",,", ", ,");
                 Ally a = Ally.parseFromPlainData(line);
                 if (a != null && a.getName() != null && a.getTag() != null) {
                     mAllies.put(a.getId(), a);

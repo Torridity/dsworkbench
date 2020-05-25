@@ -201,6 +201,9 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         
         jMenueSize.setValue(menueSizeToSlider(GlobalOptions.getProperties().getDouble("ribbon.size")));
         jMenueSizeStateChanged(null);
+        
+        jSliderCmdSleepTime.setValue(GlobalOptions.getProperties().getInt("command.sleep.time"));
+        jSliderCmdSleepTimeStateChanged(null);
     }
 
     private void setDefense(TroopAmountFixed pDefense) {
@@ -468,6 +471,10 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jBrowserPath = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
         jXLabel3 = new org.jdesktop.swingx.JXLabel();
+        jPanel1 = new javax.swing.JPanel();
+        jSliderCmdSleepTime = new javax.swing.JSlider();
+        jLabelCmdSleepTimePreview = new javax.swing.JLabel();
+        jLabelCmdSleepTime = new javax.swing.JLabel();
         jPanel8 = new javax.swing.JPanel();
         jDirectConnectOption = new javax.swing.JRadioButton();
         jProxyConnectOption = new javax.swing.JRadioButton();
@@ -1430,6 +1437,65 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel4.add(jXLabel3, gridBagConstraints);
 
+        jPanel1.setOpaque(false);
+        jPanel1.setLayout(new java.awt.GridBagLayout());
+
+        jSliderCmdSleepTime.setMaximum(2000);
+        jSliderCmdSleepTime.setMinimum(100);
+        jSliderCmdSleepTime.setSnapToTicks(true);
+        jSliderCmdSleepTime.setValue(150);
+        jSliderCmdSleepTime.setMinimumSize(new java.awt.Dimension(150, 46));
+        jSliderCmdSleepTime.setPreferredSize(new java.awt.Dimension(300, 46));
+        jSliderCmdSleepTime.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                jSliderCmdSleepTimeStateChanged(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 0.8;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 5);
+        jPanel1.add(jSliderCmdSleepTime, gridBagConstraints);
+
+        jLabelCmdSleepTimePreview.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabelCmdSleepTimePreview.setText("20");
+        jLabelCmdSleepTimePreview.setMaximumSize(new java.awt.Dimension(50, 18));
+        jLabelCmdSleepTimePreview.setMinimumSize(new java.awt.Dimension(50, 18));
+        jLabelCmdSleepTimePreview.setPreferredSize(new java.awt.Dimension(50, 18));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 16, 0, 0);
+        jPanel1.add(jLabelCmdSleepTimePreview, gridBagConstraints);
+
+        jLabelCmdSleepTime.setText("Wartezeit zwischen den Tabs");
+        jLabelCmdSleepTime.setMaximumSize(new java.awt.Dimension(400, 18));
+        jLabelCmdSleepTime.setMinimumSize(new java.awt.Dimension(220, 18));
+        jLabelCmdSleepTime.setPreferredSize(new java.awt.Dimension(220, 18));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 0.2;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 0);
+        jPanel1.add(jLabelCmdSleepTime, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        jPanel4.add(jPanel1, gridBagConstraints);
+
         jPanel8.setOpaque(false);
         jPanel8.setLayout(new java.awt.GridBagLayout());
 
@@ -2054,6 +2120,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
         jPanel6.add(jEnableSystray, gridBagConstraints);
 
         jPanelMenueSize.setMinimumSize(new java.awt.Dimension(206, 46));
+        jPanelMenueSize.setOpaque(false);
         jPanelMenueSize.setPreferredSize(new java.awt.Dimension(206, 46));
         jPanelMenueSize.setLayout(new java.awt.GridBagLayout());
 
@@ -2414,6 +2481,7 @@ public class DSWorkbenchSettingsDialog extends javax.swing.JDialog implements
             GlobalOptions.addProperty("max.loss.ratio", jMaxLossRatio.getText());
             GlobalOptions.addProperty("map.marker.transparency", Integer.toString(jMarkerTransparency.getValue()));
             GlobalOptions.addProperty("obst.server", jObstServer.getText());
+            GlobalOptions.addProperty("command.sleep.time", Integer.toString(jSliderCmdSleepTime.getValue()));
             GlobalOptions.saveProperties();
             if (!checkSettings()) {
                 logger.error("Failed to check server settings");
@@ -2831,6 +2899,10 @@ private void fireProfileActionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
         jLabelMenueSize.setText(Double.toString(menueSizeFromSlider()));
     }//GEN-LAST:event_jMenueSizeStateChanged
 
+    private void jSliderCmdSleepTimeStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jSliderCmdSleepTimeStateChanged
+        jLabelCmdSleepTimePreview.setText(Integer.toString(jSliderCmdSleepTime.getValue()));
+    }//GEN-LAST:event_jSliderCmdSleepTimeStateChanged
+
     private double menueSizeFromSlider() {
         int sliderVal = jMenueSize.getValue(), sliderMin = jMenueSize.getMinimum(),
                 sliderMax = jMenueSize.getMaximum();
@@ -3116,6 +3188,8 @@ private void fireProfileActionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
+    private javax.swing.JLabel jLabelCmdSleepTime;
+    private javax.swing.JLabel jLabelCmdSleepTimePreview;
     private javax.swing.JLabel jLabelMenueSize;
     private javax.swing.JLabel jLabelServer;
     private javax.swing.JPanel jMapSettings;
@@ -3136,6 +3210,7 @@ private void fireProfileActionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
     private javax.swing.JComboBox jNotifyDurationBox;
     private javax.swing.JButton jOKButton;
     private javax.swing.JTextField jObstServer;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel10;
     private javax.swing.JPanel jPanel11;
     private javax.swing.JPanel jPanel12;
@@ -3183,6 +3258,7 @@ private void fireProfileActionEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:
     private javax.swing.JCheckBox jShowSectors;
     private javax.swing.JLabel jShowSectorsLabel;
     private javax.swing.JPanel jSingleSupportPanel;
+    private javax.swing.JSlider jSliderCmdSleepTime;
     private javax.swing.JPanel jStandardAttackerPanel;
     private javax.swing.JTextArea jStatusArea;
     private javax.swing.JPanel jTemplateSettings;

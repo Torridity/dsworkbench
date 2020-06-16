@@ -505,7 +505,7 @@ public class FarmInformation extends ManageableType {
                         getBuilding("stable") == 0 && getBuilding("garage") == 0 &&
                         getBuilding("market") == 0 && getBuilding("wall") == 0 &&
                         this.getVillage().getPoints() >= ServerSettings.getSingleton().getBarbarianPoints()) {
-                setSiegeStatus(SIEGE_STATUS.FINAL_FARM);
+                    setSiegeStatus(SIEGE_STATUS.FINAL_FARM);
                 }
             }
         }

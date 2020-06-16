@@ -973,47 +973,29 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
             int row = rowIndex.get(i);
             int modelRow = jFarmTable.convertRowIndexToModel(row);
 
-            if ((f.getSiegeStatus().equals(FarmInformation.SIEGE_STATUS.BOTH_ON_WAY)
-                    || f.getSiegeStatus().equals(FarmInformation.SIEGE_STATUS.CATA_ON_WAY)
-                    || f.getSiegeStatus().equals(FarmInformation.SIEGE_STATUS.RAM_ON_WAY))
-                    && pConfig.equals(DSWorkbenchFarmManager.FARM_CONFIGURATION.K)) {
+            if (f.getSiegeStatus().equals(FarmInformation.SIEGE_STATUS.BOTH_ON_WAY)
+                    || (f.getSiegeStatus().equals(FarmInformation.SIEGE_STATUS.CATA_ON_WAY)
+                        && pConfig.equals(DSWorkbenchFarmManager.FARM_CONFIGURATION.K))
+                    || (f.getSiegeStatus().equals(FarmInformation.SIEGE_STATUS.RAM_ON_WAY))
+                        && !pConfig.equals(DSWorkbenchFarmManager.FARM_CONFIGURATION.K)) {
+                //type is currently on its way
                 siegeOnWay++;
-                jFarmTable.getSelectionModel().removeSelectionInterval(row, row);
-                if (rowIndex.get(i + 1) < jFarmTable.getRowCount()) {
-                    jFarmTable.getSelectionModel().addSelectionInterval(rowIndex.get(i + 1), rowIndex.get(i + 1));
-                    jFarmTable.requestFocus();
-                }
             } else if (f.getSiegeStatus().equals(FarmInformation.SIEGE_STATUS.FINAL_FARM)
                     && pConfig.equals(DSWorkbenchFarmManager.FARM_CONFIGURATION.K)) {
+                //farm already finished
                 farmFinal++;
-                jFarmTable.getSelectionModel().removeSelectionInterval(row, row);
-                if (rowIndex.get(i + 1) < jFarmTable.getRowCount()) {
-                    jFarmTable.getSelectionModel().addSelectionInterval(rowIndex.get(i + 1), rowIndex.get(i + 1));
-                    jFarmTable.requestFocus();
-                }
-            } else if (pConfig.equals(DSWorkbenchFarmManager.FARM_CONFIGURATION.K)
-                    && f.getVillage().getPoints() > 600) {
-                bigFarm++;
-                jFarmTable.getSelectionModel().removeSelectionInterval(row, row);
-                if (rowIndex.get(i + 1) < jFarmTable.getRowCount()) {
-                    jFarmTable.getSelectionModel().addSelectionInterval(rowIndex.get(i + 1), rowIndex.get(i + 1));
-                    jFarmTable.requestFocus();
-                }
             } else if (!this.isUseRams(pConfig) && isBlockFarmWithWall() && f.getWallLevel() > 1) {
+                //farm should not be used because of wall
                 wallTooHigh++;
-                jFarmTable.getSelectionModel().removeSelectionInterval(row, row);
-                if (rowIndex.get(i + 1) < jFarmTable.getRowCount()) {
-                    jFarmTable.getSelectionModel().addSelectionInterval(rowIndex.get(i + 1), rowIndex.get(i + 1));
-                    jFarmTable.requestFocus();
-                }
             } else if ((!f.getStatus().equals(FarmInformation.FARM_STATUS.FARMING)
                     && !f.getStatus().equals(FarmInformation.FARM_STATUS.REPORT_EXPECTED))
                     || pConfig.equals(DSWorkbenchFarmManager.FARM_CONFIGURATION.K)) {
+                
+                //just use click if more than one row is selected
                 boolean clickUsed = rows.length == 1 || clickAccount.useClick();
-                if (clickUsed || rows.length == 1) {
+                if (clickUsed) {
                     boolean success = false;
                     boolean fatal = false;
-                    boolean send = false;
                     switch (f.farmFarm(pConfig)) {
                         case FAILED:
                             miscMessage = "Keine Truppeninformationen gefunden oder Fehler beim Öffnen des Browsers";
@@ -1027,31 +1009,17 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
                             break;
                         case OK:
                             success = true;
-                            send = true;
                             opened++;
                             break;
-                    default:
-                        break;
+                        default:
+                            break;
                     }
                     getModel().fireTableRowsUpdated(modelRow, modelRow);
-                    jFarmTable.getSelectionModel().removeSelectionInterval(row, row);
-                    if (success || !fatal) {
-                        if (rowIndex.get(i + 1) < jFarmTable.getRowCount()) {
-                            jFarmTable.getSelectionModel().addSelectionInterval(rowIndex.get(i + 1),
-                                    rowIndex.get(i + 1));
-                            jFarmTable.requestFocus();
-                        }
-                        if (!send && clickUsed && rows.length > 1) {
-                            clickAccount.giveClickBack();
-                        }
-                    } else {
-                        jFarmTable.getSelectionModel().addSelectionInterval(row, row);
-                        if (clickUsed && rows.length > 1) {
-                            clickAccount.giveClickBack();
-                        }
-                        if (fatal) {
-                            break;
-                        }
+                    if (!success && rows.length > 1) {
+                        clickAccount.giveClickBack();
+                    }
+                    if (fatal) {
+                        break;
                     }
                 } else {
                     miscMessage = "Das Klick-Konto ist leer";
@@ -1059,48 +1027,40 @@ public class DSWorkbenchFarmManager extends AbstractDSWorkbenchFrame implements 
                 }
             } else {
                 alreadyFarming++;
-                jFarmTable.getSelectionModel().removeSelectionInterval(row, row);
-                if (row + 1 < jFarmTable.getRowCount()) {
-                    jFarmTable.getSelectionModel().addSelectionInterval(rowIndex.get(i + 1), rowIndex.get(i + 1));
-                    jFarmTable.requestFocus();
-                }
             }
+            
+            jFarmTable.getSelectionModel().removeSelectionInterval(row, row);
+            if (rowIndex.get(i + 1) < jFarmTable.getRowCount()) {
+                jFarmTable.getSelectionModel().addSelectionInterval(rowIndex.get(i + 1), rowIndex.get(i + 1));
+                jFarmTable.requestFocus();
+            }
+            
             i++;
             logger.debug("Not possible: " + impossible + " inactive: " + farmInactive + " already farming: "
                     + alreadyFarming + "\n Catas on the way" + siegeOnWay + " No catas needed: " + farmFinal
                     + " farm too big: " + bigFarm + " opened: " + opened);
         }
-
-        if (miscMessage == null) {
-            if (!pConfig.equals(DSWorkbenchFarmManager.FARM_CONFIGURATION.K)) {
-                showInfo("Geöffnete Tabs: " + opened + "/" + rows.length + "\n" + " - " + impossible
-                        + " Mal keine passenden Dörfer gefunden\n" + " - " + farmInactive + " Farmen deaktiviert\n"
-                        + " - " + alreadyFarming + " Mal Truppen bereits unterwegs oder Bericht erwartet\n" + " - "
-                        + wallTooHigh + " Mal Wall höher als Stufe 1");
-        } else {
-                showInfo("Geöffnete Tabs: " + opened + "/" + rows.length + "\n" + " - " + impossible
-                        + " Mal keine passenden Dörfer gefunden\n" + " - " + farmInactive + " Farmen deaktiviert\n"
-                        + " - " + siegeOnWay + " Mal Kataulte bereits unterwegs\n" + " - " + farmFinal
-                        + " Mal keine Kattas nötig (optimale Farm)\n" + " - " + bigFarm
-                        + " Farm zu groß für Kataangriff\n" + " - " + wallTooHigh + " Mal Wall höher als Stufe 1");
+        
+        StringBuilder message = new StringBuilder();
+        if (miscMessage != null) {
+            message.append("FEHLER: '").append(miscMessage).append("'\n");
         }
+        message.append("Geöffnete Tabs: ").append(opened).append("/").append(rows.length).append("\n");
+        message.append(" - ").append(impossible).append(" Mal keine passenden Dörfer gefunden\n");
+        message.append(" - ").append(farmInactive).append(" Farmen deaktiviert\n");
+        
+        if (!pConfig.equals(DSWorkbenchFarmManager.FARM_CONFIGURATION.K)) {
+            message.append(" - ").append(alreadyFarming).append(" Mal Truppen bereits unterwegs oder Bericht erwartet\n");
+            message.append(" - ").append(wallTooHigh).append(" Mal Wall höher als Stufe 1");
         } else {
-            if (!pConfig.equals(DSWorkbenchFarmManager.FARM_CONFIGURATION.K)) {
-                showInfo("FEHLER: '" + miscMessage + "'\n" + "Geöffnete Tabs: " + opened + "/" + rows.length + "\n"
-                        + " - " + impossible + " Mal keine passenden Dörfer gefunden\n" + " - " + farmInactive
-                        + " Farmen deaktiviert\n" + " - " + alreadyFarming
-                        + " Mal Truppen bereits unterwegs oder Bericht erwartet\n" + " - " + wallTooHigh
-                        + " Mal Wall höher als Stufe 1");
-            } else {
-                showInfo("FEHLER: '" + miscMessage + "'\n" + "Geöffnete Tabs: " + opened + "/" + rows.length + "\n"
-                        + " - " + impossible + " Mal keine passenden Dörfer gefunden\n" + " - " + farmInactive
-                        + " Farmen deaktiviert\n" + " - " + siegeOnWay + " Mal Kataulte bereits unterwegs\n" + " - "
-                        + farmFinal + " Mal keine Kattas nötig (optimale Farm)\n" + " - " + bigFarm
-                        + " Farm zu groß für Kataangriff\n" + " - " + wallTooHigh + " Mal Wall höher als Stufe 1");
-    }
+            message.append(" - ").append(siegeOnWay).append(" Mal Kataulte bereits unterwegs\n");
+            message.append(" - ").append(farmFinal).append(" Mal keine Kattas nötig (optimale Farm)\n");
+            message.append(" - ").append(bigFarm).append(" Farm zu groß für Kataangriff\n");
+            message.append(" - ").append(wallTooHigh).append(" Mal Wall höher als Stufe 1");
         }
+        showInfo(message.toString());
     }
-
+    
     private void resetStatus() {
         int rows[] = jFarmTable.getSelectedRows();
         if (rows == null || rows.length == 0) {

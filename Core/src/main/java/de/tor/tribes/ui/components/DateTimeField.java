@@ -15,6 +15,7 @@
  */
 package de.tor.tribes.ui.components;
 
+import de.tor.tribes.util.ServerSettings;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -36,7 +37,7 @@ public class DateTimeField extends javax.swing.JPanel {
     private TimePicker tp;
     private JDialog dlg;
     private SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
-    private SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+    private SimpleDateFormat timeFormat;
     private boolean timeEnabled = true;
     private boolean dateEnabled = true;
     private ActionListener mListener = null;
@@ -45,6 +46,12 @@ public class DateTimeField extends javax.swing.JPanel {
      * Creates new form DateTimeField
      */
     public DateTimeField() {
+        if(ServerSettings.getSingleton().isMillisArrival()) {
+            timeFormat = new SimpleDateFormat("HH:mm:ss:SSS");
+        } else {
+            timeFormat = new SimpleDateFormat("HH:mm:ss");
+        }
+        
         initComponents();
         jDateField.setText(dateFormat.format(Calendar.getInstance().getTime()));
         jTimeField.setText(timeFormat.format(Calendar.getInstance().getTime()));
@@ -212,7 +219,11 @@ public class DateTimeField extends javax.swing.JPanel {
                 result.set(Calendar.HOUR_OF_DAY, c.get(Calendar.HOUR_OF_DAY));
                 result.set(Calendar.MINUTE, c.get(Calendar.MINUTE));
                 result.set(Calendar.SECOND, c.get(Calendar.SECOND));
-                result.set(Calendar.MILLISECOND, 0);
+                if(ServerSettings.getSingleton().isMillisArrival()) {
+                    result.set(Calendar.MILLISECOND, c.get(Calendar.MILLISECOND));
+                } else {
+                    result.set(Calendar.MILLISECOND, 0);
+                }
             } else {
                 result.set(Calendar.HOUR_OF_DAY, 0);
                 result.set(Calendar.MINUTE, 0);

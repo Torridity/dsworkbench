@@ -55,7 +55,7 @@ user@localhost:/home/user/DSWorkbench$
 
 ## More Information
 
-* [Die Staemme Forum Thread](https://forum.die-staemme.de/showthread.php?80831-DS-Workbench)
+* [Die Staemme Forum Thread](https://forum.die-staemme.de/index.php?threads/ds-workbench.80831/)
 
 ## License
 

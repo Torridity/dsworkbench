@@ -226,18 +226,19 @@ public class TimeSpan implements Comparable<TimeSpan> {
           if(!this.isValidAtEveryDay()) {
             Long thisStart = DateUtils.getFragmentInMilliseconds(new Date(thisSpan.getMinimum()), Calendar.DATE);
             Long thisEnd = DateUtils.getFragmentInMilliseconds(new Date(thisSpan.getMaximum()), Calendar.DATE);
-            thisSpan = Range.between(thisStart, thisEnd);
+            thisSpan = Range.between(thisStart, thisEnd - 1);
+          } else {
+            thisSpan = Range.between(thisSpan.getMinimum(), thisSpan.getMaximum() - 1);
           }
           
           if(!pSpan.isValidAtEveryDay()) {
             Long otherStart = DateUtils.getFragmentInMilliseconds(new Date(theOtherSpan.getMinimum()), Calendar.DATE);
             Long otherEnd = DateUtils.getFragmentInMilliseconds(new Date(theOtherSpan.getMaximum()), Calendar.DATE);
             theOtherSpan = Range.between(otherStart, otherEnd);
+          } else {
+            theOtherSpan = Range.between(theOtherSpan.getMinimum(), theOtherSpan.getMaximum() - 1);
           }
           
-          return thisSpan.isOverlappedBy(theOtherSpan);
-        } else if(this.isValidAtEveryDay() && pSpan.isValidAtEveryDay()) {
-          //both valid at every Day - just compare spans
           return thisSpan.isOverlappedBy(theOtherSpan);
         } else {
             //one span is for everyDay the other is over multiple Days

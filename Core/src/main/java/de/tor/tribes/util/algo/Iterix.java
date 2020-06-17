@@ -68,9 +68,6 @@ public class Iterix extends AbstractAttackAlgorithm {
         logText("Berechne Offs");
         
         troops = new LinkedList<>(pSources.keySet());
-        for(UnitHolder unit: pFakes.keySet()) {
-            if(!troops.contains(unit)) troops.add(unit);
-        }
         
         HashMap<Village, TroopMovement> movements = new HashMap<>();
         List<TroopMovement> movementList = new LinkedList<>();
@@ -112,10 +109,12 @@ public class Iterix extends AbstractAttackAlgorithm {
             }
         }
         
+        logArray("SourceAmounts", sourceAmounts);
         if (!offSources.isEmpty()) {
             //build mappings of possible source-target combinations
             logText(" - Erstelle mögliche Herkunft-Ziel Kombinationen");
             mappings = buildMappings(offSources, pTargets, pTimeFrame, pMaxAttacksTable);
+            logArray("mappings", mappings);
 
             //initialize result array
             result = new int[mappings.length][mappings[0].length];
@@ -125,6 +124,9 @@ public class Iterix extends AbstractAttackAlgorithm {
                 round = 1;
                 int maxMappings = countMappings(mappings);
                 while (!solve(offSources, pTargets, mappings, result)) {
+                    logArray("SourceAmounts", sourceAmounts);
+                    logArray("mappings", mappings);
+                    logArray("result", result);
                     Thread.sleep(10);
                     int currentMappings = countMappings(mappings);
                     updateStatus(maxMappings - currentMappings, maxMappings);
@@ -204,6 +206,7 @@ public class Iterix extends AbstractAttackAlgorithm {
         
         // <editor-fold defaultstate="collapsed" desc=" Assign Fakes">
         logText("Berechne Fakes");
+        troops = new LinkedList<>(pFakes.keySet());
         sourceAmounts = new int[troops.size()][];
         
         //list where the source an target ids are obtained from
@@ -390,6 +393,7 @@ public class Iterix extends AbstractAttackAlgorithm {
                     long runtime = Math.round(DSCalculator.calculateMoveTimeInSeconds(pSources.get(i),
                             pTargets.get(j), troops.get(z).getSpeed())  * 1000);
                     
+                    logArray("SourceAmounts", sourceAmounts);
                     if (pTimeFrame.isMovementPossible(runtime) && !pSources.get(i).equals(pTargets.get(j)) &&
                             sourceAmounts[z][i] > 0) {
                         tMappings[z * pSources.size() + i][j] = pMaxAttacksTable.get(pTargets.get(j));
@@ -643,5 +647,23 @@ public class Iterix extends AbstractAttackAlgorithm {
         }
         tMap += (System.currentTimeMillis() - s);
         return targetMappings;
+    }
+    
+    private void logArray(String name, int[][] array) {
+        if(!logger.isTraceEnabled()) return;
+        
+        StringBuilder str = new StringBuilder(name);
+        try {
+            str.append("\n");
+            for(int i = 0; i < array.length; i++) {
+                str.append("[");
+                for(int j = 0; j < array[i].length; j++) {
+                    if(j != 0) str.append(", ");
+                    str.append(array[i][j]);
+                }
+                str.append("],\n");
+            }
+        } catch(Exception ignored) {};
+        logger.trace(str.toString());
     }
 }

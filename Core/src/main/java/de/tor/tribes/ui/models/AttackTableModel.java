@@ -16,6 +16,7 @@
 package de.tor.tribes.ui.models;
 
 import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.io.DataHolderListener;
 import de.tor.tribes.io.TroopAmountElement;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Attack;
@@ -46,11 +47,29 @@ public class AttackTableModel extends AbstractTableModel {
     private final List<String> columnNames = new LinkedList<>();
     private final List<Class> columnTypes = new LinkedList<>();
     private final List<Boolean> editable = new LinkedList<>();
-    private final int unitAfter;
-    private final List<UnitHolder> units;
+    private int unitAfter;
+    private List<UnitHolder> units;
 
     public AttackTableModel(String pPlan) {
         sPlan = pPlan;
+        generateColumns();
+        
+        DataHolder.getSingleton().addDataHolderListener(new DataHolderListener() {
+            @Override
+            public void fireDataHolderEvent(String arg0) {
+            }
+
+            @Override
+            public void fireDataLoadedEvent(boolean arg0) {
+                generateColumns();
+            }
+        });
+    }
+    
+    private void generateColumns() {
+        columnNames.clear();
+        columnTypes.clear();
+        editable.clear();
         
         columnNames.add("Angreifer"); columnTypes.add(Tribe.class); editable.add(false);
         columnNames.add("Stamm (Angreifer)"); columnTypes.add(Ally.class); editable.add(false);
@@ -73,6 +92,8 @@ public class AttackTableModel extends AbstractTableModel {
         columnNames.add("Einzeichnen"); columnTypes.add(Boolean.class); editable.add(true);
         columnNames.add("Übertragen"); columnTypes.add(Boolean.class); editable.add(true);
         columnNames.add("Mult"); columnTypes.add(Short.class); editable.add(true);
+        
+        fireTableStructureChanged();
     }
 
     public void setPlan(String pPlan) {

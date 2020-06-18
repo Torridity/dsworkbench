@@ -100,7 +100,7 @@ public class StandardAttack extends ManageableType {
     public void loadFromXml(Element e) {
         try {
             name = URLDecoder.decode(e.getAttribute("name").getValue(), "UTF-8");
-        } catch (IOException ioe) {
+        } catch (Exception ex) {
             name = "";
         }
 

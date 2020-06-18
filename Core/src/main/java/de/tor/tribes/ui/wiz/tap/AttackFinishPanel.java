@@ -147,6 +147,7 @@ public class AttackFinishPanel extends WizardPage {
         stdFakeModel.addElement(null);
         for (ManageableType t : StandardAttackManager.getSingleton().getAllElements()) {
             StandardAttack a = (StandardAttack) t;
+            logger.debug("StdAtt {}:\n{}", a.getName(), a.getTroops());
             stdOffModel.addElement(a);
             stdFakeModel.addElement(a);
         }
@@ -708,7 +709,7 @@ public class AttackFinishPanel extends WizardPage {
         logger.debug("StdOff: {}", stdOff);
 
         StandardAttack stdFake = (StandardAttack) jStandardFake.getSelectedItem();
-        logger.debug("StdFale: {}", stdFake);
+        logger.debug("StdFake: {}", stdFake);
 
         List<Attack> modifiedTransfer = new LinkedList<>();
         for (Attack a : pToTransfer) {
@@ -729,7 +730,8 @@ public class AttackFinishPanel extends WizardPage {
                         default:
                             toUse = StandardAttackManager.getSingleton().getElementByIcon(StandardAttack.FAKE_ICON);
                     }
-                    a.setType(toUse.getIcon());
+                    logger.debug("Setting Fake {}:\n{}", toUse.getName());
+                    newAttack.setType(toUse.getIcon());
                 }
                 
             } else if (a.getType() == Attack.CLEAN_TYPE) {
@@ -749,7 +751,8 @@ public class AttackFinishPanel extends WizardPage {
                         default:
                             toUse = StandardAttackManager.getSingleton().getElementByIcon(StandardAttack.OFF_ICON);
                     }
-                    a.setType(toUse.getIcon());
+                    logger.debug("Setting Clean {}:\n{}", toUse.getName(), toUse.getTroops());
+                    newAttack.setType(toUse.getIcon());
                 }
             }
             newAttack.setUnit(a.getUnit());

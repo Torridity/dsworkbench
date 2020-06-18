@@ -189,12 +189,6 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         jScriptExportDialog.pack();
     }
 
-    public void setup() {
-        attackModel = new AttackTableModel(AttackManager.DEFAULT_GROUP);
-
-        jxAttackTable.setModel(attackModel);
-    }
-
     public void deregister() {
         jxAttackTable.getSelectionModel().removeListSelectionListener(this);
     }

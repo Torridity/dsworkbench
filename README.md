@@ -22,6 +22,23 @@ tool 'DS Workbench'.
 
 All *official* releases you can find [here](https://github.com/Torridity/dsworkbench/releases).
 
+## How to install
+
+* Install the latest OpenJDK (JRE versions will be enough for running DSWorkbench) for your platform from [https://adoptopenjdk.net/](https://adoptopenjdk.net/) and follow the installation instructions (you may also use the official releases but setup might need much more effort and expertise)
+* Download the current release, e.g. DSWorkbench-3.72.zip and extract the file into a new folder, preferably into your user directory, not containing blanks, e.g. DSWorkbench
+
+### Linux/MacOS
+
+* Open a terminal window and change to the folder where you extracted DS Workbench, by calling e.g. `cd ~/DSWorkbench`
+* Make the launch script executable by calling `chmod +x DSWorkbench`
+* Run DSWorkbench from the current folder by calling `./DSWorkbench`
+
+### Windows
+
+* Open the file explorer and change into the folder where you extracted DS Workbench
+* Press and hold the 'Alt' key and drag the file 'DSWorkbench.bat' to your Desktop, which will create a shortcut (don't forget pressing 'Alt', otherwise the file is moved to the Desktop and DSWorkbench won't run)
+* Launch DSWorkbench by double-clicking the shortcut on your Desktop
+
 ## How to build
 
 In order to build DS Workbench you'll need:

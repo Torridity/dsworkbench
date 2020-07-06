@@ -364,7 +364,7 @@ public class DSWorkbenchSOSRequestAnalyzer extends AbstractDSWorkbenchFrame impl
                     Village source = defense.getSupporter();
                     Village target = defense.getTarget();
                     TroopAmountFixed units = DSWorkbenchSettingsDialog.getSingleton().getDefense();
-                    if (units == null || units.hasUnits()) {
+                    if (units == null || !units.hasUnits()) {
                         showError("Fehlerhafte Einstellungen für die unterstützenden Einheiten");
                         break;
                     }

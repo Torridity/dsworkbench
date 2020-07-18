@@ -67,12 +67,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.swing.DefaultListModel;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  *
  * @author Torridity
  */
 public class BBCodeEditor extends javax.swing.JFrame {
+    private static Logger logger = LogManager.getLogger("BBCodeEditor");
 
     private BasicFormatter element = null;
     private final List<BasicFormatter> elementList = new ArrayList<>();
@@ -91,25 +94,24 @@ public class BBCodeEditor extends javax.swing.JFrame {
      */
     public BBCodeEditor() {
         super();
-        
         // This list needs to be manually kept in sync with designer
         elementList.add(new AttackListFormatter(false)); //attackFormatter
         elementList.add(new AttackListFormatter(true)); //attackFormatterIGMs
-        elementList.add(new VillageListFormatter()); //villageFormatter
-        elementList.add(new ReportListFormatter()); //reportFormatter
-        elementList.add(new SosListFormatter()); //sosFormatter
         elementList.add(new NoteListFormatter()); //noteFormatter
+        elementList.add(new VillageListFormatter()); //villageFormatter
+        elementList.add(new SosListFormatter()); //sosFormatter
+        elementList.add(new ReportListFormatter()); //reportFormatter
         elementList.add(new TagListFormatter()); //tagFormatter
-        elementList.add(new MarkerListFormatter()); //markerFormatter
+        elementList.add(new TroopListFormatter()); //troopsFormatter
         elementList.add(new PointStatsFormatter()); //pointStatsFormatter
         elementList.add(new KillStatsFormatter()); //offStatsFormatter
         elementList.add(new DefStatsFormatter()); //defStatsFormatter
         elementList.add(new WinnerLoserStatsFormatter()); //winnerLoserStatsFormatter
-        elementList.add(new TroopListFormatter()); //troopsFormatter
         elementList.add(new FormListFormatter()); //formFormatter
         elementList.add(new OverallReportStatsFormatter()); //overallStatFormatter
         elementList.add(new AllyReportStatsFormatter()); //allyStatFormatter
         elementList.add(new TribeReportStatsFormatter()); //tribeStatFormatter
+        elementList.add(new MarkerListFormatter()); //markerFormatter
         
         initComponents();
         buildSampleData();
@@ -547,7 +549,8 @@ public class BBCodeEditor extends javax.swing.JFrame {
         
         try {
             jTextPane1.setText("<html><head>" + BBCodeFormatter.getStyles() + "</head><body>" + BBCodeFormatter.toHtml(result) + "</body></html>");
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            logger.error("Exception during update", e);
         }
     }
 

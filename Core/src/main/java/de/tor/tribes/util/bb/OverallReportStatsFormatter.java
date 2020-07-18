@@ -30,15 +30,6 @@ public class OverallReportStatsFormatter extends BasicFormatter<OverallStatResul
     private static final String TEMPLATE_PROPERTY = "overall.report.stats.bbexport.template";
 
     @Override
-    public String formatElements(List<OverallStatResult> pElements, boolean pExtended) {
-        OverallStatResult res = pElements.get(0);
-        String[] replacements = res.getReplacements(pExtended);
-        String template = STANDARD_TEMPLATE;
-        template = StringUtils.replaceEach(template, res.getBBVariables(), replacements);
-        return template;
-    }
-
-    @Override
     public String getPropertyKey() {
         return TEMPLATE_PROPERTY;
     }

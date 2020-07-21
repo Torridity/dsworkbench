@@ -24,4 +24,9 @@ public class TimeSpanDivider extends TimeSpan {
     public TimeSpanDivider() {
         setDirection(DIRECTION.NONE);
     }
+    
+    @Override
+    public String toString() {
+        return "";
+    }
 }

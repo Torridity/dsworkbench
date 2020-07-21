@@ -40,28 +40,34 @@ public class StandardAttackListCellRenderer implements ListCellRenderer {
 
     @Override
     public Component getListCellRendererComponent(JList list, Object pValue, int pIndex, boolean pSelected, boolean pHasFocus) {
-        try {
-            StandardAttack att = (StandardAttack) pValue;
-            if (pSelected) {
-                renderComponent.setForeground(list.getSelectionForeground());
-                renderComponent.setBackground(list.getSelectionBackground());
-            } else {
-                renderComponent.setBackground(list.getBackground());
-                renderComponent.setForeground(list.getForeground());
-            }
-            
-            renderComponent.setText(att.getName());
-            if (att.getIcon() == ImageManager.NOTE_SYMBOL_NONE) {
-                //no icon!?
+        if (pSelected) {
+            renderComponent.setForeground(list.getSelectionForeground());
+            renderComponent.setBackground(list.getSelectionBackground());
+        } else {
+            renderComponent.setBackground(list.getBackground());
+            renderComponent.setForeground(list.getForeground());
+        }
+        
+        if(pValue != null) {
+            try {
+                StandardAttack att = (StandardAttack) pValue;
+
+                renderComponent.setText(att.getName());
+                if (att.getIcon() == ImageManager.NOTE_SYMBOL_NONE) {
+                    //no icon!?
+                    renderComponent.setIcon(null);
+                } else {
+                    renderComponent.setIcon(new ImageIcon(ImageManager.getNoteSymbol(att.getIcon())));
+                }
+            } catch (ClassCastException e) {
+                renderComponent.setText("-");
                 renderComponent.setIcon(null);
-            } else {
-                renderComponent.setIcon(new ImageIcon(ImageManager.getNoteSymbol(att.getIcon())));
             }
-        } catch (ClassCastException e) {
-            renderComponent.setText("-");
+        } else {
+            // value is null -> used for intuitive selection
+            renderComponent.setText("Automatische Auswahl");
             renderComponent.setIcon(null);
         }
-
         return renderComponent;
     }
 }

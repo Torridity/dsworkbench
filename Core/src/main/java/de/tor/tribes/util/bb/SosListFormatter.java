@@ -29,7 +29,7 @@ import org.apache.commons.lang3.StringUtils;
 public class SosListFormatter extends BasicFormatter<SOSRequest> {
 
     private static final String[] VARIABLES = new String[] {LIST_START, LIST_END, ELEMENT_COUNT, ELEMENT_ID};
-    public static final String STANDARD_TEMPLATE = new SOSRequest().getStandardTemplate();
+    private static final String STANDARD_TEMPLATE = new SOSRequest().getStandardTemplate();
     private static final String TEMPLATE_PROPERTY = "sos.list.bbexport.template";
 
     @Override
@@ -72,5 +72,10 @@ public class SosListFormatter extends BasicFormatter<SOSRequest> {
         Collections.addAll(vars, VARIABLES);
         Collections.addAll(vars, new SOSRequest().getBBVariables());
         return vars.toArray(new String[vars.size()]);
+    }
+    
+    @Override
+    public Class<SOSRequest> getConvertableType() {
+        return SOSRequest.class;
     }
 }

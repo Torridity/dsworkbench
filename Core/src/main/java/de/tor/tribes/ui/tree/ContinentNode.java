@@ -32,7 +32,7 @@ public class ContinentNode extends AbstractTreeNode {
 
     public int getContinent() {
         String cont = getUserObject();
-        cont = cont.replaceAll("K", "");
+        cont = cont.replace("K", "");
         return Integer.parseInt(cont);
     }
 

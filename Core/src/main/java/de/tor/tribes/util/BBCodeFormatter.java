@@ -37,18 +37,12 @@ public class BBCodeFormatter {
         Map<String, String> bbMap = new HashMap<>();
         bbMap.put("(\r\n|\r|\n|\n\r)", "<br/>");
         bbMap.put("\\[b\\](.+?)\\[/b\\]", "<strong>$1</strong>");
-        //bbMap.put(Pattern.compile("\\[table\\](.+?)"), "<table border='0' cellspacing='1' cellpadding='4' class='vis' style='border:#999966 1px solid'> $1");
         bbMap.put("\\[table\\]", "<table border='0' cellspacing='1' cellpadding='4' class='vis' style='border:#999966 1px solid'>");
-        //bbMap.put(Pattern.compile("(.+?)\\[/table\\]"), "$1</table>");
         bbMap.put("\\[/table\\]", "</table>");
-        //bbMap.put(Pattern.compile("(.+?)\\[\\*\\*\\](.+?)"), "$1<tr><th>$2");
         bbMap.put("\\[\\*\\*\\]", "<tr><th>");
-        //bbMap.put(Pattern.compile("(.+?)\\[/\\*\\*\\](.+?)"), "$1</th></tr>$2");
         bbMap.put("\\[/\\*\\*\\]", "</th></tr>");
         bbMap.put("\\[\\|\\|\\]", "</th><th>");
-        //bbMap.put(Pattern.compile("(.+?)\\[\\*\\](.+?)"), "$1<tr><td>$2");
         bbMap.put("\\[\\*\\]", "<tr><td>");
-        //bbMap.put(Pattern.compile("(.+?)\\[/\\*\\](.+?)"), "$1</td></tr>$2");
         bbMap.put("\\[/\\*\\]", "</td></tr>");
         bbMap.put("\\[\\|\\]", "</td><td>");
         bbMap.put("\\[s\\](.+?)\\[/s\\]", "<s>$1</s>");

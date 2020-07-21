@@ -343,7 +343,7 @@ public class VillageHTMLTooltipGenerator {
                 if (text == null) {
                     text = "";
                 }
-                text = text.replaceAll("\n", "<br/>");
+                text = text.replace("\n", "<br/>");
                 if (n.getNoteSymbol() == -1) {
                     b.append("<td colspan='3' bgcolor='#F7F5BF'>").append(BBCodeFormatter.toHtml(text)).append("</td>\n");
                 } else {

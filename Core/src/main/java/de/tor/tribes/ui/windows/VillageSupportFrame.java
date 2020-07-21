@@ -132,30 +132,8 @@ public class VillageSupportFrame extends javax.swing.JFrame implements ActionLis
                 showInfo("Keine Unterstützungen ausgewählt");
                 return;
             }
-            boolean extended = (JOptionPaneHelper.showQuestionConfirmBox(this, "Erweiterte BB-Codes verwenden (nur für Forum und Notizen geeignet)?", "Erweiterter BB-Code", "Nein", "Ja") == JOptionPane.YES_OPTION);
-
-            StringBuilder buffer = new StringBuilder();
-            if (extended) {
-                buffer.append("[u][size=12]Unterstützungsplan[/size][/u]\n\n");
-            } else {
-                buffer.append("[u]Unterstützungsplan[/u]\n\n");
-            }
-
-            buffer.append(new AttackListFormatter().formatElements(supports, extended));
-
-            if (extended) {
-                buffer.append("\n[size=8]Erstellt am ");
-                buffer.append(new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss").format(Calendar.getInstance().getTime()));
-                buffer.append(" mit DS Workbench ");
-                buffer.append(Constants.VERSION).append(Constants.VERSION_ADDITION + "[/size]\n");
-            } else {
-                buffer.append("\nErstellt am ");
-                buffer.append(new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss").format(Calendar.getInstance().getTime()));
-                buffer.append(" mit DS Workbench ");
-                buffer.append(Constants.VERSION).append(Constants.VERSION_ADDITION + "\n");
-            }
-
-            String b = buffer.toString();
+            
+            String b = AttackListFormatter.AttackListToBBCodes(this, supports, "Unterstützungsplan");
             StringTokenizer t = new StringTokenizer(b, "[");
             int cnt = t.countTokens();
             if (cnt > 1000) {

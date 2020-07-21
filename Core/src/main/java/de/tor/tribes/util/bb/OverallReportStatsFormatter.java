@@ -26,17 +26,8 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class OverallReportStatsFormatter extends BasicFormatter<OverallStatResult> {
 
-    public static final String STANDARD_TEMPLATE = new OverallStatResult().getStandardTemplate();
+    private static final String STANDARD_TEMPLATE = new OverallStatResult().getStandardTemplate();
     private static final String TEMPLATE_PROPERTY = "overall.report.stats.bbexport.template";
-
-    @Override
-    public String formatElements(List<OverallStatResult> pElements, boolean pExtended) {
-        OverallStatResult res = pElements.get(0);
-        String[] replacements = res.getReplacements(pExtended);
-        String template = STANDARD_TEMPLATE;
-        template = StringUtils.replaceEach(template, res.getBBVariables(), replacements);
-        return template;
-    }
 
     @Override
     public String getPropertyKey() {
@@ -53,5 +44,10 @@ public class OverallReportStatsFormatter extends BasicFormatter<OverallStatResul
         List<String> vars = new LinkedList<>();
         Collections.addAll(vars, new OverallStatResult().getBBVariables());
         return vars.toArray(new String[vars.size()]);
+    }
+    
+    @Override
+    public Class<OverallStatResult> getConvertableType() {
+        return OverallStatResult.class;
     }
 }

@@ -161,8 +161,11 @@ public class StandardAttackManager extends GenericManager<StandardAttack> {
         Element stdAtts = new Element("stdAttacks");
         
         try {
-            for (ManageableType element : getAllElements()) {
-                stdAtts.addContent(element.toXml("stdAttack"));
+            for (ManageableType t : getAllElements()) {
+                Element e = t.toXml("stdAttack");
+                if(e != null) {
+                  stdAtts.addContent(e);
+                }
             }
         } catch (Exception e) {
             logger.error("Failed to store standard attacks", e);

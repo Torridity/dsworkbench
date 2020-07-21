@@ -29,7 +29,7 @@ import org.apache.commons.lang3.StringUtils;
 public class FormListFormatter extends BasicFormatter<AbstractForm> {
 
     private static final String[] VARIABLES = new String[] {LIST_START, LIST_END, ELEMENT_COUNT, ELEMENT_ID};
-    public static final String STANDARD_TEMPLATE = "[b]Zeichnungen[/b]\nAnzahl der Zeichnungen: %ELEMENT_COUNT%\n"
+    private static final String STANDARD_TEMPLATE = "[b]Zeichnungen[/b]\nAnzahl der Zeichnungen: %ELEMENT_COUNT%\n"
             + "%LIST_START%\n" + new Circle().getStandardTemplate() + "\n%LIST_END%";
     private static final String TEMPLATE_PROPERTY = "form.list.bbexport.template";
 
@@ -82,5 +82,10 @@ public class FormListFormatter extends BasicFormatter<AbstractForm> {
         Collections.addAll(vars, VARIABLES);
         Collections.addAll(vars, new Circle().getBBVariables());
         return vars.toArray(new String[vars.size()]);
+    }
+    
+    @Override
+    public Class<AbstractForm> getConvertableType() {
+        return AbstractForm.class;
     }
 }

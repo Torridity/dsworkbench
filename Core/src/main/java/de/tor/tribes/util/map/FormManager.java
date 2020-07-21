@@ -85,11 +85,14 @@ public class FormManager extends GenericManager<AbstractForm> {
 
     @Override
     public Element getExportData(final List<String> pGroupsToExport) {
-        Element forms = new Element("plans");
+        Element forms = new Element("forms");
         try {
             logger.debug("Generating forms data");
             for (ManageableType t : getAllElements()) {
-                forms.addContent(t.toXml("form"));
+                Element e = t.toXml("form");
+                if(e != null) {
+                    forms.addContent(e);
+                }
             }
             logger.debug("Export data generated successfully");
         } catch (Exception e) {

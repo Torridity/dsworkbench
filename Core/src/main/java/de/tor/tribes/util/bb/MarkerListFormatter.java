@@ -26,7 +26,7 @@ import java.util.List;
 public class MarkerListFormatter extends BasicFormatter<Marker> {
 
     private static final String[] VARIABLES = new String[] {LIST_START, LIST_END, ELEMENT_COUNT, ELEMENT_ID};
-    public static final String STANDARD_TEMPLATE = "Anzahl der Markierungen: %ELEMENT_COUNT%\n\n"
+    private static final String STANDARD_TEMPLATE = "Anzahl der Markierungen: %ELEMENT_COUNT%\n\n"
             + "%LIST_START% %NAME% [color=%MARKER_COLOR%]▓▓▓[/color] %LIST_END%\n";
     private static final String TEMPLATE_PROPERTY = "marker.list.bbexport.template";
 
@@ -46,5 +46,10 @@ public class MarkerListFormatter extends BasicFormatter<Marker> {
         Collections.addAll(vars, VARIABLES);
         Collections.addAll(vars, new Marker().getBBVariables());
         return vars.toArray(new String[vars.size()]);
+    }
+    
+    @Override
+    public Class<Marker> getConvertableType() {
+        return Marker.class;
     }
 }

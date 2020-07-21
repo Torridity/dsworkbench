@@ -19,9 +19,13 @@ import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.ServerSettings;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JTable;
 import org.jdesktop.swingx.renderer.DefaultTableRenderer;
 
@@ -72,8 +76,6 @@ public class ColoredDateCellRenderer extends DefaultTableRenderer {
 
             if (t <= now) {
                 //value is expired, stroke result
-                //renderComponent.setText(specialFormat.format(d));
-                //renderComponent.setForeground(Color.RED);
                 renderComponent.setText("<html><nobr><s>" + renderComponent.getText() + "</s></nobr></html>");
             } else if (diff <= ten_minutes && diff > five_minutes) {
                 float ratio = (float) (diff - five_minutes) / (float) five_minutes;
@@ -98,7 +100,9 @@ public class ColoredDateCellRenderer extends DefaultTableRenderer {
             }
             renderComponent.setOpaque(true);
             renderComponent.setBackground(color);
-            return renderComponent;
+            JPanel panel = new JPanel(new GridBagLayout());
+            panel.add(renderComponent, new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0, GridBagConstraints.CENTER, 1, new Insets(0, 0, 0, 0), 0, 0));
+            return panel;
         } catch (Exception e) {
             return c;
         }

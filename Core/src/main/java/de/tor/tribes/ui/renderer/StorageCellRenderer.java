@@ -48,10 +48,12 @@ public class StorageCellRenderer extends DefaultTableRenderer {
         label.setBackground(defaultLabel.getBackground());
         try {
             StorageStatus status = (StorageStatus) value;
-            double wood = status.getWoodStatus();
-            double clay = status.getClayStatus();
-            double iron = status.getIronStatus();
-            label.setData(new double[]{wood, clay, iron}, status.getCapacity());
+            int wood = status.getWoodInStorage();
+            int clay = status.getClayInStorage();
+            int iron = status.getIronInStorage();
+            int capacity = status.getCapacity();
+            if (capacity == Integer.MAX_VALUE) capacity = -1;
+            label.setData(new double[]{wood, clay, iron}, capacity);
 
         } catch (Exception ignored) {
         }

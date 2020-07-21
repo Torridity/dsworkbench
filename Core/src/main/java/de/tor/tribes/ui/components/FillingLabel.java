@@ -33,13 +33,25 @@ public class FillingLabel extends JLabel {
     private String text = "";
 
     public void setData(double[] fillings, double capacity) {
-        this.fillings = fillings;
+        if(capacity <= 0) {
+            //unknown storage size
+            this.fillings = new double[fillings.length];
+            for(int i = 0; i < fillings.length; i++) {
+                this.fillings[i] = (capacity == 0)?(0.0):(1.0);
+            }
+        } else {
+            this.fillings = new double[fillings.length];
+            for(int i = 0; i < fillings.length; i++) {
+                this.fillings[i] = fillings[i] / capacity;
+            }
+        }
+        
         NumberFormat nf = NumberFormat.getInstance();
         nf.setMinimumFractionDigits(1);
         nf.setMaximumFractionDigits(1);
         double res = 0;
         for (Double v : fillings) {
-            res += v * capacity;
+            res += v;
         }
         res /= 1000;
         

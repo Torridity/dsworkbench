@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright 2015 Torridity.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -36,6 +36,7 @@ import de.tor.tribes.types.ext.NoAlly;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.ImageManager;
 import de.tor.tribes.util.BBCodeFormatter;
+import de.tor.tribes.util.BBSupport;
 import de.tor.tribes.util.BuildingSettings;
 import de.tor.tribes.util.Constants;
 import de.tor.tribes.util.GlobalOptions;
@@ -60,47 +61,25 @@ import de.tor.tribes.util.interfaces.BBChangeListener;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
 import java.awt.Color;
 import java.awt.event.ItemEvent;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.LinkedList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.swing.DefaultListModel;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  *
  * @author Torridity
  */
-public class BBCodeEditor extends javax.swing.JDialog {
+public class BBCodeEditor extends javax.swing.JFrame {
+    private static Logger logger = LogManager.getLogger("BBCodeEditor");
 
-    private final List<Attack> sampleAttacks = new LinkedList<>();
-    private final List<Village> sampleVillages = new LinkedList<>();
-    private List<FightReport> sampleReports = new LinkedList<>();
-    private List<SOSRequest> sampleRequests = new LinkedList<>();
-    private List<Tag> sampleTags = new LinkedList<>();
-    private List<Note> sampleNotes = new LinkedList<>();
-    private List<Stats> sampleStats = new LinkedList<>();
-    private List<VillageTroopsHolder> sampleTroops = new LinkedList<>();
-    private List<AbstractForm> sampleForms = new LinkedList<>();
-    private List<OverallStatResult> sampleOverallResult = new LinkedList<>();
-    private List<AllyStatResult> sampleAllyResult = new LinkedList<>();
-    private List<TribeStatResult> sampleTribeResult = new LinkedList<>();
-    private List<Marker> sampleMarker = new LinkedList<>();
     private BasicFormatter element = null;
-    private BasicFormatter<Attack> attackFormatter = new AttackListFormatter();
-    private BasicFormatter<Village> villageFormatter = new VillageListFormatter();
-    private BasicFormatter<FightReport> reportFormatter = new ReportListFormatter();
-    private BasicFormatter<SOSRequest> sosFormatter = new SosListFormatter();
-    private BasicFormatter<Note> noteFormatter = new NoteListFormatter();
-    private BasicFormatter<Tag> tagFormatter = new TagListFormatter();
-    private BasicFormatter<Marker> markerFormatter = new MarkerListFormatter();
-    private BasicFormatter<Stats> pointStatsFormatter = new PointStatsFormatter();
-    private BasicFormatter<Stats> offStatsFormatter = new KillStatsFormatter();
-    private BasicFormatter<Stats> defStatsFormatter = new DefStatsFormatter();
-    private BasicFormatter<Stats> winnerLoserStatsFormatter = new WinnerLoserStatsFormatter();
-    private BasicFormatter<VillageTroopsHolder> troopsFormatter = new TroopListFormatter();
-    private BasicFormatter<AbstractForm> formFormatter = new FormListFormatter();
-    private BasicFormatter<OverallStatResult> overallStatFormatter = new OverallReportStatsFormatter();
-    private BasicFormatter<AllyStatResult> allyStatFormatter = new AllyReportStatsFormatter();
-    private BasicFormatter<TribeStatResult> tribeStatFormatter = new TribeReportStatsFormatter();
+    private final List<BasicFormatter> elementList = new ArrayList<>();
+    private final Map<Class, List<? extends BBSupport>> samples = new HashMap<>();
     private static BBCodeEditor SINGLETON = null;
 
     public static synchronized BBCodeEditor getSingleton() {
@@ -113,14 +92,32 @@ public class BBCodeEditor extends javax.swing.JDialog {
     /**
      * Creates new form BBCodeEditor
      */
-    BBCodeEditor() {
+    public BBCodeEditor() {
         super();
-        setModal(true);
+        // This list needs to be manually kept in sync with designer
+        elementList.add(new AttackListFormatter(false)); //attackFormatter
+        elementList.add(new AttackListFormatter(true)); //attackFormatterIGMs
+        elementList.add(new NoteListFormatter()); //noteFormatter
+        elementList.add(new VillageListFormatter()); //villageFormatter
+        elementList.add(new SosListFormatter()); //sosFormatter
+        elementList.add(new ReportListFormatter()); //reportFormatter
+        elementList.add(new TagListFormatter()); //tagFormatter
+        elementList.add(new TroopListFormatter()); //troopsFormatter
+        elementList.add(new PointStatsFormatter()); //pointStatsFormatter
+        elementList.add(new KillStatsFormatter()); //offStatsFormatter
+        elementList.add(new DefStatsFormatter()); //defStatsFormatter
+        elementList.add(new WinnerLoserStatsFormatter()); //winnerLoserStatsFormatter
+        elementList.add(new FormListFormatter()); //formFormatter
+        elementList.add(new OverallReportStatsFormatter()); //overallStatFormatter
+        elementList.add(new AllyReportStatsFormatter()); //allyStatFormatter
+        elementList.add(new TribeReportStatsFormatter()); //tribeStatFormatter
+        elementList.add(new MarkerListFormatter()); //markerFormatter
+        
         initComponents();
         buildSampleData();
         jTextPane1.setBackground(Constants.DS_BACK_LIGHT);
 
-        element = attackFormatter;
+        element = elementList.get(0);
 
         bBPanel2.setBBChangeListener(new BBChangeListener() {
 
@@ -143,16 +140,21 @@ public class BBCodeEditor extends javax.swing.JDialog {
     }
 
     private void buildSampleData() {
-        sampleAttacks.clear();
-        sampleVillages.clear();
-        sampleReports.clear();
-        sampleRequests.clear();
-        sampleTags.clear();
-        sampleNotes.clear();
-        sampleStats.clear();
-        sampleTroops.clear();
-        sampleForms.clear();
-        sampleMarker.clear();
+        samples.clear();
+        List<Attack> sampleAttacks = new ArrayList<>(); samples.put(Attack.class, sampleAttacks);
+        List<Village> sampleVillages = new ArrayList<>(); samples.put(Village.class, sampleVillages);
+        List<FightReport> sampleReports = new ArrayList<>(); samples.put(FightReport.class, sampleReports);
+        List<SOSRequest> sampleRequests = new ArrayList<>(); samples.put(SOSRequest.class, sampleRequests);
+        List<Tag> sampleTags = new ArrayList<>(); samples.put(Tag.class, sampleTags);
+        List<Note> sampleNotes = new ArrayList<>(); samples.put(Note.class, sampleNotes);
+        List<Stats> sampleStats = new ArrayList<>(); samples.put(Stats.class, sampleStats);
+        List<VillageTroopsHolder> sampleTroops = new ArrayList<>(); samples.put(VillageTroopsHolder.class, sampleTroops);
+        List<AbstractForm> sampleForms = new ArrayList<>(); samples.put(AbstractForm.class, sampleForms);
+        List<OverallStatResult> sampleOverallResult = new ArrayList<>(); samples.put(OverallStatResult.class, sampleOverallResult);
+        List<AllyStatResult> sampleAllyResult = new ArrayList<>(); samples.put(AllyStatResult.class, sampleAllyResult);
+        List<TribeStatResult> sampleTribeResult = new ArrayList<>(); samples.put(TribeStatResult.class, sampleTribeResult);
+        List<Marker> sampleMarker = new ArrayList<>(); samples.put(Marker.class, sampleMarker);
+        
         //sample village
         Village sampleVillage1 = DataHolder.getSingleton().getRandomVillageWithOwner();
         //sample attack
@@ -359,8 +361,9 @@ public class BBCodeEditor extends javax.swing.JDialog {
     }
 
     /**
-     * This method is called from within the constructor to initialize the form. WARNING: Do NOT modify this code. The content of this
-     * method is always regenerated by the Form Editor.
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
      */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -370,27 +373,29 @@ public class BBCodeEditor extends javax.swing.JDialog {
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextPane1 = new javax.swing.JTextPane();
         jApplyButton = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        jStandardButton = new javax.swing.JButton();
         jBBPanel = new javax.swing.JPanel();
         bBPanel2 = new de.tor.tribes.ui.panels.BBPanel();
         infoPanel = new org.jdesktop.swingx.JXCollapsiblePane();
         jScrollPane2 = new javax.swing.JScrollPane();
         jVarsList = new javax.swing.JList();
-        jPanel1 = new javax.swing.JPanel();
-        jComboBox1 = new javax.swing.JComboBox();
+        jPanelEditSelect = new javax.swing.JPanel();
+        jComboBoxEditSelect = new javax.swing.JComboBox();
         jLabel1 = new javax.swing.JLabel();
         jButton3 = new javax.swing.JButton();
-        jLabel3 = new javax.swing.JLabel();
 
-        setTitle("BB-Code Editor");
-        setModal(true);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                onClose(evt);
+            }
+        });
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         jScrollPane1.setBorder(javax.swing.BorderFactory.createTitledBorder("Vorschau"));
         jScrollPane1.setMinimumSize(new java.awt.Dimension(33, 150));
         jScrollPane1.setPreferredSize(new java.awt.Dimension(33, 150));
 
-        jTextPane1.setContentType("text/html");
+        jTextPane1.setContentType("text/html"); // NOI18N
         jScrollPane1.setViewportView(jTextPane1);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -406,8 +411,8 @@ public class BBCodeEditor extends javax.swing.JDialog {
 
         jApplyButton.setText("Schließen");
         jApplyButton.setToolTipText("Beendet den BB-Editor. Änderungen werden während dem Editiervorgang automatisch gespeichert.");
-        jApplyButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
+        jApplyButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 fireApplyBBTemplatesEvent(evt);
             }
         });
@@ -418,10 +423,10 @@ public class BBCodeEditor extends javax.swing.JDialog {
         gridBagConstraints.insets = new java.awt.Insets(10, 5, 10, 10);
         getContentPane().add(jApplyButton, gridBagConstraints);
 
-        jButton2.setText("Standard wiederherstellen");
-        jButton2.setToolTipText("Stellt den Standardwert für das gewählte Template her");
-        jButton2.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
+        jStandardButton.setText("Standard wiederherstellen");
+        jStandardButton.setToolTipText("Stellt den Standardwert für das gewählte Template her");
+        jStandardButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 fireResetEvent(evt);
             }
         });
@@ -430,10 +435,9 @@ public class BBCodeEditor extends javax.swing.JDialog {
         gridBagConstraints.gridy = 3;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(10, 10, 10, 5);
-        getContentPane().add(jButton2, gridBagConstraints);
+        getContentPane().add(jStandardButton, gridBagConstraints);
 
         jBBPanel.setBackground(new java.awt.Color(239, 235, 223));
-        jBBPanel.setPreferredSize(new java.awt.Dimension(363, 251));
         jBBPanel.setLayout(new java.awt.BorderLayout());
 
         bBPanel2.setMinimumSize(new java.awt.Dimension(363, 150));
@@ -469,41 +473,34 @@ public class BBCodeEditor extends javax.swing.JDialog {
         gridBagConstraints.insets = new java.awt.Insets(10, 10, 10, 10);
         getContentPane().add(jBBPanel, gridBagConstraints);
 
-        jPanel1.setLayout(new java.awt.BorderLayout(5, 0));
+        jPanelEditSelect.setLayout(new java.awt.BorderLayout(5, 0));
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Angriffe", "Notizen", "Dorflisten", "SOS-Anfragen", "Kampfbericht", "Gruppen", "Truppen", "Statistik (Punkte)", "Statistik (Angriff)", "Statistik (Verteidigung)", "Statistik (Gewinner/Verlierer)", "Zeichnungen", "Berichtauswertung (Zusammenfassung)", "Berichtauswertung (Stämme)", "Berichtauswertung (Spieler)", "Markierungen" }));
-        jComboBox1.setMinimumSize(new java.awt.Dimension(66, 20));
-        jComboBox1.addItemListener(new java.awt.event.ItemListener() {
+        jComboBoxEditSelect.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Angriffe", "Angriffe (IGM)", "Notizen", "Dorflisten", "SOS-Anfragen", "Kampfbericht", "Gruppen", "Truppen", "Statistik (Punkte)", "Statistik (Angriff)", "Statistik (Verteidigung)", "Statistik (Gewinner/Verlierer)", "Zeichnungen", "Berichtauswertung (Zusammenfassung)", "Berichtauswertung (Stämme)", "Berichtauswertung (Spieler)", "Markierungen" }));
+        jComboBoxEditSelect.setMinimumSize(new java.awt.Dimension(66, 20));
+        jComboBoxEditSelect.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 fireExportTypeChangedEvent(evt);
             }
         });
-        jPanel1.add(jComboBox1, java.awt.BorderLayout.CENTER);
+        jPanelEditSelect.add(jComboBoxEditSelect, java.awt.BorderLayout.CENTER);
 
         jLabel1.setText("Export Template für");
-        jPanel1.add(jLabel1, java.awt.BorderLayout.WEST);
+        jPanelEditSelect.add(jLabel1, java.awt.BorderLayout.WEST);
 
         jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/information.png"))); // NOI18N
         jButton3.setToolTipText("Verfügbare Platzhalter");
-        jButton3.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 fireShowTemplateVarsDialogEvent(evt);
             }
         });
-        jPanel1.add(jButton3, java.awt.BorderLayout.EAST);
+        jPanelEditSelect.add(jButton3, java.awt.BorderLayout.EAST);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridwidth = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(10, 10, 10, 10);
-        getContentPane().add(jPanel1, gridBagConstraints);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 3;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.weightx = 1.0;
-        getContentPane().add(jLabel3, gridBagConstraints);
+        getContentPane().add(jPanelEditSelect, gridBagConstraints);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -511,88 +508,9 @@ public class BBCodeEditor extends javax.swing.JDialog {
     private void fireExportTypeChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireExportTypeChangedEvent
         String result = "";
         if (evt.getStateChange() == ItemEvent.SELECTED) {
-            switch (jComboBox1.getSelectedIndex()) {
-                case 0:
-                    element = attackFormatter;
-                    bBPanel2.setBBCode(element.getTemplate());
-                    result = element.formatElements(sampleAttacks, true);
-                    break;
-                case 1:
-                    element = noteFormatter;
-                    bBPanel2.setBBCode(element.getTemplate());
-                    result = element.formatElements(sampleNotes, true);
-                    break;
-                case 2:
-                    element = villageFormatter;
-                    bBPanel2.setBBCode(element.getTemplate());
-                    result = element.formatElements(sampleVillages, true);
-                    break;
-                case 3:
-                    element = sosFormatter;
-                    bBPanel2.setBBCode(element.getTemplate());
-                    result = element.formatElements(sampleRequests, true);
-                    break;
-                case 4:
-                    element = reportFormatter;
-                    bBPanel2.setBBCode(element.getTemplate());
-                    result = element.formatElements(sampleReports, true);
-                    break;
-                case 5:
-                    element = tagFormatter;
-                    bBPanel2.setBBCode(element.getTemplate());
-                    result = element.formatElements(sampleTags, true);
-                    break;
-                case 6:
-                    element = troopsFormatter;
-                    bBPanel2.setBBCode(element.getTemplate());
-                    result = element.formatElements(sampleTroops, true);
-                    break;
-                case 7:
-                    element = pointStatsFormatter;
-                    bBPanel2.setBBCode(element.getTemplate());
-                    result = element.formatElements(sampleStats, true);
-                    break;
-                case 8:
-                    element = offStatsFormatter;
-                    bBPanel2.setBBCode(element.getTemplate());
-                    result = element.formatElements(sampleStats, true);
-                    break;
-                case 9:
-                    element = defStatsFormatter;
-                    bBPanel2.setBBCode(element.getTemplate());
-                    result = element.formatElements(sampleStats, true);
-                    break;
-                case 10:
-                    element = winnerLoserStatsFormatter;
-                    bBPanel2.setBBCode(element.getTemplate());
-                    result = element.formatElements(sampleStats, true);
-                    break;
-                case 11:
-                    element = formFormatter;
-                    bBPanel2.setBBCode(element.getTemplate());
-                    result = element.formatElements(sampleForms, true);
-                    break;
-                case 12:
-                    element = overallStatFormatter;
-                    bBPanel2.setBBCode(element.getTemplate());
-                    result = element.formatElements(sampleOverallResult, true);
-                    break;
-                case 13:
-                    element = allyStatFormatter;
-                    bBPanel2.setBBCode(element.getTemplate());
-                    result = element.formatElements(sampleAllyResult, true);
-                    break;
-                case 14:
-                    element = tribeStatFormatter;
-                    bBPanel2.setBBCode(element.getTemplate());
-                    result = element.formatElements(sampleTribeResult, true);
-                    break;
-                case 15:
-                    element = markerFormatter;
-                    bBPanel2.setBBCode(element.getTemplate());
-                    result = element.formatElements(sampleMarker, true);
-                    break;
-            }
+            element = elementList.get(jComboBoxEditSelect.getSelectedIndex());
+            bBPanel2.setBBCode(element.getTemplate());
+            result = element.formatElements(samples.get(element.getConvertableType()), true);
         }
 
         DefaultListModel model = new DefaultListModel();
@@ -605,157 +523,34 @@ public class BBCodeEditor extends javax.swing.JDialog {
         jVarsList.setModel(model);
     }//GEN-LAST:event_fireExportTypeChangedEvent
 
-    private void fireShowTemplateVarsDialogEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireShowTemplateVarsDialogEvent
+    private void fireShowTemplateVarsDialogEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireShowTemplateVarsDialogEvent
         infoPanel.setCollapsed(!infoPanel.isCollapsed());
     }//GEN-LAST:event_fireShowTemplateVarsDialogEvent
 
-    private void fireApplyBBTemplatesEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireApplyBBTemplatesEvent
+    private void fireApplyBBTemplatesEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireApplyBBTemplatesEvent
         setVisible(false);
     }//GEN-LAST:event_fireApplyBBTemplatesEvent
 
-    private void fireResetEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireResetEvent
-
-        switch (jComboBox1.getSelectedIndex()) {
-            case 0:
-                element = attackFormatter;
-                break;
-            case 1:
-                element = noteFormatter;
-                break;
-            case 2:
-                element = villageFormatter;
-                break;
-            case 3:
-                element = sosFormatter;
-                break;
-            case 4:
-                element = reportFormatter;
-                break;
-            case 5:
-                element = tagFormatter;
-                break;
-            case 6:
-                element = troopsFormatter;
-                break;
-            case 7:
-                element = pointStatsFormatter;
-                break;
-            case 8:
-                element = offStatsFormatter;
-                break;
-            case 9:
-                element = defStatsFormatter;
-                break;
-            case 10:
-                element = winnerLoserStatsFormatter;
-                break;
-            case 11:
-                element = formFormatter;
-                break;
-            case 12:
-                element = overallStatFormatter;
-                break;
-            case 13:
-                element = allyStatFormatter;
-                break;
-            case 14:
-                element = tribeStatFormatter;
-                break;
-            case 15:
-                element = markerFormatter;
-                break;
-        }
+    private void fireResetEvent(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fireResetEvent
+        element = elementList.get(jComboBoxEditSelect.getSelectedIndex());
         bBPanel2.setBBCode(element.getStandardTemplate());
         updatePreview();
     }//GEN-LAST:event_fireResetEvent
 
+    private void onClose(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_onClose
+        bBPanel2.hideAllSubelements();
+    }//GEN-LAST:event_onClose
+
     private void updatePreview() {
         String result = "";
-        switch (jComboBox1.getSelectedIndex()) {
-            case 0:
-                element = attackFormatter;
-                GlobalOptions.addProperty(element.getPropertyKey(), bBPanel2.getBBCode());
-                result = element.formatElements(sampleAttacks, true);
-                break;
-            case 1:
-                element = noteFormatter;
-                GlobalOptions.addProperty(element.getPropertyKey(), bBPanel2.getBBCode());
-                result = element.formatElements(sampleNotes, true);
-                break;
-            case 2:
-                element = villageFormatter;
-                GlobalOptions.addProperty(element.getPropertyKey(), bBPanel2.getBBCode());
-                result = element.formatElements(sampleVillages, true);
-                break;
-            case 3:
-                element = sosFormatter;
-                GlobalOptions.addProperty(element.getPropertyKey(), bBPanel2.getBBCode());
-                result = element.formatElements(sampleRequests, true);
-                break;
-            case 4:
-                element = reportFormatter;
-                GlobalOptions.addProperty(element.getPropertyKey(), bBPanel2.getBBCode());
-                result = element.formatElements(sampleReports, true);
-                break;
-            case 5:
-                element = tagFormatter;
-                GlobalOptions.addProperty(element.getPropertyKey(), bBPanel2.getBBCode());
-                result = element.formatElements(sampleTags, true);
-                break;
-            case 6:
-                element = troopsFormatter;
-                GlobalOptions.addProperty(element.getPropertyKey(), bBPanel2.getBBCode());
-                result = element.formatElements(sampleTroops, true);
-                break;
-            case 7:
-                element = pointStatsFormatter;
-                GlobalOptions.addProperty(element.getPropertyKey(), bBPanel2.getBBCode());
-                result = element.formatElements(sampleStats, true);
-                break;
-            case 8:
-                element = offStatsFormatter;
-                GlobalOptions.addProperty(element.getPropertyKey(), bBPanel2.getBBCode());
-                result = element.formatElements(sampleStats, true);
-                break;
-            case 9:
-                element = defStatsFormatter;
-                GlobalOptions.addProperty(element.getPropertyKey(), bBPanel2.getBBCode());
-                result = element.formatElements(sampleStats, true);
-                break;
-            case 10:
-                element = winnerLoserStatsFormatter;
-                GlobalOptions.addProperty(element.getPropertyKey(), bBPanel2.getBBCode());
-                result = element.formatElements(sampleStats, true);
-                break;
-            case 11:
-                element = formFormatter;
-                GlobalOptions.addProperty(element.getPropertyKey(), bBPanel2.getBBCode());
-                result = element.formatElements(sampleForms, true);
-                break;
-            case 12:
-                element = overallStatFormatter;
-                GlobalOptions.addProperty(element.getPropertyKey(), bBPanel2.getBBCode());
-                result = element.formatElements(sampleOverallResult, true);
-                break;
-            case 13:
-                element = allyStatFormatter;
-                GlobalOptions.addProperty(element.getPropertyKey(), bBPanel2.getBBCode());
-                result = element.formatElements(sampleAllyResult, true);
-                break;
-            case 14:
-                element = tribeStatFormatter;
-                GlobalOptions.addProperty(element.getPropertyKey(), bBPanel2.getBBCode());
-                result = element.formatElements(sampleTribeResult, true);
-                break;
-            case 15:
-                element = markerFormatter;
-                GlobalOptions.addProperty(element.getPropertyKey(), bBPanel2.getBBCode());
-                result = element.formatElements(sampleMarker, true);
-                break;
-        }
+        element = elementList.get(jComboBoxEditSelect.getSelectedIndex());
+        GlobalOptions.addProperty(element.getPropertyKey(), bBPanel2.getBBCode());
+        result = element.formatElements(samples.get(element.getConvertableType()), true);
+        
         try {
             jTextPane1.setText("<html><head>" + BBCodeFormatter.getStyles() + "</head><body>" + BBCodeFormatter.toHtml(result) + "</body></html>");
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            logger.error("Exception during update", e);
         }
     }
 
@@ -764,14 +559,13 @@ public class BBCodeEditor extends javax.swing.JDialog {
     private org.jdesktop.swingx.JXCollapsiblePane infoPanel;
     private javax.swing.JButton jApplyButton;
     private javax.swing.JPanel jBBPanel;
-    private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
-    private javax.swing.JComboBox jComboBox1;
+    private javax.swing.JComboBox jComboBoxEditSelect;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanelEditSelect;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JButton jStandardButton;
     private javax.swing.JTextPane jTextPane1;
     private javax.swing.JList jVarsList;
     // End of variables declaration//GEN-END:variables

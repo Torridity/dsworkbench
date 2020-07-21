@@ -34,14 +34,13 @@ public class RibbonLayoutConstants {
     public static Font FONT = new JButton("").getFont();//12
 
     static {
-        if (GlobalOptions.getProperties().getBoolean("half.ribbon.size")) {
-            TASK_BAR_HEIGHT = 16;//24
-            TASK_TOGGLE_BUTTON_HEIGHT = 14;//22
-            TILE_SIZE = 16;//32
-            MAX_SIZE = 16;//32
-            MED_SIZE = 8;//16
-            MIN_SIZE = 8;//16
-            FONT = new JButton("").getFont().deriveFont(10f);//12
-        }
+        double size = GlobalOptions.getProperties().getDouble("ribbon.size");
+        TASK_BAR_HEIGHT = (int) (24 * size);
+        TASK_TOGGLE_BUTTON_HEIGHT = (int) (22 * size);
+        TILE_SIZE = (int) (32 * size);
+        MAX_SIZE = (int) (32 * size);
+        MED_SIZE = (int) (16 * size);
+        MIN_SIZE = (int) (16 * size);
+        FONT = new JButton("").getFont().deriveFont((float) (12 * Math.sqrt(size)));
     }
 }

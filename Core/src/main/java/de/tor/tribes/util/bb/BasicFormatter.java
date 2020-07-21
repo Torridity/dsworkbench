@@ -31,11 +31,11 @@ public abstract class BasicFormatter<C extends BBSupport> implements BBFormatter
     private String sCustomTemplate = null;
 
     public BasicFormatter() {
-        sCustomTemplate = getTemplate();
     }
 
     @Override
     public final void storeProperty() {
+        if(sCustomTemplate == null) return;
         GlobalOptions.addProperty(getPropertyKey(), sCustomTemplate);
     }
 
@@ -133,4 +133,9 @@ public abstract class BasicFormatter<C extends BBSupport> implements BBFormatter
         sCustomTemplate = pTemplate;
         storeProperty();
     }
+    
+    /**
+     * Returns the Class of the Type this Formatter was made for
+     */
+    public abstract Class<C> getConvertableType();
 }

@@ -49,38 +49,38 @@ public class AttackPlanHTMLExporter {
     private static String BLOCK = "";
     private static boolean TEMPLATE_ERROR = false;
     //header and footer variables
-    private static final String CREATOR = "\\$CREATOR";
-    private static final String SERVER = "\\$SERVER";
-    private static final String PLANNAME = "\\$PLANNAME";
-    private static final String ATTACK_COUNT = "\\$ATTACK_COUNT";
-    private static final String VERSION = "\\$VERSION";
-    private static final String CREATION_DATE = "\\$CREATION_DATE";
+    private static final String CREATOR = "$CREATOR";
+    private static final String SERVER = "$SERVER";
+    private static final String PLANNAME = "$PLANNAME";
+    private static final String ATTACK_COUNT = "$ATTACK_COUNT";
+    private static final String VERSION = "$VERSION";
+    private static final String CREATION_DATE = "$CREATION_DATE";
     //block variables
-    private static final String ID = "\\$ID";
-    private static final String DIV_CLASS = "\\$DIV_CLASS";
-    private static final String TYPE = "\\$TYPE";
-    private static final String UNIT = "\\$UNIT";
-    private static final String SEND_TIME = "\\$SEND_TIME";
-    private static final String ARRIVE_TIME = "\\$ARRIVE_TIME";
-    private static final String PLACE = "\\$PLACE";
+    private static final String ID = "$ID";
+    private static final String DIV_CLASS = "$DIV_CLASS";
+    private static final String TYPE = "$TYPE";
+    private static final String UNIT = "$UNIT";
+    private static final String SEND_TIME = "$SEND_TIME";
+    private static final String ARRIVE_TIME = "$ARRIVE_TIME";
+    private static final String PLACE = "$PLACE";
     //source variables
-    private static final String SOURCE_PLAYER_LINK = "\\$SOURCE_PLAYER_LINK";
-    private static final String SOURCE_PLAYER_NAME = "\\$SOURCE_PLAYER_NAME";
-    private static final String SOURCE_ALLY_LINK = "\\$SOURCE_ALLY_LINK";
-    private static final String SOURCE_ALLY_NAME = "\\$SOURCE_ALLY_NAME";
-    private static final String SOURCE_ALLY_TAG = "\\$SOURCE_ALLY_TAG";
-    private static final String SOURCE_VILLAGE_LINK = "\\$SOURCE_VILLAGE_LINK";
-    private static final String SOURCE_VILLAGE_NAME = "\\$SOURCE_VILLAGE_NAME";
-    private static final String SOURCE_VILLAGE_COORD = "\\$SOURCE_VILLAGE_COORD";
+    private static final String SOURCE_PLAYER_LINK = "$SOURCE_PLAYER_LINK";
+    private static final String SOURCE_PLAYER_NAME = "$SOURCE_PLAYER_NAME";
+    private static final String SOURCE_ALLY_LINK = "$SOURCE_ALLY_LINK";
+    private static final String SOURCE_ALLY_NAME = "$SOURCE_ALLY_NAME";
+    private static final String SOURCE_ALLY_TAG = "$SOURCE_ALLY_TAG";
+    private static final String SOURCE_VILLAGE_LINK = "$SOURCE_VILLAGE_LINK";
+    private static final String SOURCE_VILLAGE_NAME = "$SOURCE_VILLAGE_NAME";
+    private static final String SOURCE_VILLAGE_COORD = "$SOURCE_VILLAGE_COORD";
     //target variables
-    private static final String TARGET_PLAYER_LINK = "\\$TARGET_PLAYER_LINK";
-    private static final String TARGET_PLAYER_NAME = "\\$TARGET_PLAYER_NAME";
-    private static final String TARGET_ALLY_LINK = "\\$TARGET_ALLY_LINK";
-    private static final String TARGET_ALLY_NAME = "\\$TARGET_ALLY_NAME";
-    private static final String TARGET_ALLY_TAG = "\\$TARGET_ALLY_TAG";
-    private static final String TARGET_VILLAGE_LINK = "\\$TARGET_VILLAGE_LINK";
-    private static final String TARGET_VILLAGE_NAME = "\\$TARGET_VILLAGE_NAME";
-    private static final String TARGET_VILLAGE_COORD = "\\$TARGET_VILLAGE_COORD";
+    private static final String TARGET_PLAYER_LINK = "$TARGET_PLAYER_LINK";
+    private static final String TARGET_PLAYER_NAME = "$TARGET_PLAYER_NAME";
+    private static final String TARGET_ALLY_LINK = "$TARGET_ALLY_LINK";
+    private static final String TARGET_ALLY_NAME = "$TARGET_ALLY_NAME";
+    private static final String TARGET_ALLY_TAG = "$TARGET_ALLY_TAG";
+    private static final String TARGET_VILLAGE_LINK = "$TARGET_VILLAGE_LINK";
+    private static final String TARGET_VILLAGE_NAME = "$TARGET_VILLAGE_NAME";
+    private static final String TARGET_VILLAGE_COORD = "$TARGET_VILLAGE_COORD";
 
     static {
         loadCustomTemplate();
@@ -198,40 +198,40 @@ public class AttackPlanHTMLExporter {
             String b = BLOCK;
             // <editor-fold defaultstate="collapsed" desc="Replace DIV-IDs">
             if (cnt % 2 == 0) {
-                b = b.replaceAll(DIV_CLASS, "odd_div");
+                b = b.replace(DIV_CLASS, "odd_div");
             } else {
-                b = b.replaceAll(DIV_CLASS, "even_div");
+                b = b.replace(DIV_CLASS, "even_div");
             }
-            b = b.replaceAll(ID, Integer.toString(cnt));
+            b = b.replace(ID, Integer.toString(cnt));
             // </editor-fold>
 
             // <editor-fold defaultstate="collapsed" desc="Replace Unit Icons">
             UnitHolder unit = a.getUnit();
-            b = b.replaceAll(UNIT, "<img src=\"http://torridity.de/tools/res/" + unit.getPlainName() + ".png\">");
+            b = b.replace(UNIT, "<img src=\"http://torridity.de/tools/res/" + unit.getPlainName() + ".png\">");
 
             switch (a.getType()) {
                 case Attack.CLEAN_TYPE: {
-                    b = b.replaceAll(TYPE, "<img src=\"http://torridity.de/tools/res/att.png\">");
+                    b = b.replace(TYPE, "<img src=\"http://torridity.de/tools/res/att.png\">");
                     break;
                 }
                 case Attack.SNOB_TYPE: {
-                    b = b.replaceAll(TYPE, "<img src=\"http://torridity.de/tools/res/snob.png\">");
+                    b = b.replace(TYPE, "<img src=\"http://torridity.de/tools/res/snob.png\">");
                     break;
                 }
                 case Attack.FAKE_TYPE: {
-                    b = b.replaceAll(TYPE, "<img src=\"http://torridity.de/tools/res/fake.png\">");
+                    b = b.replace(TYPE, "<img src=\"http://torridity.de/tools/res/fake.png\">");
                     break;
                 }
                 case Attack.FAKE_DEFF_TYPE: {
-                    b = b.replaceAll(TYPE, "<img src=\"http://torridity.de/tools/res/def_fake.png\">");
+                    b = b.replace(TYPE, "<img src=\"http://torridity.de/tools/res/def_fake.png\">");
                     break;
                 }
                 case Attack.SUPPORT_TYPE: {
-                    b = b.replaceAll(TYPE, "<img src=\"http://torridity.de/tools/res/ally.png\">");
+                    b = b.replace(TYPE, "<img src=\"http://torridity.de/tools/res/ally.png\">");
                     break;
                 }
                 default: {
-                    b = b.replaceAll(TYPE, "-");
+                    b = b.replace(TYPE, "-");
                     break;
                 }
             }
@@ -279,14 +279,14 @@ public class AttackPlanHTMLExporter {
             sourceVillageCoord = a.getSource().getCoordAsString();
 
             //replace values
-            b = b.replaceAll(SOURCE_PLAYER_NAME, Matcher.quoteReplacement(sourceTribeName));
-            b = b.replaceAll(SOURCE_PLAYER_LINK, sourceTribeLink);
-            b = b.replaceAll(SOURCE_ALLY_NAME, Matcher.quoteReplacement(sourceAllyName));
-            b = b.replaceAll(SOURCE_ALLY_TAG, Matcher.quoteReplacement(sourceAllyTag));
-            b = b.replaceAll(SOURCE_ALLY_LINK, sourceAllyLink);
-            b = b.replaceAll(SOURCE_VILLAGE_NAME, Matcher.quoteReplacement(sourceVillageName));
-            b = b.replaceAll(SOURCE_VILLAGE_COORD, sourceVillageCoord);
-            b = b.replaceAll(SOURCE_VILLAGE_LINK, sourceVillageLink);
+            b = b.replace(SOURCE_PLAYER_NAME, sourceTribeName);
+            b = b.replace(SOURCE_PLAYER_LINK, sourceTribeLink);
+            b = b.replace(SOURCE_ALLY_NAME, sourceAllyName);
+            b = b.replace(SOURCE_ALLY_TAG, sourceAllyTag);
+            b = b.replace(SOURCE_ALLY_LINK, sourceAllyLink);
+            b = b.replace(SOURCE_VILLAGE_NAME, sourceVillageName);
+            b = b.replace(SOURCE_VILLAGE_COORD, sourceVillageCoord);
+            b = b.replace(SOURCE_VILLAGE_LINK, sourceVillageLink);
 
             //</editor-fold>
 
@@ -330,22 +330,22 @@ public class AttackPlanHTMLExporter {
             targetVillageCoord = a.getTarget().getCoordAsString();
 
             //replace values
-            b = b.replaceAll(TARGET_PLAYER_NAME, Matcher.quoteReplacement(targetTribeName));
-            b = b.replaceAll(TARGET_PLAYER_LINK, targetTribeLink);
-            b = b.replaceAll(TARGET_ALLY_NAME, Matcher.quoteReplacement(targetAllyName));
-            b = b.replaceAll(TARGET_ALLY_TAG, Matcher.quoteReplacement(targetAllyTag));
-            b = b.replaceAll(TARGET_ALLY_LINK, targetAllyLink);
-            b = b.replaceAll(TARGET_VILLAGE_NAME, Matcher.quoteReplacement(targetVillageName));
-            b = b.replaceAll(TARGET_VILLAGE_COORD, targetVillageCoord);
-            b = b.replaceAll(TARGET_VILLAGE_LINK, targetVillageLink);
+            b = b.replace(TARGET_PLAYER_NAME, targetTribeName);
+            b = b.replace(TARGET_PLAYER_LINK, targetTribeLink);
+            b = b.replace(TARGET_ALLY_NAME, targetAllyName);
+            b = b.replace(TARGET_ALLY_TAG, targetAllyTag);
+            b = b.replace(TARGET_ALLY_LINK, targetAllyLink);
+            b = b.replace(TARGET_VILLAGE_NAME, targetVillageName);
+            b = b.replace(TARGET_VILLAGE_COORD, targetVillageCoord);
+            b = b.replace(TARGET_VILLAGE_LINK, targetVillageLink);
 
             //</editor-fold>
 
             // <editor-fold defaultstate="collapsed" desc="Replace times and place URL">
             //replace arrive time
-            b = b.replaceAll(ARRIVE_TIME, f.format(a.getArriveTime()));
+            b = b.replace(ARRIVE_TIME, f.format(a.getArriveTime()));
             //replace send time
-            b = b.replaceAll(SEND_TIME, f.format(a.getSendTime()));
+            b = b.replace(SEND_TIME, f.format(a.getSendTime()));
             //replace place link
             String placeURL = baseURL + "game.php?village=";
             int uvID = GlobalOptions.getSelectedProfile().getUVId();
@@ -365,7 +365,7 @@ public class AttackPlanHTMLExporter {
                 placeURL += "&" + u.getPlainName() + "=" + amount;
             }
 
-            b = b.replaceAll(PLACE, placeURL);
+            b = b.replace(PLACE, placeURL);
             // </editor-fold>
 
             result.append(b);
@@ -389,39 +389,34 @@ public class AttackPlanHTMLExporter {
         //set creator
         Tribe user = GlobalOptions.getSelectedProfile().getTribe();
         if (user != null) {
-            result = result.replaceAll(CREATOR, Matcher.quoteReplacement(user.getName()));
+            result = result.replace(CREATOR, user.getName());
         } else {
-            result = result.replaceAll(CREATOR, "-");
+            result = result.replace(CREATOR, "-");
         }
         //set planname
         if (pPlanName != null) {
-            result = result.replaceAll(PLANNAME, EscapeChars.forHTML(pPlanName));
+            result = result.replace(PLANNAME, EscapeChars.forHTML(pPlanName));
         } else {
-            result = result.replaceAll(PLANNAME, "-");
+            result = result.replace(PLANNAME, "-");
         }
         //set attack count
         NumberFormat nf = NumberFormat.getInstance();
         nf.setMinimumFractionDigits(0);
         nf.setMinimumFractionDigits(0);
-        result = result.replaceAll(ATTACK_COUNT, nf.format(pAttacks.size()));
+        result = result.replace(ATTACK_COUNT, nf.format(pAttacks.size()));
         //set attack count
         String server = GlobalOptions.getSelectedServer();
         if (server != null) {
-            result = result.replaceAll(SERVER, server);
+            result = result.replace(SERVER, server);
         } else {
-            result = result.replaceAll(SERVER, "-");
+            result = result.replace(SERVER, "-");
         }
         //replace version
-        result = result.replaceAll(VERSION, Double.toString(Constants.VERSION) + Constants.VERSION_ADDITION);
+        result = result.replace(VERSION, Double.toString(Constants.VERSION) + Constants.VERSION_ADDITION);
         //replace creation date
         SimpleDateFormat f = new SimpleDateFormat("dd.MM.yyyy 'um' HH:mm:ss 'Uhr'");
-        result = result.replaceAll(CREATION_DATE, f.format(new Date(System.currentTimeMillis())));
+        result = result.replace(CREATION_DATE, f.format(new Date(System.currentTimeMillis())));
 
         return result;
-    }
-    
-    public static void main(String[] args) {
-        String test = "%P%";
-        System.out.println(test.replaceAll("%P%", Matcher.quoteReplacement("$test$")));
     }
 }

@@ -64,6 +64,7 @@ public class Attack extends ManageableType implements Serializable, Comparable<A
     private int type = NO_TYPE;
     private TroopAmountDynamic amounts = null;
     private boolean transferredToBrowser = false;
+    private short multiplier = 1;
 
     public Attack() {
         showOnMap = GlobalOptions.getProperties().getBoolean("draw.attacks.by.default");
@@ -219,11 +220,28 @@ public class Attack extends ManageableType implements Serializable, Comparable<A
             return;
         }
         
+        this.amounts = byType.getTroops().clone();
+    }
+
+    public void setTroopsByTypeIgnoreToSlow() {
+        this.amounts = new TroopAmountDynamic(0);
+        if(this.type == NO_TYPE) {
+            return;
+        }
+        
+        StandardAttack byType = StandardAttackManager.getSingleton().getElementByIcon(this.type);
+        if(byType == null) {
+            //no StandardAttack exists for that type
+            return;
+        }
+        
+        logger.debug("Setting from std\n{}", byType);
         TroopAmountDynamic typeAmount = byType.getTroops();
 
         for(UnitHolder u: DataHolder.getSingleton().getUnits()) {
             if(u.getSpeed() <= unit.getSpeed()) {
                 //faster or equal
+                logger.debug("Setting {} with {}", u.getPlainName(), typeAmount.getElementForUnit(u));
                 this.amounts.setAmount(typeAmount.getElementForUnit(u));
             }
         }
@@ -262,7 +280,8 @@ public class Attack extends ManageableType implements Serializable, Comparable<A
         str.append(getType()).append("&");
         str.append(isShowOnMap()).append("&");
         str.append(isTransferredToBrowser()).append("&");
-        str.append(getTroops().toProperty());
+        str.append(getTroops().toProperty()).append("&");
+        str.append(getMultiplier());
         return str.toString();
     }
 
@@ -279,6 +298,7 @@ public class Attack extends ManageableType implements Serializable, Comparable<A
             a.setShowOnMap(Boolean.parseBoolean(split[5]));
             a.setTransferredToBrowser(Boolean.parseBoolean(split[6]));
             a.setTroops(new TroopAmountDynamic().loadFromProperty(split[7]));
+            a.setMultiplier((short) Integer.parseInt(split[8]));
         } catch (Exception e) {
             a = null;
         }
@@ -308,6 +328,7 @@ public class Attack extends ManageableType implements Serializable, Comparable<A
         extensions.addContent(new Element("showOnMap").setText(Boolean.toString(showOnMap)));
         extensions.addContent(new Element("type").setText(Integer.toString(type)));
         extensions.addContent(new Element("transferredToBrowser").setText(Boolean.toString(transferredToBrowser)));
+        extensions.addContent(new Element("multiplier").setText(Integer.toString(multiplier)));
         
         attack.addContent(extensions);
         return attack;
@@ -335,6 +356,9 @@ public class Attack extends ManageableType implements Serializable, Comparable<A
         }
         this.showOnMap = Boolean.parseBoolean(JDomUtils.getNodeValue(pElement, "extensions/showOnMap"));
         this.transferredToBrowser = Boolean.parseBoolean(JDomUtils.getNodeValue(pElement, "extensions/transferredToBrowser"));
+        
+        if(JDomUtils.getNodeValue(pElement, "extensions/multiplier") != null)
+            this.multiplier = (short) Integer.parseInt(JDomUtils.getNodeValue(pElement, "extensions/multiplier"));
     }
 
     @Override
@@ -477,5 +501,13 @@ public class Attack extends ManageableType implements Serializable, Comparable<A
         if(transferredToBrowser != otherAtt.isTransferredToBrowser()) return false;
         
         return true;
+    }
+
+    public void setMultiplier(Short pMultiplier) {
+        this.multiplier = pMultiplier;
+    }
+
+    public short getMultiplier() {
+        return this.multiplier;
     }
 }

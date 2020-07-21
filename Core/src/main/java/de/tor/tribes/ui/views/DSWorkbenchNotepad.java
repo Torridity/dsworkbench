@@ -15,9 +15,11 @@
  */
 package de.tor.tribes.ui.views;
 
+import de.tor.tribes.control.GenericEventListener;
 import de.tor.tribes.control.GenericManagerListener;
 import de.tor.tribes.types.Note;
 import de.tor.tribes.types.ext.Village;
+import de.tor.tribes.ui.components.TabPaneComponent;
 import de.tor.tribes.ui.panels.GenericTestPanel;
 import de.tor.tribes.ui.panels.NoteTableTab;
 import de.tor.tribes.ui.windows.AbstractDSWorkbenchFrame;
@@ -256,18 +258,23 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
         }
     }
 
+    boolean generatingTabs = false;
     /**Initialize and add one tab for each note set to jTabbedPane1*/
     public void generateNoteTabs() {
-        jNoteTabbedPane.invalidate();
+        if(generatingTabs) return;
+        generatingTabs = true;
+        
         while (jNoteTabbedPane.getTabCount() > 0) {
-            NoteTableTab tab = (NoteTableTab) jNoteTabbedPane.getComponentAt(0);
-            tab.deregister();
+            if(jNoteTabbedPane.getComponentAt(0) instanceof NoteTableTab) {
+                NoteTableTab tab = (NoteTableTab) jNoteTabbedPane.getComponentAt(0);
+                tab.deregister();
+            }
+            if(jNoteTabbedPane.getTabComponentAt(0) instanceof TabPaneComponent) {
+                ((TabPaneComponent) jNoteTabbedPane.getTabComponentAt(0)).stopEditing();
+            }
             jNoteTabbedPane.removeTabAt(0);
         }
         
-        LabelUIResource lr = new LabelUIResource();
-        lr.setLayout(new BorderLayout());
-        lr.add(jNewSetPanel, BorderLayout.CENTER);
         String[] plans = NoteManager.getSingleton().getGroups();
 
         //insert default tab to first place
@@ -277,8 +284,57 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
             jNoteTabbedPane.addTab(plan, tab);
             cnt++;
         }
-        jNoteTabbedPane.revalidate();
+        
+        for(int i = 0; i < jNoteTabbedPane.getTabCount(); i++) {
+            final TabPaneComponent component = new TabPaneComponent(jNoteTabbedPane);
+            component.setStopEditingListener(new GenericEventListener() {
+                @Override
+                public void event() {
+                    int i = jNoteTabbedPane.indexOfTabComponent(component);
+                    NoteTableTab tab = (NoteTableTab) jNoteTabbedPane.getComponentAt(i);
+                    String newName = component.getEditedText();
+                    if(!newName.equals(tab.getNoteSet())) {
+                        newName = newName.trim();
+                        if (newName.length() == 0) {
+                            JOptionPaneHelper.showWarningBox(jNoteTabbedPane, "'" + newName + "' ist ein ungültiger Notizenset name", "Fehler");
+                            return;
+                        }
+                        if (NoteManager.getSingleton().groupExists(newName)) {
+                            JOptionPaneHelper.showWarningBox(jNoteTabbedPane, "Es existiert bereits ein Notizenset mit dem Namen '" + newName + "'", "Fehler");
+                            return;
+                        }
+                        
+                        NoteManager.getSingleton().renameGroup(tab.getNoteSet(), newName);
+                    }
+                }
+            });
+            
+            component.setCloseTabListener(new GenericEventListener() {
+                @Override
+                public void event() {
+                    int i = jNoteTabbedPane.indexOfTabComponent(component);
+                    NoteTableTab tab = (NoteTableTab) jNoteTabbedPane.getComponentAt(i);
+                    if (JOptionPaneHelper.showQuestionConfirmBox(jNoteTabbedPane, "Notizset '" + tab.getNoteSet()+
+                            "' und alle darin enthaltenen Notizen wirklich löschen? ", "Löschen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
+                        NoteManager.getSingleton().removeGroup(tab.getNoteSet());
+                    }
+                }
+            });
+            
+            if(i == 0) {
+                component.setCloseable(false);
+                component.setEditable(false);
+            }
+            
+            jNoteTabbedPane.setTabComponentAt(i, component);
+        }
+        
+        jNoteTabbedPane.addTab("", new javax.swing.ImageIcon(getClass().getResource("/res/ui/document_new_24x24.png")),
+                new JPanel(), "neues Notizset erstellen");
         jNoteTabbedPane.setSelectedIndex(0);
+        
+        generatingTabs = false;
+        
         NoteTableTab tab = getActiveTab();
         if (tab != null) {
             tab.updateSet();
@@ -331,8 +387,6 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
 
         jXNotePanel = new org.jdesktop.swingx.JXPanel();
         jNoteTabbedPane = new javax.swing.JTabbedPane();
-        jNewSetPanel = new javax.swing.JPanel();
-        jLabel4 = new javax.swing.JLabel();
         jxSearchPane = new org.jdesktop.swingx.JXPanel();
         jXPanel3 = new org.jdesktop.swingx.JXPanel();
         jButton16 = new javax.swing.JButton();
@@ -354,30 +408,13 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
 
         jXNotePanel.setPreferredSize(new java.awt.Dimension(500, 400));
         jXNotePanel.setLayout(new java.awt.BorderLayout());
-        jXNotePanel.add(jNoteTabbedPane, java.awt.BorderLayout.CENTER);
 
-        jNewSetPanel.setOpaque(false);
-        jNewSetPanel.setLayout(new java.awt.BorderLayout());
-
-        jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/document_new_24x24.png"))); // NOI18N
-        jLabel4.setToolTipText("Leeres Notizset erstellen");
-        jLabel4.setMaximumSize(new java.awt.Dimension(40, 40));
-        jLabel4.setMinimumSize(new java.awt.Dimension(40, 40));
-        jLabel4.setOpaque(true);
-        jLabel4.setPreferredSize(new java.awt.Dimension(40, 40));
-        jLabel4.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                fireEnterEvent(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                fireMouseExitEvent(evt);
-            }
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                fireCreateNoteSetEvent(evt);
+        jNoteTabbedPane.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                selectedTabChanged(evt);
             }
         });
-        jNewSetPanel.add(jLabel4, java.awt.BorderLayout.CENTER);
+        jXNotePanel.add(jNoteTabbedPane, java.awt.BorderLayout.CENTER);
 
         jxSearchPane.setOpaque(false);
         jxSearchPane.setLayout(new java.awt.GridBagLayout());
@@ -548,28 +585,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
     private void fireAlwaysOnTopChangedEvent(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fireAlwaysOnTopChangedEvent
         setAlwaysOnTop(!isAlwaysOnTop());
     }//GEN-LAST:event_fireAlwaysOnTopChangedEvent
-    
-    private void fireEnterEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireEnterEvent
-        jLabel4.setBackground(getBackground().darker());
-}//GEN-LAST:event_fireEnterEvent
-    
-    private void fireMouseExitEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireMouseExitEvent
-        jLabel4.setBackground(getBackground());
-}//GEN-LAST:event_fireMouseExitEvent
-    
-    private void fireCreateNoteSetEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCreateNoteSetEvent
-        int unusedId = 1;
-        while (unusedId < 1000) {
-            if (NoteManager.getSingleton().addGroup("Neues Set " + unusedId)) {
-                break;
-            }
-            unusedId++;
-        }
-        if (unusedId == 1000) {
-            JOptionPaneHelper.showErrorBox(DSWorkbenchNotepad.this, "Du hast mehr als 1000 Notizsets. Bitte lösche zuerst ein paar bevor du Neue erstellst.", "Fehler");
-        }
-}//GEN-LAST:event_fireCreateNoteSetEvent
-    
+                
     private void jButton16fireHideGlassPaneEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton16fireHideGlassPaneEvent
         jxSearchPane.setBackgroundPainter(null);
         jxSearchPane.setVisible(false);
@@ -587,6 +603,31 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
         updateFilter();
 }//GEN-LAST:event_jFilterCaseSensitivefireUpdateFilterEvent
 
+    private void selectedTabChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_selectedTabChanged
+        if(generatingTabs) {
+            return;
+        }
+        if(jNoteTabbedPane.getSelectedIndex() == jNoteTabbedPane.getTabCount() - 1) {
+            int index = jNoteTabbedPane.getSelectedIndex();
+            //new Tab has been selected
+            createNewNoteSet();
+            jNoteTabbedPane.setSelectedIndex(index);
+        }
+    }//GEN-LAST:event_selectedTabChanged
+
+    private void createNewNoteSet() {
+        int unusedId = 1;
+        while (unusedId < 1000) {
+            if (NoteManager.getSingleton().addGroup("Neues Set " + unusedId)) {
+                break;
+            }
+            unusedId++;
+        }
+        if (unusedId == 1000) {
+            JOptionPaneHelper.showErrorBox(DSWorkbenchNotepad.this, "Du hast mehr als 1000 Notizsets. Bitte lösche zuerst ein paar bevor du Neue erstellst.", "Fehler");
+        }
+    }
+    
     /**Update the attack plan filter*/
     private void updateFilter() {
         NoteTableTab tab = getActiveTab();
@@ -648,9 +689,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
     private javax.swing.JCheckBox jFilterCaseSensitive;
     private javax.swing.JCheckBox jFilterRows;
     private javax.swing.JLabel jLabel21;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JPanel jNewSetPanel;
     private javax.swing.JTabbedPane jNoteTabbedPane;
     private javax.swing.JPanel jNotesPanel;
     private javax.swing.JScrollPane jScrollPane4;

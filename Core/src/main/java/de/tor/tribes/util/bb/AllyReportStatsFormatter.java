@@ -26,7 +26,7 @@ import java.util.List;
 public class AllyReportStatsFormatter extends BasicFormatter<AllyStatResult> {
 
     private static final String[] VARIABLES = new String[] {LIST_START, LIST_END, ELEMENT_COUNT, ELEMENT_ID};
-    public static final String STANDARD_TEMPLATE = new AllyStatResult().getStandardTemplate();
+    private static final String STANDARD_TEMPLATE = new AllyStatResult().getStandardTemplate();
     private static final String TEMPLATE_PROPERTY = "ally.report.stats.bbexport.template";
 
     @Override
@@ -45,5 +45,10 @@ public class AllyReportStatsFormatter extends BasicFormatter<AllyStatResult> {
         vars.addAll(Arrays.asList(VARIABLES));
         vars.addAll(Arrays.asList(new AllyStatResult().getBBVariables()));
         return vars.toArray(new String[vars.size()]);
+    }
+    
+    @Override
+    public Class<AllyStatResult> getConvertableType() {
+        return AllyStatResult.class;
     }
 }

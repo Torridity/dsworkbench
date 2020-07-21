@@ -28,7 +28,7 @@ import org.apache.commons.lang3.time.DurationFormatUtils;
  */
 public class FarmTableModel extends AbstractTableModel {
 
-    private Class[] types = new Class[]{FarmInformation.FARM_STATUS.class, Boolean.class, Date.class, String.class, FarmInformation.SIEGE_STATUS.class, Integer.class, StorageStatus.class, String.class, FarmInformation.FARM_RESULT.class, Float.class};
+    private Class[] types = new Class[]{FarmInformation.FARM_STATUS.class, Boolean.class, Date.class, String.class, FarmInformation.SIEGE_STATUS.class, String.class, StorageStatus.class, String.class, FarmInformation.FARM_RESULT.class, Float.class};
     private String[] colNames = new String[]{"Status", "Resourcen gefunden", "Letzter Bericht", "Dorf", "Kata Status", "Wall", "Rohstoffe", "Ankunft", "Übertragen", "Erfolgsquote"};
 
     public FarmTableModel() {
@@ -74,7 +74,9 @@ public class FarmTableModel extends AbstractTableModel {
             case 4:
                 return elem.getSiegeStatus();
             case 5:
-                return elem.getWallLevel();
+                int wall = elem.getWallLevel();
+                if(wall < 0) return "unbekannt";
+                return Integer.toString(wall);
             case 6:
                 return elem.getStorageStatus();
             case 7:

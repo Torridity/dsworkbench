@@ -318,8 +318,11 @@ public class FarmManager extends GenericManager<FarmInformation> {
         return farmInfos;
     }
     
-    for (ManageableType element : getAllElements()) {
-      farmInfos.addContent(element.toXml("farmInfo"));
+    for (ManageableType t : getAllElements()) {
+      Element e = t.toXml("farmInfo");
+      if(e != null) {
+        farmInfos.addContent(e);
+      }
     }
     
     return farmInfos;

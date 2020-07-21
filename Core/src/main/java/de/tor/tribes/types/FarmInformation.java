@@ -136,6 +136,11 @@ public class FarmInformation extends ManageableType {
      * Get the storage capacity of this farm excluding hidden resources
      */
     public int getStorageCapacity() {
+        if(getBuilding("storage") == -1) {
+            //no information use fallback
+            return Integer.MAX_VALUE;
+        }
+        
         int storageCapacity = BuildingSettings.calculateStorageCapacity(getBuilding("storage"));
         int hiddenResources = 0;
         if (getBuilding("hide") > 0) {
@@ -500,7 +505,7 @@ public class FarmInformation extends ManageableType {
                         getBuilding("stable") == 0 && getBuilding("garage") == 0 &&
                         getBuilding("market") == 0 && getBuilding("wall") == 0 &&
                         this.getVillage().getPoints() >= ServerSettings.getSingleton().getBarbarianPoints()) {
-                setSiegeStatus(SIEGE_STATUS.FINAL_FARM);
+                    setSiegeStatus(SIEGE_STATUS.FINAL_FARM);
                 }
             }
         }

@@ -16,6 +16,7 @@
 package de.tor.tribes.ui.models;
 
 import de.tor.tribes.io.DataHolder;
+import de.tor.tribes.io.DataHolderListener;
 import de.tor.tribes.io.TroopAmountElement;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Attack;
@@ -46,11 +47,29 @@ public class AttackTableModel extends AbstractTableModel {
     private final List<String> columnNames = new LinkedList<>();
     private final List<Class> columnTypes = new LinkedList<>();
     private final List<Boolean> editable = new LinkedList<>();
-    private final int unitAfter;
-    private final List<UnitHolder> units;
+    private int unitAfter;
+    private List<UnitHolder> units;
 
     public AttackTableModel(String pPlan) {
         sPlan = pPlan;
+        generateColumns();
+        
+        DataHolder.getSingleton().addDataHolderListener(new DataHolderListener() {
+            @Override
+            public void fireDataHolderEvent(String arg0) {
+            }
+
+            @Override
+            public void fireDataLoadedEvent(boolean arg0) {
+                generateColumns();
+            }
+        });
+    }
+    
+    private void generateColumns() {
+        columnNames.clear();
+        columnTypes.clear();
+        editable.clear();
         
         columnNames.add("Angreifer"); columnTypes.add(Tribe.class); editable.add(false);
         columnNames.add("Stamm (Angreifer)"); columnTypes.add(Ally.class); editable.add(false);
@@ -72,7 +91,9 @@ public class AttackTableModel extends AbstractTableModel {
         columnNames.add("Verbleibend"); columnTypes.add(Long.class); editable.add(false);
         columnNames.add("Einzeichnen"); columnTypes.add(Boolean.class); editable.add(true);
         columnNames.add("Übertragen"); columnTypes.add(Boolean.class); editable.add(true);
+        columnNames.add("Mult"); columnTypes.add(Short.class); editable.add(true);
         
+        fireTableStructureChanged();
     }
 
     public void setPlan(String pPlan) {
@@ -92,6 +113,14 @@ public class AttackTableModel extends AbstractTableModel {
 
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
+        if(columnNames.get(columnIndex).equals("Einheit")) {
+            Attack a = (Attack) AttackManager.getSingleton().getAllElements(sPlan).get(rowIndex);
+            
+            UnitHolder slowest = a.getTroops().getSlowestUnit();
+            if(slowest != null) {
+                return false;
+            }
+        }
         return editable.get(columnIndex);
     }
 
@@ -152,7 +181,7 @@ public class AttackTableModel extends AbstractTableModel {
             } else if(columnIndex == 5) {
                 return a.getTarget();
             } else if(columnIndex == 6) {
-                return a.getUnit();
+                return a.getRealUnit();
             } else if(columnIndex == 7) {
                 return a.getType();
             } else if(columnIndex > 7 && columnIndex < unitAfter) {
@@ -169,6 +198,8 @@ public class AttackTableModel extends AbstractTableModel {
                 return a.isShowOnMap();
             } else if(columnIndex == unitAfter + 4) {
                 return a.isTransferredToBrowser();
+            } else if(columnIndex == unitAfter + 5) {
+                return a.getMultiplier();
             }
         } catch (Exception ignored) {};
         return null;
@@ -221,6 +252,8 @@ public class AttackTableModel extends AbstractTableModel {
                 a.setShowOnMap((Boolean) pValue);
             } else if(pCol == unitAfter + 4) {
                 a.setTransferredToBrowser((Boolean) pValue);
+            } else if(pCol == unitAfter + 5) {
+                a.setMultiplier((Short) pValue);
             }
         } catch (Exception ignored) {
         }

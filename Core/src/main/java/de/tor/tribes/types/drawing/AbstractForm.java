@@ -137,11 +137,13 @@ public abstract class AbstractForm extends ManageableType implements BBSupport {
             color.setAttribute("r", Integer.toString(textColor.getRed()));
             color.setAttribute("g", Integer.toString(textColor.getGreen()));
             color.setAttribute("b", Integer.toString(textColor.getBlue()));
-            color.setAttribute("a", Integer.toString(textColor.getAlpha()));
+            color.setAttribute("a", Float.toString(getTextAlpha()));
             form.addContent(color);
             form.addContent(new Element("textSize").setText(Integer.toString(textSize)));
             form.addContent(formToXml("extra"));
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            logger.error("Exception during generating XML", e);
+            return null;
         }
         return form;
     }
@@ -247,6 +249,7 @@ public abstract class AbstractForm extends ManageableType implements BBSupport {
      * @param alpha the alpha to set
      */
     public void setTextAlpha(float alpha) {
+        if(alpha > 1 || alpha < 0) throw new IllegalArgumentException("Alpha out of range 0.0-1.0 (" + alpha + ")");
         this.textAlpha = alpha;
     }
 

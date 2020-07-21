@@ -421,7 +421,7 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
             report.addContent(new Element("spyLevel").setText(Integer.toString(spyLevel)));
             return report;
         } catch (Exception e) {
-            logger.info("Exception during xml export", e);
+            logger.error("Exception during generating XML", e);
             return null;
         }
     }

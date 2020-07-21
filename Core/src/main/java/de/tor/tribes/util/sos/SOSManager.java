@@ -84,7 +84,10 @@ public class SOSManager extends GenericManager<SOSRequest> {
     logger.debug("Generating SOS information");
     try {
       for (ManageableType t : getAllElements()) {
-        sosRequests.addContent(t.toXml("sosRequest"));
+        Element e = t.toXml("sosRequest");
+        if(e != null) {
+            sosRequests.addContent(e);
+        }
       }
       logger.debug("SOS information generated");
     } catch (Exception e) {

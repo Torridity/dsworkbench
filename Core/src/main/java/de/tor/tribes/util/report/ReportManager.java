@@ -239,7 +239,10 @@ public class ReportManager extends GenericManager<FightReport> {
       reportSet.setAttribute("name", set);
       Element reports = new Element("reports");
       for (ManageableType t : getAllElements(set)) {
-        reports.addContent(t.toXml("report"));
+        Element e = t.toXml("report");
+        if(e != null) {
+            reports.addContent(e);
+        }
       }
       reportSet.addContent(reports);
       reportData.addContent(reportSet);

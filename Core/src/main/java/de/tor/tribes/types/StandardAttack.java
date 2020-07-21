@@ -89,7 +89,9 @@ public class StandardAttack extends ManageableType {
             stdAtt.setAttribute("name", URLEncoder.encode(name, "UTF-8"));
             stdAtt.setAttribute("icon", Integer.toString(icon));
             stdAtt.addContent(troops.toXml("attackElements"));
-        } catch (IOException ignored) {
+        } catch (IOException e) {
+            logger.error("Exception during generating XML", e);
+            return null;
         }
         return stdAtt;
     }
@@ -98,7 +100,7 @@ public class StandardAttack extends ManageableType {
     public void loadFromXml(Element e) {
         try {
             name = URLDecoder.decode(e.getAttribute("name").getValue(), "UTF-8");
-        } catch (IOException ioe) {
+        } catch (Exception ex) {
             name = "";
         }
 

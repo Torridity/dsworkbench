@@ -37,6 +37,7 @@ import java.util.*;
 import javax.swing.*;
 import org.apache.commons.lang3.Range;
 import org.apache.commons.lang3.time.DateUtils;
+import org.apache.logging.log4j.LogManager;
 
 /**
  *
@@ -105,6 +106,7 @@ public class AttackTimePanel extends javax.swing.JPanel implements DragGestureLi
         if (mListener != null) {
             mListener.fireTimeFrameChangedEvent();
         }
+        jLabelWarningError.setText(validateSettings());
     }
 
     public final void reset() {
@@ -125,6 +127,8 @@ public class AttackTimePanel extends javax.swing.JPanel implements DragGestureLi
         c.setTimeInMillis(System.currentTimeMillis() + DateUtils.MILLIS_PER_HOUR);
         maxArriveTimeField.setDate(c.getTime());
         dateTimeField.setDate(c.getTime());
+        
+        fireTimeFrameChangedEvent();
     }
 
     private void deleteSelectedTimeSpan() {
@@ -145,6 +149,8 @@ public class AttackTimePanel extends javax.swing.JPanel implements DragGestureLi
                 }
             }
         }
+        
+        fireTimeFrameChangedEvent();
     }
 
     public List<TimeSpan> getTimeSpans() {
@@ -179,9 +185,9 @@ public class AttackTimePanel extends javax.swing.JPanel implements DragGestureLi
         maxArriveTimeField.setDate(pDate);
     }
 
-    public void validateSettings() throws RuntimeException {
+    public String validateSettings() {
         if (getTimeSpans().isEmpty()) {
-            throw new RuntimeException("Es muss mindestens ein Abschick- und ein Ankunftszeitrahmen angegeben werden.");
+            return "Es muss mindestens ein Abschick- und ein Ankunftszeitrahmen angegeben werden.";
         }
         boolean haveStart = false;
         boolean haveArrive = false;
@@ -200,14 +206,14 @@ public class AttackTimePanel extends javax.swing.JPanel implements DragGestureLi
         }
 
         if (!haveStart) {
-            throw new RuntimeException("Es muss mindestens ein Abschickzeitrahmen angegeben werden.");
+            return "Es muss mindestens ein Abschickzeitrahmen angegeben werden.";
         } else if (!haveArrive) {
-            throw new RuntimeException("Es muss mindestens ein Ankunftszeitrahmen angegeben werden.");
+            return "Es muss mindestens ein Ankunftszeitrahmen angegeben werden.";
         }
 
         TimeFrame currentFrame = getTimeFrame();
         if (minSendTimeField.getSelectedDate().getTime() > maxArriveTimeField.getSelectedDate().getTime()) {
-            throw new RuntimeException("Das Startdatum befindet sich nach dem Ankunftsdatum. Eine Berechnung ist nicht möglich.");
+            return "Das Startdatum befindet sich nach dem Ankunftsdatum. Eine Berechnung ist nicht möglich.";
         }
 
 
@@ -226,9 +232,9 @@ public class AttackTimePanel extends javax.swing.JPanel implements DragGestureLi
             gotWarning = true;
         }
         if (gotWarning) {
-            throw new RuntimeException(warnings);
+            return warnings;
         }
-
+        return "";
     }
 
     /**
@@ -427,6 +433,7 @@ public class AttackTimePanel extends javax.swing.JPanel implements DragGestureLi
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         jPanel5 = new javax.swing.JPanel();
+        jLabelWarningError = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTimeFrameList = new javax.swing.JList();
         jButton1 = new javax.swing.JButton();
@@ -670,6 +677,19 @@ public class AttackTimePanel extends javax.swing.JPanel implements DragGestureLi
 
         jPanel5.setLayout(new java.awt.GridBagLayout());
 
+        jLabelWarningError.setBackground(new java.awt.Color(156, 134, 113));
+        jLabelWarningError.setForeground(new java.awt.Color(255, 255, 255));
+        jLabelWarningError.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabelWarningError.setOpaque(true);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 5);
+        jPanel5.add(jLabelWarningError, gridBagConstraints);
+
         jScrollPane1.setBorder(javax.swing.BorderFactory.createTitledBorder("Verwendete Zeitrahmen"));
         jScrollPane1.setMinimumSize(new java.awt.Dimension(262, 60));
 
@@ -762,6 +782,7 @@ public class AttackTimePanel extends javax.swing.JPanel implements DragGestureLi
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
+    private javax.swing.JLabel jLabelWarningError;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;

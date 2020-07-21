@@ -248,7 +248,7 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
 
             @Override
             public void mouseReleased(MouseEvent e) {
-                fireCreateAttackPlanEvent(e);
+                createNewAttackPlan();
             }
         }));
         editTaskPane.getContentPane().add(factoryButton("/res/ui/garbage.png", "Abgelaufene Befehle entfernen", new MouseAdapter() {
@@ -470,8 +470,6 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         jLabel22 = new javax.swing.JLabel();
         jXAttackPanel = new org.jdesktop.swingx.JXPanel();
         jAttackTabPane = new javax.swing.JTabbedPane();
-        jNewPlanPanel = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
         jAttackPanel = new javax.swing.JPanel();
         jAttackFrameAlwaysOnTop = new javax.swing.JCheckBox();
         capabilityInfoPanel1 = new de.tor.tribes.ui.components.CapabilityInfoPanel();
@@ -567,30 +565,13 @@ public class DSWorkbenchAttackFrame extends AbstractDSWorkbenchFrame implements 
         jxSearchPane.add(jXPanel2, new java.awt.GridBagConstraints());
 
         jXAttackPanel.setLayout(new java.awt.BorderLayout());
-        jXAttackPanel.add(jAttackTabPane, java.awt.BorderLayout.CENTER);
 
-        jNewPlanPanel.setOpaque(false);
-        jNewPlanPanel.setLayout(new java.awt.BorderLayout());
-
-        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/ui/document_new_24x24.png"))); // NOI18N
-        jLabel1.setToolTipText("Leeren Plan erstellen");
-        jLabel1.setEnabled(false);
-        jLabel1.setMaximumSize(new java.awt.Dimension(40, 40));
-        jLabel1.setMinimumSize(new java.awt.Dimension(40, 40));
-        jLabel1.setPreferredSize(new java.awt.Dimension(40, 40));
-        jLabel1.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                fireEnterEvent(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                fireMouseExitEvent(evt);
-            }
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                fireCreateAttackPlanEvent(evt);
+        jAttackTabPane.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                selectedTabChanged(evt);
             }
         });
-        jNewPlanPanel.add(jLabel1, java.awt.BorderLayout.CENTER);
+        jXAttackPanel.add(jAttackTabPane, java.awt.BorderLayout.CENTER);
 
         setTitle("Befehle");
         setMinimumSize(new java.awt.Dimension(700, 500));
@@ -645,15 +626,7 @@ private void fireAttackFrameAlwaysOnTopEvent(javax.swing.event.ChangeEvent evt) 
     setAlwaysOnTop(!isAlwaysOnTop());
 }//GEN-LAST:event_fireAttackFrameAlwaysOnTopEvent
 
-private void fireEnterEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireEnterEvent
-    jLabel1.setEnabled(true);
-}//GEN-LAST:event_fireEnterEvent
-
-private void fireMouseExitEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireMouseExitEvent
-    jLabel1.setEnabled(false);
-}//GEN-LAST:event_fireMouseExitEvent
-
-private void fireCreateAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fireCreateAttackPlanEvent
+private void createNewAttackPlan() {                                           
     int unusedId = 1;
     while (unusedId < 1000) {
         if (AttackManager.getSingleton().addGroup("Neuer Plan " + unusedId)) {
@@ -664,7 +637,19 @@ private void fireCreateAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
     if (unusedId == 1000) {
         JOptionPaneHelper.showErrorBox(DSWorkbenchAttackFrame.this, "Du hast mehr als 1000 Befehlspläne. Bitte lösche zuerst ein paar bevor du Neue erstellst.", "Fehler");
     }
-}//GEN-LAST:event_fireCreateAttackPlanEvent
+}
+
+    private void selectedTabChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_selectedTabChanged
+        if(generatingAttackTabs) {
+            return;
+        }
+        if(jAttackTabPane.getSelectedIndex() == jAttackTabPane.getTabCount() - 1) {
+            int index = jAttackTabPane.getSelectedIndex();
+            //new Tab has been selected
+            createNewAttackPlan();
+            jAttackTabPane.setSelectedIndex(index);
+        }
+    }//GEN-LAST:event_selectedTabChanged
 
     /**
      * Update the attack plan filter
@@ -705,14 +690,21 @@ private void fireCreateAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
         generateAttackTabs();
     }
 
+    boolean generatingAttackTabs = false;
     /**
      * Initialize and add one tab for each attack plan to jTabbedPane1
      */
     public void generateAttackTabs() {
-        jAttackTabPane.invalidate();
+        if(generatingAttackTabs) return;
+        generatingAttackTabs = true;
         while (jAttackTabPane.getTabCount() > 0) {
-            AttackTableTab tab = (AttackTableTab) jAttackTabPane.getComponentAt(0);
-            tab.deregister();
+            if(jAttackTabPane.getComponentAt(0) instanceof AttackTableTab) {
+                AttackTableTab tab = (AttackTableTab) jAttackTabPane.getComponentAt(0);
+                tab.deregister();
+            }
+            if(jAttackTabPane.getTabComponentAt(0) instanceof TabPaneComponent) {
+                ((TabPaneComponent) jAttackTabPane.getTabComponentAt(0)).stopEditing();
+            }
             jAttackTabPane.removeTabAt(0);
         }
         String[] plans = AttackManager.getSingleton().getGroups();
@@ -765,8 +757,12 @@ private void fireCreateAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
             
             jAttackTabPane.setTabComponentAt(i, component);
         }
-
-        jAttackTabPane.revalidate();
+        
+        jAttackTabPane.addTab("", new javax.swing.ImageIcon(getClass().getResource("/res/ui/document_new_24x24.png")),
+                new JPanel(), "Leeren Plan erstellen");
+        
+        generatingAttackTabs = false;
+        
         AttackTableTab tab = getActiveTab();
         if (tab != null) {
             tab.updatePlan();
@@ -888,10 +884,8 @@ private void fireCreateAttackPlanEvent(java.awt.event.MouseEvent evt) {//GEN-FIR
     private javax.swing.JButton jButton12;
     private javax.swing.JCheckBox jFilterCaseSensitive;
     private javax.swing.JCheckBox jFilterRows;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel21;
     private javax.swing.JLabel jLabel22;
-    private javax.swing.JPanel jNewPlanPanel;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField jTextField1;
     private org.jdesktop.swingx.JXPanel jXAttackPanel;

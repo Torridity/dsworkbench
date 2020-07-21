@@ -44,20 +44,20 @@ public class ResourceComparator implements Comparator<StorageStatus> {
 
         switch (resource) {
             case WOOD:
-                criteria1 = o1.getWoodStatus();
-                criteria2 = o2.getWoodStatus();
+                criteria1 = o1.getWoodInStorage();
+                criteria2 = o2.getWoodInStorage();
                 break;
             case CLAY:
-                criteria1 = o1.getClayStatus();
-                criteria2 = o2.getClayStatus();
+                criteria1 = o1.getClayInStorage();
+                criteria2 = o2.getClayInStorage();
                 break;
             case IRON:
-                criteria1 = o1.getIronStatus();
-                criteria2 = o2.getIronStatus();
+                criteria1 = o1.getIronInStorage();
+                criteria2 = o2.getIronInStorage();
                 break;
             case ALL:
-                criteria1 = o1.getWoodStatus() + o1.getClayStatus() + o1.getIronStatus();
-                criteria2 = o2.getWoodStatus() + o2.getClayStatus() + o2.getIronStatus();
+                criteria1 = o1.getWoodInStorage() + o1.getClayInStorage() + o1.getIronInStorage();
+                criteria2 = o2.getWoodInStorage() + o2.getClayInStorage() + o2.getIronInStorage();
                 break;
         }
                 

@@ -26,7 +26,7 @@ import java.util.List;
 public class TagListFormatter extends BasicFormatter<Tag> {
 
     private static final String[] VARIABLES = new String[] {LIST_START, LIST_END, ELEMENT_COUNT, ELEMENT_ID};
-    public static final String STANDARD_TEMPLATE = "[b]Gruppenübersicht[/b]\n"
+    private static final String STANDARD_TEMPLATE = "[b]Gruppenübersicht[/b]\n"
             + "%LIST_START%" + new Tag().getStandardTemplate() + "%LIST_END%";
     private static final String TEMPLATE_PROPERTY = "tag.list.bbexport.template";
 
@@ -46,5 +46,10 @@ public class TagListFormatter extends BasicFormatter<Tag> {
         Collections.addAll(vars, VARIABLES);
         Collections.addAll(vars, new Tag().getBBVariables());
         return vars.toArray(new String[vars.size()]);
+    }
+    
+    @Override
+    public Class<Tag> getConvertableType() {
+        return Tag.class;
     }
 }

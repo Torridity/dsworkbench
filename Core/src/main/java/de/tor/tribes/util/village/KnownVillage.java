@@ -88,6 +88,7 @@ public class KnownVillage extends ManageableType {
             }
             kVillage.addContent(buildingsE);
         } catch (Exception e) {
+            logger.error("Exception during generating XML", e);
             return null;
         }
         

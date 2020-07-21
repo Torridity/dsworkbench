@@ -80,6 +80,11 @@ public class KnownVillageManager extends GenericManager<KnownVillage> {
             for (Element e : (List<Element>) JDomUtils.getNodes(pElm, "villages/village")) {
                 try {
                     KnownVillage v = new KnownVillage(e);
+                    if(v.getVillage() == null) {
+                        logger.warn("Known Village without Village {}", e.getChild("id").getText());
+                        //ignore this entry maybe village got deleted
+                        continue;
+                    }
                     if (getKnownVillage(v.getVillage()) == null) {
                         addManagedElement(v);
                     } else {
@@ -109,7 +114,10 @@ public class KnownVillageManager extends GenericManager<KnownVillage> {
         
         logger.debug("Generating KnownVillages data");
         for (ManageableType t : getAllElements()) {
-            villages.addContent(t.toXml("village"));
+            Element e = t.toXml("village");
+            if(e != null) {
+                villages.addContent(e);
+            }
         }
         logger.debug("Data generated successfully");
         return villages;
@@ -228,6 +236,7 @@ public class KnownVillageManager extends GenericManager<KnownVillage> {
         
         for(ManageableType e :getAllElements()) {
             KnownVillage v = (KnownVillage) e;
+            if(v.getVillage() == null) continue; //maybe a bug during loading??
             if (v.hasChurch()) {
                 churchVillages.add(v);
             }

@@ -26,7 +26,7 @@ import java.util.List;
 public class VillageListFormatter extends BasicFormatter<Village> {
 
     private static final String[] VARIABLES = new String[] {LIST_START, LIST_END, ELEMENT_COUNT, ELEMENT_ID};
-    public static final String STANDARD_TEMPLATE = "[table]\n[**]ID[||]Dorf[||]Besitzer[||]Punkte[/**]\n"
+    private static final String STANDARD_TEMPLATE = "[table]\n[**]ID[||]Dorf[||]Besitzer[||]Punkte[/**]\n"
             + "%LIST_START%[*]%ELEMENT_ID%[|][coord]%X%|%Y%[/coord][|]%TRIBE%[|]%POINTS%[/*]%LIST_END%\n"
             + "[/table]";
     private static final String TEMPLATE_PROPERTY = "village.list.bbexport.template";
@@ -47,5 +47,10 @@ public class VillageListFormatter extends BasicFormatter<Village> {
         Collections.addAll(vars, VARIABLES);
         Collections.addAll(vars, new Village().getBBVariables());
         return vars.toArray(new String[vars.size()]);
+    }
+    
+    @Override
+    public Class<Village> getConvertableType() {
+        return Village.class;
     }
 }

@@ -17,6 +17,7 @@ package de.tor.tribes.ui.wiz.tap;
 
 import de.tor.tribes.control.GenericManagerListener;
 import de.tor.tribes.control.ManageableType;
+import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.Attack;
 import de.tor.tribes.types.StandardAttack;
@@ -40,6 +41,8 @@ import java.awt.*;
 import java.util.*;
 import java.util.List;
 import javax.swing.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.netbeans.spi.wizard.Wizard;
 import org.netbeans.spi.wizard.WizardPage;
@@ -61,7 +64,9 @@ public class AttackFinishPanel extends WizardPage {
             + "</html>";
     private static AttackFinishPanel singleton = null;
     private VillageOverviewMapPanel overviewPanel = null;
-
+    
+    private static Logger logger = LogManager.getLogger();
+    
     public static synchronized AttackFinishPanel getSingleton() {
         if (singleton == null) {
             singleton = new AttackFinishPanel();
@@ -120,8 +125,8 @@ public class AttackFinishPanel extends WizardPage {
     public void storeProperties() {
         UserProfile profile = GlobalOptions.getSelectedProfile();
         profile.addProperty("tap.finish.expert", jExpertView.isSelected());
-        profile.addProperty("tap.finish.std.off", jStandardOff.getSelectedItem());
-        profile.addProperty("tap.finish.std.fake", jStandardFake.getSelectedItem());
+        profile.addProperty("tap.finish.std.off", (jStandardOff.getSelectedItem() == null)?("null"):(jStandardOff.getSelectedItem()));
+        profile.addProperty("tap.finish.std.fake", (jStandardFake.getSelectedItem() == null)?("null"):(jStandardFake.getSelectedItem()));
     }
 
     public void restoreProperties() {
@@ -137,26 +142,24 @@ public class AttackFinishPanel extends WizardPage {
         UserProfile profile = GlobalOptions.getSelectedProfile();
         DefaultComboBoxModel stdOffModel = new DefaultComboBoxModel();
         DefaultComboBoxModel stdFakeModel = new DefaultComboBoxModel();
-
+        
+        stdOffModel.addElement(null);
+        stdFakeModel.addElement(null);
         for (ManageableType t : StandardAttackManager.getSingleton().getAllElements()) {
             StandardAttack a = (StandardAttack) t;
+            logger.debug("StdAtt {}:\n{}", a.getName(), a.getTroops());
             stdOffModel.addElement(a);
             stdFakeModel.addElement(a);
         }
         jStandardOff.setModel(stdOffModel);
         jStandardFake.setModel(stdFakeModel);
 
+        //val can be null, but since we defined null as real Element we can use this to set it as standard
         StandardAttack val = StandardAttackManager.getSingleton().getElementByName(profile.getProperty("tap.finish.std.off"));
-        if (val == null) {//no value set or std attack not used
-            val = StandardAttackManager.getSingleton().getElementByIcon(StandardAttack.OFF_ICON);
-        }
         jStandardOff.setSelectedItem(val);
 
-
+        //val can be null, but since we defined null as real Element we can use this to set it as standard
         val = StandardAttackManager.getSingleton().getElementByName(profile.getProperty("tap.finish.std.fake"));
-        if (val == null) {//no value set or std attack not used
-            val = StandardAttackManager.getSingleton().getElementByIcon(StandardAttack.FAKE_ICON);
-        }
         jStandardFake.setSelectedItem(val);
     }
 
@@ -703,26 +706,57 @@ public class AttackFinishPanel extends WizardPage {
 
         //modify attack types
         StandardAttack stdOff = (StandardAttack) jStandardOff.getSelectedItem();
-        if (stdOff == null) {
-            stdOff = StandardAttackManager.getSingleton().getElementByIcon(StandardAttack.OFF_ICON);
-        }
+        logger.debug("StdOff: {}", stdOff);
 
         StandardAttack stdFake = (StandardAttack) jStandardFake.getSelectedItem();
-        if (stdFake == null) {
-            stdFake = StandardAttackManager.getSingleton().getElementByIcon(StandardAttack.FAKE_ICON);
-        }
+        logger.debug("StdFake: {}", stdFake);
 
         List<Attack> modifiedTransfer = new LinkedList<>();
         for (Attack a : pToTransfer) {
             Attack newAttack = new Attack(a);
 
             if (a.getType() == Attack.FAKE_TYPE) {
-                newAttack.setType(stdFake.getIcon());
+                if(stdFake != null) {
+                    newAttack.setType(stdFake.getIcon());
+                } else {
+                    StandardAttack toUse;
+                    switch(a.getUnit().getPlainName()) {
+                        case "spear": case "sword": case "heavy": case "archer":
+                            toUse = StandardAttackManager.getSingleton().getElementByIcon(StandardAttack.FAKE_SUPPORT_ICON);
+                            break;
+                        case "axe": case "spy": case "light":
+                        case "marcher": case "ram": case "catapult":
+                        case "knight": case "snob":
+                        default:
+                            toUse = StandardAttackManager.getSingleton().getElementByIcon(StandardAttack.FAKE_ICON);
+                    }
+                    logger.debug("Setting Fake {}:\n{}", toUse.getName());
+                    newAttack.setType(toUse.getIcon());
+                }
+                
             } else if (a.getType() == Attack.CLEAN_TYPE) {
-                newAttack.setType(stdOff.getIcon());
+                if(stdOff != null) {
+                    newAttack.setType(stdOff.getIcon());
+                } else {
+                    StandardAttack toUse;
+                    switch(a.getUnit().getPlainName()) {
+                        case "spear": case "sword": case "archer": case "heavy":
+                            toUse = StandardAttackManager.getSingleton().getElementByIcon(StandardAttack.SUPPORT_ICON);
+                            break;
+                        case "snob":
+                            toUse = StandardAttackManager.getSingleton().getElementByIcon(StandardAttack.SNOB_ICON);
+                            break;
+                        case "axe": case "spy": case "light": case "marcher":
+                        case "ram": case "catapult": case "knight":
+                        default:
+                            toUse = StandardAttackManager.getSingleton().getElementByIcon(StandardAttack.OFF_ICON);
+                    }
+                    logger.debug("Setting Clean {}:\n{}", toUse.getName(), toUse.getTroops());
+                    newAttack.setType(toUse.getIcon());
+                }
             }
             newAttack.setUnit(a.getUnit());
-            newAttack.setTroopsByType();
+            newAttack.setTroopsByTypeIgnoreToSlow();
             modifiedTransfer.add(newAttack);
         }
 

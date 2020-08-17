@@ -295,7 +295,7 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
                 Element e = pElement.getChild("spyBuildings");
                 
                 for(int i = 0; i < this.buildingLevels.length; i++) {
-                    this.buildingLevels[i] = Integer.parseInt(e.getChildText(
+                    this.buildingLevels[i] = Integer.parseInt(e.getAttributeValue(
                             BuildingSettings.BUILDING_NAMES[i]));
                 }
             } catch (Exception e) {
@@ -1045,37 +1045,6 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
 
     @Override
     public int hashCode() {
-        int hash = 5;
-        hash = 53 * hash + (this.won ? 1 : 0);
-        hash = 53 * hash + (int) (this.timestamp ^ (this.timestamp >>> 32));
-        hash = 53 * hash + (int) (Double.doubleToLongBits(this.luck) ^ (Double.doubleToLongBits(this.luck) >>> 32));
-        hash = 53 * hash + (int) (Double.doubleToLongBits(this.moral) ^ (Double.doubleToLongBits(this.moral) >>> 32));
-        hash = 53 * hash + (this.attacker != null ? this.attacker.hashCode() : 0);
-        hash = 53 * hash + (this.sourceVillage != null ? this.sourceVillage.hashCode() : 0);
-        hash = 53 * hash + (this.attackers != null ? this.attackers.hashCode() : 0);
-        hash = 53 * hash + (this.diedAttackers != null ? this.diedAttackers.hashCode() : 0);
-        hash = 53 * hash + (this.defender != null ? this.defender.hashCode() : 0);
-        hash = 53 * hash + (this.targetVillage != null ? this.targetVillage.hashCode() : 0);
-        hash = 53 * hash + (this.defenders != null ? this.defenders.hashCode() : 0);
-        hash = 53 * hash + (this.diedDefenders != null ? this.diedDefenders.hashCode() : 0);
-        hash = 53 * hash + (this.defendersOutside != null ? this.defendersOutside.hashCode() : 0);
-        hash = 53 * hash + (this.defendersOnTheWay != null ? this.defendersOnTheWay.hashCode() : 0);
-        hash = 53 * hash + (this.conquered ? 1 : 0);
-        hash = 53 * hash + this.wallBefore;
-        hash = 53 * hash + this.wallAfter;
-        hash = 53 * hash + this.aimedBuildingId;
-        hash = 53 * hash + this.buildingBefore;
-        hash = 53 * hash + this.buildingAfter;
-        hash = 53 * hash + this.acceptanceBefore;
-        hash = 53 * hash + this.acceptanceAfter;
-        hash = 53 * hash + Arrays.hashCode(this.spyedResources);
-        hash = 53 * hash + Arrays.hashCode(this.haul);
-        for(int i = 0; i < this.buildingLevels.length; i++)
-            hash = 53 * hash + this.buildingLevels[i];
-        return hash;
-    }
-
-    public int cleanupHashCode() {
         int hash = 5;
         hash = 53 * hash + (this.won ? 1 : 0);
         hash = 53 * hash + (int) (this.timestamp ^ (this.timestamp >>> 32));

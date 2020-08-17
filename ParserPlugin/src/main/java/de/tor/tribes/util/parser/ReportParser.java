@@ -340,7 +340,8 @@ public class ReportParser implements SilentParserInterface {
                 continue;
             }
             
-            if (line.startsWith(getVariable("report.ontheway"))) {
+            if (line.startsWith(getVariable("report.ontheway")) ||
+                    line.startsWith(getVariable("report.ontheway_spy"))) {
                 troopsOnTheWayPart = true;
                 logger.debug("Found troops on the way line");
                 continue;

@@ -18,6 +18,7 @@ package de.tor.tribes.util.parser;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.TroopAmountFixed;
 import de.tor.tribes.io.UnitHolder;
+import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.FightReport;
 import de.tor.tribes.types.UnknownUnit;
 import de.tor.tribes.types.ext.Village;
@@ -106,7 +107,7 @@ public class OBSTServerReportHandler implements SilentParserInterface {
         if (m.find()) {
             try {
                 report.setLuck(Double.parseDouble(m.group(1)));
-            } catch (Exception e) {
+        } catch (Exception e) {
                 logger.error("Failed to get luck from entry " + m.group(1) + ". Setting default: 0.0");
                 report.setLuck(0.0);
             }
@@ -129,6 +130,18 @@ public class OBSTServerReportHandler implements SilentParserInterface {
             logger.error("No source village found");
         }
 
+        m = Pattern.compile(getVariable("report.att.player") + ":\\s+(.*)\n").matcher(data);
+        if (m.find()) {
+            Tribe attacker = DataHolder.getSingleton().getTribeByName(m.group(1));
+            if (attacker == null) {
+                logger.error("No attacker found");
+            } else {
+                report.setAttacker(attacker);
+            }
+        } else {
+            logger.error("No source village found");
+        }
+
         m = Pattern.compile(getVariable("report.village.3") + ":\\s+(.*)\n").matcher(data);
         if (m.find()) {
             Village target = VillageParser.parseSingleLine(m.group(1));
@@ -141,6 +154,18 @@ public class OBSTServerReportHandler implements SilentParserInterface {
             }
         } else {
             logger.error("No target village found");
+        }
+
+        m = Pattern.compile(getVariable("report.defender.player") + ":\\s+(.*)\n").matcher(data);
+        if (m.find()) {
+            Tribe defender = DataHolder.getSingleton().getTribeByName(m.group(1));
+            if (defender == null) {
+                logger.error("No attacker found");
+            } else {
+                report.setDefender(defender);
+            }
+        } else {
+            logger.error("No source village found");
         }
 
         logger.debug("Checking for winner");
@@ -172,12 +197,12 @@ public class OBSTServerReportHandler implements SilentParserInterface {
                 Date sent = new SimpleDateFormat(getVariable("report.date.format")).parse(date);
                 report.setTimestamp(sent.getTime());
             } catch (Exception e) {
-                logger.warn("Failed to set report timestamp. Using 'NOW'");
-                report.setTimestamp(System.currentTimeMillis());
+                logger.warn("Failed to set report timestamp. Using '0'");
+                report.setTimestamp(0L);
             }
         } else {
             logger.debug("No report timestamp found");
-            report.setTimestamp(System.currentTimeMillis());
+            report.setTimestamp(0L);
         }
 
         boolean haveMilitia = !DataHolder.getSingleton().getUnitByPlainName("militia").equals(UnknownUnit.getSingleton());
@@ -213,6 +238,7 @@ public class OBSTServerReportHandler implements SilentParserInterface {
                 report.setDiedDefenders(new TroopAmountFixed(-1));
             }
         }
+        
         unitPattern = RegExpHelper.getTroopsPattern(false, false);
         //m = Pattern.compile("Truppen des Verteidigers, die unterwegs waren\n([0-9]+\\s+[0-9]+\\s+[0-9]+\\s+[0-9]+\\s+[0-9]+\\s+[0-9]+\\s+[0-9]+\\s+[0-9]+\\s+[0-9]+)").matcher(data);
         m = Pattern.compile(getVariable("report.ontheway") + "\n" + unitPattern).matcher(data);
@@ -221,6 +247,13 @@ public class OBSTServerReportHandler implements SilentParserInterface {
         } else {
             logger.info("No units on the way");
         }
+        m = Pattern.compile(getVariable("report.ontheway_spy") + "\n" + unitPattern).matcher(data);
+        if (m.find()) {
+            report.setDefendersOnTheWay(parseUnits(m.group(1).trim().split("\\s")));
+        } else {
+            logger.info("No units on the way");
+        }
+        
         //in haul there are spaces in e.g. "3 . 400" ... replace thema first
         data = data.replaceAll(" \\. ", ".");
         m = Pattern.compile(getVariable("report.haul") + ":\\s+([\\.0-9]+)\\s([\\.0-9]+)\\s([\\.0-9]+)").matcher(data);
@@ -356,7 +389,7 @@ public class OBSTServerReportHandler implements SilentParserInterface {
     }
 
     private TroopAmountFixed parseUnits(String[] pUnits) {
-        TroopAmountFixed units = new TroopAmountFixed();
+        TroopAmountFixed units = new TroopAmountFixed(0);
         List<UnitHolder> allUnits = DataHolder.getSingleton().getUnits();
         for (int i = 0; i < pUnits.length; i++) {
             units.setAmountForUnit(allUnits.get(i), Integer.parseInt(pUnits[i]));

@@ -17,6 +17,8 @@ package de.tor.tribes.util.troops;
 
 import de.tor.tribes.control.GenericManager;
 import de.tor.tribes.control.ManageableType;
+import de.tor.tribes.io.TroopAmountFixed;
+import de.tor.tribes.types.FightReport;
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.xml.JDomUtils;
@@ -288,7 +290,7 @@ public class TroopsManager extends GenericManager<VillageTroopsHolder> {
             if (pType.equals(TROOP_TYPE.SUPPORT)) {
                 newHolder = new SupportVillageTroopsHolder(pVillage, new Date());
             } else {
-                newHolder = new VillageTroopsHolder(pVillage, new Date());
+                newHolder = new VillageTroopsHolder(pVillage, null);
             }
             addManagedElement(group, newHolder);
             return newHolder;
@@ -477,5 +479,25 @@ public class TroopsManager extends GenericManager<VillageTroopsHolder> {
             logger.error("Failed to generate troop data", e);
         }
         return troopGroups;
+    }
+    
+    public void updateInformation(FightReport pReport) {
+        if(pReport.wasConquered()) return;
+        
+        Village v = pReport.getTargetVillage();
+        
+        VillageTroopsHolder own = getTroopsForVillage(v, TROOP_TYPE.OWN, true);
+        VillageTroopsHolder outwards = getTroopsForVillage(v, TROOP_TYPE.OUTWARDS, true);
+        if(own.getState() == null || own.getState().getTime() < pReport.getTimestamp()) {
+            TroopAmountFixed surviving = pReport.getSurvivingDefenders();
+            if(surviving != null) {
+                own.setTroops(surviving);
+                own.setState(new Date(pReport.getTimestamp()));
+            }
+        }
+        if(outwards.getState() == null || outwards.getState().getTime() < pReport.getTimestamp()) {
+            outwards.setTroops(pReport.getDefendersOnTheWay());
+            outwards.setState(new Date(pReport.getTimestamp()));
+        }
     }
 }

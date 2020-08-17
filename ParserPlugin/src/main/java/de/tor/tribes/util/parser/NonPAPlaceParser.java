@@ -115,7 +115,6 @@ public class NonPAPlaceParser implements SilentParserInterface {
                 own.setTroops(ownTroops);
                 TroopsManager.getSingleton().addManagedElement(TroopsManager.OWN_GROUP, own);
             } else {
-                own.setState(new Date());
                 own.setTroops(ownTroops);
             }
             VillageTroopsHolder inVillage = TroopsManager.getSingleton().getTroopsForVillage(v, TROOP_TYPE.IN_VILLAGE, true);
@@ -125,7 +124,6 @@ public class NonPAPlaceParser implements SilentParserInterface {
                 TroopsManager.getSingleton().addManagedElement(TroopsManager.IN_VILLAGE_GROUP, inVillage);
 
             } else {
-                inVillage.setState(new Date());
                 inVillage.setTroops(troopsInVillage);
             }
             //@TODO handle supports

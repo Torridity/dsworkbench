@@ -39,10 +39,10 @@ public class VillageTroopsHolder extends ManageableType implements BBSupport {
     @Override
     public void loadFromXml(Element e) {
         this.village = DataHolder.getSingleton().getVillagesById().get(Integer.parseInt(e.getChild("id").getText()));
-        this.state = new Date(Long.parseLong(e.getChild("state").getText()));
 
         TroopAmountFixed hTroops = new TroopAmountFixed(e.getChild("troops"));
         setTroops(hTroops);
+        this.state = new Date(Long.parseLong(e.getChild("state").getText()));
     }
 
     @Override
@@ -78,6 +78,7 @@ public class VillageTroopsHolder extends ManageableType implements BBSupport {
     }
 
     public void setTroops(TroopAmountFixed pTroops) {
+        setState(new Date());
         troops = pTroops.clone();
     }
 

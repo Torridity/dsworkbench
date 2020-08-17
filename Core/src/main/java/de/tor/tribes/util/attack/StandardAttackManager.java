@@ -36,8 +36,8 @@ public class StandardAttackManager extends GenericManager<StandardAttack> {
     public static final String FAKE_TYPE_NAME = "Fake";
     public static final String OFF_TYPE_NAME = "Off";
     public static final String SNOB_TYPE_NAME = "AG";
-    public static final String SUPPORT_TYPE_NAME = "Unterstützung";
-    public static final String FAKE_SUPPORT_TYPE_NAME = "Unterstützung (Fake)";
+    public static final String SUPPORT_TYPE_NAME = "Unterstuetzung";
+    public static final String FAKE_SUPPORT_TYPE_NAME = "Unterstuetzung (Fake)";
     private static StandardAttackManager SINGLETON = null;
 
     public static synchronized StandardAttackManager getSingleton() {
@@ -53,22 +53,22 @@ public class StandardAttackManager extends GenericManager<StandardAttack> {
 
     @Override
     protected void checkValues() {
-        if (getElementByName(NO_TYPE_NAME) == null) {
+        if (getElementByName(NO_TYPE_NAME) == null && getElementByIcon(StandardAttack.NO_ICON) == null) {
             addManagedElement(new StandardAttack(NO_TYPE_NAME, StandardAttack.NO_ICON));
         }
-        if (getElementByName(OFF_TYPE_NAME) == null) {
+        if (getElementByName(OFF_TYPE_NAME) == null && getElementByIcon(StandardAttack.OFF_ICON) == null) {
             addManagedElement(new StandardAttack(OFF_TYPE_NAME, StandardAttack.OFF_ICON));
         }
-        if (getElementByName(FAKE_TYPE_NAME) == null) {
+        if (getElementByName(FAKE_TYPE_NAME) == null && getElementByIcon(StandardAttack.FAKE_ICON) == null) {
             addManagedElement(new StandardAttack(FAKE_TYPE_NAME, StandardAttack.FAKE_ICON));
         }
-        if (getElementByName(SNOB_TYPE_NAME) == null) {
+        if (getElementByName(SNOB_TYPE_NAME) == null && getElementByIcon(StandardAttack.SNOB_ICON) == null) {
             addManagedElement(new StandardAttack(SNOB_TYPE_NAME, StandardAttack.SNOB_ICON));
         }
-        if (getElementByName(SUPPORT_TYPE_NAME) == null) {
+        if (getElementByName(SUPPORT_TYPE_NAME) == null && getElementByIcon(StandardAttack.SUPPORT_ICON) == null) {
             addManagedElement(new StandardAttack(SUPPORT_TYPE_NAME, StandardAttack.SUPPORT_ICON));
         }
-        if (getElementByName(FAKE_SUPPORT_TYPE_NAME) == null) {
+        if (getElementByName(FAKE_SUPPORT_TYPE_NAME) == null && getElementByIcon(StandardAttack.FAKE_SUPPORT_ICON) == null) {
             addManagedElement(new StandardAttack(FAKE_SUPPORT_TYPE_NAME, StandardAttack.FAKE_SUPPORT_ICON));
         }
     }
@@ -122,7 +122,8 @@ public class StandardAttackManager extends GenericManager<StandardAttack> {
     }
 
     public boolean addStandardAttack(String pName, int pIcon) {
-        if (isAllowedName(pName) && !containsElementByName(pName) && isAllowedIcon(pIcon) && !containsElementByIcon(pIcon)) {
+        if (isAllowedName(pName) && !containsElementByName(pName) && JDomUtils.stringAllowed(pName) &&
+                isAllowedIcon(pIcon) && !containsElementByIcon(pIcon)) {
             addManagedElement(new StandardAttack(pName, pIcon));
             return true;
         }

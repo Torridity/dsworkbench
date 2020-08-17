@@ -22,6 +22,7 @@ import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.report.ReportManager;
 import de.tor.tribes.util.report.ReportRule;
+import de.tor.tribes.util.xml.JDomUtils;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.event.ItemEvent;
@@ -552,6 +553,11 @@ public class ReportRulesDialog extends javax.swing.JDialog implements GenericMan
         if (targetReportSet == null || targetReportSet.length() == 0) {
             return;
         }
+        if (! JDomUtils.stringAllowed(targetReportSet)) {
+            JOptionPaneHelper.showWarningBox(this, "Der name '" + targetReportSet + "' enthält ungültige Sonderzeichen", "Fehler");
+            return;
+        }
+        
         try {
             ReportRule rule;
             if (c == jReportColorPanel) {

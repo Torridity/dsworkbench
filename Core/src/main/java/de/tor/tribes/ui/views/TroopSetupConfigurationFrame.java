@@ -294,7 +294,7 @@ public class TroopSetupConfigurationFrame extends javax.swing.JDialog implements
         if (evt.getSource() == jAddTypeButton) {
             if (!StandardAttackManager.getSingleton().addStandardAttack(jAttackTypeName.getText(), (Integer) jAttackTypeIcon.getSelectedItem())) {
                 JOptionPaneHelper.showWarningBox(this, "Angriffstyp konnte nicht hinzugefügt werden.\n"
-                        + "Entweder sind der Name oder das Symbol bereits vergeben, oder der Name oder das Symbol sind reserviert.", "Fehler");
+                        + "Entweder sind der Name oder das Symbol bereits vergeben, oder der Name oder das Symbol sind reserviert, oder der Name enthält sonderzeichen.", "Fehler");
             }
         }
     }//GEN-LAST:event_fireAddRemoveAttackTypeEvent

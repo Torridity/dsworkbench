@@ -34,6 +34,7 @@ import de.tor.tribes.util.bb.TribeReportStatsFormatter;
 import de.tor.tribes.util.farm.FarmManager;
 import de.tor.tribes.util.report.ReportManager;
 import de.tor.tribes.util.report.ReportStatBuilder;
+import de.tor.tribes.util.xml.JDomUtils;
 import java.awt.*;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.*;
@@ -452,6 +453,10 @@ public class DSWorkbenchReportFrame extends AbstractDSWorkbenchFrame implements 
                         }
                         if (ReportManager.getSingleton().groupExists(newName)) {
                             JOptionPaneHelper.showWarningBox(jReportsTabbedPane, "Es existiert bereits ein Berichtset mit dem Namen '" + newName + "'", "Fehler");
+                            return;
+                        }
+                        if (! JDomUtils.stringAllowed(newName)) {
+                            JOptionPaneHelper.showWarningBox(jReportsTabbedPane, "Der name '" + newName + "' enthält ungültige Sonderzeichen", "Fehler");
                             return;
                         }
                         

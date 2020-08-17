@@ -29,6 +29,7 @@ import de.tor.tribes.util.ImageUtils;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.PropertyHelper;
 import de.tor.tribes.util.note.NoteManager;
+import de.tor.tribes.util.xml.JDomUtils;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Graphics;
@@ -301,6 +302,10 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
                         }
                         if (NoteManager.getSingleton().groupExists(newName)) {
                             JOptionPaneHelper.showWarningBox(jNoteTabbedPane, "Es existiert bereits ein Notizenset mit dem Namen '" + newName + "'", "Fehler");
+                            return;
+                        }
+                        if (! JDomUtils.stringAllowed(newName)) {
+                            JOptionPaneHelper.showWarningBox(jNoteTabbedPane, "Der name '" + newName + "' enthält ungültige Sonderzeichen", "Fehler");
                             return;
                         }
                         

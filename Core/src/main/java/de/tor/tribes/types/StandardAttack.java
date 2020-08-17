@@ -19,6 +19,7 @@ import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.TroopAmountDynamic;
 import de.tor.tribes.io.TroopAmountFixed;
 import de.tor.tribes.ui.ImageManager;
+import de.tor.tribes.util.xml.JDomUtils;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -114,6 +115,7 @@ public class StandardAttack extends ManageableType {
     }
 
     public final void setName(String pName) {
+        if(! JDomUtils.stringAllowed(pName)) return;
         name = pName;
     }
 

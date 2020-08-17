@@ -159,6 +159,16 @@ public class JDomUtils {
         xmlOutput.setFormat(Format.getCompactFormat());
         return xmlOutput.outputString(pDoc);
     }
+    
+    public static final String whitelist = " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_abcdefghijklmnopqrstuvw{|}~";
+    public static boolean stringAllowed(String toCheck) {
+        for(int i = 0; i < toCheck.length(); i++) {
+            if(whitelist.indexOf(toCheck.charAt(i)) == -1) {
+                return false;
+            }
+        }
+        return true;
+    }
 }
 
 

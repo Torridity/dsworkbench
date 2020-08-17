@@ -31,6 +31,7 @@ import de.tor.tribes.util.ImageUtils;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.PropertyHelper;
 import de.tor.tribes.util.attack.AttackManager;
+import de.tor.tribes.util.xml.JDomUtils;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Graphics;
@@ -730,6 +731,10 @@ private void createNewAttackPlan() {
                         }
                         if (AttackManager.getSingleton().groupExists(newName)) {
                             JOptionPaneHelper.showWarningBox(jAttackTabPane, "Es existiert bereits ein Plan mit dem Namen '" + newName + "'", "Fehler");
+                            return;
+                        }
+                        if (! JDomUtils.stringAllowed(newName)) {
+                            JOptionPaneHelper.showWarningBox(jAttackTabPane, "Der name '" + newName + "' enthält ungültige Sonderzeichen", "Fehler");
                             return;
                         }
                         

@@ -270,7 +270,7 @@ public class DSWorkbenchTagFrame extends AbstractDSWorkbenchFrame implements Gen
         transferTaskPane.getContentPane().add(transferJS);
 
         if (!GlobalOptions.isMinimal()) {
-            JXButton centerButton = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/center_24x24.png")));
+            JXButton centerButton = new JXButton(new ImageIcon(DSWorkbenchTagFrame.class.getResource("/res/center_24x24.png")));
             centerButton.setToolTipText("Zentriert das erste gewählte Dorf auf der Hauptkarte");
             centerButton.addMouseListener(new MouseAdapter() {
 

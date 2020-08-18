@@ -206,7 +206,7 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
 
         JXTaskPane transferTaskPane = new JXTaskPane();
         transferTaskPane.setTitle("Übertragen");
-        JXButton centerVillageInGame = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/ui/center_ingame.png")));
+        JXButton centerVillageInGame = new JXButton(new ImageIcon(DSWorkbenchDistanceFrame.class.getResource("/res/ui/center_ingame.png")));
         centerVillageInGame.setToolTipText("Zentriert das gewählte Dorf im Spiel");
         centerVillageInGame.addMouseListener(new MouseAdapter() {
 
@@ -216,7 +216,7 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
             }
         });
         transferTaskPane.getContentPane().add(centerVillageInGame);
-        JXButton openPlace = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/ui/place.png")));
+        JXButton openPlace = new JXButton(new ImageIcon(DSWorkbenchDistanceFrame.class.getResource("/res/ui/place.png")));
         openPlace.setToolTipText("Öffnet den Versammlungsplatz des gewählten Dorfes im Spiel");
         openPlace.addMouseListener(new MouseAdapter() {
 
@@ -231,7 +231,7 @@ public class DSWorkbenchDistanceFrame extends AbstractDSWorkbenchFrame implement
         openPlace.setPreferredSize(centerVillageInGame.getPreferredSize());
         transferTaskPane.getContentPane().add(openPlace);
 
-        JXButton centerVillage = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/center_24x24.png")));
+        JXButton centerVillage = new JXButton(new ImageIcon(DSWorkbenchDistanceFrame.class.getResource("/res/center_24x24.png")));
         centerVillage.setToolTipText("Zentriert das gewählte Dorf auf der Hauptkarte");
         centerVillage.addMouseListener(new MouseAdapter() {
 

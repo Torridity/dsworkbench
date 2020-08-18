@@ -179,7 +179,7 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame implements Ac
     private void buildMenu() {
         JXTaskPane statsTaskPane = new JXTaskPane();
         statsTaskPane.setTitle("Statistiken");
-        JXButton openDSRealButton = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/ui/dsreal.png")));
+        JXButton openDSRealButton = new JXButton(new ImageIcon(DSWorkbenchRankFrame.class.getResource("/res/ui/dsreal.png")));
         openDSRealButton.setToolTipText("DS Real Seite im Browser öffnen");
         openDSRealButton.addMouseListener(new MouseAdapter() {
             
@@ -192,7 +192,7 @@ public class DSWorkbenchRankFrame extends AbstractDSWorkbenchFrame implements Ac
             }
         });
         statsTaskPane.getContentPane().add(openDSRealButton);
-        JXButton dsRealStatsButton = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/ui/chart.png")));
+        JXButton dsRealStatsButton = new JXButton(new ImageIcon(DSWorkbenchRankFrame.class.getResource("/res/ui/chart.png")));
         dsRealStatsButton.setToolTipText("DS Real Verlaufsgrafik anzeigen");
         dsRealStatsButton.addMouseListener(new MouseAdapter() {
             

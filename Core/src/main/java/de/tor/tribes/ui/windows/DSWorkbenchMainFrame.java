@@ -493,6 +493,8 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
       DSWorkbenchChurchFrame.getSingleton().restoreProperties();
       DSWorkbenchWatchtowerFrame.getSingleton().resetView();
       DSWorkbenchWatchtowerFrame.getSingleton().restoreProperties();
+      DSWorkbenchKnownVillageFrame.getSingleton().resetView();
+      DSWorkbenchKnownVillageFrame.getSingleton().restoreProperties();
       DSWorkbenchAttackFrame.getSingleton().resetView();
       DSWorkbenchAttackFrame.getSingleton().restoreProperties();
       DSWorkbenchAttackFrame.getSingleton().updateCountdownSettings();
@@ -618,6 +620,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
     DSWorkbenchMarkerFrame.getSingleton().addFrameListener(this);
     DSWorkbenchChurchFrame.getSingleton().addFrameListener(this);
     DSWorkbenchWatchtowerFrame.getSingleton().addFrameListener(this);
+    DSWorkbenchKnownVillageFrame.getSingleton().addFrameListener(this);
     DSWorkbenchConquersFrame.getSingleton().addFrameListener(this);
     DSWorkbenchNotepad.getSingleton().addFrameListener(this);
     DSWorkbenchTagFrame.getSingleton().addFrameListener(this);

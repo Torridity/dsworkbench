@@ -85,6 +85,9 @@ public class KnownVillageManager extends GenericManager<KnownVillage> {
                         //ignore this entry maybe village got deleted
                         continue;
                     }
+                    if(! v.containsInformation()) {
+                        continue;
+                    }
                     if (getKnownVillage(v.getVillage()) == null) {
                         addManagedElement(v);
                     } else {
@@ -198,6 +201,23 @@ public class KnownVillageManager extends GenericManager<KnownVillage> {
             revalidate(true);
         }
     }
+    
+    public void removeVillage(Village pVillage) {
+        if (pVillage != null) {
+            removeElement(getKnownVillage(pVillage));
+            cacheValid = false;
+        }
+    }
+    
+    public void removeVillages(Village[] pVillages) {
+        if (pVillages != null) {
+            invalidate();
+            for (Village v : pVillages) {
+                removeVillage(v);
+            }
+            revalidate(true);
+        }
+    }
 
     public KnownVillage getKnownVillage(Village pVillage) {
         List<ManageableType> elements = getAllElements();
@@ -247,5 +267,16 @@ public class KnownVillageManager extends GenericManager<KnownVillage> {
         
         logger.debug("rebuilded cache");
         cacheValid = true;
+    }
+    
+    public void cleanEmptyVillages() {
+        List<KnownVillage> toRemove = new ArrayList<>();
+        for(ManageableType m : getAllElements()) {
+            if(! ((KnownVillage) m).containsInformation()) {
+                logger.debug("Removing village {}", m);
+                toRemove.add((KnownVillage) m);
+            }
+        }
+        removeElements(toRemove);
     }
 }

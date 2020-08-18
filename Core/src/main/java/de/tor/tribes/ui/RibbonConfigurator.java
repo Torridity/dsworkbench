@@ -26,6 +26,7 @@ import de.tor.tribes.ui.windows.FormConfigFrame;
 import de.tor.tribes.ui.wiz.red.ResourceDistributorWizard;
 import de.tor.tribes.ui.wiz.tap.TacticsPlanerWizard;
 import de.tor.tribes.util.*;
+import de.tor.tribes.util.village.KnownVillageManager;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -967,12 +968,28 @@ public class RibbonConfigurator {
                 }
             }
         });
+        JCommandButton villageViewButton = factoryButton("Dörfer", "graphics/big/village.png", "Öffnet die Dorfübersicht", "Die Dorfübersicht zeigt alle in DS Workbench eingetragenen Dörfer an (z.B. von Berichten oder dem Import der Gebäudeübersicht).", true);
+        villageViewButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                SwingUtilities.invokeLater(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        KnownVillageManager.getSingleton().cleanEmptyVillages();
+                        DSWorkbenchKnownVillageFrame.getSingleton().setVisible(true);
+                        DSWorkbenchKnownVillageFrame.getSingleton().requestFocus();
+                    }
+                });
+            }
+        });
         //   attackViewBand.startGroup();
         attackViewBand.addCommandButton(attackViewButton, RibbonElementPriority.TOP);
         attackViewBand.addCommandButton(markerViewButton, RibbonElementPriority.MEDIUM);
         attackViewBand.addCommandButton(formsViewButton, RibbonElementPriority.MEDIUM);
         attackViewBand.addCommandButton(churchViewButton, RibbonElementPriority.MEDIUM);
         attackViewBand.addCommandButton(watchtowerViewButton, RibbonElementPriority.MEDIUM);
+        attackViewBand.addCommandButton(villageViewButton, RibbonElementPriority.MEDIUM);
         // </editor-fold>
         // <editor-fold defaultstate="collapsed" desc="ingameInfoViewBand setup">
         JCommandButton tagsViewButton = factoryButton("Gruppen", "graphics/icons/tag.png", "Öffnet die Gruppenübersicht", "Die Gruppenübersicht erlaubt es, vorher aus dem Spiel importierte Gruppen zu verwalten und zu neuen Gruppen zu kombinieren. Weitere Informationen findest du in der Hilfe (F1) im Abschnitt 'Import von Spielinformationen'.", true);

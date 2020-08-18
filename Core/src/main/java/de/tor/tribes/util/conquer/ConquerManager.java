@@ -308,6 +308,7 @@ public class ConquerManager extends GenericManager<Conquer> {
             lastUpdate = System.currentTimeMillis() - 1000;
             logger.debug("Setting lastUpdate to NOW (" + lastUpdate + ")");
         }
+        KnownVillageManager.getSingleton().cleanEmptyVillages();
         mergeWithWorldData();
     }
 

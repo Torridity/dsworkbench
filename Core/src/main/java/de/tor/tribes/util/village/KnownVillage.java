@@ -276,4 +276,11 @@ public class KnownVillage extends ManageableType {
         logger.debug("Getting Farm Space {} / {} / {}", village.getCoordAsString(), maxFarmSpace, buildingPop);
         return maxFarmSpace - buildingPop;
     }
+
+    boolean containsInformation() {
+        for(int i = 0; i < buildings.length; i++) {
+            if(buildings[i] != -1) return true;
+        }
+        return false;
+    }
 }

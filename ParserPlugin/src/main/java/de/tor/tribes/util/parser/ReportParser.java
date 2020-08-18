@@ -165,6 +165,11 @@ public class ReportParser implements SilentParserInterface {
             
             if (line.startsWith(getVariable("report.num"))) {
                 line = line.replaceAll(getVariable("report.num") + ":", "").trim();
+                //fix for some browsers using space instead of tab
+                while(line.indexOf("  ") != -1)
+                    line = line.replaceAll("  ", " ");
+                line = line.replaceAll(" ", "\t");
+                
                 logger.debug("Found amount line: '" + line + "'");
                 if (attackerPart) {
                     logger.debug(" Use amount for attacker");
@@ -172,12 +177,16 @@ public class ReportParser implements SilentParserInterface {
                     //hack for militia servers (militia is not shown for attacker)
                     if (troops.length == serverTroopCount || troops.length == serverTroopCount - 1) {
                         result.setAttackers(parseUnits(troops));
+                    } else {
+                        logger.debug(" Line seems NOT valid (" + troops.length + " != " + serverTroopCount + ")");
                     }
                 } else if (defenderPart) {
                     logger.debug(" Use amount for defender");
                     String[] troops = line.split("\t");
                     if (troops.length == serverTroopCount) {
                         result.setDefenders(parseUnits(troops));
+                    } else {
+                        logger.debug(" Line seems NOT valid (" + troops.length + " != " + serverTroopCount + ")");
                     }
                 }
                 continue;
@@ -185,6 +194,11 @@ public class ReportParser implements SilentParserInterface {
             
             if (line.startsWith(getVariable("report.loss"))) {
                 line = line.replaceAll(getVariable("report.loss") + ":", "").trim();
+                //fix for some browsers using space instead of tab
+                while(line.indexOf("  ") != -1)
+                    line = line.replaceAll("  ", " ");
+                line = line.replaceAll(" ", "\t");
+                
                 logger.debug("Found losses line: '" + line + "'");
                 if (attackerPart) {
                     logger.debug(" Use losses for attacker");
@@ -402,8 +416,14 @@ public class ReportParser implements SilentParserInterface {
             }
 
             if (troopsOnTheWayPart) {
+                //fix for some browsers using space instead of tab
+                while(line.indexOf("  ") != -1)
+                    line = line.replaceAll("  ", " ");
+                line = line.replaceAll(" ", "\t");
+                
+                logger.debug("Found possible on the way troop line: '" + line + "'");
                 String[] troops = line.split("\t");
-                if (troops.length == serverTroopCount) {
+                if (troops.length == serverTroopCount || troops.length == serverTroopCount - 1) {
                     troopsOnTheWayPart = false;
                     result.setDefendersOnTheWay(parseUnits(troops));
                 }

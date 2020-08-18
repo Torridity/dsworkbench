@@ -241,13 +241,13 @@ public class OBSTServerReportHandler implements SilentParserInterface {
         
         unitPattern = RegExpHelper.getTroopsPattern(false, false);
         //m = Pattern.compile("Truppen des Verteidigers, die unterwegs waren\n([0-9]+\\s+[0-9]+\\s+[0-9]+\\s+[0-9]+\\s+[0-9]+\\s+[0-9]+\\s+[0-9]+\\s+[0-9]+\\s+[0-9]+)").matcher(data);
-        m = Pattern.compile(getVariable("report.ontheway") + "\n" + unitPattern).matcher(data);
+        m = Pattern.compile(getVariable("report.ontheway") + "\\n?\\s?" + unitPattern).matcher(data);
         if (m.find()) {
             report.setDefendersOnTheWay(parseUnits(m.group(1).trim().split("\\s")));
         } else {
             logger.info("No units on the way");
         }
-        m = Pattern.compile(getVariable("report.ontheway_spy") + "\n" + unitPattern).matcher(data);
+        m = Pattern.compile(getVariable("report.ontheway_spy") + "\\n?\\s?" + unitPattern).matcher(data);
         if (m.find()) {
             report.setDefendersOnTheWay(parseUnits(m.group(1).trim().split("\\s")));
         } else {

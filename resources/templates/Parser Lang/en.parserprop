@@ -49,6 +49,7 @@ movement.date.format.ouput='am' dd.MM.
 
 report.fight.time=Battle time
 report.date.format=dd.MM.yy HH:mm:ss
+report.date.format.ms=dd.MM.yy HH:mm:ss:SSS
 report.has.won=has won
 report.spy=scouted
 report.att.luck=Attacker's luck

@@ -84,7 +84,7 @@ public class FightReportHTMLToolTipGenerator {
     public static String buildToolTip(FightReport pReport) {
         String res = pTemplateData;
         String[] tables = buildUnitTables(pReport);
-        SimpleDateFormat f = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
+        SimpleDateFormat f = new SimpleDateFormat("dd.MM.yy HH:mm:ss:SSS");
         NumberFormat nf = NumberFormat.getInstance();
         nf.setMinimumFractionDigits(0);
         nf.setMaximumFractionDigits(0);

@@ -84,7 +84,7 @@ public class ReportManagerTableModel extends AbstractTableModel {
                 case 0:
                     return r.getStatus();
                 case 1:
-                    return new Date(r.getTimestamp());//new SimpleDateFormat("dd.MM.yy HH:mm").format(new Date(r.getTimestamp()));
+                    return new Date(r.getTimestamp());
                 case 2:
                     return r.getAttacker();
                 case 3:

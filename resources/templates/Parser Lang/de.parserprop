@@ -43,6 +43,7 @@ movement.date.format.ms='am' dd.MM. 'um' HH:mm:ss:SSS
 movement.date.format.ouput='am' dd.MM.
 report.fight.time=Kampfzeit
 report.date.format=dd.MM.yy HH:mm:ss
+report.date.format.ms=dd.MM.yy HH:mm:ss:SSS
 report.has.won=hat gewonnen
 report.spy=ausgekundschaftet
 report.att.luck=Angreifergl\u00fcck

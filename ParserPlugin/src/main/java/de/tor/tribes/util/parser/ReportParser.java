@@ -85,7 +85,13 @@ public class ReportParser implements SilentParserInterface {
             if (line.startsWith(getVariable("report.fight.time"))) {
                 logger.debug("Found send line");
                 line = line.replaceAll(getVariable("report.fight.time"), "").trim();
-                SimpleDateFormat f = new SimpleDateFormat(getVariable("report.date.format"));
+                
+                SimpleDateFormat f;
+                if (ServerSettings.getSingleton().isMillisArrival()) {
+                    f = new SimpleDateFormat(getVariable("report.date.format.ms"));
+                } else {
+                    f = new SimpleDateFormat(getVariable("report.date.format"));
+                }
                 try {
                     Date d = f.parse(line);
                     result.setTimestamp(d.getTime());

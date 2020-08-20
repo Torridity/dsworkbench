@@ -194,7 +194,14 @@ public class OBSTServerReportHandler implements SilentParserInterface {
             try {
                 //16.03.12 21:00:33
                 String date = m.group(1).trim();
-                Date sent = new SimpleDateFormat(getVariable("report.date.format")).parse(date);
+                
+                SimpleDateFormat f;
+                if (ServerSettings.getSingleton().isMillisArrival()) {
+                    f = new SimpleDateFormat(getVariable("report.date.format.ms"));
+                } else {
+                    f = new SimpleDateFormat(getVariable("report.date.format"));
+                }
+                Date sent = f.parse(date);
                 report.setTimestamp(sent.getTime());
             } catch (Exception e) {
                 logger.warn("Failed to set report timestamp. Using '0'");

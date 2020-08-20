@@ -90,6 +90,7 @@ public class ChurchTableModel extends AbstractTableModel implements BuildingLeve
         switch (columnIndex) {
             case 2:
                 v.setChurchLevel((Integer) o);
+                v.updateTime();
                 break;
             default:
                 logger.error("Invalid Columnindex " + columnIndex);

@@ -116,6 +116,7 @@ public class BuildingParser implements SilentParserInterface {
                     }
                 }
             }
+            v.updateTime();
         }
         
         return !buildingValues.isEmpty();

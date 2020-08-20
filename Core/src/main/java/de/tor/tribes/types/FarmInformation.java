@@ -1052,5 +1052,6 @@ public class FarmInformation extends ManageableType {
 
     private void setBuilding(String pName, int level) {
         kVillage.setBuildingLevelByName(pName, level);
+        kVillage.updateTime();
     }
 }

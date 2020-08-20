@@ -115,9 +115,9 @@ public class KnownVillageTableModel extends AbstractTableModel implements Buildi
                 case 1:
                     return v;
                 case 2:
-                    return new Date(v.getLastUpdate() * 1000L);
+                    return new Date(v.getLastUpdate());
                 default:
-                return v.getBuildingLevelByName(buildingNames.get(columnIndex - 3));
+                return v.getBuildingLevelByName(getBuildingNameForColumn(columnIndex));
             }
         } catch (Exception e) {
             return null;
@@ -126,12 +126,14 @@ public class KnownVillageTableModel extends AbstractTableModel implements Buildi
 
     @Override
     public void setValueAt(Object o, int rowIndex, int columnIndex) {
+        if(getValueAt(rowIndex, columnIndex).equals(o)) return;
         if(columnIndex < 3) {
             logger.error("Invalid Columnindex " + columnIndex);
             return;
         }
         KnownVillage v = (KnownVillage) KnownVillageManager.getSingleton().getAllElements().get(rowIndex);
-        v.setBuildingLevelById(columnIndex - 3, (Integer) o);
+        v.setBuildingLevelByName(getBuildingNameForColumn(columnIndex), (Integer) o);
+        v.updateTime();
         KnownVillageManager.getSingleton().revalidate(true);
     }
 

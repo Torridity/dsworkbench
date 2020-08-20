@@ -133,32 +133,42 @@ public class KnownVillageManager extends GenericManager<KnownVillage> {
         return churchVillages;
     }
 
-    public void addChurchLevel(Village pVillage, int pLevel) {
+    public void addChurchLevel(Village pVillage, int pLevel, boolean pTimeUpdate) {
         if (pVillage != null) {
             KnownVillage v = getKnownVillage(pVillage);
             if (v == null) {
                 v = new KnownVillage(pVillage);
                 v.setChurchLevel(pLevel);
+                if(pTimeUpdate) {
+                    v.updateTime();
+                }
                 addManagedElement(v);
             } else {
                 v.setChurchLevel(pLevel);
+                if(pTimeUpdate) {
+                    v.updateTime();
+                }
                 fireDataChangedEvents();
             }
         }
     }
 
-    public void removeChurch(Village pVillage) {
+    public void removeChurch(Village pVillage, boolean pTimeUpdate) {
         if (pVillage != null) {
-            getKnownVillage(pVillage).removeChurchInfo();
+            KnownVillage knowV = getKnownVillage(pVillage);
+            knowV.removeChurchInfo();
+            if(pTimeUpdate) {
+                knowV.updateTime();
+            }
             cacheValid = false;
         }
     }
 
-    public void removeChurches(Village[] pVillages) {
+    public void removeChurches(Village[] pVillages, boolean pTimeUpdate) {
         if (pVillages != null) {
             invalidate();
             for (Village v : pVillages) {
-                removeChurch(v);
+                removeChurch(v, pTimeUpdate);
             }
             revalidate(true);
         }
@@ -171,32 +181,42 @@ public class KnownVillageManager extends GenericManager<KnownVillage> {
         return watchtowerVillages;
     }
 
-    public void addWatchtowerLevel(Village pVillage, int pLevel) {
+    public void addWatchtowerLevel(Village pVillage, int pLevel, boolean pTimeUpdate) {
         if (pVillage != null) {
             KnownVillage v = getKnownVillage(pVillage);
             if (v == null) {
                 v = new KnownVillage(pVillage);
                 v.setWatchtowerLevel(pLevel);
+                if(pTimeUpdate) {
+                    v.updateTime();
+                }
                 addManagedElement(v);
             } else {
                 v.setWatchtowerLevel(pLevel);
+                if(pTimeUpdate) {
+                    v.updateTime();
+                }
                 fireDataChangedEvents();
             }
         }
     }
 
-    public void removeWatchtower(Village pVillage) {
+    public void removeWatchtower(Village pVillage, boolean pTimeUpdate) {
         if (pVillage != null) {
-            getKnownVillage(pVillage).removeWatchtowerInfo();
+            KnownVillage knowV = getKnownVillage(pVillage);
+            knowV.removeWatchtowerInfo();
+            if(pTimeUpdate) {
+                knowV.updateTime();
+            }
             cacheValid = false;
         }
     }
 
-    public void removeWatchtowers(Village[] pVillages) {
+    public void removeWatchtowers(Village[] pVillages, boolean pTimeUpdate) {
         if (pVillages != null) {
             invalidate();
             for (Village v : pVillages) {
-                removeWatchtower(v);
+                removeWatchtower(v, pTimeUpdate);
             }
             revalidate(true);
         }

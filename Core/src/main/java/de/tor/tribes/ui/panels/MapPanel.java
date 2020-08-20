@@ -519,31 +519,31 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                     }
                     case ImageManager.CURSOR_CHURCH_1: {
                         if (v != null) {
-                            KnownVillageManager.getSingleton().addChurchLevel(v, 1);
+                            KnownVillageManager.getSingleton().addChurchLevel(v, 1, true);
                         }
                         break;
                     }
                     case ImageManager.CURSOR_CHURCH_2: {
                         if (v != null) {
-                            KnownVillageManager.getSingleton().addChurchLevel(v, 2);
+                            KnownVillageManager.getSingleton().addChurchLevel(v, 2, true);
                         }
                         break;
                     }
                     case ImageManager.CURSOR_CHURCH_3: {
                         if (v != null) {
-                            KnownVillageManager.getSingleton().addChurchLevel(v, 3);
+                            KnownVillageManager.getSingleton().addChurchLevel(v, 3, true);
                         }
                         break;
                     }
                     case ImageManager.CURSOR_REMOVE_CHURCH: {
                         if (v != null) {
-                            KnownVillageManager.getSingleton().removeChurch(v);
+                            KnownVillageManager.getSingleton().removeChurch(v, true);
                         }
                         break;
                     }
                     case ImageManager.CURSOR_WATCHTOWER_1: {
                         if (v != null) {
-                            KnownVillageManager.getSingleton().addWatchtowerLevel(v, 1);
+                            KnownVillageManager.getSingleton().addWatchtowerLevel(v, 1, true);
                         }
                         break;
                     }
@@ -562,13 +562,13 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                             }
                             
                             if(level > 0)
-                                KnownVillageManager.getSingleton().addWatchtowerLevel(v, level);
+                                KnownVillageManager.getSingleton().addWatchtowerLevel(v, level, true);
                         }
                         break;
                     }
                     case ImageManager.CURSOR_REMOVE_WATCHTOWER: {
                         if (v != null) {
-                            KnownVillageManager.getSingleton().removeWatchtower(v);
+                            KnownVillageManager.getSingleton().removeWatchtower(v, true);
                         }
                         break;
                     }

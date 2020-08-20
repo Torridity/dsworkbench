@@ -29,7 +29,6 @@ import javax.swing.JTable;
 public class BuildingLevelCellEditor extends DefaultCellEditor {
     private final JComboBox editComp;
     private final DefaultComboBoxModel editModel;
-    private int curCol;
     
     public BuildingLevelCellEditor() {
         super(new JComboBox());
@@ -39,7 +38,6 @@ public class BuildingLevelCellEditor extends DefaultCellEditor {
         for(int i = 1; i <= BuildingSettings.getMaxBuildingLevel("main"); i++)
             editModel.addElement(i);
         editComp.setModel(editModel);
-        curCol = -1;
     }
 
     @Override
@@ -52,7 +50,7 @@ public class BuildingLevelCellEditor extends DefaultCellEditor {
             for(int i =  BuildingSettings.getMinBuildingLevel(name); i <= BuildingSettings.getMaxBuildingLevel(name); i++)
                 editModel.addElement(i);
             
-            curCol = column;
+            editModel.setSelectedItem(table.getModel().getValueAt(row, column));
         }
         return editComp;
     }

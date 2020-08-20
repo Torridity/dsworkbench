@@ -485,6 +485,7 @@ public class TroopsManager extends GenericManager<VillageTroopsHolder> {
         if(pReport.wasConquered()) return;
         
         Village v = pReport.getTargetVillage();
+        if(! pReport.getDefender().equals(v.getTribe())) return;
         
         VillageTroopsHolder own = getTroopsForVillage(v, TROOP_TYPE.OWN, true);
         VillageTroopsHolder outwards = getTroopsForVillage(v, TROOP_TYPE.OUTWARDS, true);

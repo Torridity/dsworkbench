@@ -31,6 +31,7 @@ import de.tor.tribes.util.DSCalculator;
 import de.tor.tribes.util.GlobalOptions;
 import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
+import de.tor.tribes.util.village.KnownVillage;
 import de.tor.tribes.util.village.KnownVillageManager;
 import de.tor.tribes.util.xml.JDomUtils;
 import java.io.BufferedReader;
@@ -245,7 +246,7 @@ public class ConquerManager extends GenericManager<Conquer> {
                 String[] data = line.split(",");
                 //$village_id, $unix_timestamp, $new_owner, $old_owner
                 int villageID = Integer.parseInt(data[0]);
-                int timestamp = Integer.parseInt(data[1]);
+                long timestamp = Long.parseLong(data[1]);
                 int newOwner = Integer.parseInt(data[2]);
                 int oldOwner = Integer.parseInt(data[3]);
                 Tribe loser = DataHolder.getSingleton().getTribes().get(oldOwner);
@@ -274,13 +275,15 @@ public class ConquerManager extends GenericManager<Conquer> {
 
                     try {
                         //remove troop information for conquered village
-                        VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(v);
-                        if (holder != null) {
-                            //check if troop holder state lays is before conquer
-                            if (holder.getState().getTime() < timestamp) {
-                                //clear troops information for this village due to troop informations are outdated
-                                holder.clear();
-                                holder.setState(new Date(timestamp));
+                        for(TroopsManager.TROOP_TYPE type: TroopsManager.TROOP_TYPE.values()) {
+                            VillageTroopsHolder holder = TroopsManager.getSingleton().getTroopsForVillage(v, type);
+                            if (holder != null) {
+                                //check if troop holder state lays is before conquer
+                                if (holder.getState().getTime() < timestamp) {
+                                    //clear troops information for this village due to troop informations are outdated
+                                    holder.clear();
+                                    holder.setState(new Date(timestamp));
+                                }
                             }
                         }
                     } catch (Exception ignored) {
@@ -288,7 +291,11 @@ public class ConquerManager extends GenericManager<Conquer> {
 
                     try {
                         //removing church
-                        KnownVillageManager.getSingleton().removeChurch(v);
+                        KnownVillage knowV = KnownVillageManager.getSingleton().getKnownVillage(v);
+                        if(knowV.hasChurch()) {
+                            knowV.removeChurchInfo();
+                            knowV.setLastUpdate(timestamp);
+                        }
                     } catch (Exception ignored) {
                     }
                 }

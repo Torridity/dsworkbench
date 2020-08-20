@@ -92,6 +92,7 @@ public class WatchtowerTableModel extends AbstractTableModel implements Building
         switch (columnIndex) {
             case 2:
                 v.setWatchtowerLevel((Integer) o);
+                v.updateTime();
                 break;
             default:
                 logger.error("Invalid Columnindex " + columnIndex);

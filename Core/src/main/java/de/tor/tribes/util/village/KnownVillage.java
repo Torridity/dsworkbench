@@ -39,13 +39,12 @@ public class KnownVillage extends ManageableType {
     
     private int[] buildings;
     private Village village;
-    private long lastUpdate;
+    private long lastUpdate = 0;
     
     public KnownVillage(Village pVillage) {
         buildings = new int[BuildingSettings.BUILDING_NAMES.length];
         Arrays.fill(buildings, -1);
         this.village = pVillage;
-        updateTime();
     }
     
     public KnownVillage(Element e) {
@@ -159,7 +158,6 @@ public class KnownVillage extends ManageableType {
             return;
         }
         setBuildingLevelByName("church", pLevel);
-        updateTime();
     }
 
     public void removeChurchInfo() {
@@ -168,7 +166,6 @@ public class KnownVillage extends ManageableType {
             return;
         }
         setBuildingLevelByName("church", -1);
-        updateTime();
     }
 
     public void setWatchtowerLevel(int pLevel) {
@@ -177,7 +174,6 @@ public class KnownVillage extends ManageableType {
             return;
         }
         setBuildingLevelByName("watchtower", pLevel);
-        updateTime();
     }
 
     public void removeWatchtowerInfo() {
@@ -186,15 +182,18 @@ public class KnownVillage extends ManageableType {
             return;
         }
         setBuildingLevelByName("watchtower", -1);
-        updateTime();
+    }
+
+    public void setLastUpdate(Long pLastUpdate) {
+        lastUpdate = pLastUpdate;
     }
 
     public long getLastUpdate() {
         return lastUpdate;
     }
 
-    private void updateTime() {
-        lastUpdate = System.currentTimeMillis() / 1000L;
+    public void updateTime() {
+        lastUpdate = System.currentTimeMillis();
     }
     
     /**
@@ -246,6 +245,9 @@ public class KnownVillage extends ManageableType {
     }
 
     void updateInformation(FightReport pReport) {
+        //only use newer information
+        if(pReport.getTimestamp() < getLastUpdate()) return;
+        
         if (pReport.getSpyLevel() >= pReport.SPY_LEVEL_BUILDINGS) {
             for(int i = 0; i < buildings.length; i++) {
                 if(pReport.getBuilding(i) != -1) {
@@ -253,13 +255,14 @@ public class KnownVillage extends ManageableType {
                     if(BuildingSettings.getMaxBuildingLevel(BuildingSettings.BUILDING_NAMES[i]) > 0) {
                         //Building can be build
                         setBuildingLevelById(i, pReport.getBuilding(i));
-                        updateTime();
+                        setLastUpdate(pReport.getTimestamp());
                     }
                 }
             }
         } else if (pReport.getWallAfter() != -1) {
             // set wall destruction (works also without spying)
             setBuildingLevelByName("wall", pReport.getWallAfter());
+            setLastUpdate(pReport.getTimestamp());
         }
     }
     

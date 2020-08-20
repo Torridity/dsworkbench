@@ -363,7 +363,7 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
             }
             jChurchTable.revalidate();
             //remove all selected markers and update the view once
-            KnownVillageManager.getSingleton().removeChurches(toRemove.toArray(new Village[]{}));
+            KnownVillageManager.getSingleton().removeChurches(toRemove.toArray(new Village[]{}), true);
             showSuccess(toRemove.size() + ((toRemove.size() == 1) ? " Kirche gelöscht" : " Kirchen gelöscht"));
         }
     }

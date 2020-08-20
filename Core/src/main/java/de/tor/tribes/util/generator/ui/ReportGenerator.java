@@ -453,7 +453,6 @@ public class ReportGenerator extends javax.swing.JFrame {
                 : getReducedTroopAmount(r.getDefenders(), 0.0));
 
         if (!jFullDef.isSelected() && jSnobbing.isSelected()) {
-            r.setConquered(true);
             r.setAcceptanceBefore((byte) 10);
             r.setAcceptanceAfter((byte) -10);
         }

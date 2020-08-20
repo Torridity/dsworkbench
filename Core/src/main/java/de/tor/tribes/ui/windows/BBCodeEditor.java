@@ -232,7 +232,6 @@ public class BBCodeEditor extends javax.swing.JFrame {
         FightReport sampleReport = new FightReport();
         sampleReport.setAimedBuildingId(BuildingSettings.getBuildingIdByName("wall"));
         sampleReport.setAttacker(sampleVillage2.getTribe());
-        sampleReport.setConquered(false);
         sampleReport.setDefender(sampleVillage3.getTribe());
         sampleReport.setLuck(0d);
         sampleReport.setMoral(100d);
@@ -245,7 +244,6 @@ public class BBCodeEditor extends javax.swing.JFrame {
         sampleReport2.setAcceptanceBefore((byte) 100);
         sampleReport2.setAimedBuildingId(BuildingSettings.getBuildingIdByName("wall"));
         sampleReport2.setAttacker(sampleVillage2.getTribe());
-        sampleReport2.setConquered(false);
         sampleReport2.setDefender(sampleVillage3.getTribe());
         sampleReport2.setLuck(0d);
         sampleReport2.setMoral(100d);

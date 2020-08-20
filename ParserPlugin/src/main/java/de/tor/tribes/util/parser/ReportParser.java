@@ -466,7 +466,8 @@ public class ReportParser implements SilentParserInterface {
         Tribe attacker = result.getAttacker();
         Tribe defender = result.getDefender();
         if (winString == null) {
-            logger.debug("No winString found. Leaving isWon as it is.");
+            logger.debug("No winString found. Guessing winner based on surviving Defenders");
+            result.setWon(result.getSurvivingDefenders().getTroopSum() == 0);
         } else {
             if (attacker != null && defender != null) {
                 if (winString.contains(getVariable("report.win.win"))) {

@@ -42,7 +42,7 @@ import org.apache.logging.log4j.Logger;
 public class Village implements Comparable<Village>, Serializable, BBSupport {
     private static Logger logger = LogManager.getLogger("Village");
 
-    private final static String[] VARIABLES = new String[]{"%NAME%", "%X%", "%Y%", "%CONTINENT%", "%FULL_NAME%", "%TRIBE%", "%ALLY%", "%POINTS%"};
+    private final static String[] VARIABLES = new String[]{"%NAME%", "%X%", "%Y%", "%CONTINENT%", "%FULL_NAME%", "%PLAYER%", "%ALLY%", "%POINTS%"};
     private final static String STANDARD_TEMPLATE = "[coord]%X%|%Y%[/coord]";
     public final static int NO_BONUS = 0;
     public final static int WOOD_BONUS = 1;

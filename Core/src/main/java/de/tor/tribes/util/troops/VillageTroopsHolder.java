@@ -19,17 +19,30 @@ import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.TroopAmountFixed;
 import de.tor.tribes.io.UnitHolder;
+import de.tor.tribes.types.ext.Ally;
+import de.tor.tribes.types.ext.NoAlly;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.BBSupport;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jdom2.Element;
 
 /**
  * @author Torridity
  */
 public class VillageTroopsHolder extends ManageableType implements BBSupport {
+    private static Logger logger = LogManager.getLogger("VillageTroopsHolder");
 
-    private final static String[] VARIABLES = new String[]{"%VILLAGE%", "%SPEAR_ICON%", "%SWORD_ICON%", "%AXE_ICON%", "%ARCHER_ICON%", "%SPY_ICON%", "%LIGHT_ICON%", "%MARCHER_ICON%", "%HEAVY_ICON%", "%RAM_ICON%", "%CATA_ICON%", "%KNIGHT_ICON%", "%SNOB_ICON%", "%MILITIA_ICON%", "%SPEAR_AMOUNT%", "%SWORD_AMOUNT%", "%AXE_AMOUNT%", "%ARCHER_AMOUNT%", "%SPY_AMOUNT%", "%LIGHT_AMOUNT%", "%MARCHER_AMOUNT%", "%HEAVY_AMOUNT%", "%RAM_AMOUNT%", "%CATA_AMOUNT%", "%KNIGHT_AMOUNT%", "%SNOB_AMOUNT%", "%MILITIA_AMOUNT%"};
+    private final static String[] VARIABLES = new String[]{
+        "%VILLAGE%", "%PLAYER%", "%ALLY%",
+        "%SPEAR_ICON%", "%SWORD_ICON%", "%AXE_ICON%", "%ARCHER_ICON%", "%SPY_ICON%", "%LIGHT_ICON%", "%MARCHER_ICON%",
+            "%HEAVY_ICON%", "%RAM_ICON%", "%CATA_ICON%", "%KNIGHT_ICON%", "%SNOB_ICON%", "%MILITIA_ICON%",
+        "%SPEAR_AMOUNT%", "%SWORD_AMOUNT%", "%AXE_AMOUNT%", "%ARCHER_AMOUNT%", "%SPY_AMOUNT%", "%LIGHT_AMOUNT%", "%MARCHER_AMOUNT%",
+        "%HEAVY_AMOUNT%", "%RAM_AMOUNT%", "%CATA_AMOUNT%", "%KNIGHT_AMOUNT%", "%SNOB_AMOUNT%", "%MILITIA_AMOUNT%",
+        "%UPDATE%"
+    };
     private final static String STANDARD_TEMPLATE = "[table]\n"
             + "[**]%SPEAR_ICON%[||]%SWORD_ICON%[||]%AXE_ICON%[||]%ARCHER_ICON%[||]%SPY_ICON%[||]%LIGHT_ICON%[||]%MARCHER_ICON%[||]%HEAVY_ICON%[||]%RAM_ICON%[||]%CATA_ICON%[||]%SNOB_ICON%[/**]\n";
     private Village village = null;
@@ -117,11 +130,20 @@ public class VillageTroopsHolder extends ManageableType implements BBSupport {
 
     @Override
     public String[] getReplacements(boolean pExtended) {
-        Village v = village;
         String villageVal = "-";
-        if (v != null) {
+        String tribeVal = "-";
+        String allyVal = "-";
+        if (village != null) {
             villageVal = village.toBBCode();
+            
+            tribeVal = village.getTribe().toBBCode();
+            Ally a = village.getTribe().getAlly();
+            if (a == null) {
+                a = NoAlly.getSingleton();
+            }
+            allyVal = a.toBBCode();
         }
+       
         String spearIcon = "[unit]spear[/unit]";
         String spearVal = getValueForUnit("spear");
         String swordIcon = "[unit]sword[/unit]";
@@ -148,9 +170,20 @@ public class VillageTroopsHolder extends ManageableType implements BBSupport {
         String knightVal = getValueForUnit("knight");
         String militiaIcon = "[unit]militia[/unit]";
         String militiaVal = getValueForUnit("militia");
+        
+        String updateVal = "-";
+        if(state != null) {
+            SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
+            updateVal = sdf.format(state);
+        }
 
-        return new String[]{villageVal, spearIcon, swordIcon, axeIcon, archerIcon, spyIcon, lightIcon, marcherIcon, heavyIcon, ramIcon, cataIcon, knightIcon, snobIcon, militiaIcon,
-                    spearVal, swordVal, axeVal, archerVal, spyVal, lightVal, marcherVal, heavyVal, ramVal, cataVal, knightVal, snobVal, militiaVal};
+        return new String[]{villageVal, tribeVal, allyVal,
+            spearIcon, swordIcon, axeIcon, archerIcon, spyIcon, lightIcon, marcherIcon,
+            heavyIcon, ramIcon, cataIcon, knightIcon, snobIcon, militiaIcon,
+            spearVal, swordVal, axeVal, archerVal, spyVal, lightVal, marcherVal,
+            heavyVal, ramVal, cataVal, knightVal, snobVal, militiaVal,
+            updateVal
+        };
     }
 
     private String getValueForUnit(String pName) {

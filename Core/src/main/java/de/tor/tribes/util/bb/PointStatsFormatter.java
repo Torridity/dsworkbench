@@ -27,7 +27,7 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class PointStatsFormatter extends BasicFormatter<Stats> {
 
-    private static final String TRIBE = "%TRIBE%";
+    private static final String TRIBE = "%PLAYER%";
     private static final String POINTS_BEFORE = "%POINTS_START%";
     private static final String POINTS_AFTER = "%POINTS_END%";
     private static final String POINTS_DIFFERENCE = "%POINTS_DIFFERENCE%";
@@ -36,7 +36,7 @@ public class PointStatsFormatter extends BasicFormatter<Stats> {
     private static final String[] VARIABLES = new String[] {LIST_START, LIST_END, ELEMENT_COUNT, ELEMENT_ID};
     private static final String STANDARD_TEMPLATE = "[b]Punktestatistik[/b]\nBerücksichtigte Spieler: %ELEMENT_COUNT%\n[table]\n"
             + "[**]Platz[||]Spieler[||]Punkte (Anfang)[||]Wachstum[||]Punkte (Ende)[||]Kills/Punkt[/**]\n"
-            + "%LIST_START%[*]%ELEMENT_ID%[|]%TRIBE%[|]%POINTS_START%[|]%PERCENT_DIFFERENCE%[|]%POINTS_END%[|]%KILLS_PER_POINT%[/*]%LIST_END%\n"
+            + "%LIST_START%[*]%ELEMENT_ID%[|]%PLAYER%[|]%POINTS_START%[|]%PERCENT_DIFFERENCE%[|]%POINTS_END%[|]%KILLS_PER_POINT%[/*]%LIST_END%\n"
             + "[/table]";
     private static final String TEMPLATE_PROPERTY = "point.stats.bbexport.template";
     private final String[] STAT_SPECIFIC_VARIABLES = new String[] {TRIBE, POINTS_BEFORE, POINTS_AFTER, POINTS_DIFFERENCE, PERCENT_DIFFERENCE, KILLS_PER_POINT};

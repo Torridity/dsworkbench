@@ -27,7 +27,7 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class KillStatsFormatter extends BasicFormatter<Stats> {
 
-    private static final String TRIBE = "%TRIBE%";
+    private static final String TRIBE = "%PLAYER%";
     private static final String KILLS_BEFORE = "%KILLS_START%";
     private static final String KILLS_AFTER = "%KILLS_END%";
     private static final String KILLS_DIFFERENCE = "%KILLS_DIFFERENCE%";
@@ -35,7 +35,7 @@ public class KillStatsFormatter extends BasicFormatter<Stats> {
     private static final String[] VARIABLES = new String[] {LIST_START, LIST_END, ELEMENT_COUNT, ELEMENT_ID};
     private static final String STANDARD_TEMPLATE = "[b]Angriffsstatistik[/b]\nBerücksichtigte Spieler: %ELEMENT_COUNT%\n[table]\n"
             + "[**]Platz[||]Spieler[||]Kills (Anfang)[||]Zuwachs[||]Kills (Ende)[/**]\n"
-            + "%LIST_START%[*]%ELEMENT_ID%[|]%TRIBE%[|]%KILLS_START%[|]%KILLS_DIFFERENCE%[|]%KILLS_END%[/*]%LIST_END%\n"
+            + "%LIST_START%[*]%ELEMENT_ID%[|]%PLAYER%[|]%KILLS_START%[|]%KILLS_DIFFERENCE%[|]%KILLS_END%[/*]%LIST_END%\n"
             + "[/table]";
     private static final String TEMPLATE_PROPERTY = "kills.stats.bbexport.template";
     private final String[] STAT_SPECIFIC_VARIABLES = new String[] {TRIBE, KILLS_BEFORE, KILLS_AFTER, KILLS_DIFFERENCE, PERCENT_DIFFERENCE};

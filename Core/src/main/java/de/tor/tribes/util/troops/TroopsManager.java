@@ -487,7 +487,7 @@ public class TroopsManager extends GenericManager<VillageTroopsHolder> {
         Village v = pReport.getTargetVillage();
         if(! pReport.getDefender().equals(v.getTribe())) return;
         
-        VillageTroopsHolder own = getTroopsForVillage(v, TROOP_TYPE.OWN, true);
+        VillageTroopsHolder own = getTroopsForVillage(v, TROOP_TYPE.IN_VILLAGE, true);
         VillageTroopsHolder outwards = getTroopsForVillage(v, TROOP_TYPE.OUTWARDS, true);
         if(own.getState() == null || own.getState().getTime() < pReport.getTimestamp()) {
             TroopAmountFixed surviving = pReport.getSurvivingDefenders();

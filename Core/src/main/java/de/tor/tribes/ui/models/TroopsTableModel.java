@@ -17,6 +17,8 @@ package de.tor.tribes.ui.models;
 
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.UnitHolder;
+import de.tor.tribes.types.ext.Ally;
+import de.tor.tribes.types.ext.NoAlly;
 import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.ImageManager;
@@ -45,7 +47,9 @@ public class TroopsTableModel extends AbstractTableModel {
     private static Logger logger = LogManager.getLogger("TroopTable");
 
     public enum COL_CONTENT {
-        TRIBE, VILLAGE, LAST_CHANGE, SPEAR, SWORD, AXE, ARCHER, SPY, LIGHT, MARCHER, HEAVY, RAM, CATA, KNIGHT, MILITIA, SNOB, OFF, DEF, DEF_CAV, DEF_ARCH, OUTSIDE, INSIDE, FARM
+        ALLY, TRIBE, VILLAGE, LAST_CHANGE,
+        SPEAR, SWORD, AXE, ARCHER, SPY, LIGHT, MARCHER, HEAVY, RAM, CATA, KNIGHT, MILITIA, SNOB,
+        OFF, DEF, DEF_CAV, DEF_ARCH, OUTSIDE, INSIDE, FARM
     }
     private String sSet = null;
     private NumberFormat nf = NumberFormat.getInstance();
@@ -71,10 +75,12 @@ public class TroopsTableModel extends AbstractTableModel {
     @Override
     public final void fireTableStructureChanged() {
         content = new ArrayList<>();
+        content.add(COL_CONTENT.ALLY);
         content.add(COL_CONTENT.TRIBE);
         content.add(COL_CONTENT.VILLAGE);
         content.add(COL_CONTENT.LAST_CHANGE);
         columnIcons = new HashMap<>();
+        columnIcons.put("Stamm", null);
         columnIcons.put("Spieler", null);
         columnIcons.put("Dorf", null);
         columnIcons.put("Stand", null);
@@ -152,6 +158,8 @@ public class TroopsTableModel extends AbstractTableModel {
         }
         COL_CONTENT colContent = content.get(columnIndex);
         switch (colContent) {
+            case ALLY:
+                return Ally.class;
             case TRIBE:
                 return Tribe.class;
             case VILLAGE:
@@ -217,6 +225,8 @@ public class TroopsTableModel extends AbstractTableModel {
 
         COL_CONTENT colContent = content.get(columnIndex);
         switch (colContent) {
+            case ALLY:
+                return "Stamm";
             case TRIBE:
                 return "Spieler";
             case VILLAGE:
@@ -295,6 +305,12 @@ public class TroopsTableModel extends AbstractTableModel {
         COL_CONTENT colContent = content.get(columnIndex);
         VillageTroopsHolder h = TroopsManager.getSingleton().getManagedElement(sSet, rowIndex);
         switch (colContent) {
+            case ALLY:
+                Ally a = h.getVillage().getTribe().getAlly();
+                if(a == null) {
+                    a = NoAlly.getSingleton();
+                }
+                return a;
             case TRIBE:
                 return h.getVillage().getTribe();
             case VILLAGE:

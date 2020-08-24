@@ -497,8 +497,11 @@ public class TroopsManager extends GenericManager<VillageTroopsHolder> {
             }
         }
         if(outwards.getState() == null || outwards.getState().getTime() < pReport.getTimestamp()) {
-            outwards.setTroops(pReport.getDefendersOnTheWay());
-            outwards.setState(new Date(pReport.getTimestamp()));
+            TroopAmountFixed defOTW = pReport.getDefendersOnTheWay();
+            if(defOTW != null && defOTW.containsInformation()) {
+                outwards.setTroops(defOTW);
+                outwards.setState(new Date(pReport.getTimestamp()));
+            }
         }
     }
 }

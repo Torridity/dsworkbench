@@ -188,12 +188,13 @@ public class OBSTServerReportHandler implements SilentParserInterface {
             }
         }
         
-        m = Pattern.compile(getVariable("report.fight.time") + "(.*)" + "(" +
+        m = Pattern.compile(getVariable("report.fight.time") + "(.*?)" + "(" +
                 report.getAttacker().getName() + "|" + report.getDefender().getName() + ")").matcher(data);
         if (m.find()) {
             try {
                 //16.03.12 21:00:33
-                String date = m.group(1).trim();
+                String date = m.group(1).trim().replaceAll("\\s:", ":");
+                logger.debug("Found time {}", date);
                 
                 SimpleDateFormat f;
                 if (ServerSettings.getSingleton().isMillisArrival()) {
@@ -204,7 +205,7 @@ public class OBSTServerReportHandler implements SilentParserInterface {
                 Date sent = f.parse(date);
                 report.setTimestamp(sent.getTime());
             } catch (Exception e) {
-                logger.warn("Failed to set report timestamp. Using '0'");
+                logger.warn("Failed to set report timestamp. Using '0'", e);
                 report.setTimestamp(0L);
             }
         } else {

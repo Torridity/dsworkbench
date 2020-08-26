@@ -60,6 +60,11 @@ public class VillageTroopsHolder extends ManageableType implements BBSupport {
 
     @Override
     public Element toXml(String elementName) {
+        if(state == null) {
+            state = new Date(0);
+            logger.error("Found empty state: {}", village);
+        }
+        
         Element troopInfo = new Element(elementName);
         troopInfo.setAttribute("type", "normal");
         troopInfo.addContent(new Element("id").setText(Integer.toString(village.getId())));

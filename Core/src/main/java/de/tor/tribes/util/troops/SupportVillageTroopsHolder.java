@@ -18,8 +18,11 @@ package de.tor.tribes.util.troops;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.TroopAmountFixed;
 import de.tor.tribes.io.UnitHolder;
+import de.tor.tribes.types.ext.Ally;
+import de.tor.tribes.types.ext.NoAlly;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.xml.JDomUtils;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -36,6 +39,7 @@ public class SupportVillageTroopsHolder extends VillageTroopsHolder {
     @Override
     public void loadFromXml(Element e) {
         super.loadFromXml(e);
+        Date state_temp = getState();
         try {
             List<Element> supportElements = (List<Element>) JDomUtils.getNodes(e, "supportTargets/supportTarget");
             for (Element source : supportElements) {
@@ -55,6 +59,7 @@ public class SupportVillageTroopsHolder extends VillageTroopsHolder {
         } catch (Exception newFeature) {
             //no support data yet
         }
+        setState(state_temp);
     }
 
     public SupportVillageTroopsHolder() {
@@ -97,16 +102,19 @@ public class SupportVillageTroopsHolder extends VillageTroopsHolder {
     }
 
     public void clearSupports() {
+        setState(new Date());
         //remove supports to this village
         incomingSupports.clear();
         outgoingSupports.clear();
     }
 
     public void addOutgoingSupport(Village pTarget, TroopAmountFixed pTroops) {
+        setState(new Date());
         outgoingSupports.put(pTarget, (TroopAmountFixed) pTroops.clone());
     }
 
     public void addIncomingSupport(Village pSource, TroopAmountFixed pTroops) {
+        setState(new Date());
         incomingSupports.put(pSource, (TroopAmountFixed) pTroops.clone());
     }
 
@@ -137,10 +145,25 @@ public class SupportVillageTroopsHolder extends VillageTroopsHolder {
 
     @Override
     public String[] getReplacements(boolean pExtended) {
-        Village v = getVillage();
         String villageVal = "-";
+        String tribeVal = "-";
+        String tribeNoBBVal = "-";
+        String allyVal = "-";
+        String allyNoBBVal = "-";
+        String allyNameNoBBVal = "-";
+        Village v = getVillage();
         if (v != null) {
-            villageVal = getVillage().toBBCode();
+            villageVal = v.toBBCode();
+            
+            tribeVal = v.getTribe().toBBCode();
+            tribeNoBBVal = v.getTribe().getName();
+            Ally a = v.getTribe().getAlly();
+            if (a == null) {
+                a = NoAlly.getSingleton();
+            }
+            allyVal = a.toBBCode();
+            allyNoBBVal = a.getTag();
+            allyNameNoBBVal = a.getName();
         }
         
         TroopAmountFixed troops = getTroops();
@@ -171,8 +194,20 @@ public class SupportVillageTroopsHolder extends VillageTroopsHolder {
         String militiaIcon = "[unit]militia[/unit]";
         String militiaVal = getValueForUnit(troops, "militia");
 
-        return new String[]{villageVal, spearIcon, swordIcon, axeIcon, archerIcon, spyIcon, lightIcon, marcherIcon, heavyIcon, ramIcon, cataIcon, knightIcon, snobIcon, militiaIcon,
-                    spearVal, swordVal, axeVal, archerVal, spyVal, lightVal, marcherVal, heavyVal, ramVal, cataVal, knightVal, snobVal, militiaVal};
+        String updateVal = "-";
+        if(getState() != null) {
+            SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
+            updateVal = sdf.format(getState());
+        }
+
+        return new String[]{
+            villageVal, tribeVal, allyVal, tribeNoBBVal, allyNoBBVal, allyNameNoBBVal,
+            spearIcon, swordIcon, axeIcon, archerIcon, spyIcon, lightIcon, marcherIcon,
+            heavyIcon, ramIcon, cataIcon, knightIcon, snobIcon, militiaIcon,
+            spearVal, swordVal, axeVal, archerVal, spyVal, lightVal, marcherVal,
+            heavyVal, ramVal, cataVal, knightVal, snobVal, militiaVal,
+            updateVal
+        };
     }
 
     private String getValueForUnit(TroopAmountFixed pTroops, String pName) {

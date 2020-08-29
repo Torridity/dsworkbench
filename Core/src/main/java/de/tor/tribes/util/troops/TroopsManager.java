@@ -288,7 +288,7 @@ public class TroopsManager extends GenericManager<VillageTroopsHolder> {
         if (pCreate) {
             VillageTroopsHolder newHolder = null;
             if (pType.equals(TROOP_TYPE.SUPPORT)) {
-                newHolder = new SupportVillageTroopsHolder(pVillage, new Date());
+                newHolder = new SupportVillageTroopsHolder(pVillage, new Date(0));
             } else {
                 newHolder = new VillageTroopsHolder(pVillage, new Date(0));
             }

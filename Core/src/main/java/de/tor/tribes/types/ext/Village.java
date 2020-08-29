@@ -42,7 +42,10 @@ import org.apache.logging.log4j.Logger;
 public class Village implements Comparable<Village>, Serializable, BBSupport {
     private static Logger logger = LogManager.getLogger("Village");
 
-    private final static String[] VARIABLES = new String[]{"%NAME%", "%X%", "%Y%", "%CONTINENT%", "%FULL_NAME%", "%PLAYER%", "%ALLY%", "%POINTS%"};
+    private final static String[] VARIABLES = new String[]{
+        "%NAME%", "%X%", "%Y%", "%CONTINENT%", "%FULL_NAME%", "%POINTS%",
+        "%PLAYER%", "%ALLY%", "%PLAYER_NO_BB%", "%ALLY_NO_BB%", "%ALLY_NAME%"
+    };
     private final static String STANDARD_TEMPLATE = "[coord]%X%|%Y%[/coord]";
     public final static int NO_BONUS = 0;
     public final static int WOOD_BONUS = 1;
@@ -77,17 +80,23 @@ public class Village implements Comparable<Village>, Serializable, BBSupport {
         String contVal = "K" + Integer.toString(cont);
         String fullNameVal = getFullName();
         String tribeVal = getTribe().toBBCode();
+        String tribeNoBBVal = getTribe().getName();
         Ally a = getTribe().getAlly();
         if (a == null) {
             a = NoAlly.getSingleton();
         }
         String allyVal = a.toBBCode();
+        String allyNoBBVal = a.getTag();
+        String allyNameVal = a.getName();
         NumberFormat f = NumberFormat.getInstance();
         f.setMaximumFractionDigits(0);
         f.setMinimumFractionDigits(0);
         String pointsVal = f.format(getPoints());
 
-        return new String[]{nameVal, xVal, yVal, contVal, fullNameVal, tribeVal, allyVal, pointsVal};
+        return new String[]{
+            nameVal, xVal, yVal, contVal, fullNameVal, pointsVal,
+            tribeVal, allyVal, tribeNoBBVal, allyNoBBVal, allyNameVal
+        };
     }
 
     @Override

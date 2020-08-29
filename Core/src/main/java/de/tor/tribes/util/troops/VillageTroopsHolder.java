@@ -36,9 +36,9 @@ public class VillageTroopsHolder extends ManageableType implements BBSupport {
     private static Logger logger = LogManager.getLogger("VillageTroopsHolder");
 
     private final static String[] VARIABLES = new String[]{
-        "%VILLAGE%", "%PLAYER%", "%ALLY%",
+        "%VILLAGE%", "%PLAYER%", "%ALLY%", "%PLAYER_NO_BB%", "%ALLY_NO_BB%", "%ALLY_NAME%",
         "%SPEAR_ICON%", "%SWORD_ICON%", "%AXE_ICON%", "%ARCHER_ICON%", "%SPY_ICON%", "%LIGHT_ICON%", "%MARCHER_ICON%",
-            "%HEAVY_ICON%", "%RAM_ICON%", "%CATA_ICON%", "%KNIGHT_ICON%", "%SNOB_ICON%", "%MILITIA_ICON%",
+        "%HEAVY_ICON%", "%RAM_ICON%", "%CATA_ICON%", "%KNIGHT_ICON%", "%SNOB_ICON%", "%MILITIA_ICON%",
         "%SPEAR_AMOUNT%", "%SWORD_AMOUNT%", "%AXE_AMOUNT%", "%ARCHER_AMOUNT%", "%SPY_AMOUNT%", "%LIGHT_AMOUNT%", "%MARCHER_AMOUNT%",
         "%HEAVY_AMOUNT%", "%RAM_AMOUNT%", "%CATA_AMOUNT%", "%KNIGHT_AMOUNT%", "%SNOB_AMOUNT%", "%MILITIA_AMOUNT%",
         "%UPDATE%"
@@ -133,20 +133,29 @@ public class VillageTroopsHolder extends ManageableType implements BBSupport {
         return VARIABLES;
     }
 
+    /**
+     * All changes here need to be also done in SupportVillageHolder for compability
+     */
     @Override
     public String[] getReplacements(boolean pExtended) {
         String villageVal = "-";
         String tribeVal = "-";
+        String tribeNoBBVal = "-";
         String allyVal = "-";
+        String allyNoBBVal = "-";
+        String allyNameVal = "-";
         if (village != null) {
             villageVal = village.toBBCode();
             
             tribeVal = village.getTribe().toBBCode();
+            tribeNoBBVal = village.getTribe().getName();
             Ally a = village.getTribe().getAlly();
             if (a == null) {
                 a = NoAlly.getSingleton();
             }
             allyVal = a.toBBCode();
+            allyNoBBVal = a.getTag();
+            allyNameVal = a.getName();
         }
        
         String spearIcon = "[unit]spear[/unit]";
@@ -182,7 +191,8 @@ public class VillageTroopsHolder extends ManageableType implements BBSupport {
             updateVal = sdf.format(state);
         }
 
-        return new String[]{villageVal, tribeVal, allyVal,
+        return new String[]{
+            villageVal, tribeVal, allyVal, tribeNoBBVal, allyNoBBVal, allyNameVal,
             spearIcon, swordIcon, axeIcon, archerIcon, spyIcon, lightIcon, marcherIcon,
             heavyIcon, ramIcon, cataIcon, knightIcon, snobIcon, militiaIcon,
             spearVal, swordVal, axeVal, archerVal, spyVal, lightVal, marcherVal,

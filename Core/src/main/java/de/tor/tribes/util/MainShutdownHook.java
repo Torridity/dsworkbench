@@ -63,8 +63,8 @@ public class MainShutdownHook extends Thread {
             DSWorkbenchMainFrame.getSingleton().storeProperties();
             GlobalOptions.saveProperties();
             GlobalOptions.storeViewStates();
-            if (!FileUtils.deleteQuietly(new File(".running"))) {
-                logger.warn("Failed to remove file '.running'");
+            if (!FileUtils.deleteQuietly(new File("runningFile"))) {
+                logger.warn("Failed to remove file 'runningFile'");
             }
             logger.debug("Shutdown finished");
         } catch (Throwable t) {

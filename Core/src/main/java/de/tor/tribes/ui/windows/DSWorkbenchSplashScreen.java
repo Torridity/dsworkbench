@@ -456,7 +456,7 @@ public class DSWorkbenchSplashScreen extends javax.swing.JFrame implements DataH
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        File runningIndicator = new File(".running");
+        File runningIndicator = new File("runningFile");
         if (runningIndicator.exists()) {
             int answer = JOptionPaneHelper.showQuestionConfirmBox(null, "Es scheint so als ob DSWorkbench noch laufen würde "
                     + "oder nicht korrekt geschlossen wurde. Dennoch öffnen?", "Absturz?", "Nein", "Ja");

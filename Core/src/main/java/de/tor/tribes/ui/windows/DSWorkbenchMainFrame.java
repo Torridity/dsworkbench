@@ -704,15 +704,15 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
       }
     });
 
-    File runningIndicator = new File(".running");
+    File runningIndicator = new File("runningFile");
 
     if (runningIndicator.exists()) {
       showRestoreOption();
     } else {
       try {
-        FileUtils.touch(new File(".running"));
+        FileUtils.touch(new File("runningFile"));
       } catch (IOException ioe) {
-        logger.error("Failed to touch file '.running'", ioe);
+        logger.error("Failed to touch file 'runningFile'", ioe);
       }
     }
   }

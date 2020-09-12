@@ -16,7 +16,6 @@
 package de.tor.tribes.ui.views;
 
 import de.tor.tribes.control.GenericManagerListener;
-import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.editors.BuildingLevelCellEditor;
 import de.tor.tribes.ui.models.KnownVillageTableModel;

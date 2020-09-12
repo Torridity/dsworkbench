@@ -19,8 +19,6 @@ import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.TroopAmountFixed;
 import de.tor.tribes.io.UnitHolder;
-import de.tor.tribes.types.ext.Ally;
-import de.tor.tribes.types.ext.NoAlly;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.BBSupport;
 import de.tor.tribes.util.interfaces.BBFormatterInterface;

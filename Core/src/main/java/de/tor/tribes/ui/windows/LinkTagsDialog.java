@@ -28,7 +28,6 @@ import de.tor.tribes.util.tag.TagManager;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.regex.Matcher;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import org.jdesktop.swingx.decorator.CompoundHighlighter;

@@ -18,8 +18,6 @@ package de.tor.tribes.util.troops;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.TroopAmountFixed;
 import de.tor.tribes.io.UnitHolder;
-import de.tor.tribes.types.ext.Ally;
-import de.tor.tribes.types.ext.NoAlly;
 import de.tor.tribes.types.ext.Village;
 import static de.tor.tribes.util.troops.VillageTroopsHolder.UNIT_NAMES;
 import de.tor.tribes.util.xml.JDomUtils;

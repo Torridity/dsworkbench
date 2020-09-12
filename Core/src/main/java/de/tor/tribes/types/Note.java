@@ -41,7 +41,7 @@ public class Note extends ManageableType implements BBSupport {
 
     private static Logger logger = LogManager.getLogger("Note");
     private final static String[] VARIABLES = new String[]{"%LAST_CHANGE%", "%NOTE_TEXT%", "%VILLAGE_LIST%", "%NOTE_ICON%"};
-    private final static String STANDARD_TEMPLATE = "[quote][b]Notiz vom:[/b] %LAST_CHANGE%\n\n[b]Zugeordnete Dörfer:[/b]\n%VILLAGE_LIST%\n\n[b]Notizsymbol:[/b] %NOTE_ICON%\n\n[b]Notiztext:[/b]\n\n%NOTE_TEXT%[/quote]";
+    public final static String STANDARD_TEMPLATE = "[quote][b]Notiz vom:[/b] %LAST_CHANGE%\n\n[b]Zugeordnete Dörfer:[/b]\n%VILLAGE_LIST%\n\n[b]Notizsymbol:[/b] %NOTE_ICON%\n\n[b]Notiztext:[/b]\n\n%NOTE_TEXT%[/quote]";
     private String sNoteText = null;
     private List<Integer> villageIds = null;
     private long timestamp = -1;
@@ -253,11 +253,6 @@ public class Note extends ManageableType implements BBSupport {
     public void setNoteSymbol(int noteSymbol) {
         this.noteSymbol = noteSymbol;
         timestamp = System.currentTimeMillis();
-    }
-
-    @Override
-    public String getStandardTemplate() {
-        return STANDARD_TEMPLATE;
     }
 
     @Override

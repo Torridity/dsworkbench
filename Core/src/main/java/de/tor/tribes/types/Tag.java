@@ -42,7 +42,7 @@ public class Tag extends ManageableType implements Comparable<Tag>, BBSupport {
     public static final Comparator<Tag> CASE_INSENSITIVE_ORDER = new CaseInsensitiveTagComparator();
     public static final Comparator<Tag> SIZE_ORDER = new SizeComparator();
     private final static String[] VARIABLES = new String[]{"%NAME%", "%VILLAGE_LIST%", "%VILLAGE_COUNT%", "%COLOR%", "%ICON%"};
-    private final static String STANDARD_TEMPLATE = "[u][color=\"%COLOR%\"][b]%NAME%[/b][/color][/u]\n"
+    public final static String STANDARD_TEMPLATE = "[u][color=\"%COLOR%\"][b]%NAME%[/b][/color][/u]\n"
             + "%ICON%\n"
             + "Dörfer: %VILLAGE_COUNT%\n"
             + "[quote]%VILLAGE_LIST%[/quote]";
@@ -90,11 +90,6 @@ public class Tag extends ManageableType implements Comparable<Tag>, BBSupport {
         }
 
         return new String[]{nameVal, villageListVal, villageCountVal, colorVal, iconVal};
-    }
-
-    @Override
-    public String getStandardTemplate() {
-        return STANDARD_TEMPLATE;
     }
 
     @Override

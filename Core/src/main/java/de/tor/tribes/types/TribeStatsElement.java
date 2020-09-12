@@ -549,11 +549,6 @@ public class TribeStatsElement {
         public static final Comparator<Stats> POINTS_COMPARATOR = new StatPointsComparator();
 
         @Override
-        public String getStandardTemplate() {
-            return "";
-        }
-
-        @Override
         public String[] getBBVariables() {
             return new String[]{};
         }

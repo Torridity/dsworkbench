@@ -17,6 +17,8 @@ package de.tor.tribes.ui.models;
 
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.DataHolderListener;
+import de.tor.tribes.types.ext.Ally;
+import de.tor.tribes.types.ext.NoAlly;
 import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.ui.editors.BuildingLevelCellEditor.BuildingLevelModel;
 import de.tor.tribes.util.BuildingSettings;
@@ -43,6 +45,7 @@ public class KnownVillageTableModel extends AbstractTableModel implements Buildi
     private final List<Class> columnTypes = new ArrayList<>();
     private final List<Boolean> editable = new ArrayList<>();
     private final List<String> buildingNames = new ArrayList<>();
+    private int buildingOffset = 0;
     
     public KnownVillageTableModel() {
         generateColumns();
@@ -66,8 +69,10 @@ public class KnownVillageTableModel extends AbstractTableModel implements Buildi
         buildingNames.clear();
         
         columnNames.add("Spieler"); columnTypes.add(Tribe.class); editable.add(false);
+        columnNames.add("Stamm"); columnTypes.add(Ally.class); editable.add(false);
         columnNames.add("Dorf"); columnTypes.add(KnownVillage.class); editable.add(false);
         columnNames.add("Stand"); columnTypes.add(Date.class); editable.add(true);
+        buildingOffset = columnNames.size();
         for (String buildingName : BuildingSettings.BUILDING_NAMES) {
             if(BuildingSettings.getMaxBuildingLevel(buildingName) == -1) continue;
             
@@ -113,11 +118,17 @@ public class KnownVillageTableModel extends AbstractTableModel implements Buildi
                 case 0:
                     return v.getVillage().getTribe();
                 case 1:
-                    return v;
+                    Ally a = v.getVillage().getTribe().getAlly();
+                    if (a == null) {
+                        a = NoAlly.getSingleton();
+                    }
+                    return a;
                 case 2:
+                    return v.getVillage();
+                case 3:
                     return new Date(v.getLastUpdate());
                 default:
-                return v.getBuildingLevelByName(getBuildingNameForColumn(columnIndex));
+                    return v.getBuildingLevelByName(getBuildingNameForColumn(columnIndex));
             }
         } catch (Exception e) {
             return null;
@@ -127,7 +138,7 @@ public class KnownVillageTableModel extends AbstractTableModel implements Buildi
     @Override
     public void setValueAt(Object o, int rowIndex, int columnIndex) {
         if(getValueAt(rowIndex, columnIndex).equals(o)) return;
-        if(columnIndex < 3) {
+        if(columnIndex < buildingOffset) {
             logger.error("Invalid Columnindex " + columnIndex);
             return;
         }
@@ -139,9 +150,9 @@ public class KnownVillageTableModel extends AbstractTableModel implements Buildi
 
     @Override
     public String getBuildingNameForColumn(int column) {
-        if(column < 3) {
+        if(column < buildingOffset) {
             return null;
         }
-        return buildingNames.get(column - 3);
+        return buildingNames.get(column - buildingOffset);
     }
 }

@@ -15,19 +15,19 @@
  */
 package de.tor.tribes.util.bb;
 
-import de.tor.tribes.types.TribeStatResult;
-import java.util.Arrays;
+import de.tor.tribes.util.village.KnownVillage;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
 /**
  * @author Torridity
  */
-public class TribeReportStatsFormatter extends BasicFormatter<TribeStatResult> {
+public class KnownVillageListFormatter extends BasicFormatter<KnownVillage> {
 
     private static final String[] VARIABLES = new String[] {LIST_START, LIST_END, ELEMENT_COUNT, ELEMENT_ID};
-    private static final String STANDARD_TEMPLATE = TribeStatResult.STANDARD_TEMPLATE;
-    private static final String TEMPLATE_PROPERTY = "tribe.report.stats.bbexport.template";
+    private static final String STANDARD_TEMPLATE = KnownVillage.STANDARD_TEMPLATE;
+    private static final String TEMPLATE_PROPERTY = "knownVillage.list.bbexport.template";
 
     @Override
     public String getPropertyKey() {
@@ -42,13 +42,13 @@ public class TribeReportStatsFormatter extends BasicFormatter<TribeStatResult> {
     @Override
     public String[] getTemplateVariables() {
         List<String> vars = new LinkedList<>();
-        vars.addAll(Arrays.asList(VARIABLES));
-        vars.addAll(Arrays.asList(new TribeStatResult().getBBVariables()));
+        Collections.addAll(vars, VARIABLES);
+        Collections.addAll(vars, KnownVillage.BB_VARIABLES);
         return vars.toArray(new String[vars.size()]);
     }
     
     @Override
-    public Class<TribeStatResult> getConvertableType() {
-        return TribeStatResult.class;
+    public Class<KnownVillage> getConvertableType() {
+        return KnownVillage.class;
     }
 }

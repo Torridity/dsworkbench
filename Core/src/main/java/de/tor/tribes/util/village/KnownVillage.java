@@ -19,10 +19,16 @@ import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.FightReport;
 import de.tor.tribes.types.ext.Village;
+import de.tor.tribes.util.BBSupport;
 import de.tor.tribes.util.BuildingSettings;
 import de.tor.tribes.util.ServerSettings;
+import de.tor.tribes.util.interfaces.BBFormatterInterface;
 import java.awt.Color;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jdom2.Element;
@@ -34,8 +40,37 @@ import org.jdom2.Element;
  *  spy information
  *  watchtower / church Range
  */
-public class KnownVillage extends ManageableType {
+public class KnownVillage extends ManageableType implements BBSupport {
     private static Logger logger = LogManager.getLogger("KnownVillage");
+    
+    public final static String[] BB_VARIABLES;
+    public final static String STANDARD_TEMPLATE;
+    static {
+        List<String> bbTemp = new ArrayList<>();
+        bbTemp.addAll(Arrays.asList(new Village().getBBVariables()));
+        bbTemp.add("%UPDATE%");
+        for (String buildingName : BuildingSettings.BUILDING_NAMES) {
+            bbTemp.add("%" + buildingName.toUpperCase() + "%");
+        }
+        BB_VARIABLES = bbTemp.toArray(new String[bbTemp.size()]);
+        
+        StringBuilder stdTemplate = new StringBuilder();
+        stdTemplate.append("[table]\n");
+        stdTemplate.append("[**]Spieler[||]Dorf");
+        for (String buildingName : BuildingSettings.BUILDING_NAMES) {
+            stdTemplate.append("[||]").append(buildingName);
+        }
+        stdTemplate.append("[/**]\n");
+        stdTemplate.append(BBFormatterInterface.LIST_START);
+        stdTemplate.append("[*]%PLAYER%[|]%VILLAGE%");
+        for (String buildingName : BuildingSettings.BUILDING_NAMES) {
+            stdTemplate.append("[|]").append("%").append(buildingName.toUpperCase()).append("%");
+        }
+        stdTemplate.append("[/*]\n");
+        stdTemplate.append(BBFormatterInterface.LIST_END);
+        stdTemplate.append("[/table]");
+        STANDARD_TEMPLATE = stdTemplate.toString();
+    }
     
     private int[] buildings;
     private Village village;
@@ -285,5 +320,28 @@ public class KnownVillage extends ManageableType {
             if(buildings[i] != -1) return true;
         }
         return false;
+    }
+
+    @Override
+    public String[] getBBVariables() {
+        return BB_VARIABLES;
+    }
+
+    @Override
+    public String[] getReplacements(boolean pExtended) {
+        List<String> replacements = new ArrayList<>();
+        replacements.addAll(Arrays.asList(getVillage().getReplacements(pExtended)));
+        
+        String updateVal = "-";
+        if(getLastUpdate() > System.currentTimeMillis() - 1000 * 60 * 60 * 24 * 365) {
+            SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
+            updateVal = sdf.format(getLastUpdate());
+        }
+        replacements.add(updateVal);
+        
+        for (String buildingName : BuildingSettings.BUILDING_NAMES) {
+            replacements.add(Integer.toString(getBuildingLevelByName(buildingName)));
+        }
+        return replacements.toArray(new String[replacements.size()]);
     }
 }

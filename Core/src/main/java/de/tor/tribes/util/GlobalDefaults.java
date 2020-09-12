@@ -181,6 +181,7 @@ public class GlobalDefaults {
         addBasicFormatter(new de.tor.tribes.util.bb.TagListFormatter());
         addBasicFormatter(new de.tor.tribes.util.bb.TribeReportStatsFormatter());
         addBasicFormatter(new de.tor.tribes.util.bb.TroopListFormatter());
+        addBasicFormatter(new de.tor.tribes.util.bb.KnownVillageListFormatter());
         addBasicFormatter(new de.tor.tribes.util.bb.VillageListFormatter());
         addBasicFormatter(new de.tor.tribes.util.bb.WinnerLoserStatsFormatter());
         

@@ -54,7 +54,6 @@ public class Attack extends ManageableType implements Serializable, Comparable<A
         "%DEFENDER%", "%TARGET%", "%DEFENDER_NO_BB%", "%TARGET_NO_BB%", "%DEFENDER_ALLY%", "%DEFENDER_ALLY_NO_BB%", "%DEFENDER_ALLY_NAME%",
         "%SEND%", "%ARRIVE%", "%PLACE%", "%PLACE_URL%"
     };
-    private final static String STANDARD_TEMPLATE = "%TYPE% von %ATTACKER% aus %SOURCE% mit %UNIT% auf %DEFENDER% in %TARGET% startet am [color=#ff0e0e]%SEND%[/color] und kommt am [color=#2eb92e]%ARRIVE%[/color] an (%PLACE%)";
     public static final int NO_TYPE = StandardAttack.NO_ICON;
     public static final int CLEAN_TYPE = StandardAttack.OFF_ICON;
     public static final int SNOB_TYPE = StandardAttack.SNOB_ICON;
@@ -371,11 +370,6 @@ public class Attack extends ManageableType implements Serializable, Comparable<A
     @Override
     public String[] getBBVariables() {
         return VARIABLES;
-    }
-
-    @Override
-    public String getStandardTemplate() {
-        return STANDARD_TEMPLATE;
     }
 
     @Override

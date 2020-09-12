@@ -29,7 +29,25 @@ public class AllyStatResult implements BBSupport {
 
     private final static String[] VARIABLES = new String[]{"%ALLY_NAME%", "%ALLY_TAG%", "%ATTACKERS%", "%ATTACKS%", "%OFF_ATTACKS%", "%SNOB_ATTACKS%", "%FAKE_ATTACKS%", "%ENOBLEMENTS%",
         "%KILLS%", "%KILLS_FARM%", "%KILLS_PERCENT%", "%LOSSES%", "%LOSSES_FARM%", "%LOSSES_PERCENT%", "%WALL_DESTRUCTION%", "%BUILDING_DESTRUCTION%"};
-    private String STANDARD_TEMPLATE = null;
+    public final static String STANDARD_TEMPLATE;
+    static {
+        StringBuilder b = new StringBuilder();
+        b.append("[b]Auswertung für %ALLY_NAME% ([ally]%ALLY_TAG%[/ally])[/b]\n\n");
+        b.append("Angreifer: %ATTACKERS%\n");
+        b.append("Adelungen: %ENOBLEMENTS%\n");
+        b.append("Zerstörte Wallstufen: %WALL_DESTRUCTION%\n");
+        b.append("Zerstörte Gebäudestufen: %BUILDING_DESTRUCTION%\n\n");
+        b.append("Angriffe:\n");
+        b.append("[table][**]Gesamt[||]Off[||]Fake[||]AG[/**]\n");
+        b.append("[*]%ATTACKS%[|]%OFF_ATTACKS%[|]%FAKE_ATTACKS%[|]%SNOB_ATTACKS%[/*]\n");
+        b.append("[/table]\n\n");
+        b.append("Besiegte Einheiten:\n");
+        b.append("[table][**]Art[||]Anzahl[||]Bauernhofplätze[||]Anteil[/**]\n");
+        b.append("[*]Getötet[|]%KILLS%[|]%KILLS_FARM%[|]%KILLS_PERCENT%[/*]\n");
+        b.append("[*]Verloren[|]%LOSSES%[|]%LOSSES_FARM%[|]%LOSSES_PERCENT%[/*]\n");
+        b.append("[/table]\n");
+        STANDARD_TEMPLATE = b.toString();
+    }
 
     @Override
     public String[] getBBVariables() {
@@ -64,30 +82,6 @@ public class AllyStatResult implements BBSupport {
                     valKillsPercent, valLosses, valLossesFarm, valLossesPercent, valWallDestruction, valBuildingDestruction};
     }
 
-    @Override
-    public String getStandardTemplate() {
-        if (STANDARD_TEMPLATE == null) {
-            StringBuilder b = new StringBuilder();
-            b.append("[b]Auswertung für %ALLY_NAME% ([ally]%ALLY_TAG%[/ally])[/b]\n\n");
-            b.append("Angreifer: %ATTACKERS%\n");
-            b.append("Adelungen: %ENOBLEMENTS%\n");
-            b.append("Zerstörte Wallstufen: %WALL_DESTRUCTION%\n");
-            b.append("Zerstörte Gebäudestufen: %BUILDING_DESTRUCTION%\n\n");
-            b.append("Angriffe:\n");
-            b.append("[table][**]Gesamt[||]Off[||]Fake[||]AG[/**]\n");
-            b.append("[*]%ATTACKS%[|]%OFF_ATTACKS%[|]%FAKE_ATTACKS%[|]%SNOB_ATTACKS%[/*]\n");
-            b.append("[/table]\n\n");
-            b.append("Besiegte Einheiten:\n");
-            b.append("[table][**]Art[||]Anzahl[||]Bauernhofplätze[||]Anteil[/**]\n");
-            b.append("[*]Getötet[|]%KILLS%[|]%KILLS_FARM%[|]%KILLS_PERCENT%[/*]\n");
-            b.append("[*]Verloren[|]%LOSSES%[|]%LOSSES_FARM%[|]%LOSSES_PERCENT%[/*]\n");
-            b.append("[/table]\n");
-
-
-            STANDARD_TEMPLATE = b.toString();
-        }
-        return STANDARD_TEMPLATE;
-    }
     private Ally ally = null;
     private List<TribeStatResult> tribeStats = null;
     private int attacks = 0;

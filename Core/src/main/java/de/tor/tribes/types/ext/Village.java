@@ -43,10 +43,9 @@ public class Village implements Comparable<Village>, Serializable, BBSupport {
     private static Logger logger = LogManager.getLogger("Village");
 
     private final static String[] VARIABLES = new String[]{
-        "%NAME%", "%X%", "%Y%", "%CONTINENT%", "%FULL_NAME%", "%POINTS%",
+        "%VILLAGE%", "%NAME%", "%X%", "%Y%", "%CONTINENT%", "%FULL_NAME%", "%POINTS%",
         "%PLAYER%", "%ALLY%", "%PLAYER_NO_BB%", "%ALLY_NO_BB%", "%ALLY_NAME%"
     };
-    private final static String STANDARD_TEMPLATE = "[coord]%X%|%Y%[/coord]";
     public final static int NO_BONUS = 0;
     public final static int WOOD_BONUS = 1;
     public final static int CLAY_BONUS = 2;
@@ -73,6 +72,7 @@ public class Village implements Comparable<Village>, Serializable, BBSupport {
 
     @Override
     public String[] getReplacements(boolean pExtended) {
+        String villVal = toBBCode();
         String nameVal = getName();
         String xVal = Short.toString(x);
         String yVal = Short.toString(y);
@@ -94,15 +94,11 @@ public class Village implements Comparable<Village>, Serializable, BBSupport {
         String pointsVal = f.format(getPoints());
 
         return new String[]{
-            nameVal, xVal, yVal, contVal, fullNameVal, pointsVal,
+            villVal, nameVal, xVal, yVal, contVal, fullNameVal, pointsVal,
             tribeVal, allyVal, tribeNoBBVal, allyNoBBVal, allyNameVal
         };
     }
 
-    @Override
-    public String getStandardTemplate() {
-        return STANDARD_TEMPLATE;
-    }
     public static final Comparator<Village> CASE_INSENSITIVE_ORDER = new CaseInsensitiveComparator();
     public static final Comparator<Village> ALLY_TRIBE_VILLAGE_COMPARATOR = new AllyTribeVillageComparator();
     public static final Comparator<String> ALPHA_NUM_COMPARATOR = new IntuitiveStringComparator<>();

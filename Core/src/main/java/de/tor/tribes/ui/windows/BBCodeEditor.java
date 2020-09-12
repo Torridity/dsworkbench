@@ -46,6 +46,7 @@ import de.tor.tribes.util.bb.BasicFormatter;
 import de.tor.tribes.util.bb.DefStatsFormatter;
 import de.tor.tribes.util.bb.FormListFormatter;
 import de.tor.tribes.util.bb.KillStatsFormatter;
+import de.tor.tribes.util.bb.KnownVillageListFormatter;
 import de.tor.tribes.util.bb.MarkerListFormatter;
 import de.tor.tribes.util.bb.NoteListFormatter;
 import de.tor.tribes.util.bb.OverallReportStatsFormatter;
@@ -59,6 +60,7 @@ import de.tor.tribes.util.bb.VillageListFormatter;
 import de.tor.tribes.util.bb.WinnerLoserStatsFormatter;
 import de.tor.tribes.util.interfaces.BBChangeListener;
 import de.tor.tribes.util.troops.VillageTroopsHolder;
+import de.tor.tribes.util.village.KnownVillage;
 import java.awt.Color;
 import java.awt.event.ItemEvent;
 import java.util.ArrayList;
@@ -95,24 +97,25 @@ public class BBCodeEditor extends javax.swing.JFrame {
     public BBCodeEditor() {
         super();
         // This list needs to be manually kept in sync with designer
-        elementList.add(new AttackListFormatter(false)); //attackFormatter
-        elementList.add(new AttackListFormatter(true)); //attackFormatterIGMs
-        elementList.add(new NoteListFormatter()); //noteFormatter
-        elementList.add(new VillageListFormatter()); //villageFormatter
-        elementList.add(new SosListFormatter()); //sosFormatter
-        elementList.add(new ReportListFormatter()); //reportFormatter
-        elementList.add(new TagListFormatter()); //tagFormatter
-        elementList.add(new TroopListFormatter()); //troopsFormatter
-        elementList.add(new PointStatsFormatter()); //pointStatsFormatter
-        elementList.add(new KillStatsFormatter()); //offStatsFormatter
-        elementList.add(new DefStatsFormatter()); //defStatsFormatter
-        elementList.add(new WinnerLoserStatsFormatter()); //winnerLoserStatsFormatter
-        elementList.add(new FormListFormatter()); //formFormatter
-        elementList.add(new OverallReportStatsFormatter()); //overallStatFormatter
-        elementList.add(new AllyReportStatsFormatter()); //allyStatFormatter
-        elementList.add(new TribeReportStatsFormatter()); //tribeStatFormatter
-        elementList.add(new MarkerListFormatter()); //markerFormatter
-        
+        elementList.add(new AttackListFormatter(false)); //Angriffe
+        elementList.add(new AttackListFormatter(true)); //Angriffe (IGM)
+        elementList.add(new NoteListFormatter()); //Notizen
+        elementList.add(new VillageListFormatter()); //Dorflisten
+        elementList.add(new SosListFormatter()); //SOS-Anfragen
+        elementList.add(new ReportListFormatter()); //Kampfbericht
+        elementList.add(new TagListFormatter()); //Gruppen
+        elementList.add(new TroopListFormatter()); //Truppen
+        elementList.add(new KnownVillageListFormatter()); //Dorfgebäude
+        elementList.add(new PointStatsFormatter()); //Statistik (Punkte)
+        elementList.add(new KillStatsFormatter()); //Statistik (Angriff)
+        elementList.add(new DefStatsFormatter()); //Statistik (Verteidigung)
+        elementList.add(new WinnerLoserStatsFormatter()); //Statistik (Gewinner/Verlierer)
+        elementList.add(new FormListFormatter()); //Zeichnungen
+        elementList.add(new OverallReportStatsFormatter()); //Berichtauswertung (Zusammenfassung)
+        elementList.add(new AllyReportStatsFormatter()); //Berichtauswertung (Stämme)
+        elementList.add(new TribeReportStatsFormatter()); //Berichtauswertung (Spieler)
+        elementList.add(new MarkerListFormatter()); //Markierungen
+
         initComponents();
         buildSampleData();
         jTextPane1.setBackground(Constants.DS_BACK_LIGHT);
@@ -154,6 +157,7 @@ public class BBCodeEditor extends javax.swing.JFrame {
         List<AllyStatResult> sampleAllyResult = new ArrayList<>(); samples.put(AllyStatResult.class, sampleAllyResult);
         List<TribeStatResult> sampleTribeResult = new ArrayList<>(); samples.put(TribeStatResult.class, sampleTribeResult);
         List<Marker> sampleMarker = new ArrayList<>(); samples.put(Marker.class, sampleMarker);
+        List<KnownVillage> sampleKnownVillage = new ArrayList<>(); samples.put(KnownVillage.class, sampleKnownVillage);
         
         //sample village
         Village sampleVillage1 = DataHolder.getSingleton().getRandomVillageWithOwner();
@@ -285,6 +289,26 @@ public class BBCodeEditor extends javax.swing.JFrame {
         h2.setTroops(troops);
         sampleTroops.add(h);
         sampleTroops.add(h2);
+        
+        //sample known village
+        KnownVillage knV1 = new KnownVillage(sampleVillage1);
+        KnownVillage knV2 = new KnownVillage(sampleVillage2);
+        KnownVillage knV3 = new KnownVillage(sampleVillage3);
+        KnownVillage knV4 = new KnownVillage(sampleVillage4);
+        for (String buildingName : BuildingSettings.BUILDING_NAMES) {
+            int max = BuildingSettings.getMaxBuildingLevel(buildingName);
+            int min = BuildingSettings.getMinBuildingLevel(buildingName);
+            if(max < 1) continue;
+            knV1.setBuildingLevelByName(buildingName, (int) (Math.random()*(max-min) + min));
+            knV2.setBuildingLevelByName(buildingName, (int) (Math.random()*(max-min) + min));
+            knV3.setBuildingLevelByName(buildingName, (int) (Math.random()*(max-min) + min));
+            knV4.setBuildingLevelByName(buildingName, (int) (Math.random()*(max-min) + min));
+        }
+        sampleKnownVillage.add(knV1);
+        sampleKnownVillage.add(knV2);
+        sampleKnownVillage.add(knV3);
+        sampleKnownVillage.add(knV4);
+        
         //build stats
         TribeStatsElement e1 = new TribeStatsElement(sampleVillage2.getTribe());
         e1.addRandomSnapshots();
@@ -473,7 +497,7 @@ public class BBCodeEditor extends javax.swing.JFrame {
 
         jPanelEditSelect.setLayout(new java.awt.BorderLayout(5, 0));
 
-        jComboBoxEditSelect.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Angriffe", "Angriffe (IGM)", "Notizen", "Dorflisten", "SOS-Anfragen", "Kampfbericht", "Gruppen", "Truppen", "Statistik (Punkte)", "Statistik (Angriff)", "Statistik (Verteidigung)", "Statistik (Gewinner/Verlierer)", "Zeichnungen", "Berichtauswertung (Zusammenfassung)", "Berichtauswertung (Stämme)", "Berichtauswertung (Spieler)", "Markierungen" }));
+        jComboBoxEditSelect.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Angriffe", "Angriffe (IGM)", "Notizen", "Dorflisten", "SOS-Anfragen", "Kampfbericht", "Gruppen", "Truppen", "Dorfgebäude", "Statistik (Punkte)", "Statistik (Angriff)", "Statistik (Verteidigung)", "Statistik (Gewinner/Verlierer)", "Zeichnungen", "Berichtauswertung (Zusammenfassung)", "Berichtauswertung (Stämme)", "Berichtauswertung (Spieler)", "Markierungen" }));
         jComboBoxEditSelect.setMinimumSize(new java.awt.Dimension(66, 20));
         jComboBoxEditSelect.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {

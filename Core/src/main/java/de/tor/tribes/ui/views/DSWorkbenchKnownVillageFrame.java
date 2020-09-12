@@ -22,24 +22,22 @@ import de.tor.tribes.ui.editors.BuildingLevelCellEditor;
 import de.tor.tribes.ui.models.KnownVillageTableModel;
 import de.tor.tribes.ui.panels.GenericTestPanel;
 import de.tor.tribes.ui.renderer.BuildingLevelCellRenderer;
-import de.tor.tribes.ui.renderer.ColorCellRenderer;
 import de.tor.tribes.ui.renderer.DateCellRenderer;
 import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
 import de.tor.tribes.ui.windows.AbstractDSWorkbenchFrame;
 import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
 import de.tor.tribes.util.*;
+import de.tor.tribes.util.bb.KnownVillageListFormatter;
 import de.tor.tribes.util.mark.MarkerManager;
 import de.tor.tribes.util.village.KnownVillage;
 import de.tor.tribes.util.village.KnownVillageManager;
 import java.awt.*;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.*;
-import java.awt.geom.GeneralPath;
-import java.awt.image.BufferedImage;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
 import javax.swing.*;
@@ -51,11 +49,7 @@ import org.apache.logging.log4j.Logger;
 import org.jdesktop.swingx.JXButton;
 import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.decorator.CompoundHighlighter;
-import org.jdesktop.swingx.decorator.HighlightPredicate;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
-import org.jdesktop.swingx.decorator.PainterHighlighter;
-import org.jdesktop.swingx.painter.AbstractLayoutPainter;
-import org.jdesktop.swingx.painter.ImagePainter;
 import org.jdesktop.swingx.painter.MattePainter;
 
 /**
@@ -354,7 +348,7 @@ public class DSWorkbenchKnownVillageFrame extends AbstractDSWorkbenchFrame imple
         String message = ((rows.length == 1) ? "Dorf " : (rows.length + " Dörfer ")) + "wirklich löschen?";
         if (JOptionPaneHelper.showQuestionConfirmBox(this, message, "Löschen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
             //get markers to remove
-            List<Village> toRemove = new LinkedList<>();
+            List<Village> toRemove = new ArrayList<>();
             jKnownVillageTable.invalidate();
             for (int i = rows.length - 1; i >= 0; i--) {
                 int row = jKnownVillageTable.convertRowIndexToModel(rows[i]);
@@ -372,8 +366,8 @@ public class DSWorkbenchKnownVillageFrame extends AbstractDSWorkbenchFrame imple
 
     private void bbCopySelection() {
         try {
-            int[] rows = jKnownVillageTable.getSelectedRows();
-            if (rows.length == 0) {
+            List<KnownVillage> selVill = getSelectedVillages();
+            if (selVill.size() == 0) {
                 return;
             }
 
@@ -385,34 +379,7 @@ public class DSWorkbenchKnownVillageFrame extends AbstractDSWorkbenchFrame imple
             } else {
                 buffer.append("[u]Dörfer[/u]\n\n");
             }
-
-            buffer.append("[table]\n");
-            buffer.append("[**]Spieler[||]Dorf");
-            for (String buildingName : BuildingSettings.BUILDING_NAMES) {
-                if(BuildingSettings.getMaxBuildingLevel(buildingName) == -1) continue;
-                buffer.append("[||]").append(buildingName);
-            }
-            buffer.append("[/**]\n");
-
-            for (int row1 : rows) {
-                int row = jKnownVillageTable.convertRowIndexToModel(row1);
-                int tribeCol = jKnownVillageTable.convertColumnIndexToModel(0);
-                int villageCol = jKnownVillageTable.convertColumnIndexToModel(1);
-                int rangeCol = jKnownVillageTable.convertColumnIndexToModel(2);
-                buffer.append("[*]").
-                        append(((Tribe) jKnownVillageTable.getModel().getValueAt(row, tribeCol)).toBBCode()).
-                        append("[|]").
-                        append(((Village) jKnownVillageTable.getModel().getValueAt(row, villageCol)).toBBCode());
-                
-                KnownVillage v = (KnownVillage) jKnownVillageTable.getModel().getValueAt(row, 2);
-                for (String buildingName : BuildingSettings.BUILDING_NAMES) {
-                    if(BuildingSettings.getMaxBuildingLevel(buildingName) == -1) continue;
-                    buffer.append("[|]").append(v.getBuildingLevelByName(buildingName));
-                }
-                buffer.append("\n");
-            }
-
-            buffer.append("[/table]");
+            buffer.append(new KnownVillageListFormatter().formatElements(selVill, extended));
 
             if (extended) {
                 buffer.append("\n[size=8]Erstellt am ");
@@ -445,6 +412,22 @@ public class DSWorkbenchKnownVillageFrame extends AbstractDSWorkbenchFrame imple
             String result = "Fehler beim Kopieren in die Zwischenablage.";
             showError(result);
         }
+    }
+
+    private List<KnownVillage> getSelectedVillages() {
+        final List<KnownVillage> selectedVillages = new ArrayList<>();
+        int[] selectedRows = jKnownVillageTable.getSelectedRows();
+        if (selectedRows != null && selectedRows.length < 1) {
+            return selectedVillages;
+        }
+        for (Integer selectedRow : selectedRows) {
+            KnownVillage a = (KnownVillage) KnownVillageManager.getSingleton().getAllElements()
+                    .get(jKnownVillageTable.convertRowIndexToModel(selectedRow));
+            if (a != null) {
+                selectedVillages.add(a);
+            }
+        }
+        return selectedVillages;
     }
 
     @Override

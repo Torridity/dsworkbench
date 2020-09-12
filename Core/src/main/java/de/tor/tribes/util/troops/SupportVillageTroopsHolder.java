@@ -21,8 +21,11 @@ import de.tor.tribes.io.UnitHolder;
 import de.tor.tribes.types.ext.Ally;
 import de.tor.tribes.types.ext.NoAlly;
 import de.tor.tribes.types.ext.Village;
+import static de.tor.tribes.util.troops.VillageTroopsHolder.UNIT_NAMES;
 import de.tor.tribes.util.xml.JDomUtils;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -145,69 +148,31 @@ public class SupportVillageTroopsHolder extends VillageTroopsHolder {
 
     @Override
     public String[] getReplacements(boolean pExtended) {
-        String villageVal = "-";
-        String tribeVal = "-";
-        String tribeNoBBVal = "-";
-        String allyVal = "-";
-        String allyNoBBVal = "-";
-        String allyNameNoBBVal = "-";
-        Village v = getVillage();
-        if (v != null) {
-            villageVal = v.toBBCode();
-            
-            tribeVal = v.getTribe().toBBCode();
-            tribeNoBBVal = v.getTribe().getName();
-            Ally a = v.getTribe().getAlly();
-            if (a == null) {
-                a = NoAlly.getSingleton();
+        List<String> replacements = new ArrayList<>();
+        if(getVillage() != null) {
+            replacements.addAll(Arrays.asList(getVillage().getReplacements(pExtended)));
+        } else {
+            int size = new Village().getBBVariables().length;
+            for(int i = 0; i < size; i++) {
+                replacements.add("-");
             }
-            allyVal = a.toBBCode();
-            allyNoBBVal = a.getTag();
-            allyNameNoBBVal = a.getName();
         }
         
-        TroopAmountFixed troops = getTroops();
-        String spearIcon = "[unit]spear[/unit]";
-        String spearVal = getValueForUnit(troops, "spear");
-        String swordIcon = "[unit]sword[/unit]";
-        String swordVal = getValueForUnit(troops, "sword");
-        String axeIcon = "[unit]axe[/unit]";
-        String axeVal = getValueForUnit(troops, "axe");
-        String archerIcon = "[unit]archer[/unit]";
-        String archerVal = getValueForUnit(troops, "archer");
-        String spyIcon = "[unit]spy[/unit]";
-        String spyVal = getValueForUnit(troops, "spy");
-        String lightIcon = "[unit]light[/unit]";
-        String lightVal = getValueForUnit(troops, "light");
-        String marcherIcon = "[unit]marcher[/unit]";
-        String marcherVal = getValueForUnit(troops, "marcher");
-        String heavyIcon = "[unit]heavy[/unit]";
-        String heavyVal = getValueForUnit(troops, "heavy");
-        String ramIcon = "[unit]ram[/unit]";
-        String ramVal = getValueForUnit(troops, "ram");
-        String cataIcon = "[unit]catapult[/unit]";
-        String cataVal = getValueForUnit(troops, "catapult");
-        String snobIcon = "[unit]snob[/unit]";
-        String snobVal = getValueForUnit(troops, "snob");
-        String knightIcon = "[unit]knight[/unit]";
-        String knightVal = getValueForUnit(troops, "knight");
-        String militiaIcon = "[unit]militia[/unit]";
-        String militiaVal = getValueForUnit(troops, "militia");
-
         String updateVal = "-";
         if(getState() != null) {
             SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
             updateVal = sdf.format(getState());
         }
-
-        return new String[]{
-            villageVal, tribeVal, allyVal, tribeNoBBVal, allyNoBBVal, allyNameNoBBVal,
-            spearIcon, swordIcon, axeIcon, archerIcon, spyIcon, lightIcon, marcherIcon,
-            heavyIcon, ramIcon, cataIcon, knightIcon, snobIcon, militiaIcon,
-            spearVal, swordVal, axeVal, archerVal, spyVal, lightVal, marcherVal,
-            heavyVal, ramVal, cataVal, knightVal, snobVal, militiaVal,
-            updateVal
-        };
+        replacements.add(updateVal);
+        
+        for (String unitName : UNIT_NAMES) {
+            replacements.add("[unit]" + unitName + "[/unit]");
+        }
+        TroopAmountFixed troops = getTroops();
+        for (String unitName : UNIT_NAMES) {
+            replacements.add(getValueForUnit(troops, unitName));
+        }
+        return replacements.toArray(new String[replacements.size()]);
     }
 
     private String getValueForUnit(TroopAmountFixed pTroops, String pName) {

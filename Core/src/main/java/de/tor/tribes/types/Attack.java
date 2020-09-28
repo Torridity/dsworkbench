@@ -375,10 +375,10 @@ public class Attack extends ManageableType implements Serializable, Comparable<A
     @Override
     public String[] getReplacements(boolean pExtended) {
         String sendVal = null;
-        String arrivetVal = null;
+        String arriveVal = null;
 
-        Date aTime = getArriveTime();
         Date sTime = getSendTime();
+        Date aTime = getArriveTime();
         SimpleDateFormat sdf;
         if(ServerSettings.getSingleton().isMillisArrival()) {
             if(pExtended) {
@@ -390,7 +390,7 @@ public class Attack extends ManageableType implements Serializable, Comparable<A
             sdf = new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss");
         }
         sendVal = sdf.format(sTime);
-        arrivetVal = sdf.format(sTime);
+        arriveVal = sdf.format(aTime);
         
         String typeVal = "";
         switch (type) {
@@ -511,7 +511,7 @@ public class Attack extends ManageableType implements Serializable, Comparable<A
             typeVal, stdName, unitVal,
             attackerVal, sourceVal, attackerNoBBVal, sourceNoBBVal, attackerAllyVal, attackerAllyNoBBVal, attackerAllyNameVal,
             defenderVal, targetVal, defenderNoBBVal, targetNoBBVal, defenderAllyVal, defenderAllyNoBBVal, defenderAllyNameVal,
-            sendVal, arrivetVal, "[url=\"" + placeURL + "\"]Versammlungsplatz[/url]", placeURLVal};
+            sendVal, arriveVal, "[url=\"" + placeURL + "\"]Versammlungsplatz[/url]", placeURLVal};
     }
     
     @Override

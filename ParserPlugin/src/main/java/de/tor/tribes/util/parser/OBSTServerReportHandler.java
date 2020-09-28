@@ -25,6 +25,7 @@ import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
 import de.tor.tribes.ui.windows.NotifierFrame;
 import de.tor.tribes.util.BuildingSettings;
+import de.tor.tribes.util.EscapeChars;
 import de.tor.tribes.util.RegExpHelper;
 import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.SilentParserInterface;
@@ -168,17 +169,19 @@ public class OBSTServerReportHandler implements SilentParserInterface {
             logger.error("No source village found");
         }
 
+        String escapedAtt = EscapeChars.forRegex(report.getAttacker().getName());
+        String escapedDef = EscapeChars.forRegex(report.getDefender().getName());
         logger.debug("Checking for winner");
-        m = Pattern.compile("(" + report.getAttacker().getName() + "|" +
-                report.getDefender().getName() + ") " + getVariable("report.has.won")).matcher(data);
+        m = Pattern.compile("(" + escapedAtt + "|" +
+                escapedDef + ") " + getVariable("report.has.won")).matcher(data);
         if (m.find()) {
             String first = m.group(1);
             logger.debug("Winner string found: " + first);
             report.setWon(first.equals(report.getAttacker().getName()));
         } else {
             logger.debug("Winner string not found. Checking spy report.");
-            m = Pattern.compile(report.getAttacker().getName() + " .* " +
-                    report.getDefender().getName() + " " + getVariable("report.spy")).matcher(data);
+            m = Pattern.compile(escapedAtt + " .* " +
+                    escapedDef + " " + getVariable("report.spy")).matcher(data);
             if (m.find()) {
                 logger.debug("Successful spy report detected. Setting 'isWon' true.");
                 report.setWon(true);
@@ -189,7 +192,7 @@ public class OBSTServerReportHandler implements SilentParserInterface {
         }
         
         m = Pattern.compile(getVariable("report.fight.time") + "(.*?)" + "(" +
-                report.getAttacker().getName() + "|" + report.getDefender().getName() + ")").matcher(data);
+                escapedAtt + "|" + escapedDef + ")").matcher(data);
         if (m.find()) {
             try {
                 //16.03.12 21:00:33

@@ -175,7 +175,7 @@ public class VillageTroopsHolder extends ManageableType implements BBSupport {
         
         String updateVal = "-";
         if(state != null) {
-            SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
+            SimpleDateFormat sdf = new SimpleDateFormat("yy.MM.dd HH:mm:ss");
             updateVal = sdf.format(state);
         }
         replacements.add(updateVal);

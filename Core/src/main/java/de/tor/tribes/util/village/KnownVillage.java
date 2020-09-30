@@ -333,7 +333,7 @@ public class KnownVillage extends ManageableType implements BBSupport {
         
         String updateVal = "-";
         if(getLastUpdate() > System.currentTimeMillis() - 1000L * 60 * 60 * 24 * 365) {
-            SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yy HH:mm:ss");
+            SimpleDateFormat sdf = new SimpleDateFormat("yy.MM.dd HH:mm:ss");
             updateVal = sdf.format(getLastUpdate());
         }
         replacements.add(updateVal);

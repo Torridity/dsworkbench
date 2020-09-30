@@ -134,7 +134,7 @@ public class GlobalDefaults {
         GLOBAL_DEFAULTS.addProperty("support.tolerance", 0);
         GLOBAL_DEFAULTS.addProperty("systray.enabled", SystrayHelper.isSystraySupported());
         GLOBAL_DEFAULTS.addProperty("tag.frame.menu.visible", true);
-        GLOBAL_DEFAULTS.addProperty("tag.frame.table.visibility", "true;true;true;false");
+        GLOBAL_DEFAULTS.addProperty("tag.frame.table.visibility", "true;true;true;true");
         GLOBAL_DEFAULTS.addProperty("tap.height", 0);
         GLOBAL_DEFAULTS.addProperty("tap.width", 0);
         GLOBAL_DEFAULTS.addProperty("text.attacks.per.file", "10");

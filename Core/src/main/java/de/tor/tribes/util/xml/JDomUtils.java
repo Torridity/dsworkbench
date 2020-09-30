@@ -159,7 +159,7 @@ public class JDomUtils {
         return xmlOutput.outputString(pDoc);
     }
     
-    public static final String whitelist = " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_abcdefghijklmnopqrstuvw{|}~";
+    public static final String whitelist = " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_abcdefghijklmnopqrstuvwxyz{|}~";
     public static boolean stringAllowed(String toCheck) {
         for(int i = 0; i < toCheck.length(); i++) {
             if(whitelist.indexOf(toCheck.charAt(i)) == -1) {

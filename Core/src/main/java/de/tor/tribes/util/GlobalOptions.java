@@ -44,7 +44,6 @@ import javax.help.CSH;
 import javax.help.HelpBroker;
 import javax.help.HelpSet;
 import javax.help.HelpSetException;
-import jdk.nashorn.api.scripting.URLReader;
 import org.apache.commons.configuration2.PropertiesConfiguration;
 import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.apache.logging.log4j.LogManager;
@@ -446,15 +445,6 @@ public class GlobalOptions {
             this();
             try {
                 GLOBAL_PROPERTIES.read(new FileReader(file));
-            } catch (IOException ex) {
-                logger.error("Can't read Global options", ex);
-            }
-        }
-        
-        public DSPropertiesConfiguration(URL url) throws ConfigurationException {
-            this();
-            try {
-                GLOBAL_PROPERTIES.read(new URLReader(url));
             } catch (IOException ex) {
                 logger.error("Can't read Global options", ex);
             }

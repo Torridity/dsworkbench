@@ -234,7 +234,7 @@ public class TimeSpan implements Comparable<TimeSpan> {
           if(!pSpan.isValidAtEveryDay()) {
             Long otherStart = DateUtils.getFragmentInMilliseconds(new Date(theOtherSpan.getMinimum()), Calendar.DATE);
             Long otherEnd = DateUtils.getFragmentInMilliseconds(new Date(theOtherSpan.getMaximum()), Calendar.DATE);
-            theOtherSpan = Range.between(otherStart, otherEnd);
+            theOtherSpan = Range.between(otherStart, otherEnd - 1);
           } else {
             theOtherSpan = Range.between(theOtherSpan.getMinimum(), theOtherSpan.getMaximum() - 1);
           }
@@ -273,6 +273,9 @@ public class TimeSpan implements Comparable<TimeSpan> {
             return always.isOverlappedBy(manual);
         }
     }
+    
+    thisSpan = Range.between(thisSpan.getMinimum(), thisSpan.getMaximum() - 1);
+    theOtherSpan = Range.between(theOtherSpan.getMinimum(), theOtherSpan.getMaximum() - 1);
     
     return thisSpan.isOverlappedBy(theOtherSpan);
   }

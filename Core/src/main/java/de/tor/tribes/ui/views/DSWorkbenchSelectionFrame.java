@@ -40,7 +40,6 @@ import de.tor.tribes.util.ServerSettings;
 import de.tor.tribes.util.UIHelper;
 import de.tor.tribes.util.bb.VillageListFormatter;
 import de.tor.tribes.util.html.SelectionHTMLExporter;
-import de.tor.tribes.util.interfaces.VillageSelectionListener;
 import de.tor.tribes.util.tag.TagManager;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -82,7 +81,7 @@ import org.jdesktop.swingx.painter.MattePainter;
 /**
  * @author Charon
  */
-public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implements VillageSelectionListener, ActionListener, TreeSelectionListener {
+public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implements ActionListener, TreeSelectionListener {
 
     @Override
     public void valueChanged(TreeSelectionEvent e) {
@@ -500,7 +499,7 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
         if (villages == null || villages.isEmpty()) {
             showInfo("Keine Dörfer in der Zwischenablage gefunden");
         } else {
-            addVillages(villages);
+            updateSelection(villages);
             showSuccess(((villages.size() == 1) ? "Dorf" : villages.size() + " Dörfer") + " eingefügt");
         }
     }
@@ -882,7 +881,7 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
                         + "Die Auswahl k&ouml;nnte so sehr lange dauern. Bitte verkleinere den gew&auml;hlten Bereich.");
             } else {
                 List<Village> selection = DataHolder.getSingleton().getVillagesInRegion(start, end);
-                addVillages(selection);
+                updateSelection(selection);
             }
         }
 
@@ -968,7 +967,7 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
 
     @Override
     public void fireVillagesDraggedEvent(List<Village> pVillages, Point pDropLocation) {
-        addVillages(pVillages);
+        updateSelection(pVillages);
     }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -996,12 +995,13 @@ public class DSWorkbenchSelectionFrame extends AbstractDSWorkbenchFrame implemen
     private org.jdesktop.swingx.JXLabel jXInfoLabel;
     // End of variables declaration//GEN-END:variables
 
-    @Override
-    public void fireSelectionFinishedEvent(Point pStart, Point pEnd) {
-        addVillages(DataHolder.getSingleton().getVillagesInRegion(pStart, pEnd));
-    }
-
-    public void addVillages(List<Village> pVillages) {
+    /**
+     * Updates selection to given villages
+     * removes old selection
+     * 
+     * @param pVillages the new selection
+     */
+    public void updateSelection(List<Village> pVillages) {
         boolean showBarbarian = GlobalOptions.getProperties().getBoolean("show.barbarian");
         treeData.clear();
         for (Village v : pVillages.toArray(new Village[]{})) {

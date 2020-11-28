@@ -1384,7 +1384,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
             //none
             return;
         }
-        DSWorkbenchSelectionFrame.getSingleton().addVillages(villages);
+        DSWorkbenchSelectionFrame.getSingleton().updateSelection(villages);
         showInfo(villages.size() + ((villages.size() == 1) ? " Dorf" : " Dörfer") + " in die Auswahlübersicht übertragen");
     }
 

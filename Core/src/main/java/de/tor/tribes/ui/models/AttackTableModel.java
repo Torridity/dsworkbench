@@ -251,11 +251,11 @@ public class AttackTableModel extends AbstractTableModel {
                 } else {
                     a.setArriveTime((Date) pValue);
                 }
-            } else if(pCol == unitAfter + 3) {
-                a.setShowOnMap((Boolean) pValue);
             } else if(pCol == unitAfter + 4) {
-                a.setTransferredToBrowser((Boolean) pValue);
+                a.setShowOnMap((Boolean) pValue);
             } else if(pCol == unitAfter + 5) {
+                a.setTransferredToBrowser((Boolean) pValue);
+            } else if(pCol == unitAfter + 6) {
                 a.setMultiplier((Short) pValue);
             }
         } catch (Exception ignored) {

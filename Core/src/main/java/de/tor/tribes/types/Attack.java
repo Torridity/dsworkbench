@@ -309,7 +309,9 @@ public class Attack extends ManageableType implements Serializable, Comparable<A
             a.setShowOnMap(Boolean.parseBoolean(split[5]));
             a.setTransferredToBrowser(Boolean.parseBoolean(split[6]));
             a.setTroops(new TroopAmountDynamic().loadFromProperty(split[7]));
-            a.setMultiplier((short) Integer.parseInt(split[8]));
+            if(split.length > 8) {
+                a.setMultiplier((short) Integer.parseInt(split[8]));
+            }
         } catch (Exception e) {
             a = null;
         }

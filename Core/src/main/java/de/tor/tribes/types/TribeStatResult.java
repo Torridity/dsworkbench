@@ -27,7 +27,25 @@ public class TribeStatResult implements BBSupport {
 
     private final static String[] VARIABLES = new String[]{"%TRIBE_NAME%", "%ATTACKS%", "%OFF_ATTACKS%", "%SNOB_ATTACKS%", "%FAKE_ATTACKS%", "%ENOBLEMENTS%",
         "%KILLS%", "%KILLS_FARM%", "%KILLS_PERCENT_ALLY%", "%KILLS_PERCENT_ALL%", "%LOSSES%", "%LOSSES_FARM%", "%LOSSES_PERCENT_ALLY%", "%LOSSES_PERCENT_ALL%", "%WALL_DESTRUCTION%", "%BUILDING_DESTRUCTION%"};
-    private String STANDARD_TEMPLATE = null;
+    public static final String STANDARD_TEMPLATE;
+    static {
+        StringBuilder b = new StringBuilder();
+        b.append("[b]Auswertung für [player]%TRIBE_NAME%[/player][/b]\n\n");
+        b.append("Adelungen: %ENOBLEMENTS%\n");
+        b.append("Zerstörte Wallstufen: %WALL_DESTRUCTION%\n");
+        b.append("Zerstörte Gebäudestufen: %BUILDING_DESTRUCTION%\n\n");
+        b.append("Angriffe:\n");
+        b.append("[table][**]Gesamt[||]Off[||]Fake[||]AG[/**]\n");
+        b.append("[*]%ATTACKS%[|]%OFF_ATTACKS%[|]%FAKE_ATTACKS%[|]%SNOB_ATTACKS%[/*]\n");
+        b.append("[/table]\n\n");
+        b.append("Besiegte Einheiten:\n");
+        b.append("[table][**]Art[||]Anzahl[||]Bauernhofplätze[||]Anteil (Stamm)[||]Anteil (Gesamt)[/**]\n");
+        b.append("[*]Getötet[|]%KILLS%[|]%KILLS_FARM%[|]%KILLS_PERCENT_ALLY%[|]%KILLS_PERCENT_ALL%[/*]\n");
+        b.append("[*]Verloren[|]%LOSSES%[|]%LOSSES_FARM%[|]%LOSSES_PERCENT_ALLY%[|]%LOSSES_PERCENT_ALL%[/*]\n");
+        b.append("[/table]\n");
+
+        STANDARD_TEMPLATE = b.toString();
+    }
 
     @Override
     public String[] getBBVariables() {
@@ -61,28 +79,6 @@ public class TribeStatResult implements BBSupport {
         return new String[]{valName, valAttacks, valOffs, valSnobs, valFakes, valEnoblements, valKills, valKillsAsFarm, valKillsPercentAlly, valKillsPercentAll, valLosses, valLossesAsFarm, valLossesPercentAlly, valLossesPercentAll, valWallDestruction, valBuildingDestruction};
     }
 
-    @Override
-    public String getStandardTemplate() {
-        if (STANDARD_TEMPLATE == null) {
-            StringBuilder b = new StringBuilder();
-            b.append("[b]Auswertung für [player]%TRIBE_NAME%[/player][/b]\n\n");
-            b.append("Adelungen: %ENOBLEMENTS%\n");
-            b.append("Zerstörte Wallstufen: %WALL_DESTRUCTION%\n");
-            b.append("Zerstörte Gebäudestufen: %BUILDING_DESTRUCTION%\n\n");
-            b.append("Angriffe:\n");
-            b.append("[table][**]Gesamt[||]Off[||]Fake[||]AG[/**]\n");
-            b.append("[*]%ATTACKS%[|]%OFF_ATTACKS%[|]%FAKE_ATTACKS%[|]%SNOB_ATTACKS%[/*]\n");
-            b.append("[/table]\n\n");
-            b.append("Besiegte Einheiten:\n");
-            b.append("[table][**]Art[||]Anzahl[||]Bauernhofplätze[||]Anteil (Stamm)[||]Anteil (Gesamt)[/**]\n");
-            b.append("[*]Getötet[|]%KILLS%[|]%KILLS_FARM%[|]%KILLS_PERCENT_ALLY%[|]%KILLS_PERCENT_ALL%[/*]\n");
-            b.append("[*]Verloren[|]%LOSSES%[|]%LOSSES_FARM%[|]%LOSSES_PERCENT_ALLY%[|]%LOSSES_PERCENT_ALL%[/*]\n");
-            b.append("[/table]\n");
-
-            STANDARD_TEMPLATE = b.toString();
-        }
-        return STANDARD_TEMPLATE;
-    }
     Tribe tribe = null;
     private int attacks = 0;
     private int offs = 0;

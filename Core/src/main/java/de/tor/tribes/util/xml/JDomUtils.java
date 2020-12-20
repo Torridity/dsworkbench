@@ -22,7 +22,6 @@ import java.io.FileWriter;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -158,6 +157,16 @@ public class JDomUtils {
         // display nice nice
         xmlOutput.setFormat(Format.getCompactFormat());
         return xmlOutput.outputString(pDoc);
+    }
+    
+    public static final String whitelist = " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_abcdefghijklmnopqrstuvwxyz{|}~";
+    public static boolean stringAllowed(String toCheck) {
+        for(int i = 0; i < toCheck.length(); i++) {
+            if(whitelist.indexOf(toCheck.charAt(i)) == -1) {
+                return false;
+            }
+        }
+        return true;
     }
 }
 

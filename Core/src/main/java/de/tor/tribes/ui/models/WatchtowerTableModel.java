@@ -16,6 +16,7 @@
 package de.tor.tribes.ui.models;
 
 import de.tor.tribes.types.ext.Tribe;
+import de.tor.tribes.ui.editors.BuildingLevelCellEditor.BuildingLevelModel;
 import de.tor.tribes.util.village.KnownVillage;
 import de.tor.tribes.util.village.KnownVillageManager;
 import java.awt.Color;
@@ -29,7 +30,7 @@ import org.apache.logging.log4j.Logger;
  * @author Torridity
  * @author extremeCrazyCoder
  */
-public class WatchtowerTableModel extends AbstractTableModel {
+public class WatchtowerTableModel extends AbstractTableModel implements BuildingLevelModel {
 
     private static Logger logger = LogManager.getLogger("WatchtowerTableModel");
 
@@ -91,10 +92,17 @@ public class WatchtowerTableModel extends AbstractTableModel {
         switch (columnIndex) {
             case 2:
                 v.setWatchtowerLevel((Integer) o);
+                v.updateTime();
                 break;
             default:
                 logger.error("Invalid Columnindex " + columnIndex);
         }
         KnownVillageManager.getSingleton().revalidate(true);
+    }
+
+    @Override
+    public String getBuildingNameForColumn(int column) {
+        if(column == 2) return "watchtower";
+        return null;
     }
 }

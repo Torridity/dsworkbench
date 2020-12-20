@@ -178,7 +178,7 @@
         <Component class="javax.swing.JComboBox" name="jComboBoxEditSelect">
           <Properties>
             <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-              <StringArray count="17">
+              <StringArray count="18">
                 <StringItem index="0" value="Angriffe"/>
                 <StringItem index="1" value="Angriffe (IGM)"/>
                 <StringItem index="2" value="Notizen"/>
@@ -187,15 +187,16 @@
                 <StringItem index="5" value="Kampfbericht"/>
                 <StringItem index="6" value="Gruppen"/>
                 <StringItem index="7" value="Truppen"/>
-                <StringItem index="8" value="Statistik (Punkte)"/>
-                <StringItem index="9" value="Statistik (Angriff)"/>
-                <StringItem index="10" value="Statistik (Verteidigung)"/>
-                <StringItem index="11" value="Statistik (Gewinner/Verlierer)"/>
-                <StringItem index="12" value="Zeichnungen"/>
-                <StringItem index="13" value="Berichtauswertung (Zusammenfassung)"/>
-                <StringItem index="14" value="Berichtauswertung (St&#xe4;mme)"/>
-                <StringItem index="15" value="Berichtauswertung (Spieler)"/>
-                <StringItem index="16" value="Markierungen"/>
+                <StringItem index="8" value="Dorfgeb&#xe4;ude"/>
+                <StringItem index="9" value="Statistik (Punkte)"/>
+                <StringItem index="10" value="Statistik (Angriff)"/>
+                <StringItem index="11" value="Statistik (Verteidigung)"/>
+                <StringItem index="12" value="Statistik (Gewinner/Verlierer)"/>
+                <StringItem index="13" value="Zeichnungen"/>
+                <StringItem index="14" value="Berichtauswertung (Zusammenfassung)"/>
+                <StringItem index="15" value="Berichtauswertung (St&#xe4;mme)"/>
+                <StringItem index="16" value="Berichtauswertung (Spieler)"/>
+                <StringItem index="17" value="Markierungen"/>
               </StringArray>
             </Property>
             <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">

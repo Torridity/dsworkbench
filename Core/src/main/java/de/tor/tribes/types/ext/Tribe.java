@@ -270,6 +270,14 @@ public class Tribe implements Comparable<Tribe>, Serializable {
         }
         return DEFAULT;
     }
+    
+    @Override
+    public boolean equals(Object other) {
+        if(! (other instanceof Tribe)) return false;
+        Tribe oTrib = (Tribe) other;
+        
+        return oTrib.getId() == getId();
+    }
 
     @Override
     public int compareTo(Tribe o) {

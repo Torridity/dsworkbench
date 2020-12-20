@@ -9,6 +9,7 @@
 #\[url]
 \https://www.die-staemme.de
 \https://www.staemme.ch
+\https://www.tribalwars.net
 \https://www.tribalwars.works
 
 #fr1;https://fr1.guerretribale.fr

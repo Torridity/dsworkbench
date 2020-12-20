@@ -21,8 +21,6 @@ package de.tor.tribes.util;
  */
 public interface BBSupport {
 
-    String getStandardTemplate();
-
     String[] getBBVariables();
 
     String[] getReplacements(boolean pExtended);

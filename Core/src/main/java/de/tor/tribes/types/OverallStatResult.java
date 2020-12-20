@@ -30,7 +30,23 @@ public class OverallStatResult implements BBSupport {
 
     private final static String[] VARIABLES = new String[]{"%START_DATE%", "%END_DATE%", "%REPORT_COUNT%", "%ATTACK_TRIBES%", "%ATTACK_ALLIES%", "%DEFEND_TRIBES%", "%DEFEND_ALLIES%",
         "%KILLS%", "%KILLS_FARM%", "%LOSSES%", "%LOSSES_FARM%", "%LOSSES_PER_ATTACKER%", "%LOSSES_PER_DEFENDER%", "%WALL_DESTRUCTION%", "%BUILDING_DESTRUCTION%"};
-    private String STANDARD_TEMPLATE = null;
+    public final static String STANDARD_TEMPLATE;
+    static {
+        StringBuilder b = new StringBuilder();
+        b.append("[b][u]Gesamtstatistiken[/u][/b]\n\n");
+        b.append("Auswertung vom %START_DATE% bis zum %END_DATE%\n\n");
+        b.append("[table]\n");
+        b.append("[**]Ausgewertete Berichte[||]%REPORT_COUNT%[/**]\n");
+        b.append("[*]Ausgewertete Angreifer (Stämme)[|]%ATTACK_TRIBES% (%ATTACK_ALLIES%)[/*]\n");
+        b.append("[**]Verteidiger (Stämme)[||]%DEFEND_TRIBES% (%DEFEND_ALLIES%)[/**]\n");
+        b.append("[*]Verluste der Verteidiger (Bauernhofplätze)[|] %KILLS% (%KILLS_FARM%)[/*]\n");
+        b.append("[**]Verluste pro Verteidiger[||]%LOSSES_PER_DEFENDER%[/**]\n");
+        b.append("[*]Verluste der Angreifer (Bauernhofplätze)[|]%LOSSES% (%LOSSES_FARM%)[/*]\n");
+        b.append("[**]Verluste pro Angreifer[||]%LOSSES_PER_ATTACKER%[/**]\n");
+        b.append("[*]Zerstörte Wallstufen[|]%WALL_DESTRUCTION%[/*]\n");
+        b.append("[**]Zerstörte Gebäudestufen[||]%BUILDING_DESTRUCTION%[/**]\n");
+        STANDARD_TEMPLATE = b.toString();
+    }
 
     @Override
     public String[] getBBVariables() {
@@ -60,29 +76,6 @@ public class OverallStatResult implements BBSupport {
         String valBuildingDestruction = nf.format(buildingDestruction);
         return new String[]{valStartDate, valEndData, valReportCount, valAttackTribes, valAttackAllies, valDefendTribes, valDefendAllies, valKills, valKillsAsFarm, valLosses, valLossesAsFarm,
                     valLossesPerAttacker, valLossesPerDefender, valWallDestruction, valBuildingDestruction};
-    }
-
-    @Override
-    public String getStandardTemplate() {
-        if (STANDARD_TEMPLATE == null) {
-            StringBuilder b = new StringBuilder();
-
-            b.append("[b][u]Gesamtstatistiken[/u][/b]\n\n");
-            b.append("Auswertung vom %START_DATE% bis zum %END_DATE%\n\n");
-            b.append("[table]\n");
-            b.append("[**]Ausgewertete Berichte[||]%REPORT_COUNT%[/**]\n");
-            b.append("[*]Ausgewertete Angreifer (Stämme)[|]%ATTACK_TRIBES% (%ATTACK_ALLIES%)[/*]\n");
-            b.append("[**]Verteidiger (Stämme)[||]%DEFEND_TRIBES% (%DEFEND_ALLIES%)[/**]\n");
-            b.append("[*]Verluste der Verteidiger (Bauernhofplätze)[|] %KILLS% (%KILLS_FARM%)[/*]\n");
-            b.append("[**]Verluste pro Verteidiger[||]%LOSSES_PER_DEFENDER%[/**]\n");
-            b.append("[*]Verluste der Angreifer (Bauernhofplätze)[|]%LOSSES% (%LOSSES_FARM%)[/*]\n");
-            b.append("[**]Verluste pro Angreifer[||]%LOSSES_PER_ATTACKER%[/**]\n");
-            b.append("[*]Zerstörte Wallstufen[|]%WALL_DESTRUCTION%[/*]\n");
-            b.append("[**]Zerstörte Gebäudestufen[||]%BUILDING_DESTRUCTION%[/**]\n");
-
-            STANDARD_TEMPLATE = b.toString();
-        }
-        return STANDARD_TEMPLATE;
     }
     private List<AllyStatResult> allyStats = null;
     private int attackers = 0;

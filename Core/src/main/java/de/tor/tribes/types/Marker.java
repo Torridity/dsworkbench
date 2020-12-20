@@ -33,8 +33,6 @@ public class Marker extends ManageableType implements BBSupport {
     private final static Logger logger = LogManager.getLogger("Marker");
 
     private final static String[] VARIABLES = new String[]{"%NAME%", "%BB_CODE%", "%MARKER_COLOR%"};
-    private final static String STANDARD_TEMPLATE = "Anzahl der Markierungen: %ELEMENT_COUNT%\n\n"
-            + "%LIST_START% [color=%MARKER_COLOR%]▓▓▓[/color] %NAME% %LIST_END%\n";
 
     @Override
     public String[] getBBVariables() {
@@ -68,11 +66,6 @@ public class Marker extends ManageableType implements BBSupport {
         colorVal = "#" + colorVal.substring(2, colorVal.length());
 
         return new String[]{nameVal, bbCodeVal, colorVal};
-    }
-
-    @Override
-    public String getStandardTemplate() {
-        return STANDARD_TEMPLATE;
     }
     
     public enum MarkerType {

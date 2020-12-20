@@ -386,7 +386,7 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                             markedVillages.remove(v);
                         }
                     }
-                    DSWorkbenchSelectionFrame.getSingleton().addVillages(markedVillages);
+                    DSWorkbenchSelectionFrame.getSingleton().updateSelection(markedVillages);
                     return;
                 }
 
@@ -519,31 +519,31 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                     }
                     case ImageManager.CURSOR_CHURCH_1: {
                         if (v != null) {
-                            KnownVillageManager.getSingleton().addChurchLevel(v, 1);
+                            KnownVillageManager.getSingleton().addChurchLevel(v, 1, true);
                         }
                         break;
                     }
                     case ImageManager.CURSOR_CHURCH_2: {
                         if (v != null) {
-                            KnownVillageManager.getSingleton().addChurchLevel(v, 2);
+                            KnownVillageManager.getSingleton().addChurchLevel(v, 2, true);
                         }
                         break;
                     }
                     case ImageManager.CURSOR_CHURCH_3: {
                         if (v != null) {
-                            KnownVillageManager.getSingleton().addChurchLevel(v, 3);
+                            KnownVillageManager.getSingleton().addChurchLevel(v, 3, true);
                         }
                         break;
                     }
                     case ImageManager.CURSOR_REMOVE_CHURCH: {
                         if (v != null) {
-                            KnownVillageManager.getSingleton().removeChurch(v);
+                            KnownVillageManager.getSingleton().removeChurch(v, true);
                         }
                         break;
                     }
                     case ImageManager.CURSOR_WATCHTOWER_1: {
                         if (v != null) {
-                            KnownVillageManager.getSingleton().addWatchtowerLevel(v, 1);
+                            KnownVillageManager.getSingleton().addWatchtowerLevel(v, 1, true);
                         }
                         break;
                     }
@@ -562,13 +562,13 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                             }
                             
                             if(level > 0)
-                                KnownVillageManager.getSingleton().addWatchtowerLevel(v, level);
+                                KnownVillageManager.getSingleton().addWatchtowerLevel(v, level, true);
                         }
                         break;
                     }
                     case ImageManager.CURSOR_REMOVE_WATCHTOWER: {
                         if (v != null) {
-                            KnownVillageManager.getSingleton().removeWatchtower(v);
+                            KnownVillageManager.getSingleton().removeWatchtower(v, true);
                         }
                         break;
                     }
@@ -721,11 +721,11 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                             int ys = (int) Math.floor(selectionRect.getYPos());
                             int xe = (int) Math.floor(selectionRect.getXPosEnd());
                             int ye = (int) Math.floor(selectionRect.getYPosEnd());
-
-                            //notify selection listener (see DSWorkbenchSelectionFrame)
-                            if (!shiftDown) {
-                                DSWorkbenchSelectionFrame.getSingleton().fireSelectionFinishedEvent(new Point(xs, ys), new Point(xe, ye));
+                            if(xs == xe && ys == ye) {
+                                //single village selection is handled by mouseClicked
+                                break;
                             }
+
                             List<Village> villages = DataHolder.getSingleton().getVillagesInRegion(new Point(xs, ys), new Point(xe, ye));
                             for (Village v : villages) {
                                 if (!markedVillages.contains(v)) {
@@ -735,6 +735,9 @@ public class MapPanel extends JPanel implements DragGestureListener, // For reco
                             if (!markedVillages.isEmpty()) {
                                 DSWorkbenchMainFrame.getSingleton().showInfo(((markedVillages.size() == 1) ? "Dorf " : markedVillages.size() + " Dörfer ") + "in die Auswahlübersicht übertragen");
                             }
+                            //notify selection listener (see DSWorkbenchSelectionFrame)
+                            DSWorkbenchSelectionFrame.getSingleton().updateSelection(markedVillages);
+                            
                             selectionRect = null;
                             break;
                         }

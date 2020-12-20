@@ -20,7 +20,9 @@ import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.io.ServerManager;
 import de.tor.tribes.io.TroopAmountDynamic;
 import de.tor.tribes.io.UnitHolder;
+import de.tor.tribes.types.ext.Ally;
 import de.tor.tribes.types.ext.Barbarians;
+import de.tor.tribes.types.ext.NoAlly;
 import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.ImageManager;
@@ -34,6 +36,7 @@ import java.util.Date;
 import java.util.List;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.Predicate;
+import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jdom2.Element;
@@ -46,8 +49,12 @@ public class Attack extends ManageableType implements Serializable, Comparable<A
 
     private static Logger logger = LogManager.getLogger("AttackTableModel");
 
-    private final static String[] VARIABLES = new String[]{"%TYPE%", "%STD_NAME%", "%ATTACKER%", "%SOURCE%", "%UNIT%", "%DEFENDER%", "%TARGET%", "%SEND%", "%ARRIVE%", "%PLACE%", "%PLACE_URL%"};
-    private final static String STANDARD_TEMPLATE = "%TYPE% von %ATTACKER% aus %SOURCE% mit %UNIT% auf %DEFENDER% in %TARGET% startet am [color=#ff0e0e]%SEND%[/color] und kommt am [color=#2eb92e]%ARRIVE%[/color] an (%PLACE%)";
+    private final static String[] VARIABLES = new String[]{
+        "%TYPE%", "%STD_NAME%", "%UNIT%",
+        "%ATTACKER%", "%SOURCE%", "%ATTACKER_NO_BB%", "%SOURCE_NO_BB%", "%ATTACKER_ALLY%", "%ATTACKER_ALLY_NO_BB%", "%ATTACKER_ALLY_NAME%",
+        "%DEFENDER%", "%TARGET%", "%DEFENDER_NO_BB%", "%TARGET_NO_BB%", "%DEFENDER_ALLY%", "%DEFENDER_ALLY_NO_BB%", "%DEFENDER_ALLY_NAME%",
+        "%SEND%", "%ARRIVE%", "%RUNTIME%", "%PLACE%", "%PLACE_URL%"
+    };
     public static final int NO_TYPE = StandardAttack.NO_ICON;
     public static final int CLEAN_TYPE = StandardAttack.OFF_ICON;
     public static final int SNOB_TYPE = StandardAttack.SNOB_ICON;
@@ -155,18 +162,22 @@ public class Attack extends ManageableType implements Serializable, Comparable<A
             return;
         }
 
-        long runtime = DSCalculator.calculateMoveTimeInMillis(source, target, getRealUnit().getSpeed());
+        long runtime = getRuntime();
         setArriveTime(new Date(pSendTime.getTime() + runtime));
     }
 
     public Date getSendTime() {
-        long runtime = DSCalculator.calculateMoveTimeInMillis(source, target, getRealUnit().getSpeed());
+        long runtime = getRuntime();
         return new Date(arriveTime.getTime() - runtime);
     }
 
     public Date getReturnTime() {
-        long runtime = DSCalculator.calculateMoveTimeInMillis(source, target, getRealUnit().getSpeed());
+        long runtime = getRuntime();
         return new Date((arriveTime.getTime() + runtime) / 1000 * 1000);
+    }
+    
+    public long getRuntime() {
+        return DSCalculator.calculateMoveTimeInMillis(source, target, getRealUnit().getSpeed());
     }
 
     public boolean isShowOnMap() {
@@ -298,7 +309,9 @@ public class Attack extends ManageableType implements Serializable, Comparable<A
             a.setShowOnMap(Boolean.parseBoolean(split[5]));
             a.setTransferredToBrowser(Boolean.parseBoolean(split[6]));
             a.setTroops(new TroopAmountDynamic().loadFromProperty(split[7]));
-            a.setMultiplier((short) Integer.parseInt(split[8]));
+            if(split.length > 8) {
+                a.setMultiplier((short) Integer.parseInt(split[8]));
+            }
         } catch (Exception e) {
             a = null;
         }
@@ -367,34 +380,27 @@ public class Attack extends ManageableType implements Serializable, Comparable<A
     }
 
     @Override
-    public String getStandardTemplate() {
-        return STANDARD_TEMPLATE;
-    }
-
-    @Override
     public String[] getReplacements(boolean pExtended) {
         String sendVal = null;
-        String arrivetVal = null;
+        String arriveVal = null;
 
-        Date aTime = getArriveTime();
         Date sTime = getSendTime();
-        if (pExtended) {
-            if (ServerSettings.getSingleton().isMillisArrival()) {
-                sendVal = new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss.'[size=8]'SSS'[/size]'").format(sTime);
-                arrivetVal = new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss.'[size=8]'SSS'[/size]'").format(aTime);
+        Date aTime = getArriveTime();
+        SimpleDateFormat sdf;
+        if(ServerSettings.getSingleton().isMillisArrival()) {
+            if(pExtended) {
+                sdf = new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss.'[size=8]'SSS'[/size]'");
             } else {
-                sendVal = new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss").format(sTime);
-                arrivetVal = new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss").format(aTime);
+                sdf = new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss.SSS");
             }
         } else {
-            if (ServerSettings.getSingleton().isMillisArrival()) {
-                sendVal = new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss.SSS").format(sTime);
-                arrivetVal = new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss.SSS").format(aTime);
-            } else {
-                sendVal = new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss").format(sTime);
-                arrivetVal = new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss").format(aTime);
-            }
+            sdf = new SimpleDateFormat("dd.MM.yy 'um' HH:mm:ss");
         }
+        sendVal = sdf.format(sTime);
+        arriveVal = sdf.format(aTime);
+        
+        String runtimeVal = DurationFormatUtils.formatDuration(getRuntime(), "HHH:mm:ss.SSS", true);
+        
         String typeVal = "";
         switch (type) {
             case Attack.CLEAN_TYPE: {
@@ -423,28 +429,53 @@ public class Attack extends ManageableType implements Serializable, Comparable<A
         if(a != null) {
             stdName = a.getName();
         }
-
-        String attackerVal = "";
-        if (source.getTribe() != Barbarians.getSingleton()) {
-            attackerVal = source.getTribe().toBBCode();
-        } else {
-            attackerVal = "Barbaren";
-        }
-        String sourceVal = source.toBBCode();
+        
         String unitVal = "";
         if (pExtended) {
             unitVal = "[unit]" + getUnit().getPlainName() + "[/unit]";
         } else {
             unitVal = getUnit().getName();
         }
+
+        String attackerVal = "";
+        String attackerNoBBVal = "";
+        Ally attAlly = null;
+        if (source.getTribe() != Barbarians.getSingleton()) {
+            attackerVal = source.getTribe().toBBCode();
+            attackerNoBBVal = source.getTribe().getName();
+            attAlly = source.getTribe().getAlly();
+        } else {
+            attackerVal = "Barbaren";
+            attackerNoBBVal = "Barbaren";
+        }
+        if (attAlly == null) {
+            attAlly = NoAlly.getSingleton();
+        }
+        String attackerAllyVal = attAlly.toBBCode();
+        String attackerAllyNoBBVal = attAlly.getTag();
+        String attackerAllyNameVal = attAlly.getName();
+        String sourceVal = source.toBBCode();
+        String sourceNoBBVal = source.getCoordAsString();
+        
         String defenderVal = "";
+        String defenderNoBBVal = "";
+        Ally defAlly = null;
         if (target.getTribe() != Barbarians.getSingleton()) {
             defenderVal = target.getTribe().toBBCode();
+            defenderNoBBVal = target.getTribe().getName();
+            defAlly = target.getTribe().getAlly();
         } else {
             defenderVal = "Barbaren";
+            defenderNoBBVal = "Barbaren";
         }
-
+        if (defAlly == null) {
+            defAlly = NoAlly.getSingleton();
+        }
+        String defenderAllyVal = defAlly.toBBCode();
+        String defenderAllyNoBBVal = defAlly.getTag();
+        String defenderAllyNameVal = defAlly.getName();
         String targetVal = target.toBBCode();
+        String targetNoBBVal = target.getCoordAsString();
 
         //replace place var
         String baseURL = ServerManager.getServerURL(GlobalOptions.getSelectedServer()) + "/";
@@ -484,7 +515,12 @@ public class Attack extends ManageableType implements Serializable, Comparable<A
         placeURL += source.getId() + "&screen=place&mode=command&target=" + target.getId();
 
         String placeURLVal = placeURL;
-        return new String[]{typeVal, stdName, attackerVal, sourceVal, unitVal, defenderVal, targetVal, sendVal, arrivetVal, "[url=\"" + placeURL + "\"]Versammlungsplatz[/url]", placeURLVal};
+        
+        return new String[]{
+            typeVal, stdName, unitVal,
+            attackerVal, sourceVal, attackerNoBBVal, sourceNoBBVal, attackerAllyVal, attackerAllyNoBBVal, attackerAllyNameVal,
+            defenderVal, targetVal, defenderNoBBVal, targetNoBBVal, defenderAllyVal, defenderAllyNoBBVal, defenderAllyNameVal,
+            sendVal, arriveVal, runtimeVal, "[url=\"" + placeURL + "\"]Versammlungsplatz[/url]", placeURLVal};
     }
     
     @Override

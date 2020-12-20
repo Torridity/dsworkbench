@@ -37,7 +37,6 @@ import java.util.*;
 import javax.swing.*;
 import org.apache.commons.lang3.Range;
 import org.apache.commons.lang3.time.DateUtils;
-import org.apache.logging.log4j.LogManager;
 
 /**
  *

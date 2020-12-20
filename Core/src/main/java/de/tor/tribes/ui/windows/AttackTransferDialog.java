@@ -16,7 +16,9 @@
 package de.tor.tribes.ui.windows;
 
 import de.tor.tribes.types.Attack;
+import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.attack.AttackManager;
+import de.tor.tribes.util.xml.JDomUtils;
 import java.util.Arrays;
 import java.util.List;
 import javax.swing.*;
@@ -151,44 +153,33 @@ public class AttackTransferDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_jNewPlanNamefireNewResultTargetPlanChangedEvent
 
     private void jCancelTransferButtonfireTransferResultsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jCancelTransferButtonfireTransferResultsEvent
-        if (evt.getSource() == jDoTransferButton) {
-
-            String plan = null;
-            if (jExistingPlanBox.isEnabled()) {
-                plan = (String) jExistingPlanBox.getSelectedItem();
-            } else {
-                plan = jNewPlanName.getText();
-                AttackManager.getSingleton().addGroup(plan);
-            }
-
-            AttackManager.getSingleton().invalidate();
-            for (Attack a : attacks) {
-                AttackManager.getSingleton().addManagedElement(plan, a);
-            }
-            AttackManager.getSingleton().revalidate(plan, true);
-
-
-        }
         setVisible(false);
     }//GEN-LAST:event_jCancelTransferButtonfireTransferResultsEvent
 
     private void jDoTransferButtonfireTransferResultsEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jDoTransferButtonfireTransferResultsEvent
-        if (evt.getSource() == jDoTransferButton) {
-
-            String plan = null;
-            if (jExistingPlanBox.isEnabled()) {
-                plan = (String) jExistingPlanBox.getSelectedItem();
-            } else {
-                plan = jNewPlanName.getText();
-                AttackManager.getSingleton().addGroup(plan);
+        String plan = null;
+        if (jExistingPlanBox.isEnabled()) {
+            plan = (String) jExistingPlanBox.getSelectedItem();
+        } else {
+            plan = jNewPlanName.getText();
+            if (plan.length() == 0) {
+                JOptionPaneHelper.showWarningBox(this, "'" + plan + "' ist ein ungültiger Planname", "Fehler");
+                return;
+            }
+            if (! JDomUtils.stringAllowed(plan)) {
+                JOptionPaneHelper.showWarningBox(this, "Der name '" + plan + "' enthält ungültige Sonderzeichen", "Fehler");
+                return;
             }
 
-            AttackManager.getSingleton().invalidate();
-            for (Attack a : attacks) {
-                AttackManager.getSingleton().addManagedElement(plan, a);
-            }
-            AttackManager.getSingleton().revalidate(plan, true);
+            AttackManager.getSingleton().addGroup(plan);
         }
+
+        AttackManager.getSingleton().invalidate();
+        for (Attack a : attacks) {
+            AttackManager.getSingleton().addManagedElement(plan, a);
+        }
+        AttackManager.getSingleton().revalidate(plan, true);
+
         setVisible(false);
     }//GEN-LAST:event_jDoTransferButtonfireTransferResultsEvent
     

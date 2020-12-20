@@ -17,6 +17,8 @@ package de.tor.tribes.util.troops;
 
 import de.tor.tribes.control.GenericManager;
 import de.tor.tribes.control.ManageableType;
+import de.tor.tribes.io.TroopAmountFixed;
+import de.tor.tribes.types.FightReport;
 import de.tor.tribes.types.Tag;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.xml.JDomUtils;
@@ -286,9 +288,9 @@ public class TroopsManager extends GenericManager<VillageTroopsHolder> {
         if (pCreate) {
             VillageTroopsHolder newHolder = null;
             if (pType.equals(TROOP_TYPE.SUPPORT)) {
-                newHolder = new SupportVillageTroopsHolder(pVillage, new Date());
+                newHolder = new SupportVillageTroopsHolder(pVillage, new Date(0));
             } else {
-                newHolder = new VillageTroopsHolder(pVillage, new Date());
+                newHolder = new VillageTroopsHolder(pVillage, new Date(0));
             }
             addManagedElement(group, newHolder);
             return newHolder;
@@ -477,5 +479,30 @@ public class TroopsManager extends GenericManager<VillageTroopsHolder> {
             logger.error("Failed to generate troop data", e);
         }
         return troopGroups;
+    }
+    
+    public void updateInformation(FightReport pReport) {
+        if(pReport.wasConquered()) return;
+        
+        Village v = pReport.getTargetVillage();
+        if(! pReport.getDefender().equals(v.getTribe())) return;
+        
+        TroopAmountFixed surviving = pReport.getSurvivingDefenders();
+        if(surviving != null) {
+            VillageTroopsHolder own = getTroopsForVillage(v, TROOP_TYPE.IN_VILLAGE, true);
+            if(own.getState() == null || own.getState().getTime() < pReport.getTimestamp()) {
+                    own.setTroops(surviving);
+                    own.setState(new Date(pReport.getTimestamp()));
+            }
+        }
+        
+        TroopAmountFixed defOTW = pReport.getDefendersOnTheWay();
+        if(defOTW != null && defOTW.containsInformation()) {
+            VillageTroopsHolder outwards = getTroopsForVillage(v, TROOP_TYPE.OUTWARDS, true);
+            if(outwards.getState() == null || outwards.getState().getTime() < pReport.getTimestamp()) {
+                outwards.setTroops(defOTW);
+                outwards.setState(new Date(pReport.getTimestamp()));
+            }
+        }
     }
 }

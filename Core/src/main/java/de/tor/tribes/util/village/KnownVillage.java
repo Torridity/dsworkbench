@@ -19,10 +19,15 @@ import de.tor.tribes.control.ManageableType;
 import de.tor.tribes.io.DataHolder;
 import de.tor.tribes.types.FightReport;
 import de.tor.tribes.types.ext.Village;
+import de.tor.tribes.util.BBSupport;
 import de.tor.tribes.util.BuildingSettings;
 import de.tor.tribes.util.ServerSettings;
+import de.tor.tribes.util.interfaces.BBFormatterInterface;
 import java.awt.Color;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jdom2.Element;
@@ -34,18 +39,46 @@ import org.jdom2.Element;
  *  spy information
  *  watchtower / church Range
  */
-public class KnownVillage extends ManageableType {
+public class KnownVillage extends ManageableType implements BBSupport {
     private static Logger logger = LogManager.getLogger("KnownVillage");
+    
+    public final static String[] BB_VARIABLES;
+    public final static String STANDARD_TEMPLATE;
+    static {
+        List<String> bbTemp = new ArrayList<>();
+        bbTemp.addAll(Arrays.asList(new Village().getBBVariables()));
+        bbTemp.add("%UPDATE%");
+        for (String buildingName : BuildingSettings.BUILDING_NAMES) {
+            bbTemp.add("%" + buildingName.toUpperCase() + "%");
+        }
+        BB_VARIABLES = bbTemp.toArray(new String[bbTemp.size()]);
+        
+        StringBuilder stdTemplate = new StringBuilder();
+        stdTemplate.append("[table]\n");
+        stdTemplate.append("[**]Spieler[||]Dorf");
+        for (String buildingName : BuildingSettings.BUILDING_NAMES) {
+            stdTemplate.append("[||]").append(buildingName);
+        }
+        stdTemplate.append("[/**]\n");
+        stdTemplate.append(BBFormatterInterface.LIST_START);
+        stdTemplate.append("[*]%PLAYER%[|]%VILLAGE%");
+        for (String buildingName : BuildingSettings.BUILDING_NAMES) {
+            stdTemplate.append("[|]").append("%").append(buildingName.toUpperCase()).append("%");
+        }
+        stdTemplate.append("[/*]\n");
+        stdTemplate.append(BBFormatterInterface.LIST_END);
+        stdTemplate.append("[/table]");
+        STANDARD_TEMPLATE = stdTemplate.toString();
+    }
     
     private int[] buildings;
     private Village village;
-    private long lastUpdate;
+    private long lastUpdate = 0;
     
     public KnownVillage(Village pVillage) {
         buildings = new int[BuildingSettings.BUILDING_NAMES.length];
         Arrays.fill(buildings, -1);
         this.village = pVillage;
-        updateTime();
     }
     
     public KnownVillage(Element e) {
@@ -159,7 +192,6 @@ public class KnownVillage extends ManageableType {
             return;
         }
         setBuildingLevelByName("church", pLevel);
-        updateTime();
     }
 
     public void removeChurchInfo() {
@@ -168,7 +200,6 @@ public class KnownVillage extends ManageableType {
             return;
         }
         setBuildingLevelByName("church", -1);
-        updateTime();
     }
 
     public void setWatchtowerLevel(int pLevel) {
@@ -177,7 +208,6 @@ public class KnownVillage extends ManageableType {
             return;
         }
         setBuildingLevelByName("watchtower", pLevel);
-        updateTime();
     }
 
     public void removeWatchtowerInfo() {
@@ -186,15 +216,18 @@ public class KnownVillage extends ManageableType {
             return;
         }
         setBuildingLevelByName("watchtower", -1);
-        updateTime();
+    }
+
+    public void setLastUpdate(Long pLastUpdate) {
+        lastUpdate = pLastUpdate;
     }
 
     public long getLastUpdate() {
         return lastUpdate;
     }
 
-    private void updateTime() {
-        lastUpdate = System.currentTimeMillis() / 1000L;
+    public void updateTime() {
+        lastUpdate = System.currentTimeMillis();
     }
     
     /**
@@ -246,6 +279,9 @@ public class KnownVillage extends ManageableType {
     }
 
     void updateInformation(FightReport pReport) {
+        //only use newer information
+        if(pReport.getTimestamp() < getLastUpdate()) return;
+        
         if (pReport.getSpyLevel() >= pReport.SPY_LEVEL_BUILDINGS) {
             for(int i = 0; i < buildings.length; i++) {
                 if(pReport.getBuilding(i) != -1) {
@@ -253,13 +289,14 @@ public class KnownVillage extends ManageableType {
                     if(BuildingSettings.getMaxBuildingLevel(BuildingSettings.BUILDING_NAMES[i]) > 0) {
                         //Building can be build
                         setBuildingLevelById(i, pReport.getBuilding(i));
-                        updateTime();
+                        setLastUpdate(pReport.getTimestamp());
                     }
                 }
             }
         } else if (pReport.getWallAfter() != -1) {
             // set wall destruction (works also without spying)
             setBuildingLevelByName("wall", pReport.getWallAfter());
+            setLastUpdate(pReport.getTimestamp());
         }
     }
     
@@ -275,5 +312,35 @@ public class KnownVillage extends ManageableType {
         
         logger.debug("Getting Farm Space {} / {} / {}", village.getCoordAsString(), maxFarmSpace, buildingPop);
         return maxFarmSpace - buildingPop;
+    }
+
+    boolean containsInformation() {
+        for(int i = 0; i < buildings.length; i++) {
+            if(buildings[i] != -1) return true;
+        }
+        return false;
+    }
+
+    @Override
+    public String[] getBBVariables() {
+        return BB_VARIABLES;
+    }
+
+    @Override
+    public String[] getReplacements(boolean pExtended) {
+        List<String> replacements = new ArrayList<>();
+        replacements.addAll(Arrays.asList(getVillage().getReplacements(pExtended)));
+        
+        String updateVal = "-";
+        if(getLastUpdate() > System.currentTimeMillis() - 1000L * 60 * 60 * 24 * 365) {
+            SimpleDateFormat sdf = new SimpleDateFormat("yy.MM.dd HH:mm:ss");
+            updateVal = sdf.format(getLastUpdate());
+        }
+        replacements.add(updateVal);
+        
+        for (String buildingName : BuildingSettings.BUILDING_NAMES) {
+            replacements.add(Integer.toString(getBuildingLevelByName(buildingName)));
+        }
+        return replacements.toArray(new String[replacements.size()]);
     }
 }

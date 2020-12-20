@@ -30,7 +30,7 @@ public class FormListFormatter extends BasicFormatter<AbstractForm> {
 
     private static final String[] VARIABLES = new String[] {LIST_START, LIST_END, ELEMENT_COUNT, ELEMENT_ID};
     private static final String STANDARD_TEMPLATE = "[b]Zeichnungen[/b]\nAnzahl der Zeichnungen: %ELEMENT_COUNT%\n"
-            + "%LIST_START%\n" + new Circle().getStandardTemplate() + "\n%LIST_END%";
+            + "%LIST_START%\n" + AbstractForm.STANDARD_TEMPLATE + "\n%LIST_END%";
     private static final String TEMPLATE_PROPERTY = "form.list.bbexport.template";
 
     @Override

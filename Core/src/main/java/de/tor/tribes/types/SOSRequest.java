@@ -49,7 +49,7 @@ public class SOSRequest extends ManageableType implements BBSupport {
     private static Logger logger = LogManager.getLogger("SOSManager");
 
     private final String[] VARIABLES = new String[]{"%SOS_ICON%", "%TARGET%", "%ATTACKS%", "%DEFENDERS%", "%WALL_INFO%", "%WALL_LEVEL%", "%FIRST_ATTACK%", "%LAST_ATTACK%", "%SOURCE_LIST%", "%SOURCE_DATE_TYPE_LIST%", "%ATTACK_LIST%", "%SOURCE_DATE_LIST%", "%SOURCE_TYPE_LIST%", "%SUMMARY%"};
-    private final static String STANDARD_TEMPLATE = "[quote]%SOS_ICON% %TARGET% (%ATTACKS%)\n[quote]%DEFENDERS%\n%WALL_INFO%[/quote]\n\n%FIRST_ATTACK%\n%SOURCE_DATE_LIST%\n%LAST_ATTACK%\n\n%SUMMARY%[/quote]";
+    public final static String STANDARD_TEMPLATE = "[quote]%SOS_ICON% %TARGET% (%ATTACKS%)\n[quote]%DEFENDERS%\n%WALL_INFO%[/quote]\n\n%FIRST_ATTACK%\n%SOURCE_DATE_LIST%\n%LAST_ATTACK%\n\n%SUMMARY%[/quote]";
     private Tribe mDefender = null;
     private HashMap<Village, TargetInformation> targetInformations = null;
     private HashMap<Village, DefenseInformation> defenseInformations = null;
@@ -203,11 +203,6 @@ public class SOSRequest extends ManageableType implements BBSupport {
     @Override
     public String[] getReplacements(boolean pExtended) {
         return getReplacementsForTarget((Village) targetInformations.keySet().toArray()[0], pExtended);
-    }
-
-    @Override
-    public String getStandardTemplate() {
-        return STANDARD_TEMPLATE;
     }
 
     public SOSRequest() {

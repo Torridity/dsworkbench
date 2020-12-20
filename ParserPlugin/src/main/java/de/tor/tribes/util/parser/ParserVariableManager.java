@@ -77,9 +77,11 @@ public class ParserVariableManager {
         DEFAULT.put("de.troops.place.in.other.villages", "Truppen in anderen D\u00F6rfern");
         DEFAULT.put("de.troops.commands", "Befehle");
         DEFAULT.put("de.troops", "Truppen");
+        
         DEFAULT.put("de.overview.groups", "Gruppen:");
         DEFAULT.put("de.groups.all", "alle");
         DEFAULT.put("de.groups.edit", "bearbeiten");
+        
         DEFAULT.put("de.sos.defender", "Verteidiger");
         DEFAULT.put("de.sos.name", "Name:");
         DEFAULT.put("de.sos.source", "Herkunft:");
@@ -93,9 +95,11 @@ public class ParserVariableManager {
         DEFAULT.put("de.sos.short.wall.level", "Wallstufe:");
         DEFAULT.put("de.sos.short.defender", "Verteidiger:");
         DEFAULT.put("de.sos.short.movement", "-->");
+        
         DEFAULT.put("de.diplomacy.allies", "Verb\u00fcndete");
         DEFAULT.put("de.diplomacy.nap", "Nicht-Angriffs-Pakt (NAP)");
         DEFAULT.put("de.diplomacy.enemy", "Feinde");
+        
         DEFAULT.put("de.movement.tableHeader.command", "Befehl");
         DEFAULT.put("de.movement.tableHeader.srcVillage", "Herkunftsdorf");
         DEFAULT.put("de.movement.tableHeader.arriveTime", "Ankunft");
@@ -110,6 +114,7 @@ public class ParserVariableManager {
         DEFAULT.put("de.movement.date.format", "'am' dd.MM. 'um' HH:mm:ss");
         DEFAULT.put("de.movement.date.format.ms", "'am' dd.MM. 'um' HH:mm:ss:SSS");
         DEFAULT.put("de.movement.date.format.ouput", "'am' dd.MM.");
+        
         DEFAULT.put("de.report.fight.time", "Kampfzeit");
         DEFAULT.put("de.report.has.won", "hat gewonnen");
         DEFAULT.put("de.report.spy", "ausgekundschaftet");

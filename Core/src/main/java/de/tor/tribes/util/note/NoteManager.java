@@ -86,7 +86,7 @@ public class NoteManager extends GenericManager<Note> {
             List<Element> data = (List<Element>) JDomUtils.getNodes(pElm, "noteData");
             if (data == null || data.isEmpty()) {
                 logger.debug("No data element found");
-                return -1;
+                return 0;
             }
             
             Element dataNode = data.get(0);

@@ -71,9 +71,8 @@ public class PropertyHelper {
       } catch (ConversionException ignored) {
       }
       try {
-        col.setVisible(pConfig.getBoolean(pPrefix + ".table.col." + title + ".visible", true));
+        col.setVisible(pConfig.getBoolean(pPrefix + ".table.col." + title + ".visible", col.isVisible()));
       } catch (ConversionException ce) {
-        col.setVisible(true);
       }
     }
 

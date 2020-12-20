@@ -41,19 +41,11 @@ public class DSCalculator {
     }
 
     public static double calculateMoveTimeInSeconds(Village pSource, Village pTarget, double pMinPerField) {
-        if (ServerSettings.getSingleton().isMillisArrival()) {
-            return calculateDistance(pSource, pTarget) * pMinPerField * 60.0;
-        } else {
-            return Math.round(calculateDistance(pSource, pTarget) * pMinPerField * 60.0);
-        }
+        return calculateMoveTimeInMillis(pSource, pTarget, pMinPerField) / 1000.0;
     }
 
     public static long calculateMoveTimeInMillis(Village pSource, Village pTarget, double pMinPerField) {
-        if (ServerSettings.getSingleton().isMillisArrival()) {
-            return Math.round(calculateDistance(pSource, pTarget) * pMinPerField * 60000L);
-        } else {
-            return Math.round(calculateDistance(pSource, pTarget) * pMinPerField * 60L) * 1000L;
-        }
+        return Math.round(calculateDistance(pSource, pTarget) * pMinPerField * 60L) * 1000L;
     }
 
     public static Point calculateCenterOfMass(List<Village> pVillages) {

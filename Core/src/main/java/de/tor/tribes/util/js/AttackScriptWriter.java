@@ -193,7 +193,7 @@ public class AttackScriptWriter {
     private static String toUnicode(String pString) {
         String res = "";
         for (char c : pString.toCharArray()) {
-            res += "\\" + char2Unicode(c);
+            res += char2Unicode(c);
         }
         return res;
     }

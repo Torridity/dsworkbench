@@ -16,28 +16,27 @@
 package de.tor.tribes.ui.views;
 
 import de.tor.tribes.control.GenericManagerListener;
-import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.ui.editors.BuildingLevelCellEditor;
-import de.tor.tribes.ui.models.ChurchTableModel;
+import de.tor.tribes.ui.models.KnownVillageTableModel;
 import de.tor.tribes.ui.panels.GenericTestPanel;
 import de.tor.tribes.ui.renderer.BuildingLevelCellRenderer;
-import de.tor.tribes.ui.renderer.ColorCellRenderer;
+import de.tor.tribes.ui.renderer.DateCellRenderer;
 import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
 import de.tor.tribes.ui.windows.AbstractDSWorkbenchFrame;
 import de.tor.tribes.ui.windows.DSWorkbenchMainFrame;
 import de.tor.tribes.util.*;
+import de.tor.tribes.util.bb.KnownVillageListFormatter;
 import de.tor.tribes.util.mark.MarkerManager;
 import de.tor.tribes.util.village.KnownVillage;
 import de.tor.tribes.util.village.KnownVillageManager;
 import java.awt.*;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.*;
-import java.awt.geom.GeneralPath;
-import java.awt.image.BufferedImage;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.LinkedList;
+import java.util.Date;
 import java.util.List;
 import java.util.StringTokenizer;
 import javax.swing.*;
@@ -49,18 +48,14 @@ import org.apache.logging.log4j.Logger;
 import org.jdesktop.swingx.JXButton;
 import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.decorator.CompoundHighlighter;
-import org.jdesktop.swingx.decorator.HighlightPredicate;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
-import org.jdesktop.swingx.decorator.PainterHighlighter;
-import org.jdesktop.swingx.painter.AbstractLayoutPainter.HorizontalAlignment;
-import org.jdesktop.swingx.painter.AbstractLayoutPainter.VerticalAlignment;
-import org.jdesktop.swingx.painter.ImagePainter;
 import org.jdesktop.swingx.painter.MattePainter;
 
 /**
  * @author Charon
+ * @author extremeCrazyCoder
  */
-public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements GenericManagerListener, ListSelectionListener {
+public class DSWorkbenchKnownVillageFrame extends AbstractDSWorkbenchFrame implements GenericManagerListener, ListSelectionListener {
 
     @Override
     public void dataChangedEvent() {
@@ -69,26 +64,26 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
 
     @Override
     public void dataChangedEvent(String pGroup) {
-        ((ChurchTableModel) jChurchTable.getModel()).fireTableDataChanged();
+        ((KnownVillageTableModel) jKnownVillageTable.getModel()).fireTableDataChanged();
     }
-    private final static Logger logger = LogManager.getLogger("ChurchView");
-    private static DSWorkbenchChurchFrame SINGLETON = null;
+    private final static Logger logger = LogManager.getLogger("KnownVillageView");
+    private static DSWorkbenchKnownVillageFrame SINGLETON = null;
     private GenericTestPanel centerPanel = null;
 
-    public static synchronized DSWorkbenchChurchFrame getSingleton() {
+    public static synchronized DSWorkbenchKnownVillageFrame getSingleton() {
         if (SINGLETON == null) {
-            SINGLETON = new DSWorkbenchChurchFrame();
+            SINGLETON = new DSWorkbenchKnownVillageFrame();
         }
         return SINGLETON;
     }
 
     /**
-     * Creates new form DSWorkbenchChurchFrame
+     * Creates new form DSWorkbenchKnownVillageFrame
      */
-    DSWorkbenchChurchFrame() {
+    DSWorkbenchKnownVillageFrame() {
         initComponents();
         centerPanel = new GenericTestPanel();
-        jChurchPanel.add(centerPanel, BorderLayout.CENTER);
+        jKnownVillagePanel.add(centerPanel, BorderLayout.CENTER);
         centerPanel.setChildComponent(jXPanel1);
         buildMenu();
 
@@ -106,35 +101,36 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
             }
         };
         capabilityInfoPanel1.addActionListener(listener);
-        jChurchTable.registerKeyboardAction(listener, "Delete", delete, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-        jChurchTable.registerKeyboardAction(listener, "BBCopy", bbCopy, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        jKnownVillageTable.registerKeyboardAction(listener, "Delete", delete, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        jKnownVillageTable.registerKeyboardAction(listener, "BBCopy", bbCopy, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
-        jChurchFrameAlwaysOnTop.setSelected(GlobalOptions.getProperties().getBoolean("church.frame.alwaysOnTop"));
-        setAlwaysOnTop(jChurchFrameAlwaysOnTop.isSelected());
+        jKnownVillageFrameAlwaysOnTop.setSelected(GlobalOptions.getProperties().getBoolean("watchtower.frame.alwaysOnTop"));
+        setAlwaysOnTop(jKnownVillageFrameAlwaysOnTop.isSelected());
 
-        jChurchTable.setModel(new ChurchTableModel());
+        jKnownVillageTable.setModel(new KnownVillageTableModel());
         // <editor-fold defaultstate="collapsed" desc=" Init HelpSystem ">
         if (!Constants.DEBUG) {
+            //TODO create help page
             GlobalOptions.getHelpBroker().enableHelpKey(getRootPane(), "pages.church_view", GlobalOptions.getHelpBroker().getHelpSet());
         }
         // </editor-fold>
-        jChurchTable.getSelectionModel().addListSelectionListener(DSWorkbenchChurchFrame.this);
+        jKnownVillageTable.getSelectionModel().addListSelectionListener(DSWorkbenchKnownVillageFrame.this);
         pack();
     }
 
     @Override
     public void toBack() {
-        jChurchFrameAlwaysOnTop.setSelected(false);
-        fireChurchFrameOnTopEvent(null);
+        jKnownVillageFrameAlwaysOnTop.setSelected(false);
+        fireKnownVillageFrameOnTopEvent(null);
         super.toBack();
     }
 
     @Override
     public void storeCustomProperties(Configuration pConfig) {
         pConfig.setProperty(getPropertyPrefix() + ".menu.visible", centerPanel.isMenuVisible());
-        pConfig.setProperty(getPropertyPrefix() + ".alwaysOnTop", jChurchFrameAlwaysOnTop.isSelected());
+        pConfig.setProperty(getPropertyPrefix() + ".alwaysOnTop", jKnownVillageFrameAlwaysOnTop.isSelected());
 
-        PropertyHelper.storeTableProperties(jChurchTable, pConfig, getPropertyPrefix());
+        PropertyHelper.storeTableProperties(jKnownVillageTable, pConfig, getPropertyPrefix());
 
     }
 
@@ -143,18 +139,18 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
         centerPanel.setMenuVisible(pConfig.getBoolean(getPropertyPrefix() + ".menu.visible", true));
 
         try {
-            jChurchFrameAlwaysOnTop.setSelected(pConfig.getBoolean(getPropertyPrefix() + ".alwaysOnTop"));
+            jKnownVillageFrameAlwaysOnTop.setSelected(pConfig.getBoolean(getPropertyPrefix() + ".alwaysOnTop"));
         } catch (Exception ignored) {
         }
 
-        setAlwaysOnTop(jChurchFrameAlwaysOnTop.isSelected());
+        setAlwaysOnTop(jKnownVillageFrameAlwaysOnTop.isSelected());
 
-        PropertyHelper.restoreTableProperties(jChurchTable, pConfig, getPropertyPrefix());
+        PropertyHelper.restoreTableProperties(jKnownVillageTable, pConfig, getPropertyPrefix());
     }
 
     @Override
     public String getPropertyPrefix() {
-        return "church.view";
+        return "knownVillage.view";
     }
 
     /**
@@ -171,8 +167,8 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
         infoPanel = new org.jdesktop.swingx.JXCollapsiblePane();
         jXLabel1 = new org.jdesktop.swingx.JXLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jChurchPanel = new org.jdesktop.swingx.JXPanel();
-        jChurchFrameAlwaysOnTop = new javax.swing.JCheckBox();
+        jKnownVillagePanel = new org.jdesktop.swingx.JXPanel();
+        jKnownVillageFrameAlwaysOnTop = new javax.swing.JCheckBox();
         capabilityInfoPanel1 = new de.tor.tribes.ui.components.CapabilityInfoPanel();
 
         jXPanel1.setLayout(new java.awt.BorderLayout());
@@ -191,7 +187,7 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
 
         jXPanel1.add(infoPanel, java.awt.BorderLayout.SOUTH);
 
-        jChurchTable.setModel(new javax.swing.table.DefaultTableModel(
+        jKnownVillageTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -202,15 +198,15 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jScrollPane2.setViewportView(jChurchTable);
+        jScrollPane2.setViewportView(jKnownVillageTable);
 
         jXPanel1.add(jScrollPane2, java.awt.BorderLayout.CENTER);
 
-        setTitle("Kirchen");
+        setTitle("Dörfer");
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
-        jChurchPanel.setBackground(new java.awt.Color(239, 235, 223));
-        jChurchPanel.setLayout(new java.awt.BorderLayout());
+        jKnownVillagePanel.setBackground(new java.awt.Color(239, 235, 223));
+        jKnownVillagePanel.setLayout(new java.awt.BorderLayout());
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
@@ -219,13 +215,12 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
         gridBagConstraints.ipady = 300;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
-        getContentPane().add(jChurchPanel, gridBagConstraints);
+        getContentPane().add(jKnownVillagePanel, gridBagConstraints);
 
-        jChurchFrameAlwaysOnTop.setText("Immer im Vordergrund");
-        jChurchFrameAlwaysOnTop.setOpaque(false);
-        jChurchFrameAlwaysOnTop.addChangeListener(new javax.swing.event.ChangeListener() {
+        jKnownVillageFrameAlwaysOnTop.setText("Immer im Vordergrund");
+        jKnownVillageFrameAlwaysOnTop.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                fireChurchFrameOnTopEvent(evt);
+                fireKnownVillageFrameOnTopEvent(evt);
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -233,7 +228,7 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
         gridBagConstraints.gridy = 1;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        getContentPane().add(jChurchFrameAlwaysOnTop, gridBagConstraints);
+        getContentPane().add(jKnownVillageFrameAlwaysOnTop, gridBagConstraints);
 
         capabilityInfoPanel1.setCopyable(false);
         capabilityInfoPanel1.setPastable(false);
@@ -248,9 +243,9 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void fireChurchFrameOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fireChurchFrameOnTopEvent
+    private void fireKnownVillageFrameOnTopEvent(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_fireKnownVillageFrameOnTopEvent
         setAlwaysOnTop(!isAlwaysOnTop());
-    }//GEN-LAST:event_fireChurchFrameOnTopEvent
+    }//GEN-LAST:event_fireKnownVillageFrameOnTopEvent
 
     private void jXLabel1fireHideInfoEvent(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jXLabel1fireHideInfoEvent
         infoPanel.setCollapsed(true);
@@ -259,23 +254,23 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
     private void buildMenu() {
         JXTaskPane transferPane = new JXTaskPane();
         transferPane.setTitle("Übertragen");
-        JXButton transferVillageList = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/ui/center_ingame.png")));
-        transferVillageList.setToolTipText("Zentriert das Kirchendorf im Spiel");
+        JXButton transferVillageList = new JXButton(new ImageIcon(DSWorkbenchKnownVillageFrame.class.getResource("/res/ui/center_ingame.png")));
+        transferVillageList.setToolTipText("Zentriert das Dorf im Spiel");
         transferVillageList.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
-                centerChurchInGame();
+                centerVillageInGame();
             }
         });
         transferPane.getContentPane().add(transferVillageList);
 
         if (!GlobalOptions.isMinimal()) {
-            JXButton button = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/center_24x24.png")));
-            button.setToolTipText("Zentriert das Kirchendorf auf der Hauptkarte");
+            JXButton button = new JXButton(new ImageIcon(DSWorkbenchKnownVillageFrame.class.getResource("/res/center_24x24.png")));
+            button.setToolTipText("Zentriert das Dorf auf der Hauptkarte");
             button.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseReleased(MouseEvent e) {
-                    centerChurchVillage();
+                    centerVillage();
                 }
             });
 
@@ -284,41 +279,41 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
         centerPanel.setupTaskPane(transferPane);
     }
 
-    private KnownVillage getSelectedCurch() {
-        int row = jChurchTable.getSelectedRow();
+    private KnownVillage getSelectedVillage() {
+        int row = jKnownVillageTable.getSelectedRow();
         if (row >= 0) {
             try {
-                return (KnownVillage) jChurchTable.getModel().getValueAt(jChurchTable.convertRowIndexToModel(row), 1);
+                return (KnownVillage) jKnownVillageTable.getModel().getValueAt(jKnownVillageTable.convertRowIndexToModel(row), 1);
             } catch (Exception ignored) {
             }
         }
         return null;
     }
 
-    private void centerChurchVillage() {
-        KnownVillage v = getSelectedCurch();
+    private void centerVillage() {
+        KnownVillage v = getSelectedVillage();
         if (v != null) {
             DSWorkbenchMainFrame.getSingleton().centerVillage(v.getVillage());
         } else {
-            showInfo("Keine Kirche gewählt");
+            showInfo("Kein Dorf gewählt");
         }
     }
 
-    private void centerChurchInGame() {
-        KnownVillage v = getSelectedCurch();
+    private void centerVillageInGame() {
+        KnownVillage v = getSelectedVillage();
         if (v != null) {
             BrowserInterface.centerVillage(v.getVillage());
         } else {
-            showInfo("Keine Kirche gewählt");
+            showInfo("Kein Dorf gewählt");
         }
     }
 
     @Override
     public void valueChanged(ListSelectionEvent e) {
         if (e.getValueIsAdjusting()) {
-            int selectionCount = jChurchTable.getSelectedRowCount();
+            int selectionCount = jKnownVillageTable.getSelectedRowCount();
             if (selectionCount != 0) {
-                showInfo(selectionCount + ((selectionCount == 1) ? " Kirche gewählt" : " Kirchen gewählt"));
+                showInfo(selectionCount + ((selectionCount == 1) ? " Dorf gewählt" : " Dörfer gewählt"));
             }
         }
     }
@@ -345,33 +340,33 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
     }
 
     private void deleteSelection() {
-        int[] rows = jChurchTable.getSelectedRows();
+        int[] rows = jKnownVillageTable.getSelectedRows();
         if (rows.length == 0) {
             return;
         }
-        String message = ((rows.length == 1) ? "Kirchendorf " : (rows.length + " Kirchendörfer ")) + "wirklich löschen?";
+        String message = ((rows.length == 1) ? "Dorf " : (rows.length + " Dörfer ")) + "wirklich löschen?";
         if (JOptionPaneHelper.showQuestionConfirmBox(this, message, "Löschen", "Nein", "Ja") == JOptionPane.YES_OPTION) {
             //get markers to remove
-            List<Village> toRemove = new LinkedList<>();
-            jChurchTable.invalidate();
+            List<Village> toRemove = new ArrayList<>();
+            jKnownVillageTable.invalidate();
             for (int i = rows.length - 1; i >= 0; i--) {
-                int row = jChurchTable.convertRowIndexToModel(rows[i]);
-                int col = jChurchTable.convertColumnIndexToModel(1);
-                Village v = ((KnownVillage) jChurchTable.getModel()
+                int row = jKnownVillageTable.convertRowIndexToModel(rows[i]);
+                int col = jKnownVillageTable.convertColumnIndexToModel(1);
+                Village v = ((KnownVillage) jKnownVillageTable.getModel()
                         .getValueAt(row, col)).getVillage();
                 toRemove.add(v);
             }
-            jChurchTable.revalidate();
+            jKnownVillageTable.revalidate();
             //remove all selected markers and update the view once
-            KnownVillageManager.getSingleton().removeChurches(toRemove.toArray(new Village[]{}), true);
-            showSuccess(toRemove.size() + ((toRemove.size() == 1) ? " Kirche gelöscht" : " Kirchen gelöscht"));
+            KnownVillageManager.getSingleton().removeVillages(toRemove.toArray(new Village[]{}));
+            showSuccess(toRemove.size() + ((toRemove.size() == 1) ? " Dorf gelöscht" : " Dörfer gelöscht"));
         }
     }
 
     private void bbCopySelection() {
         try {
-            int[] rows = jChurchTable.getSelectedRows();
-            if (rows.length == 0) {
+            List<KnownVillage> selVill = getSelectedVillages();
+            if (selVill.size() == 0) {
                 return;
             }
 
@@ -379,30 +374,11 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
 
             StringBuilder buffer = new StringBuilder();
             if (extended) {
-                buffer.append("[u][size=12]Kirchendörfer[/size][/u]\n\n");
+                buffer.append("[u][size=12]Dörfer[/size][/u]\n\n");
             } else {
-                buffer.append("[u]Kirchendörfer[/u]\n\n");
+                buffer.append("[u]Dörfer[/u]\n\n");
             }
-
-            buffer.append("[table]\n");
-            buffer.append("[**]Spieler[||]Dorf[||]Radius[/**]\n");
-
-
-            for (int row1 : rows) {
-                int row = jChurchTable.convertRowIndexToModel(row1);
-                int tribeCol = jChurchTable.convertColumnIndexToModel(0);
-                int villageCol = jChurchTable.convertColumnIndexToModel(1);
-                int rangeCol = jChurchTable.convertColumnIndexToModel(2);
-                buffer.append("[*]").
-                        append(((Tribe) jChurchTable.getModel().getValueAt(row, tribeCol)).toBBCode()).
-                        append("[|]").
-                        append(((Village) jChurchTable.getModel().getValueAt(row, villageCol)).toBBCode()).
-                        append("[|]").
-                        append(jChurchTable.getModel().getValueAt(row, rangeCol)).
-                        append("\n");
-            }
-
-            buffer.append("[/table]");
+            buffer.append(new KnownVillageListFormatter().formatElements(selVill, extended));
 
             if (extended) {
                 buffer.append("\n[size=8]Erstellt am ");
@@ -420,7 +396,7 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
             StringTokenizer t = new StringTokenizer(b, "[");
             int cnt = t.countTokens();
             if (cnt > 1000) {
-                if (JOptionPaneHelper.showQuestionConfirmBox(this, "Die ausgewählten Kirchen benötigen mehr als 1000 BB-Codes\n"
+                if (JOptionPaneHelper.showQuestionConfirmBox(this, "Die ausgewählten Wachtürme benötigen mehr als 1000 BB-Codes\n"
                         + "und können daher im Spiel (Forum/IGM/Notizen) nicht auf einmal dargestellt werden.\n"
                         + "Trotzdem exportieren?", "Zu viele BB-Codes", "Nein", "Ja") == JOptionPane.NO_OPTION) {
                     return;
@@ -437,14 +413,29 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
         }
     }
 
+    private List<KnownVillage> getSelectedVillages() {
+        final List<KnownVillage> selectedVillages = new ArrayList<>();
+        int[] selectedRows = jKnownVillageTable.getSelectedRows();
+        if (selectedRows != null && selectedRows.length < 1) {
+            return selectedVillages;
+        }
+        for (Integer selectedRow : selectedRows) {
+            KnownVillage a = (KnownVillage) KnownVillageManager.getSingleton().getAllElements()
+                    .get(jKnownVillageTable.convertRowIndexToModel(selectedRow));
+            if (a != null) {
+                selectedVillages.add(a);
+            }
+        }
+        return selectedVillages;
+    }
+
     @Override
     public void resetView() {
         KnownVillageManager.getSingleton().addManagerListener(this);
         MarkerManager.getSingleton().addManagerListener(this);
-        jChurchTable.getTableHeader().setDefaultRenderer(new DefaultTableHeaderRenderer());
-        UIHelper.initTableColums(jChurchTable, "Stufe", "Farbe");
+        jKnownVillageTable.getTableHeader().setDefaultRenderer(new DefaultTableHeaderRenderer());
 
-        ((ChurchTableModel) jChurchTable.getModel()).fireTableDataChanged();
+        ((KnownVillageTableModel) jKnownVillageTable.getModel()).fireTableDataChanged();
     }
 
     @Override
@@ -454,33 +445,20 @@ public class DSWorkbenchChurchFrame extends AbstractDSWorkbenchFrame implements 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private de.tor.tribes.ui.components.CapabilityInfoPanel capabilityInfoPanel1;
     private org.jdesktop.swingx.JXCollapsiblePane infoPanel;
-    private javax.swing.JCheckBox jChurchFrameAlwaysOnTop;
-    private org.jdesktop.swingx.JXPanel jChurchPanel;
-    private static final org.jdesktop.swingx.JXTable jChurchTable = new org.jdesktop.swingx.JXTable();
+    private javax.swing.JCheckBox jKnownVillageFrameAlwaysOnTop;
+    private org.jdesktop.swingx.JXPanel jKnownVillagePanel;
+    private static final org.jdesktop.swingx.JXTable jKnownVillageTable = new org.jdesktop.swingx.JXTable();
     private javax.swing.JScrollPane jScrollPane2;
     private org.jdesktop.swingx.JXLabel jXLabel1;
     private org.jdesktop.swingx.JXPanel jXPanel1;
     // End of variables declaration//GEN-END:variables
 
     static {
-        HighlightPredicate.ColumnHighlightPredicate colu = new HighlightPredicate.ColumnHighlightPredicate(0, 1, 2);
-        jChurchTable.setHighlighters(new CompoundHighlighter(colu, HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B)));
+        jKnownVillageTable.setHighlighters(new CompoundHighlighter(HighlighterFactory.createSimpleStriping(), HighlighterFactory.createAlternateStriping(Constants.DS_ROW_A, Constants.DS_ROW_B)));
 
-        jChurchTable.setColumnControlVisible(true);
-        jChurchTable.setDefaultRenderer(Color.class, new ColorCellRenderer());
-        jChurchTable.setDefaultRenderer(Integer.class, new BuildingLevelCellRenderer());
-        jChurchTable.setDefaultEditor(Integer.class, new BuildingLevelCellEditor());
-        
-        BufferedImage back = ImageUtils.createCompatibleBufferedImage(5, 5, BufferedImage.BITMASK);
-        Graphics2D g = back.createGraphics();
-        GeneralPath p = new GeneralPath();
-        p.moveTo(0, 0);
-        p.lineTo(5, 0);
-        p.lineTo(5, 5);
-        p.closePath();
-        g.setColor(Color.GREEN.darker());
-        g.fill(p);
-        g.dispose();
-        jChurchTable.addHighlighter(new PainterHighlighter(HighlightPredicate.EDITABLE, new ImagePainter(back, HorizontalAlignment.RIGHT, VerticalAlignment.TOP)));
+        jKnownVillageTable.setColumnControlVisible(true);
+        jKnownVillageTable.setDefaultRenderer(Date.class, new DateCellRenderer());
+        jKnownVillageTable.setDefaultRenderer(Integer.class, new BuildingLevelCellRenderer());
+        jKnownVillageTable.setDefaultEditor(Integer.class, new BuildingLevelCellEditor());
     }
 }

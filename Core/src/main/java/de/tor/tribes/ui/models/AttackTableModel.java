@@ -88,6 +88,7 @@ public class AttackTableModel extends AbstractTableModel {
         unitAfter = columnNames.size();
         columnNames.add("Abschickzeit"); columnTypes.add(Date.class); editable.add(true);
         columnNames.add("Ankunftzeit"); columnTypes.add(Date.class); editable.add(true);
+        columnNames.add("Laufzeit"); columnTypes.add(Long.class); editable.add(false);
         columnNames.add("Verbleibend"); columnTypes.add(Long.class); editable.add(false);
         columnNames.add("Einzeichnen"); columnTypes.add(Boolean.class); editable.add(true);
         columnNames.add("Übertragen"); columnTypes.add(Boolean.class); editable.add(true);
@@ -191,14 +192,16 @@ public class AttackTableModel extends AbstractTableModel {
             } else if(columnIndex == unitAfter + 1) {
                 return a.getArriveTime();
             } else if(columnIndex == unitAfter + 2) {
+                return a.getRuntime();
+            } else if(columnIndex == unitAfter + 3) {
                 long sendTime = a.getSendTime().getTime();
                 long t = sendTime - System.currentTimeMillis();
                 return (t <= 0) ? 0 : t;
-            } else if(columnIndex == unitAfter + 3) {
-                return a.isShowOnMap();
             } else if(columnIndex == unitAfter + 4) {
-                return a.isTransferredToBrowser();
+                return a.isShowOnMap();
             } else if(columnIndex == unitAfter + 5) {
+                return a.isTransferredToBrowser();
+            } else if(columnIndex == unitAfter + 6) {
                 return a.getMultiplier();
             }
         } catch (Exception ignored) {};
@@ -248,11 +251,11 @@ public class AttackTableModel extends AbstractTableModel {
                 } else {
                     a.setArriveTime((Date) pValue);
                 }
-            } else if(pCol == unitAfter + 3) {
-                a.setShowOnMap((Boolean) pValue);
             } else if(pCol == unitAfter + 4) {
-                a.setTransferredToBrowser((Boolean) pValue);
+                a.setShowOnMap((Boolean) pValue);
             } else if(pCol == unitAfter + 5) {
+                a.setTransferredToBrowser((Boolean) pValue);
+            } else if(pCol == unitAfter + 6) {
                 a.setMultiplier((Short) pValue);
             }
         } catch (Exception ignored) {

@@ -493,6 +493,8 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
       DSWorkbenchChurchFrame.getSingleton().restoreProperties();
       DSWorkbenchWatchtowerFrame.getSingleton().resetView();
       DSWorkbenchWatchtowerFrame.getSingleton().restoreProperties();
+      DSWorkbenchKnownVillageFrame.getSingleton().resetView();
+      DSWorkbenchKnownVillageFrame.getSingleton().restoreProperties();
       DSWorkbenchAttackFrame.getSingleton().resetView();
       DSWorkbenchAttackFrame.getSingleton().restoreProperties();
       DSWorkbenchAttackFrame.getSingleton().updateCountdownSettings();
@@ -618,6 +620,7 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
     DSWorkbenchMarkerFrame.getSingleton().addFrameListener(this);
     DSWorkbenchChurchFrame.getSingleton().addFrameListener(this);
     DSWorkbenchWatchtowerFrame.getSingleton().addFrameListener(this);
+    DSWorkbenchKnownVillageFrame.getSingleton().addFrameListener(this);
     DSWorkbenchConquersFrame.getSingleton().addFrameListener(this);
     DSWorkbenchNotepad.getSingleton().addFrameListener(this);
     DSWorkbenchTagFrame.getSingleton().addFrameListener(this);
@@ -701,15 +704,15 @@ public class DSWorkbenchMainFrame extends JRibbonFrame implements
       }
     });
 
-    File runningIndicator = new File(".running");
+    File runningIndicator = new File("runningFile");
 
     if (runningIndicator.exists()) {
       showRestoreOption();
     } else {
       try {
-        FileUtils.touch(new File(".running"));
+        FileUtils.touch(new File("runningFile"));
       } catch (IOException ioe) {
-        logger.error("Failed to touch file '.running'", ioe);
+        logger.error("Failed to touch file 'runningFile'", ioe);
       }
     }
   }
@@ -2677,13 +2680,9 @@ private void fireChangeClipboardWatchEvent(java.awt.event.MouseEvent evt) {//GEN
         "Formen", "Markierungen", "Notizen", "Berichte", "SOS-Infos", "Gruppen",
         "Truppen", "Dorfinfos", "Splits"};
     boolean allOk = true;
-    int sum = 0;
     for(int i = 0; i < names.length; i++) {
         if(importedNum[i] < 0) {
             allOk = false;
-            sum += (-1) * importedNum[i] - 1;
-        } else {
-            sum += importedNum[i];
         }
     }
     
@@ -2691,10 +2690,12 @@ private void fireChangeClipboardWatchEvent(java.awt.event.MouseEvent evt) {//GEN
     message.append("Import ").append(allOk?"erfolgreich ":"").append("beendet.\n");
 
     for(int i = 0; i < names.length; i++) {
-        if(importedNum[i] < 0) {
+        int realNum = importedNum[i];
+        if(realNum < 0) {
            message.append("Trotz fehler ");
+           realNum = (-1) * realNum - 1;
         }
-        message.append(importedNum[i]).append(" ").append(names[i]).append(" erfolgreich eingelesen\n");
+        message.append(realNum).append(" ").append(names[i]).append(" erfolgreich eingelesen\n");
     }
     return message.toString();
   }

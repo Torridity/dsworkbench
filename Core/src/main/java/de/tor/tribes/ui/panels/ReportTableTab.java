@@ -109,7 +109,7 @@ public class ReportTableTab extends javax.swing.JPanel implements ListSelectionL
         jxReportTable.setColumnControlVisible(true);
         jxReportTable.setDefaultRenderer(UnitHolder.class, new UnitCellRenderer());
         jxReportTable.setDefaultRenderer(Integer.class, new NoteIconCellRenderer(NoteIconCellRenderer.ICON_TYPE.NOTE));
-        jxReportTable.setDefaultRenderer(Date.class, new DateCellRenderer("dd.MM.yy HH:mm"));
+        jxReportTable.setDefaultRenderer(Date.class, new DateCellRenderer("dd.MM.yy HH:mm:ss:SSS"));
         jxReportTable.setDefaultRenderer(Tribe.class, new TribeCellRenderer());
         jxReportTable.setDefaultRenderer(Village.class, new VillageCellRenderer());
         reportModel = new ReportManagerTableModel(ReportManager.DEFAULT_GROUP);

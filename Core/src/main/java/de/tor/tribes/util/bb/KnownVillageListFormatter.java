@@ -15,7 +15,7 @@
  */
 package de.tor.tribes.util.bb;
 
-import de.tor.tribes.types.OverallStatResult;
+import de.tor.tribes.util.village.KnownVillage;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -23,10 +23,11 @@ import java.util.List;
 /**
  * @author Torridity
  */
-public class OverallReportStatsFormatter extends BasicFormatter<OverallStatResult> {
+public class KnownVillageListFormatter extends BasicFormatter<KnownVillage> {
 
-    private static final String STANDARD_TEMPLATE = OverallStatResult.STANDARD_TEMPLATE;
-    private static final String TEMPLATE_PROPERTY = "overall.report.stats.bbexport.template";
+    private static final String[] VARIABLES = new String[] {LIST_START, LIST_END, ELEMENT_COUNT, ELEMENT_ID};
+    private static final String STANDARD_TEMPLATE = KnownVillage.STANDARD_TEMPLATE;
+    private static final String TEMPLATE_PROPERTY = "knownVillage.list.bbexport.template";
 
     @Override
     public String getPropertyKey() {
@@ -41,12 +42,13 @@ public class OverallReportStatsFormatter extends BasicFormatter<OverallStatResul
     @Override
     public String[] getTemplateVariables() {
         List<String> vars = new LinkedList<>();
-        Collections.addAll(vars, new OverallStatResult().getBBVariables());
+        Collections.addAll(vars, VARIABLES);
+        Collections.addAll(vars, KnownVillage.BB_VARIABLES);
         return vars.toArray(new String[vars.size()]);
     }
     
     @Override
-    public Class<OverallStatResult> getConvertableType() {
-        return OverallStatResult.class;
+    public Class<KnownVillage> getConvertableType() {
+        return KnownVillage.class;
     }
 }

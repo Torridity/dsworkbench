@@ -190,7 +190,7 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
     private void buildMenu() {
         JXTaskPane editPane = new JXTaskPane();
         editPane.setTitle("Bearbeiten");
-        final JToggleButton createStats = new JToggleButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/ui/medal.png")));
+        final JToggleButton createStats = new JToggleButton(new ImageIcon(DSWorkbenchStatsFrame.class.getResource("/res/ui/medal.png")));
         createStats.setToolTipText("Umschalten zwischen dem Erzeugen von Statistiken und der Anzeige von Verlaufsgrafiken");
         createStats.addMouseListener(new MouseAdapter() {
             
@@ -198,16 +198,16 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
             public void mouseReleased(MouseEvent e) {
                 boolean showChartView = !createStats.isSelected();
                 if (showChartView) {
-                    createStats.setIcon(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/ui/medal.png")));
+                    createStats.setIcon(new ImageIcon(DSWorkbenchStatsFrame.class.getResource("/res/ui/medal.png")));
                 } else {
-                    createStats.setIcon(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/ui/chart.png")));
+                    createStats.setIcon(new ImageIcon(DSWorkbenchStatsFrame.class.getResource("/res/ui/chart.png")));
                 }
                 switchStatChartView(showChartView);
             }
         });
         
         
-        JXButton selectStart = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/ui/beginning.png")));
+        JXButton selectStart = new JXButton(new ImageIcon(DSWorkbenchStatsFrame.class.getResource("/res/ui/beginning.png")));
         selectStart.setToolTipText("Setzt eine Startmarkierung beim gewählten Datenpunkt");
         selectStart.addMouseListener(new MouseAdapter() {
             
@@ -221,7 +221,7 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
         selectStart.setMaximumSize(createStats.getMaximumSize());
         selectStart.setPreferredSize(createStats.getPreferredSize());
         editPane.getContentPane().add(selectStart);
-        JXButton selectEnd = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/ui/end.png")));
+        JXButton selectEnd = new JXButton(new ImageIcon(DSWorkbenchStatsFrame.class.getResource("/res/ui/end.png")));
         selectEnd.setToolTipText("Setzt eine Endmarkierung beim gewählten Datenpunkt");
         selectEnd.addMouseListener(new MouseAdapter() {
             
@@ -236,7 +236,7 @@ public class DSWorkbenchStatsFrame extends AbstractDSWorkbenchFrame implements A
         selectEnd.setPreferredSize(createStats.getPreferredSize());
         editPane.getContentPane().add(selectEnd);
         
-        JXButton removeSelection = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/ui/delete_region.png")));
+        JXButton removeSelection = new JXButton(new ImageIcon(DSWorkbenchStatsFrame.class.getResource("/res/ui/delete_region.png")));
         removeSelection.setToolTipText("Löscht alle Datenpunkte zwischen der Start- und Endmarkierung");
         removeSelection.addMouseListener(new MouseAdapter() {
             

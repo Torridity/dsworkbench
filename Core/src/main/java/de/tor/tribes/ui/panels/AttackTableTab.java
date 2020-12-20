@@ -115,6 +115,8 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
         TableColumnExt transferCol = jxAttackTable.getColumnExt("Übertragen");
         transferCol.setCellRenderer(new CustomBooleanRenderer(CustomBooleanRenderer.LayoutStyle.SENT_NOTSENT));
         transferCol.setCellEditor(new CustomCheckBoxEditor(CustomBooleanRenderer.LayoutStyle.SENT_NOTSENT));
+        TableColumnExt runtimeCol = jxAttackTable.getColumnExt("Laufzeit");
+        runtimeCol.setVisible(false);
         
         BufferedImage back = ImageUtils.createCompatibleBufferedImage(5, 5, BufferedImage.BITMASK);
         Graphics2D g = back.createGraphics();
@@ -1382,7 +1384,7 @@ public class AttackTableTab extends javax.swing.JPanel implements ListSelectionL
             //none
             return;
         }
-        DSWorkbenchSelectionFrame.getSingleton().addVillages(villages);
+        DSWorkbenchSelectionFrame.getSingleton().updateSelection(villages);
         showInfo(villages.size() + ((villages.size() == 1) ? " Dorf" : " Dörfer") + " in die Auswahlübersicht übertragen");
     }
 

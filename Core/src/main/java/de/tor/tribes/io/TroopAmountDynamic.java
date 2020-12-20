@@ -285,7 +285,9 @@ public class TroopAmountDynamic extends TroopAmount {
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 43 * hash + this.amounts.hashCode();
+        for(UnitHolder unit: DataHolder.getSingleton().getUnits()) {
+            hash = 43 * hash + this.getElementForUnit(unit).hashCode();
+        }
         return hash;
     }
 

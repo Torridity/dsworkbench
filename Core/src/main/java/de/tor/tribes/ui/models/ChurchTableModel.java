@@ -16,20 +16,19 @@
 package de.tor.tribes.ui.models;
 
 import de.tor.tribes.types.ext.Tribe;
+import de.tor.tribes.ui.editors.BuildingLevelCellEditor.BuildingLevelModel;
 import de.tor.tribes.util.village.KnownVillage;
 import de.tor.tribes.util.village.KnownVillageManager;
 import java.awt.Color;
 import javax.swing.table.AbstractTableModel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-
 /**
  *
  * @author Torridity
  * @author extremeCrazyCoder
  */
-public class ChurchTableModel extends AbstractTableModel {
+public class ChurchTableModel extends AbstractTableModel implements BuildingLevelModel {
     
     private static Logger logger = LogManager.getLogger("ChurchTableModel");
 
@@ -91,10 +90,17 @@ public class ChurchTableModel extends AbstractTableModel {
         switch (columnIndex) {
             case 2:
                 v.setChurchLevel((Integer) o);
+                v.updateTime();
                 break;
             default:
                 logger.error("Invalid Columnindex " + columnIndex);
         }
         KnownVillageManager.getSingleton().revalidate(true);
+    }
+
+    @Override
+    public String getBuildingNameForColumn(int column) {
+        if(column == 2) return "church";
+        return null;
     }
 }

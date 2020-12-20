@@ -133,12 +133,15 @@ public class TroopAmountElement {
             } else if (pVillage == null) {
                 //no village given with fixed amount, just return the Amount
                 return wanted;
+            } else if (availableAmounts == null) {
+                //no troops read just insert what we got
+                return wanted;
             } else {
                 //return max. avail count
                 return availableAmount;
             }
         }
-        throw new RuntimeException("The code must not come to this Point");
+        throw new RuntimeException("The code must not come to this Point " + val.getClass().getCanonicalName() + " / " + val);
     }
 
     @Override

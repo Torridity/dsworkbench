@@ -21,6 +21,7 @@ import de.tor.tribes.types.FightReport;
 import de.tor.tribes.types.ext.Village;
 import de.tor.tribes.util.SystrayHelper;
 import de.tor.tribes.util.farm.FarmManager;
+import de.tor.tribes.util.troops.TroopsManager;
 import de.tor.tribes.util.village.KnownVillageManager;
 import de.tor.tribes.util.xml.JDomUtils;
 import java.net.URLDecoder;
@@ -99,6 +100,7 @@ public class ReportManager extends GenericManager<FightReport> {
     
     //update information of the Villages
     KnownVillageManager.getSingleton().updateInformation(pElement);
+    TroopsManager.getSingleton().updateInformation(pElement);
     
     if (farmFilter.isValid(pElement)) {
       logger.debug("Farm filter was activated for village " + pElement.getTargetVillage());

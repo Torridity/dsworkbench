@@ -171,7 +171,7 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
         JXTaskPane transferPane = new JXTaskPane();
         transferPane.setTitle("Übertragen");
 
-        JXButton button2 = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/ui/att_browser.png")));
+        JXButton button2 = new JXButton(new ImageIcon(DSWorkbenchConquersFrame.class.getResource("/res/ui/att_browser.png")));
         button2.setToolTipText("Zentriert die markierte Eroberungen im Spiel");
         button2.addMouseListener(new MouseAdapter() {
 
@@ -183,7 +183,7 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
 
         transferPane.getContentPane().add(button2);
         if (!GlobalOptions.isMinimal()) {
-            JXButton centerOnMap = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/center_24x24.png")));
+            JXButton centerOnMap = new JXButton(new ImageIcon(DSWorkbenchConquersFrame.class.getResource("/res/center_24x24.png")));
             centerOnMap.setToolTipText("Zentriert die markierte Eroberung auf der Hauptkarte");
             centerOnMap.addMouseListener(new MouseAdapter() {
 
@@ -199,7 +199,7 @@ public class DSWorkbenchConquersFrame extends AbstractDSWorkbenchFrame implement
        /* JXTaskPane miscPane = new JXTaskPane();
         miscPane.setTitle("Sonstiges");
 
-        JXButton borderControlButton = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/ui/att_browser.png")));
+        JXButton borderControlButton = new JXButton(new ImageIcon(DSWorkbenchConquersFrame.class.getResource("/res/ui/att_browser.png")));
         borderControlButton.setToolTipText("Zentriert die markierte Eroberungen im Spiel");
         borderControlButton.addMouseListener(new MouseAdapter() {
 

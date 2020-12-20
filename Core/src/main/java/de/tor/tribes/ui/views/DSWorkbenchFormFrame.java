@@ -169,7 +169,7 @@ public class DSWorkbenchFormFrame extends AbstractDSWorkbenchFrame implements Li
         
         JXTaskPane transferPane = new JXTaskPane();
         transferPane.setTitle("Übertragen");
-        JXButton transferVillageList = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/ui/center_ingame.png")));
+        JXButton transferVillageList = new JXButton(new ImageIcon(DSWorkbenchFormFrame.class.getResource("/res/ui/center_ingame.png")));
         transferVillageList.setToolTipText("Zentriert den Mittelpunkt der gewählten Zeichnung im Spiel");
         transferVillageList.addMouseListener(new MouseAdapter() {
             

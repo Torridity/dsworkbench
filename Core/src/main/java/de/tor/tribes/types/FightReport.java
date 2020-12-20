@@ -48,7 +48,7 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
 
     private final static String[] VARIABLES = new String[]{"%ATTACKER%", "%SOURCE%", "%DEFENDER%", "%TARGET%", "%SEND_TIME%", "%RESULT%", "%LUCK%", "%MORALE%", "%ATTACKER_TROOPS%",
         "%DEFENDER_TROOPS%", "%DEFENDERS_OUTSIDE%", "%DEFENDERS_EN_ROUTE%", "%LOYALITY_CHANGE%", "%WALL_CHANGE%", "%BUILDING_CHANGE%"};
-    private final static String STANDARD_TEMPLATE = "[quote][i][b]Betreff:[/b][/i] %ATTACKER% greift %TARGET% an\n[i][b]Gesendet:[/b][/i] %SEND_TIME%\n[size=16]%RESULT%[/size]\n"
+    public final static String STANDARD_TEMPLATE = "[quote][i][b]Betreff:[/b][/i] %ATTACKER% greift %TARGET% an\n[i][b]Gesendet:[/b][/i] %SEND_TIME%\n[size=16]%RESULT%[/size]\n"
             + "[b]Glück:[/b] %LUCK%\n[b]Moral:[/b] %MORALE%\n\n[b]Angreifer:[/b] %ATTACKER%\n[b]Dorf:[/b] %SOURCE%\n%ATTACKER_TROOPS%\n\n[b]Verteidiger:[/b] %DEFENDER%\n"
             + "[b]Dorf:[/b] %TARGET%\n %DEFENDER_TROOPS%\n\n%DEFENDERS_OUTSIDE%\n%DEFENDERS_EN_ROUTE%\n%LOYALITY_CHANGE%\n%WALL_CHANGE%\n%BUILDING_CHANGE%[/quote]";
 
@@ -109,11 +109,6 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
                 : "";
         return new String[]{attackerVal, sourceVal, defenderVal, targetVal, sendDateVal, resultVal, luckVal, moraleVal, attackerTroopsVal, defenderTroopsVal, troopsOutsideVal, troopsEnRouteVal, loyalityChangeVal, wallChangeVal, cataChangeVal};
     }
-
-    @Override
-    public String getStandardTemplate() {
-        return STANDARD_TEMPLATE;
-    }
     
     public enum status {
         LOST_NOTHING,
@@ -139,7 +134,6 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
     private TroopAmountFixed diedDefenders = null;
     private HashMap<Village, TroopAmountFixed> defendersOutside = null;
     private TroopAmountFixed defendersOnTheWay = null;
-    private boolean conquered = false;
     private int wallBefore = -1;
     private int wallAfter = -1;
     private int aimedBuildingId = -1;
@@ -187,16 +181,16 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
     @Override
     public void loadFromXml(Element pElement) {
         try {
-            this.timestamp = Long.parseLong(pElement.getChild("timestamp").getText());
-            this.moral = Double.parseDouble(pElement.getChild("moral").getText());
-            this.luck = Double.parseDouble(pElement.getChild("luck").getText());
+            this.timestamp = Long.parseLong(pElement.getChildText("timestamp"));
+            this.moral = Double.parseDouble(pElement.getChildText("moral"));
+            this.luck = Double.parseDouble(pElement.getChildText("luck"));
             //attacker stuff
             Element attackerElement = pElement.getChild("attacker");
             Element defenderElement = pElement.getChild("defender");
-            int source = Integer.parseInt(attackerElement.getChild("src").getText());
+            int source = Integer.parseInt(attackerElement.getChildText("src"));
             this.sourceVillage = DataHolder.getSingleton().getVillagesById().get(source);
 
-            int attackerId = Integer.parseInt(attackerElement.getChild("id").getText());
+            int attackerId = Integer.parseInt(attackerElement.getChildText("id"));
             Tribe attElement = DataHolder.getSingleton().getTribes().get(attackerId);
             if (attElement != null) {
                 setAttacker(attElement);
@@ -208,9 +202,9 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
                 }
             }
 
-            int target = Integer.parseInt(defenderElement.getChild("trg").getText());
+            int target = Integer.parseInt(defenderElement.getChildText("trg"));
             this.targetVillage = DataHolder.getSingleton().getVillagesById().get(target);
-            int defenderId = Integer.parseInt(defenderElement.getChild("id").getText());
+            int defenderId = Integer.parseInt(defenderElement.getChildText("id"));
             Tribe defendingTribe = DataHolder.getSingleton().getTribes().get(defenderId);
             if (defendingTribe != null) {
                 setDefender(defendingTribe);
@@ -244,16 +238,20 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
             this.defendersOutside = new HashMap<>();
             if (dDefendersOutside != null) {
                 for (Element e : (List<Element>) JDomUtils.getNodes(dDefendersOutside, "support")) {
-                    int villageId = e.getAttribute("trg").getIntValue();
-                    Village v = DataHolder.getSingleton().getVillagesById().get(villageId);
-                    if(v != null) {
-                        TroopAmountFixed unitsInvillage = this.defendersOutside.get(v);
-                        if (unitsInvillage == null) {
-                            unitsInvillage = new TroopAmountFixed(e);
-                        } else {
-                            unitsInvillage.addAmount(new TroopAmountFixed(e));
+                    try {
+                        int villageId = e.getAttribute("id").getIntValue();
+                        Village v = DataHolder.getSingleton().getVillagesById().get(villageId);
+                        if(v != null) {
+                            TroopAmountFixed unitsInvillage = this.defendersOutside.get(v);
+                            if (unitsInvillage == null) {
+                                unitsInvillage = new TroopAmountFixed(e);
+                            } else {
+                                unitsInvillage.addAmount(new TroopAmountFixed(e));
+                            }
+                            this.defendersOutside.put(v, unitsInvillage);
                         }
-                        this.defendersOutside.put(v, unitsInvillage);
+                    } catch(Exception ex) {
+                        logger.debug("cannot read defenders outside", ex);
                     }
                 }
             }
@@ -295,7 +293,7 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
                 Element e = pElement.getChild("spyBuildings");
                 
                 for(int i = 0; i < this.buildingLevels.length; i++) {
-                    this.buildingLevels[i] = Integer.parseInt(e.getChildText(
+                    this.buildingLevels[i] = Integer.parseInt(e.getAttributeValue(
                             BuildingSettings.BUILDING_NAMES[i]));
                 }
             } catch (Exception e) {
@@ -331,6 +329,12 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
             } catch (Exception e) {
                 logger.debug("Failed to read spyed resources", e);
                 this.spyedResources = null;
+            }
+            
+            try {
+                this.won = Boolean.parseBoolean(pElement.getChildText("won"));
+            } catch (Exception e) {
+                logger.debug("Failed to read won Level", e);
             }
         } catch (Exception e) {
             logger.warn("failed to fully read the report", e);
@@ -368,7 +372,7 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
             if (whereDefendersOutside()) {
                 Element outsideE = new Element("outside");
                 for (Village target: defendersOutside.keySet()) {
-                    Element defOutside = defendersOutside.get(target).toXml("target");
+                    Element defOutside = defendersOutside.get(target).toXml("support");
                     defOutside.setAttribute("id", Integer.toString(target.getId()));
                     outsideE.addContent(defOutside);
                 }
@@ -419,6 +423,7 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
             report.addContent(spyBuildings);
             
             report.addContent(new Element("spyLevel").setText(Integer.toString(spyLevel)));
+            report.addContent(new Element("won").setText(Boolean.toString(won)));
             return report;
         } catch (Exception e) {
             logger.error("Exception during generating XML", e);
@@ -682,20 +687,6 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
      */
     public void setDefendersOnTheWay(TroopAmountFixed defendersOnTheWay) {
         this.defendersOnTheWay = defendersOnTheWay;
-    }
-
-    /**
-     * @return the conquered
-     */
-    public boolean isConquered() {
-        return conquered;
-    }
-
-    /**
-     * @param conquered the conquered to set
-     */
-    public void setConquered(boolean conquered) {
-        this.conquered = conquered;
     }
 
     /**
@@ -1060,38 +1051,6 @@ public class FightReport extends ManageableType implements Comparable<FightRepor
         hash = 53 * hash + (this.diedDefenders != null ? this.diedDefenders.hashCode() : 0);
         hash = 53 * hash + (this.defendersOutside != null ? this.defendersOutside.hashCode() : 0);
         hash = 53 * hash + (this.defendersOnTheWay != null ? this.defendersOnTheWay.hashCode() : 0);
-        hash = 53 * hash + (this.conquered ? 1 : 0);
-        hash = 53 * hash + this.wallBefore;
-        hash = 53 * hash + this.wallAfter;
-        hash = 53 * hash + this.aimedBuildingId;
-        hash = 53 * hash + this.buildingBefore;
-        hash = 53 * hash + this.buildingAfter;
-        hash = 53 * hash + this.acceptanceBefore;
-        hash = 53 * hash + this.acceptanceAfter;
-        hash = 53 * hash + Arrays.hashCode(this.spyedResources);
-        hash = 53 * hash + Arrays.hashCode(this.haul);
-        for(int i = 0; i < this.buildingLevels.length; i++)
-            hash = 53 * hash + this.buildingLevels[i];
-        return hash;
-    }
-
-    public int cleanupHashCode() {
-        int hash = 5;
-        hash = 53 * hash + (this.won ? 1 : 0);
-        hash = 53 * hash + (int) (this.timestamp ^ (this.timestamp >>> 32));
-        hash = 53 * hash + (int) (Double.doubleToLongBits(this.luck) ^ (Double.doubleToLongBits(this.luck) >>> 32));
-        hash = 53 * hash + (int) (Double.doubleToLongBits(this.moral) ^ (Double.doubleToLongBits(this.moral) >>> 32));
-        hash = 53 * hash + (this.attacker != null ? this.attacker.hashCode() : 0);
-        hash = 53 * hash + (this.sourceVillage != null ? this.sourceVillage.hashCode() : 0);
-        hash = 53 * hash + (this.attackers != null ? this.attackers.hashCode() : 0);
-        hash = 53 * hash + (this.diedAttackers != null ? this.diedAttackers.hashCode() : 0);
-        hash = 53 * hash + (this.defender != null ? this.defender.hashCode() : 0);
-        hash = 53 * hash + (this.targetVillage != null ? this.targetVillage.hashCode() : 0);
-        hash = 53 * hash + (this.defenders != null ? this.defenders.hashCode() : 0);
-        hash = 53 * hash + (this.diedDefenders != null ? this.diedDefenders.hashCode() : 0);
-        hash = 53 * hash + (this.defendersOutside != null ? this.defendersOutside.hashCode() : 0);
-        hash = 53 * hash + (this.defendersOnTheWay != null ? this.defendersOnTheWay.hashCode() : 0);
-        hash = 53 * hash + (this.conquered ? 1 : 0);
         hash = 53 * hash + this.wallBefore;
         hash = 53 * hash + this.wallAfter;
         hash = 53 * hash + this.aimedBuildingId;

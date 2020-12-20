@@ -273,7 +273,9 @@ public class TroopAmountFixed extends TroopAmount {
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 53 * hash + this.amounts.hashCode();
+        for(UnitHolder unit: DataHolder.getSingleton().getUnits()) {
+            hash = 53 * hash + this.getAmountForUnit(unit);
+        }
         return hash;
     }
     

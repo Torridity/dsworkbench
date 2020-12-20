@@ -27,7 +27,7 @@ public class TagListFormatter extends BasicFormatter<Tag> {
 
     private static final String[] VARIABLES = new String[] {LIST_START, LIST_END, ELEMENT_COUNT, ELEMENT_ID};
     private static final String STANDARD_TEMPLATE = "[b]Gruppenübersicht[/b]\n"
-            + "%LIST_START%" + new Tag().getStandardTemplate() + "%LIST_END%";
+            + "%LIST_START%" + Tag.STANDARD_TEMPLATE + "%LIST_END%";
     private static final String TEMPLATE_PROPERTY = "tag.list.bbexport.template";
 
     @Override

@@ -29,6 +29,7 @@ import de.tor.tribes.util.ImageUtils;
 import de.tor.tribes.util.JOptionPaneHelper;
 import de.tor.tribes.util.PropertyHelper;
 import de.tor.tribes.util.note.NoteManager;
+import de.tor.tribes.util.xml.JDomUtils;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Graphics;
@@ -192,7 +193,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
         JXTaskPane editTaskPane = new JXTaskPane();
         editTaskPane.setTitle("Bearbeiten");
         
-        JXButton newNote = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/ui/document_new_24x24.png")));
+        JXButton newNote = new JXButton(new ImageIcon(DSWorkbenchNotepad.class.getResource("/res/ui/document_new_24x24.png")));
         newNote.setToolTipText("Erstellt eine leere Notiz");
         newNote.addMouseListener(new MouseAdapter() {
             
@@ -209,7 +210,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
         
         JXTaskPane transferTaskPane = new JXTaskPane();
         transferTaskPane.setTitle("Übertragen");
-        JXButton transferVillageList = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/ui/center_ingame.png")));
+        JXButton transferVillageList = new JXButton(new ImageIcon(DSWorkbenchNotepad.class.getResource("/res/ui/center_ingame.png")));
         transferVillageList.setToolTipText("Zentriert das gewählte Notizdorf im Spiel");
         transferVillageList.addMouseListener(new MouseAdapter() {
             
@@ -224,7 +225,7 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
         transferTaskPane.getContentPane().add(transferVillageList);
         
         if (!GlobalOptions.isMinimal()) {
-            JXButton centerVillage = new JXButton(new ImageIcon(DSWorkbenchChurchFrame.class.getResource("/res/center_24x24.png")));
+            JXButton centerVillage = new JXButton(new ImageIcon(DSWorkbenchNotepad.class.getResource("/res/center_24x24.png")));
             centerVillage.setToolTipText("Zentriert das gewählte Notizdorf auf der Hauptkarte");
             centerVillage.setSize(transferVillageList.getSize());
             centerVillage.setMinimumSize(transferVillageList.getMinimumSize());
@@ -301,6 +302,10 @@ public class DSWorkbenchNotepad extends AbstractDSWorkbenchFrame implements Gene
                         }
                         if (NoteManager.getSingleton().groupExists(newName)) {
                             JOptionPaneHelper.showWarningBox(jNoteTabbedPane, "Es existiert bereits ein Notizenset mit dem Namen '" + newName + "'", "Fehler");
+                            return;
+                        }
+                        if (! JDomUtils.stringAllowed(newName)) {
+                            JOptionPaneHelper.showWarningBox(jNoteTabbedPane, "Der name '" + newName + "' enthält ungültige Sonderzeichen", "Fehler");
                             return;
                         }
                         

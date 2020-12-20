@@ -18,8 +18,10 @@ package de.tor.tribes.ui.views;
 import de.tor.tribes.control.GenericManagerListener;
 import de.tor.tribes.types.ext.Tribe;
 import de.tor.tribes.types.ext.Village;
+import de.tor.tribes.ui.editors.BuildingLevelCellEditor;
 import de.tor.tribes.ui.models.WatchtowerTableModel;
 import de.tor.tribes.ui.panels.GenericTestPanel;
+import de.tor.tribes.ui.renderer.BuildingLevelCellRenderer;
 import de.tor.tribes.ui.renderer.ColorCellRenderer;
 import de.tor.tribes.ui.renderer.DefaultTableHeaderRenderer;
 import de.tor.tribes.ui.windows.AbstractDSWorkbenchFrame;
@@ -365,7 +367,7 @@ public class DSWorkbenchWatchtowerFrame extends AbstractDSWorkbenchFrame impleme
             }
             jWatchtowerTable.revalidate();
             //remove all selected markers and update the view once
-            KnownVillageManager.getSingleton().removeWatchtowers(toRemove.toArray(new Village[]{}));
+            KnownVillageManager.getSingleton().removeWatchtowers(toRemove.toArray(new Village[]{}), true);
             showSuccess(toRemove.size() + ((toRemove.size() == 1) ? " Wachturm gelöscht" : " Wachtürme gelöscht"));
         }
     }
@@ -399,7 +401,8 @@ public class DSWorkbenchWatchtowerFrame extends AbstractDSWorkbenchFrame impleme
                         append("[|]").
                         append(((Village) jWatchtowerTable.getModel().getValueAt(row, villageCol)).toBBCode()).
                         append("[|]").
-                        append(jWatchtowerTable.getModel().getValueAt(row, rangeCol));
+                        append(jWatchtowerTable.getModel().getValueAt(row, rangeCol)).
+                        append("\n");
             }
 
             buffer.append("[/table]");
@@ -474,11 +477,9 @@ public class DSWorkbenchWatchtowerFrame extends AbstractDSWorkbenchFrame impleme
 
         jWatchtowerTable.setColumnControlVisible(true);
         jWatchtowerTable.setDefaultRenderer(Color.class, new ColorCellRenderer());
+        jWatchtowerTable.setDefaultRenderer(Integer.class, new BuildingLevelCellRenderer());
+        jWatchtowerTable.setDefaultEditor(Integer.class, new BuildingLevelCellEditor());
         
-        DefaultComboBoxModel model = new DefaultComboBoxModel();
-        for(int i = 1; i <= BuildingSettings.getMaxBuildingLevel("watchtower"); i++)
-            model.addElement(i);
-        jWatchtowerTable.setDefaultEditor(Integer.class, new DefaultCellEditor(new JComboBox(model)));
         BufferedImage back = ImageUtils.createCompatibleBufferedImage(5, 5, BufferedImage.BITMASK);
         Graphics2D g = back.createGraphics();
         GeneralPath p = new GeneralPath();

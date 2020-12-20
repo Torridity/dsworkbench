@@ -8,9 +8,11 @@ troops.place.overall=Insgesamt
 troops.place.in.other.villages=Truppen in anderen D\u00f6rfern
 troops.commands=Befehle
 troops=Truppen
+
 overview.groups=Gruppen:
 groups.all=alle
 groups.edit=bearbeiten
+
 sos.defender=Verteidiger
 sos.name=Name:
 sos.source=Herkunft:
@@ -24,9 +26,11 @@ sos.short.village=Dorf:
 sos.short.wall.level=Wallstufe:
 sos.short.defender=Verteidiger:
 sos.short.movement=-->
+
 diplomacy.allies=Verb\u00fcndete
 diplomacy.nap=Nicht-Angriffs-Pakt (NAP)
 diplomacy.enemy=Feinde
+
 movement.tableHeader.command=Befehl
 movement.tableHeader.srcVillage=Herkunftsdorf
 movement.tableHeader.arriveTime=Ankunft
@@ -41,8 +45,10 @@ movement.date.tomorrow=morgen
 movement.date.format='am' dd.MM. 'um' HH:mm:ss
 movement.date.format.ms='am' dd.MM. 'um' HH:mm:ss:SSS
 movement.date.format.ouput='am' dd.MM.
+
 report.fight.time=Kampfzeit
 report.date.format=dd.MM.yy HH:mm:ss
+report.date.format.ms=dd.MM.yy HH:mm:ss:SSS
 report.has.won=hat gewonnen
 report.spy=ausgekundschaftet
 report.att.luck=Angreifergl\u00fcck
@@ -86,6 +92,7 @@ report.acceptance.1=Zustimmung
 report.acceptance.2=Gesunken von
 report.acceptance.3=auf
 report.ontheway=Truppen des Verteidigers, die unterwegs waren
+report.ontheway_spy=Einheiten au\u00DFerhalb:
 report.outside=Truppen des Verteidigers in anderen D\u00f6rfern
 report.hidden=Durch Besitzer des Berichts verborgen
 report.full.destruction=Keiner deiner K\u00E4mpfer ist lebend zur\u00fcckgekehrt

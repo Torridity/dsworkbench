@@ -27,19 +27,16 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class PointStatsFormatter extends BasicFormatter<Stats> {
 
-    private static final String TRIBE = "%TRIBE%";
-    private static final String POINTS_BEFORE = "%POINTS_START%";
-    private static final String POINTS_AFTER = "%POINTS_END%";
-    private static final String POINTS_DIFFERENCE = "%POINTS_DIFFERENCE%";
-    private static final String PERCENT_DIFFERENCE = "%PERCENT_DIFFERENCE%";
-    private static final String KILLS_PER_POINT = "%KILLS_PER_POINT%";
     private static final String[] VARIABLES = new String[] {LIST_START, LIST_END, ELEMENT_COUNT, ELEMENT_ID};
     private static final String STANDARD_TEMPLATE = "[b]Punktestatistik[/b]\nBerücksichtigte Spieler: %ELEMENT_COUNT%\n[table]\n"
             + "[**]Platz[||]Spieler[||]Punkte (Anfang)[||]Wachstum[||]Punkte (Ende)[||]Kills/Punkt[/**]\n"
-            + "%LIST_START%[*]%ELEMENT_ID%[|]%TRIBE%[|]%POINTS_START%[|]%PERCENT_DIFFERENCE%[|]%POINTS_END%[|]%KILLS_PER_POINT%[/*]%LIST_END%\n"
+            + "%LIST_START%[*]%ELEMENT_ID%[|]%PLAYER%[|]%POINTS_START%[|]%PERCENT_DIFFERENCE%[|]%POINTS_END%[|]%KILLS_PER_POINT%[/*]%LIST_END%\n"
             + "[/table]";
     private static final String TEMPLATE_PROPERTY = "point.stats.bbexport.template";
-    private final String[] STAT_SPECIFIC_VARIABLES = new String[] {TRIBE, POINTS_BEFORE, POINTS_AFTER, POINTS_DIFFERENCE, PERCENT_DIFFERENCE, KILLS_PER_POINT};
+    private final String[] STAT_SPECIFIC_VARIABLES = new String[] {
+        "%PLAYER%", "%PLAYER_NO_BB%",
+        "%POINTS_START%", "%POINTS_END%", "%POINTS_DIFFERENCE%", "%PERCENT_DIFFERENCE%", "%KILLS_PER_POINT%"
+    };
 
     /*
     01. [player]-Atheris-[/player]
@@ -82,6 +79,7 @@ public class PointStatsFormatter extends BasicFormatter<Stats> {
         nf.setMinimumFractionDigits(0);
         nf.setMaximumFractionDigits(0);
         String tribe = pStats.getParent().getTribe().toBBCode();
+        String tribeNoBBVal = pStats.getParent().getTribe().getName();
         String pointsBefore = nf.format(pStats.getPointStart());
         String pointsAfter = nf.format(pStats.getPointEnd());
         String pointsDiff = nf.format(pStats.getPointDiff());
@@ -103,7 +101,7 @@ public class PointStatsFormatter extends BasicFormatter<Stats> {
 
         String killsPerPoints = nf.format(pStats.getKillPerPoint());
 
-        return new String[] {tribe, pointsBefore, pointsAfter, pointsDiff, percentDiff, killsPerPoints};
+        return new String[] {tribe, tribeNoBBVal, pointsBefore, pointsAfter, pointsDiff, percentDiff, killsPerPoints};
     }
 
     @Override
@@ -120,12 +118,7 @@ public class PointStatsFormatter extends BasicFormatter<Stats> {
     public String[] getTemplateVariables() {
         List<String> vars = new LinkedList<>();
         Collections.addAll(vars, VARIABLES);
-        vars.add(TRIBE);
-        vars.add(POINTS_BEFORE);
-        vars.add(POINTS_AFTER);
-        vars.add(POINTS_DIFFERENCE);
-        vars.add(PERCENT_DIFFERENCE);
-        vars.add(KILLS_PER_POINT);
+        Collections.addAll(vars, STAT_SPECIFIC_VARIABLES);
         return vars.toArray(new String[vars.size()]);
     }
     

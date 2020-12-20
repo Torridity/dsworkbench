@@ -9,9 +9,11 @@ troops.place.in.other.villages=Truppe i D\u00f6rfern vo andere Spieler
 troops.place.in.own.villages=Truppe i mine anderne D\u00f6rfern
 troops.commands=Befehl
 troops=Truppe
+
 overview.groups=Gruppe:
 groups.all=aui
 groups.edit=bearbeite
+
 sos.defender=Vrteidiger
 sos.name=Name:
 sos.source=H\u00e4rkunft:
@@ -25,9 +27,11 @@ sos.short.village=Dorf:
 sos.short.wall.level=Wallstufe:
 sos.short.defender=Vrteidiger
 sos.short.movement=-->
+
 diplomacy.allies=Vrb\u00fcndeti
 diplomacy.nap=Nid-Angriffs-Pakt (NAP)
 diplomacy.enemy=Feinde
+
 movement.tableHeader.command=Befehl
 movement.tableHeader.srcVillage=H\u00e4rkunftsdorf
 movement.tableHeader.arriveTime=Akunft
@@ -42,6 +46,7 @@ movement.date.tomorrow=morn
 movement.date.format='am' dd.MM. 'um' HH:mm:ss
 movement.date.format.ms='am' dd.MM. 'um' HH:mm:ss:SSS
 movement.date.format.ouput='am' dd.MM.
+
 report.fight.time=Kampfziit
 report.date.format=dd.MM.yy HH:mm:ss
 report.date.format.ms=dd.MM.yy HH:mm:ss:SSS
